@@ -1,0 +1,147 @@
+// Coordinates are [column, row], starting at the top left in both eras.
+export const MAZE_SIZE = 7;
+export const MAZE_ROUTE = [
+  [0, 0],
+  [1, 0],
+  [1, 1],
+  [1, 2],
+  [2, 2],
+  [3, 2],
+  [3, 1],
+  [3, 0],
+  [4, 0],
+  [5, 0],
+  [5, 1],
+  [5, 2],
+  [6, 2],
+  [6, 3],
+  [5, 3],
+  [4, 3],
+  [4, 4],
+  [3, 4],
+  [2, 4],
+  [2, 5],
+  [3, 5],
+  [4, 5],
+  [5, 5],
+  [5, 6],
+  [6, 6],
+];
+const branches = [
+  [
+    [1, 1],
+    [0, 1],
+    [0, 2],
+    [0, 3],
+    [1, 3],
+  ],
+  [
+    [2, 2],
+    [2, 1],
+    [2, 0],
+  ],
+  [
+    [3, 2],
+    [3, 3],
+    [2, 3],
+  ],
+  [
+    [5, 1],
+    [6, 1],
+    [6, 0],
+  ],
+  [
+    [4, 3],
+    [4, 2],
+    [4, 1],
+  ],
+  [
+    [2, 4],
+    [1, 4],
+    [1, 5],
+    [0, 5],
+    [0, 6],
+  ],
+  [
+    [2, 5],
+    [2, 6],
+    [1, 6],
+  ],
+  [
+    [5, 5],
+    [6, 5],
+    [6, 4],
+    [5, 4],
+  ],
+  [
+    [0, 5],
+    [0, 4],
+  ],
+  [
+    [2, 6],
+    [3, 6],
+    [4, 6],
+  ],
+];
+const edge = (a, b) => [a.join(","), b.join(",")].sort().join("|");
+const edges = new Set([MAZE_ROUTE, ...branches].flatMap((path) => path.slice(1).map((cell, i) => edge(path[i], cell))));
+export const canMove = (from, to) => edges.has(edge(from, to));
+
+export function drawMaze(ctx, canvas, { solution = false } = {}) {
+  const size = canvas.width,
+    margin = size * 0.12,
+    cell = (size - 2 * margin) / MAZE_SIZE;
+  ctx.fillStyle = "#e5d2a3";
+  ctx.fillRect(0, 0, size, canvas.height);
+  ctx.fillStyle = "#3d2b1e";
+  ctx.textAlign = "center";
+  ctx.font = `bold ${size * 0.038}px serif`;
+  ctx.fillText(solution ? "El camino de la llave" : "Resuelve el laberinto", size / 2, size * 0.065);
+  ctx.strokeStyle = "#503b28";
+  ctx.lineWidth = size * 0.005;
+  if (solution) {
+    for (let y = 0; y < MAZE_SIZE; y++)
+      for (let x = 0; x < MAZE_SIZE; x++) {
+        const left = margin + x * cell,
+          top = margin + y * cell;
+        const line = (a, b, c, d) => {
+          ctx.beginPath();
+          ctx.moveTo(a, b);
+          ctx.lineTo(c, d);
+          ctx.stroke();
+        };
+        if (y === 0) line(left, top, left + cell, top);
+        if (x === 0) line(left, top, left, top + cell);
+        if (!canMove([x, y], [x + 1, y])) line(left + cell, top, left + cell, top + cell);
+        if (!canMove([x, y], [x, y + 1])) line(left, top + cell, left + cell, top + cell);
+      }
+  } else {
+    // The present only shows the boundary; the past note reveals the walls.
+    ctx.strokeRect(margin, margin, cell * MAZE_SIZE, cell * MAZE_SIZE);
+  }
+  const center = ([x, y]) => [margin + (x + 0.5) * cell, margin + (y + 0.5) * cell];
+  if (solution) {
+    ctx.strokeStyle = "#a23728";
+    ctx.lineWidth = size * 0.012;
+    ctx.lineJoin = "round";
+    ctx.beginPath();
+    MAZE_ROUTE.forEach((p, i) => {
+      const [x, y] = center(p);
+      if (i) ctx.lineTo(x, y);
+      else ctx.moveTo(x, y);
+    });
+    ctx.stroke();
+  }
+  for (const [point, label] of [
+    [MAZE_ROUTE[0], "INICIO"],
+    [MAZE_ROUTE.at(-1), "SALIDA"],
+  ]) {
+    const [x, y] = center(point);
+    ctx.fillStyle = "#3d2b1e";
+    ctx.font = `bold ${cell * 0.19}px sans-serif`;
+    ctx.fillText(label, x, y + cell * 0.32);
+  }
+  ctx.fillStyle = "#503b28";
+  ctx.font = `${size * 0.028}px serif`;
+  ctx.fillText(solution ? "Guía la llave desde el inicio hasta la salida." : "Usa las flechas.", size / 2, size * 0.95);
+}

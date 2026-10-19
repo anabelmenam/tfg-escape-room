@@ -3,22 +3,14 @@ import { Entity } from "../Entity.js";
 import { tItem, tInteraction } from "../../../translations/index.js";
 import createBox from "../helpers/createBox.js";
 import { createWoodMaterials } from "../helpers/createWoodMaterials.js";
-
-const DOOR_SOUNDS = {
-  open: "/audio/open-door.mp3",
-  close: "/audio/close-door.mp3",
-  locked: "/audio/lock-door.mp3",
-};
-
-// All doors reuse the same decoded files.
-const soundBuffers = new Map();
+import { MechanicalAudio } from "../helpers/MechanicalAudio.js";
 
 class Door extends Entity {
   constructor({
     id,
     position = new THREE.Vector3(),
     rotationY = 0,
-    thickness = 0.8,
+    thickness = 0.3,
     requiredKey = null,
     locked = false,
     onOpenChange,
@@ -33,9 +25,7 @@ class Door extends Entity {
   }) {
     super(id);
 
-    this.sound = null;
-    this.soundRequest = 0;
-    this.disposed = false;
+    this.doorAudio = new MechanicalAudio({ kind: "roomDoor", volume: 0.48 });
 
     this.thickness = thickness;
     this.requiredKey = requiredKey;
@@ -55,6 +45,7 @@ class Door extends Entity {
 
     this.openSpeed = 4;
     this.closeSpeed = 7;
+    this.collider = new THREE.Box3();
 
     this.createMaterials({
       woodColor,
@@ -196,51 +187,15 @@ class Door extends Entity {
   }
 
   setAudioListener(listener) {
-    if (this.disposed || this.sound) return;
-    this.sound = new THREE.PositionalAudio(listener);
-    this.sound.setVolume(0.65);
-    this.sound.setDistanceModel("linear");
-    this.sound.setRefDistance(3);
-    this.sound.setMaxDistance(30);
-    this.sound.setRolloffFactor(1);
-    this.doorMesh.add(this.sound);
-
-    const loader = new THREE.AudioLoader();
-    for (const [type, url] of Object.entries(DOOR_SOUNDS)) {
-      if (!soundBuffers.has(type)) {
-        soundBuffers.set(type, loader.loadAsync(url).catch((error) => {
-          console.warn("No se pudo cargar el sonido de puerta:", error);
-          return null;
-        }));
-      }
-    }
+    this.doorAudio.setAudioListener(listener, this.doorMesh);
   }
 
-  async playSound(type) {
-    const sound = this.sound;
-    if (this.disposed || !sound || !DOOR_SOUNDS[type]) return;
-    const request = ++this.soundRequest;
-    // Ignore initial state changes until the player has enabled browser audio.
-    if (sound.context.state !== "running") return;
-    const buffer = await soundBuffers.get(type);
-    if (!buffer || this.disposed || request !== this.soundRequest) return;
-    if (sound.isPlaying) sound.stop();
-    sound.setBuffer(buffer);
-    sound.play();
-    this.object3D.updateWorldMatrix(true, true);
-    sound.updateMatrixWorld(true);
+  playSound(type, duration = 0.35) {
+    this.doorAudio.play(type, duration);
   }
 
   dispose() {
-    this.disposed = true;
-    this.soundRequest++;
-    if (this.sound) {
-      if (this.sound.isPlaying) this.sound.stop();
-      this.sound.disconnect();
-      this.sound.gain.disconnect();
-      this.sound.removeFromParent();
-      this.sound = null;
-    }
+    this.doorAudio.dispose();
   }
 
   open() {
@@ -250,7 +205,7 @@ class Door extends Entity {
 
     this.isOpen = true;
     this.targetRotation = this.openRotation;
-    void this.playSound("open");
+    void this.playSound("open", 4.6 / this.openSpeed);
 
     if (typeof this.onOpenChange === "function") {
       this.onOpenChange(true);
@@ -264,7 +219,7 @@ class Door extends Entity {
 
     this.isOpen = false;
     this.targetRotation = this.closedRotation;
-    void this.playSound("close");
+    void this.playSound("close", 4.6 / this.closeSpeed);
 
     if (typeof this.onOpenChange === "function") {
       this.onOpenChange(false);
@@ -277,6 +232,11 @@ class Door extends Entity {
     if (Math.abs(this.object3D.rotation.y - this.targetRotation) < 0.001) {
       this.object3D.rotation.y = this.targetRotation;
     }
+  }
+
+  getCollider() {
+    this.object3D.updateWorldMatrix(true, true);
+    return this.collider.setFromObject(this.doorMesh);
   }
 }
 

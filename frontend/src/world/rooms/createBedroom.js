@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { createRoom } from "./createRoom.js";
 import {
+  ClockHand,
   Door,
   Lamp,
   Switch,
@@ -21,7 +22,12 @@ import {
   Paper,
   DeskLamp,
   Flashlight,
+  Frame,
   RadioDial,
+  PaintingFragment,
+  applyAgedFurnitureAppearance,
+  createCandleCluster,
+  createPerfumeTray,
 } from "../objects/index.js";
 
 import {
@@ -31,7 +37,6 @@ import {
   RadioPuzzle,
   SewingBoxPuzzle,
 } from "../puzzles/index.js";
-import { applyAgedFurnitureAppearance } from "../objects/helpers/applyAgedFurnitureAppearance.js";
 
 const bedroomWoodStyle = {
   woodTexture: "/textures/furniture/wood2.jpg",
@@ -48,13 +53,13 @@ const bedroomWoodStyle = {
 
 const bedroomTimelineConfig = {
   past: {
-    wallColor: 0xc8b89d,
-    floorColor: 0x6a4d3c,
-    ceilingColor: 0xb0a18c,
-    blanketColor: 0xa89305,
-    pillowColor: 0xa89305,
-    carpetColor: 0x762d34,
-    ambientLightIntensity: 0.55,
+    wallColor: 0xa7a49c,
+    floorColor: 0x4e4541,
+    ceilingColor: 0x8b8983,
+    blanketColor: 0x5f6670,
+    pillowColor: 0x5f6670,
+    carpetColor: 0x51484c,
+    ambientLightIntensity: 0.48,
   },
   present: {
     wallColor: 0xa7a49c,
@@ -68,13 +73,20 @@ const bedroomTimelineConfig = {
   },
 };
 
-const createBedroom = async ({ timeline = "present", onDoorOpenChange, onDoorUnlocked, onObjectFocus } = {}) => {
+const createBedroom = async ({
+  timeline = "present",
+  onDoorOpenChange,
+  onDoorUnlocked,
+  onObjectFocus,
+  onBedroomAction = null,
+  testMode = false,
+} = {}) => {
   const timelineConfig = bedroomTimelineConfig[timeline];
 
   if (!timelineConfig) {
     throw new Error(`Timeline no válido para Bedroom: ${timeline}`);
   }
-  const { room, roomColliders, bounds, doorOpening, windowOpenings } = createRoom({
+  const { room, roomColliders, bounds, doorOpening, windowOpenings, placeAgainstWall } = createRoom({
     wallColor: timelineConfig.wallColor,
     floorColor: timelineConfig.floorColor,
     ceilingColor: timelineConfig.ceilingColor,
@@ -119,9 +131,16 @@ const createBedroom = async ({ timeline = "present", onDoorOpenChange, onDoorUnl
 
   room.name = `Bedroom-${timeline}`;
   room.userData.timeline = timeline;
+  const clues = {
+    radioNote: testMode,
+    electricalPlan: testMode,
+    revealedSymbols: testMode,
+    familyPhoto: testMode,
+  };
+  const reportAction = (type, targetId) => onBedroomAction?.(type, targetId);
 
   const ambientLight = new THREE.AmbientLight(
-    timeline === "present" ? 0xb7c8df : 0xffffff,
+    0xb7c8df,
     timelineConfig.ambientLightIntensity,
   );
   room.add(ambientLight);
@@ -143,7 +162,7 @@ const createBedroom = async ({ timeline = "present", onDoorOpenChange, onDoorUnl
     id: "bedroom-exit-door",
     position: doorPosition,
     //requiredKey: timeline === "past" ? "bedroom-key" : null,
-    locked: true,
+    //locked: true,
     onOpenChange: onDoorOpenChange,
     onUnlock: onDoorUnlocked,
   });
@@ -160,11 +179,10 @@ const createBedroom = async ({ timeline = "present", onDoorOpenChange, onDoorUnl
     timeline === "past"
       ? new Key({
           id: "bedroom-key",
-          inventoryIcon: "/images/icons/blue-key.png",
           position: new THREE.Vector3(2, 1, -3),
-          color: 0x0000ff,
         })
       : null;
+  const clockHand = timeline === "past" ? new ClockHand() : null;
   const radioDial = timeline === "past" ? new RadioDial({ id: "radio-dial" }) : null;
   const fuse = timeline === "present" ? new Fuse({ id: "fuse", scale: 0.8 }) : null;
   const lamp = new Lamp({
@@ -228,6 +246,11 @@ const createBedroom = async ({ timeline = "present", onDoorOpenChange, onDoorUnl
     ...bedroomWoodStyle,
   });
 
+  if (clockHand) {
+    clockHand.object3D.rotation.set(-Math.PI / 2, 0, Math.PI / 5);
+    nightstand2.addObjectToDrawer(0, clockHand.object3D, new THREE.Vector3(0, -0.18, -0.45));
+  }
+
   const nightstand1Interactables = nightstand1.getInteractables();
   const nightstand2Interactables = nightstand2.getInteractables();
 
@@ -252,6 +275,13 @@ const createBedroom = async ({ timeline = "present", onDoorOpenChange, onDoorUnl
   cabinet.object3D.rotation.y = Math.PI / 2;
   const cabinetInteractables = cabinet.getInteractables();
   const flashlight = timeline === "present" ? new Flashlight({ id: "flashlight", scale: 0.62 }) : null;
+  const paintingFragments =
+    timeline === "past"
+      ? [
+          new PaintingFragment({ id: "painting-piece-1", index: 0 }),
+          new PaintingFragment({ id: "painting-piece-2", index: 4 }),
+        ]
+      : [];
 
   if (flashlight) {
     cabinet.addObjectToDrawer(0, flashlight.object3D, new THREE.Vector3(0, -0.18, -0.38));
@@ -265,17 +295,38 @@ const createBedroom = async ({ timeline = "present", onDoorOpenChange, onDoorUnl
   });
   desk.object3D.rotation.y = -Math.PI / 2;
   const deskInteractables = desk.getInteractables();
+  if (paintingFragments.length) {
+    desk.addObjectToDrawer(0, paintingFragments[0].object3D, new THREE.Vector3(0, -0.16, -0.62));
+    wardrobe.addObjectToDrawer(0, paintingFragments[1].object3D, new THREE.Vector3(-0.65, -0.395, -1.07));
+  }
 
   const deskPaper = new Paper({
     id: `bedroom-${timeline}-desk-paper`,
-    position: new THREE.Vector3(-2.5, 3.32, -0.2),
-    rotation: new THREE.Euler(-Math.PI / 2, 0, Math.PI / 4),
+    position: new THREE.Vector3(1.5, 3.322, 0.78),
+    rotation: new THREE.Euler(-Math.PI / 2, 0, Math.PI / 2 + 0.08),
     width: 1.15,
     height: 0.82,
   });
   if (timeline === "present") {
     desk.object3D.add(deskPaper.object3D);
   }
+
+  [
+    { x: 1.43, z: 0.82, angle: -0.12, width: 1.28, height: 0.9 },
+    { x: 1.57, z: 0.72, angle: 0.11, width: 1.18, height: 0.84 },
+    { x: 1.46, z: 0.85, angle: -0.05, width: 1.32, height: 0.88 },
+    { x: 1.55, z: 0.77, angle: 0.16, width: 1.12, height: 0.8 },
+  ].forEach(({ x, z, angle, width, height }, index) => {
+    const paper = new Paper({
+      id: `bedroom-${timeline}-loose-desk-paper-${index + 1}`,
+      position: new THREE.Vector3(x, 3.33 + index * 0.018, z),
+      rotation: new THREE.Euler(-Math.PI / 2, 0, Math.PI / 2 + angle),
+      width,
+      height,
+      paperColor: "#c7b68f",
+    });
+    desk.object3D.add(paper.object3D);
+  });
 
   const deskLamp = new DeskLamp({
     id: `bedroom-${timeline}-desk-lamp`,
@@ -285,6 +336,24 @@ const createBedroom = async ({ timeline = "present", onDoorOpenChange, onDoorUnl
     powerAvailable: timeline !== "present",
   });
   desk.object3D.add(deskLamp.object3D);
+  const agedDecor = true;
+  const dresserCandles = createCandleCluster({ aged: agedDecor, scale: 1.05, count: 2 });
+  dresserCandles.position.set(-3.12, 3.15, 0.18);
+  dresserCandles.rotation.y = -0.28;
+  cabinet.object3D.add(dresserCandles);
+  const perfumeTray = createPerfumeTray({ aged: agedDecor, scale: 0.78 });
+  perfumeTray.position.set(2.75, 3.15, -0.25);
+  cabinet.object3D.add(perfumeTray);
+  const bedroomLandscape = new Frame({
+    id: `bedroom-${timeline}-landscape`,
+    position: new THREE.Vector3(-1.75, 7.45, -12.34),
+    width: 5.8,
+    height: 3.35,
+    imagePath: "/images/decor/bedroom-landscape.png",
+    mount: "wall",
+    frameColor: agedDecor ? 0x403a35 : 0x5d402b,
+    matColor: agedDecor ? 0x858077 : 0xd8c7a3,
+  });
 
   const planPaper =
     timeline === "past"
@@ -298,6 +367,10 @@ const createBedroom = async ({ timeline = "present", onDoorOpenChange, onDoorUnl
           collectible: true,
           itemName: "electrical-plan",
           inspectionTitle: "plano eléctrico",
+          onCollect: () => {
+            clues.electricalPlan = true;
+            reportAction("item.pickup", "bedroom-electrical-plan");
+          },
         })
       : null;
 
@@ -310,14 +383,18 @@ const createBedroom = async ({ timeline = "present", onDoorOpenChange, onDoorUnl
     timeline === "past"
       ? new RadioPuzzle({
           id: "bedroom-radio",
-          position: new THREE.Vector3(-7.5, 3.5, 5.5),
-          rotationY: Math.PI / 2,
+          position: new THREE.Vector3(0, 3.52, 0),
+          rotationY: 0,
           scale: 0.5,
           onFocus: onObjectFocus,
           key,
           dialItem: radioDial,
+          canSolve: () => clues.radioNote,
+          onSolved: () => reportAction("puzzle.solved", "bedroom-radio"),
         })
       : null;
+
+  if (radio) cabinet.object3D.add(radio.object3D);
 
   const radioNote =
     timeline === "present"
@@ -334,6 +411,10 @@ const createBedroom = async ({ timeline = "present", onDoorOpenChange, onDoorUnl
           collectible: true,
           itemName: "radio-program-note",
           inspectionTitle: "programación nocturna",
+          onCollect: () => {
+            clues.radioNote = true;
+            reportAction("item.pickup", "bedroom-radio-note");
+          },
         })
       : null;
 
@@ -345,6 +426,8 @@ const createBedroom = async ({ timeline = "present", onDoorOpenChange, onDoorUnl
           scale: 0.26,
           onFocus: onObjectFocus,
           planPaper,
+          canSolve: () => clues.familyPhoto,
+          onSolved: () => reportAction("puzzle.solved", "bedroom-sewing-box"),
         })
       : null;
 
@@ -358,7 +441,10 @@ const createBedroom = async ({ timeline = "present", onDoorOpenChange, onDoorUnl
           id: "bedroom-light-reveal-puzzle",
           deskLamp,
           paper: deskPaper,
-          onSolved: () => {},
+          onSolved: () => {
+            clues.revealedSymbols = true;
+            reportAction("puzzle.solved", "bedroom-light-reveal-puzzle");
+          },
         })
       : null;
 
@@ -374,7 +460,9 @@ const createBedroom = async ({ timeline = "present", onDoorOpenChange, onDoorUnl
             lightSwitch1.setPowerAvailable(true);
             lightSwitch2.setPowerAvailable(true);
             deskLamp.setPowerAvailable(true);
+            reportAction("puzzle.solved", "bedroom-electrical-panel");
           },
+          canSolve: () => clues.electricalPlan,
         })
       : null;
 
@@ -414,7 +502,7 @@ const createBedroom = async ({ timeline = "present", onDoorOpenChange, onDoorUnl
           password: "0328",
           onUnlock: () => {
             desk.unlockDrawer(0);
-            console.log("Candado abierto");
+            reportAction("object.interact", "bedroom-lock");
           },
           onFocus: onObjectFocus,
         })
@@ -443,7 +531,9 @@ const createBedroom = async ({ timeline = "present", onDoorOpenChange, onDoorUnl
           onFocus: onObjectFocus,
           onUnlock: (safe) => {
             safe.open();
+            reportAction("object.interact", "bedroom-symbol-safe");
           },
+          canUnlock: () => clues.revealedSymbols,
         })
       : null;
 
@@ -455,21 +545,6 @@ const createBedroom = async ({ timeline = "present", onDoorOpenChange, onDoorUnl
     });
   }
 
-  const cobweb =
-    timeline === "present"
-      ? new Cobweb({
-          id: "bedroom-back-corner-cobweb",
-          position: new THREE.Vector3(7.98, 11.98, -11.98),
-          scale: 0.8,
-          radius: 1.2,
-          corner: true,
-          cornerCeiling: true,
-          spokes: 9,
-          rings: 4,
-          opacity: 0.5,
-        })
-      : null;
-
   const familyPhoto =
     timeline === "present"
       ? new FamilyPhotoPuzzle({
@@ -478,22 +553,19 @@ const createBedroom = async ({ timeline = "present", onDoorOpenChange, onDoorUnl
           rotationY: -Math.PI / 2,
           scale: 0.7,
           onFocus: onObjectFocus,
+          onSolved: () => reportAction("puzzle.solved", "bedroom-family-photo"),
         })
       : null;
 
-  if (timeline === "present") {
-    [bed, nightstand1, nightstand2, wardrobe, cabinet, desk, chair, carpet].forEach((furniture) => {
-      applyAgedFurnitureAppearance(furniture.object3D);
-    });
-  }
+  [bed, nightstand1, nightstand2, wardrobe, cabinet, desk, chair, carpet].forEach((furniture) => {
+    applyAgedFurnitureAppearance(furniture.object3D);
+  });
 
   if (timeline === "past") {
     room.add(alarmClock.object3D);
     room.add(safe.object3D);
-    room.add(radio.object3D);
   } else {
     room.add(alarmClock.object3D);
-    room.add(cobweb.object3D);
     room.add(familyPhoto.object3D);
     room.add(electricalPanel.object3D);
     room.add(radioNote.object3D);
@@ -510,9 +582,22 @@ const createBedroom = async ({ timeline = "present", onDoorOpenChange, onDoorUnl
   room.add(nightstand1.object3D);
   room.add(nightstand2.object3D);
   room.add(chair.object3D);
+  room.add(bedroomLandscape.object3D);
   windows.forEach((window) => {
     room.add(window.object3D);
   });
+
+  placeAgainstWall(lightSwitch1, "front");
+  placeAgainstWall(lightSwitch2, "back");
+  placeAgainstWall(bed, "back");
+  placeAgainstWall(nightstand1, "back");
+  alarmClock.object3D.position.add(placeAgainstWall(nightstand2, "back"));
+  const wardrobeOffset = placeAgainstWall(wardrobe, "right");
+  safe?.object3D.position.add(wardrobeOffset);
+  placeAgainstWall(cabinet, "left");
+  placeAgainstWall(desk, "right");
+  if (familyPhoto) placeAgainstWall(familyPhoto, "right");
+  if (electricalPanel) placeAgainstWall(electricalPanel, "left");
 
   room.updateMatrixWorld(true);
   const bedCollider = bed.getCollider();
@@ -540,6 +625,20 @@ const createBedroom = async ({ timeline = "present", onDoorOpenChange, onDoorUnl
     ],
     bounds,
     door,
+    applyBedroomState: (state) => {
+      clues.radioNote ||= Boolean(state.inventories?.present?.includes("bedroom-radio-note"));
+      clues.electricalPlan ||= Boolean(state.inventories?.past?.includes("bedroom-electrical-plan"));
+      clues.revealedSymbols ||= Boolean(state.timelines?.present?.puzzles?.["bedroom-light-reveal-puzzle"]?.solved);
+      clues.familyPhoto ||= Boolean(state.timelines?.present?.puzzles?.["bedroom-family-photo"]?.solved);
+      if (radioNote && clues.radioNote) {
+        radioNote.object3D.visible = false;
+        radioNote.setEnabled(false);
+      }
+      if (planPaper && clues.electricalPlan) {
+        planPaper.object3D.visible = false;
+        planPaper.setEnabled(false);
+      }
+    },
     doorPassage: {
       minX: doorOpening.position.x - doorOpening.width / 2,
 
@@ -552,8 +651,10 @@ const createBedroom = async ({ timeline = "present", onDoorOpenChange, onDoorUnl
       lightSwitch2,
       ...(key ? [key] : []),
       ...(radioDial ? [radioDial] : []),
+      ...(clockHand ? [clockHand] : []),
       ...(fuse ? [fuse] : []),
       ...(flashlight ? [flashlight] : []),
+      ...paintingFragments,
       ...nightstand1Interactables,
       ...nightstand2Interactables,
       ...wardrobeInteractables,
@@ -577,8 +678,10 @@ const createBedroom = async ({ timeline = "present", onDoorOpenChange, onDoorUnl
       lightSwitch2,
       ...(key ? [key] : []),
       ...(radioDial ? [radioDial] : []),
+      ...(clockHand ? [clockHand] : []),
       ...(fuse ? [fuse] : []),
       ...(flashlight ? [flashlight] : []),
+      ...paintingFragments,
       nightstand1,
       nightstand2,
       wardrobe,
@@ -596,7 +699,7 @@ const createBedroom = async ({ timeline = "present", onDoorOpenChange, onDoorUnl
       ...(electricalPanel ? [electricalPanel] : []),
     ],
     puzzles: [...(lightRevealPuzzle ? [lightRevealPuzzle] : [])],
-    spawnPosition: new THREE.Vector3(0, 5.1, 8),
+    spawnPosition: new THREE.Vector3(0, 5.25, 8),
   };
 };
 

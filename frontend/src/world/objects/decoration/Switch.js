@@ -32,6 +32,7 @@ class Switch extends Entity {
     );
 
     this.object3D.add(plate);
+    this.wallMountObject = plate;
   }
 
   createLever() {

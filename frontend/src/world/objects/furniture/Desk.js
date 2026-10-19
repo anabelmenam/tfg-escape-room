@@ -312,6 +312,14 @@ class Desk extends Entity {
     this.drawerManager.update(deltaTime);
   }
 
+  setAudioListener(listener) {
+    this.drawerManager.setAudioListener(listener, this.object3D);
+  }
+
+  dispose() {
+    this.drawerManager.dispose();
+  }
+
   getCollider() {
     this.object3D.updateMatrixWorld(true);
 

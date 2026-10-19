@@ -10,7 +10,7 @@ Servidor Node.js con Express 5 para la API HTTP, Socket.IO para la comunicación
 4. Arrancar el servidor: `npm run dev`
 
 El servidor escucha en `http://localhost:3010` y Socket.IO usa el mismo puerto.
-PostgreSQL del proyecto se publica en `localhost:5433` para no interferir con otras bases de datos locales que puedan usar `5432`.
+PostgreSQL del proyecto se publica en `localhost:5434` para no interferir con otras bases de datos locales que puedan usar `5432` o `5433`.
 
 ## Flujo actual
 

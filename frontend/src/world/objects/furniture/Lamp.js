@@ -2,13 +2,14 @@ import * as THREE from "three";
 import { Entity } from "../Entity.js";
 
 class Lamp extends Entity {
-  constructor({ id, position = new THREE.Vector3(0, 8, 0), eventManager, linkedButton } = {}) {
+  constructor({ id, position = new THREE.Vector3(0, 8, 0), eventManager, linkedButton, intensityScale = 1 } = {}) {
     super(id);
 
     this.object3D = new THREE.Group();
     this.object3D.position.copy(position);
 
     this.isActive = false;
+    this.intensityScale = intensityScale;
 
     this.createCable();
     this.createSocket();
@@ -199,8 +200,8 @@ class Lamp extends Entity {
     this.roomLight.color.setHex(lightColor);
     this.downLight.color.setHex(lightColor);
 
-    this.roomLight.intensity = 300;
-    this.downLight.intensity = 450;
+    this.roomLight.intensity = 300 * this.intensityScale;
+    this.downLight.intensity = 450 * this.intensityScale;
 
     this.bulbMaterial.color.setHex(bulbColor);
     this.bulbMaterial.emissive.setHex(emissiveColor);

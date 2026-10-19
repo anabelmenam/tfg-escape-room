@@ -24,6 +24,9 @@ class Window extends Entity {
 
     hasGlass = true,
     hasCrossbars = true,
+    hasCurtains = true,
+    curtainColor = 0x9a745f,
+    curtainRodColor = 0x554438,
   } = {}) {
     super(id);
 
@@ -38,6 +41,7 @@ class Window extends Entity {
 
     this.hasGlass = hasGlass;
     this.hasCrossbars = hasCrossbars;
+    this.hasCurtains = hasCurtains;
 
     this.object3D = new THREE.Group();
     this.object3D.position.copy(position);
@@ -48,12 +52,14 @@ class Window extends Entity {
       frameColor,
       glassColor,
       glassOpacity,
+      curtainColor,
+      curtainRodColor,
     });
 
     this.createWindow();
   }
 
-  createMaterials({ frameColor, glassColor, glassOpacity }) {
+  createMaterials({ frameColor, glassColor, glassOpacity, curtainColor, curtainRodColor }) {
     this.frameMaterial = new THREE.MeshStandardMaterial({
       color: frameColor,
       roughness: 0.72,
@@ -75,6 +81,18 @@ class Window extends Entity {
       side: THREE.DoubleSide,
       depthWrite: false,
     });
+
+    this.curtainMaterial = new THREE.MeshStandardMaterial({
+      color: curtainColor,
+      roughness: 0.96,
+      metalness: 0,
+      side: THREE.DoubleSide,
+    });
+    this.curtainRodMaterial = new THREE.MeshStandardMaterial({
+      color: curtainRodColor,
+      roughness: 0.36,
+      metalness: 0.5,
+    });
   }
 
   createWindow() {
@@ -86,6 +104,10 @@ class Window extends Entity {
 
     if (this.hasGlass) {
       this.createGlass();
+    }
+
+    if (this.hasCurtains) {
+      this.createCurtains();
     }
   }
 
@@ -183,6 +205,47 @@ class Window extends Entity {
     this.object3D.add(this.glass);
   }
 
+  createCurtains() {
+    const insideZ = this.depth / 2 + 0.13;
+    const rodY = this.height / 2 + 0.34;
+    const rod = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.055, 0.055, this.width + 1.05, 18),
+      this.curtainRodMaterial,
+    );
+    rod.rotation.z = Math.PI / 2;
+    rod.position.set(0, rodY, insideZ);
+    rod.castShadow = true;
+    this.object3D.add(rod);
+
+    [-1, 1].forEach((side) => {
+      const finial = new THREE.Mesh(new THREE.SphereGeometry(0.13, 18, 12), this.curtainRodMaterial);
+      finial.position.set(side * (this.width / 2 + 0.52), rodY, insideZ);
+      finial.castShadow = true;
+      this.object3D.add(finial);
+    });
+
+    const panelWidth = Math.max(0.75, this.width * 0.24);
+    const panelHeight = this.height + 0.48;
+    [-1, 1].forEach((side) => {
+      const geometry = new THREE.PlaneGeometry(panelWidth, panelHeight, 12, 18);
+      const positions = geometry.attributes.position;
+      for (let index = 0; index < positions.count; index += 1) {
+        const localX = positions.getX(index);
+        const wave = Math.cos(((localX / panelWidth) + 0.5) * Math.PI * 7) * 0.075;
+        positions.setZ(index, wave);
+      }
+      positions.needsUpdate = true;
+      geometry.computeVertexNormals();
+
+      const panel = new THREE.Mesh(geometry, this.curtainMaterial);
+      const panelX = side * (this.width / 2 - panelWidth / 2 + 0.06);
+      panel.position.set(panelX, 0.22, insideZ + 0.04);
+      panel.castShadow = true;
+      panel.receiveShadow = true;
+      this.object3D.add(panel);
+    });
+  }
+
   setGlassVisible(visible) {
     if (this.glass) {
       this.glass.visible = visible;
@@ -191,8 +254,10 @@ class Window extends Entity {
 
   getCollider() {
     this.object3D.updateMatrixWorld(true);
-
-    return new THREE.Box3().setFromObject(this.object3D);
+    return new THREE.Box3(
+      new THREE.Vector3(-this.width / 2, -this.height / 2, -this.depth / 2),
+      new THREE.Vector3(this.width / 2, this.height / 2, this.depth / 2),
+    ).applyMatrix4(this.object3D.matrixWorld);
   }
 }
 

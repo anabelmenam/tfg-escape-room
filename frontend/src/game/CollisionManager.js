@@ -34,9 +34,12 @@ export class CollisionManager {
   resolveWallCollision(position, crouchOffset) {
     const start = this.previousPosition;
     const feetY = position.y - this.roomBounds.floorY + crouchOffset;
-    const active = this.wallColliders.filter(
-      ({ box, isActive }) => (!isActive || isActive()) && position.y >= box.min.y && feetY < box.max.y,
-    );
+    const active = this.wallColliders.flatMap(({ box, getBox, isActive }) => {
+      if (isActive && !isActive()) return [];
+      const currentBox = getBox?.() ?? box;
+      if (!currentBox || position.y < currentBox.min.y || feetY >= currentBox.max.y) return [];
+      return [{ box: currentBox }];
+    });
     let x = position.x;
     for (const { box } of active) {
       if (start.z <= box.min.z - this.playerRadius || start.z >= box.max.z + this.playerRadius) continue;

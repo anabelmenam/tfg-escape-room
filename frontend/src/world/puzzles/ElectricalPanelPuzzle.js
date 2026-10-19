@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { Entity } from "../objects/Entity.js";
+import { Entity } from "../objects/index.js";
 import { tInteraction, tItem } from "../../translations/index.js";
 
 class ElectricalPanelPuzzle extends Entity {
@@ -10,10 +10,12 @@ class ElectricalPanelPuzzle extends Entity {
     scale = 1,
     onFocus = null,
     onSolved = null,
+    canSolve = null,
   } = {}) {
     super(id);
     this.onFocus = onFocus;
     this.onSolved = onSolved;
+    this.canSolve = canSolve;
     this.isFocused = false;
     this.isOpen = false;
     this.hasFuse = false;
@@ -144,7 +146,7 @@ class ElectricalPanelPuzzle extends Entity {
       return isEnabled === this.correctSwitches.includes(switchIndex + 1);
     });
 
-    if (isCorrect) {
+    if (isCorrect && (this.canSolve?.() ?? true)) {
       this.isSolved = true;
       this.exitFocusRequested = true;
       this.onSolved?.(this);

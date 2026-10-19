@@ -1,13 +1,12 @@
-import { Puzzle } from "./Puzzle.js";
-
-class LightRevealPuzzle extends Puzzle {
+class LightRevealPuzzle {
   constructor({ id, deskLamp, paper, onSolved } = {}) {
-    super({ id, onSolved });
-
     if (!deskLamp || !paper) {
       throw new Error("LightRevealPuzzle necesita una lámpara de escritorio y un papel.");
     }
 
+    this.id = id;
+    this.solved = false;
+    this.onSolved = onSolved;
     this.deskLamp = deskLamp;
     this.paper = paper;
     this.isRevealed = deskLamp.getActive();
@@ -19,6 +18,13 @@ class LightRevealPuzzle extends Puzzle {
     };
 
     this.updatePaperSymbols();
+  }
+
+  solve({ notify = true } = {}) {
+    if (this.solved) return;
+
+    this.solved = true;
+    if (notify) this.onSolved?.();
   }
 
   setRevealed(revealed) {
@@ -83,7 +89,7 @@ class LightRevealPuzzle extends Puzzle {
   }
 
   reset() {
-    super.reset();
+    this.solved = false;
     this.deskLamp.setActive(false, { notify: false });
     this.setRevealed(false);
   }

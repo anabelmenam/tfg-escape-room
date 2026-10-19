@@ -12,11 +12,16 @@ import { createLevel1 } from "../world/levels/createLevel1.js";
 import { tItem } from "../translations/index.js";
 
 export class Game {
-  constructor(container, playerRole = "A", { onDoorUnlocked, testArea = null } = {}) {
+  constructor(container, playerRole = "A", { onDoorUnlocked, onHallwayAction, onBedroomAction, onLivingRoomAction, onBathroomAction, testArea = null, testMode = false } = {}) {
     this.playerRole = playerRole;
     this.testArea = testArea;
     this.timeline = null;
     this.onDoorUnlocked = onDoorUnlocked;
+    this.onHallwayAction = onHallwayAction;
+    this.onBedroomAction = onBedroomAction;
+    this.onLivingRoomAction = onLivingRoomAction;
+    this.onBathroomAction = onBathroomAction;
+    this.testMode = testMode;
     this.sharedState = null;
     this.roomData = null;
     this.container = container;
@@ -84,6 +89,7 @@ export class Game {
       }
 
       if (this.player.isFocused) {
+        if (this.player.focusedObject?.handleKey?.(event.code)) { event.preventDefault(); return; }
         if (event.code === "Escape" || event.code === "KeyE") {
           event.preventDefault();
           this.player.focusedObject?.closePanel?.();
@@ -196,6 +202,7 @@ export class Game {
       const photoFragmentSlot = hit.userData.photoFragmentSlot;
       const sewingSpoolSlot = hit.userData.sewingSpoolSlot;
       const electricalSwitchIndex = hit.userData.electricalSwitchIndex;
+      const emberIndex = hit.userData.emberIndex;
       const radioDialIndex = hit.userData.radioDialIndex;
       const clockHand = hit.userData.clockHand;
 
@@ -216,6 +223,10 @@ export class Game {
 
       if (electricalSwitchIndex !== undefined) {
         focusedObject.toggleSwitch?.(electricalSwitchIndex);
+        return;
+      }
+      if (emberIndex !== undefined) {
+        focusedObject.rotateEmber?.(emberIndex);
         return;
       }
 
@@ -275,6 +286,7 @@ export class Game {
     const roomData = await createLevel1({
       playerRole: this.playerRole,
       testArea: this.testArea,
+      testMode: this.testMode,
       onSwitchPress: (lightSwitch) => {
         const active = this.gameState.toggle(lightSwitch.id);
         lightSwitch.setActive(active);
@@ -290,12 +302,17 @@ export class Game {
       onDoorUnlocked: () => {
         if (this.timeline === "past") this.onDoorUnlocked?.();
       },
+      onHallwayAction: this.onHallwayAction,
+      onBedroomAction: this.onBedroomAction,
+      onLivingRoomAction: this.onLivingRoomAction,
+      onBathroomAction: this.onBathroomAction,
       onObjectFocus: (object) => {
         this.player.focusObject(object);
       },
     });
 
     this.roomData = roomData;
+    if (this.testArea && roomData.hallway?.maze) roomData.hallway.maze.available = true;
     this.timeline = roomData.timeline ?? null;
     this.scene.userData.timeline = this.timeline;
 
@@ -322,7 +339,7 @@ export class Game {
 
     this.collisionManager.setDoorPassage(roomData.doorPassage);
     this.collisionManager.setExteriorBounds(roomData.exteriorBounds);
-    if (this.testArea === "hallway") {
+    if (this.testArea && this.testArea !== "bedroom" && this.testArea !== "icons") {
       this.collisionManager.isOutsideRoom = true;
       this.collisionManager.previousPosition = this.camera.position.clone();
     }
@@ -338,6 +355,10 @@ export class Game {
     if (!state) return;
     this.sharedState = state;
     if (!this.roomData || !this.timeline) return;
+    this.roomData.hallway?.applyHallwayState(state);
+    this.roomData.bedroom?.applyBedroomState(state);
+    this.roomData.livingRoom?.applyLivingRoomState(state);
+    this.roomData.bathroom?.applyBathroomState(state);
     const doorState = state.timelines?.[this.timeline]?.objects?.["bedroom-exit-door"];
     if (!doorState) return;
     const door = this.roomData.door;
@@ -347,6 +368,13 @@ export class Game {
 
   updateInventoryUI() {
     const inventory = this.player.inventory;
+    const selectedName = document.getElementById("inventory-selected-name");
+    const selectedItem = inventory.getSelectedItem();
+
+    if (selectedName) {
+      selectedName.textContent = selectedItem ? tItem(selectedItem.itemName ?? selectedItem.id) : "";
+      selectedName.classList.toggle("hidden", !selectedItem);
+    }
 
     for (let i = 0; i < inventory.size; i++) {
       const slotElement = document.getElementById(`inventory-slot-${i}`);
@@ -382,7 +410,7 @@ export class Game {
       } else {
         const name = document.createElement("span");
 
-        name.textContent = item.id;
+        name.textContent = tItem(item.id);
         name.className = "px-1 text-center text-xs text-white";
 
         itemElement.appendChild(name);

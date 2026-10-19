@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "node --watch src/server.js",
     "build": "npm run check",
-    "check": "node --check src/server.js && node --check src/db.js && node --check src/models/index.js && node --check src/migrate.js && node --check src/state.js && node --check migrations/001_initial.js && node --check migrations/002_lobby_selection.js",
+    "check": "node --check src/server.js && node --check src/db.js && node --check src/models/index.js && node --check src/migrate.js && node --check src/state.js && node --check migrations/001_initial.js && node --check migrations/002_lobby_selection.js && node --check migrations/003_room_creator.js",
     "start": "node src/server.js",
     "migrate": "node src/migrate.js",
     "migrate:undo": "node src/migrate.js --undo"

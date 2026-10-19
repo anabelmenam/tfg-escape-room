@@ -24,6 +24,7 @@ const createRoom = ({
   width = 30,
   height = 12,
   depth = 30,
+  wallThickness = 0.3,
 
   wallColor = 0xd9d9d9,
   floorColor = 0x6b4f35,
@@ -61,8 +62,6 @@ const createRoom = ({
 } = {}) => {
   const room = new THREE.Group();
   const roomColliders = [];
-
-  const wallThickness = 1;
 
   const validWalls = ["front", "back", "left", "right"];
 
@@ -383,6 +382,7 @@ const createRoom = ({
             });
           },
         });
+
       }
     }
   };
@@ -401,9 +401,11 @@ const createRoom = ({
     material: ceilingMaterial,
   });
 
-  validWalls.filter((wall) => !omitWalls.includes(wall)).forEach((wall) => {
-    createWallWithOpenings(wall);
-  });
+  validWalls
+    .filter((wall) => !omitWalls.includes(wall))
+    .forEach((wall) => {
+      createWallWithOpenings(wall);
+    });
 
   const getOpeningTransform = (opening) => {
     const position = new THREE.Vector3();
@@ -451,16 +453,34 @@ const createRoom = ({
   const windowOpenings = openings.filter((opening) => opening.type === "window").map(getOpeningTransform);
   const passageOpenings = openings.filter((opening) => opening.type === "passage").map(getOpeningTransform);
 
+  const placeAgainstWall = (entity, wall, gap = 0) => {
+    const object = entity.object3D ?? entity;
+    if (object.parent !== room) throw new Error("El objeto debe pertenecer a la habitación antes de colocarlo.");
+    room.updateWorldMatrix(true, true);
+    const box = new THREE.Box3()
+      .setFromObject(entity.wallMountObject ?? object)
+      .applyMatrix4(room.matrixWorld.clone().invert());
+    const axis = wall === "left" || wall === "right" ? "x" : "z";
+    const positive = wall === "right" || wall === "front";
+    const innerFace = ((axis === "x" ? width : depth) - wallThickness) / 2;
+    const offset = new THREE.Vector3();
+    offset[axis] = positive ? innerFace - gap - box.max[axis] : -innerFace + gap - box.min[axis];
+    object.position.add(offset);
+    object.updateMatrixWorld(true);
+    return offset;
+  };
+
   return {
     room,
     roomColliders,
+    placeAgainstWall,
 
     bounds: {
       minX: -width / 2 + 0.5,
       maxX: width / 2 - 0.5,
       minZ: -depth / 2 + 0.5,
       maxZ: depth / 2 - 0.5,
-      floorY: 5.1,
+      floorY: 5.25,
       ceilingY: height,
     },
 

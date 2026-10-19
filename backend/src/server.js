@@ -83,18 +83,104 @@ const reduceAction = (state, player, action) => {
   const timeline = player.timeline;
   switch (action.type) {
     case "object.interact":
+      if (["living-room-painting-piece-0", "living-room-painting-piece-4"].includes(action.targetId)) {
+        const painting = state.timelines.past.objects["living-room-painting-slot"];
+        if (timeline !== "past" || !painting?.placed) throw new Error("Primero hay que colocar el cuadro en el Mundo A.");
+        const index = Number(action.targetId.slice(-1));
+        const restoredPieces = [...new Set([...(painting.restoredPieces ?? []), index])];
+        setObjectState(state, "past", "living-room-painting-slot", { restoredPieces });
+        if ([0, 4].every((piece) => restoredPieces.includes(piece))) {
+          state.timelines.past.puzzles["living-room-painting"] = { solved: true };
+        }
+        return;
+      }
+      if (action.targetId === "living-room-sofa-cushion") {
+        if (timeline !== "present") throw new Error("El cojín solo se puede registrar en el Mundo B.");
+        const cushion = state.timelines.present.objects[action.targetId] ?? {};
+        if (!cushion.cut) {
+          const scissorsIndex = state.inventories.present.indexOf("living-room-scissors");
+          if (scissorsIndex === -1) throw new Error("Necesitas las tijeras del cuadro.");
+          state.inventories.present.splice(scissorsIndex, 1);
+          setObjectState(state, "present", action.targetId, { cut: true });
+          return;
+        }
+        if (!cushion.searched) {
+          setObjectState(state, "present", action.targetId, { searched: true });
+          if (!state.inventories.present.includes("living-room-match")) state.inventories.present.push("living-room-match");
+        }
+        return;
+      }
+      if (action.targetId === "living-room-fireplace") {
+        if (timeline !== "present") throw new Error("La chimenea solo se puede encender en el Mundo B.");
+        const matchIndex = state.inventories.present.indexOf("living-room-match");
+        if (matchIndex === -1) throw new Error("Necesitas la cerilla escondida en el cojín.");
+        state.inventories.present.splice(matchIndex, 1);
+        setObjectState(state, "present", action.targetId, { open: true });
+        return;
+      }
+      if (action.targetId === "hallway-living-room-door") {
+        if (timeline !== "present" || !state.timelines.present.puzzles["hallway-maze"]?.solved) throw new Error("Resuelve el laberinto para obtener la llave del salón.");
+        for (const era of ["past", "present"]) setObjectState(state, era, action.targetId, { locked: false });
+        return;
+      }
+      if (action.targetId === "hallway-maze-mirror") {
+        if (timeline !== "present") throw new Error("El espejo solo se manipula en el Mundo B.");
+        const mirror = state.timelines.present.objects[action.targetId] ?? {};
+        if (!mirror.released) {
+          if (!state.timelines.present.puzzles["bathroom-sequence"]?.solved) {
+            throw new Error("Primero hay que resolver la secuencia del baño en el Mundo B.");
+          }
+          const screwdriverIndex = state.inventories.present.indexOf("screwdriver");
+          if (screwdriverIndex === -1) throw new Error("Necesitas el destornillador del baño.");
+          state.inventories.present.splice(screwdriverIndex, 1);
+          setObjectState(state, "present", action.targetId, { released: true, open: true });
+        } else {
+          setObjectState(state, "present", action.targetId, { released: true, open: !mirror.open });
+        }
+        return;
+      }
+      if (action.targetId === "bedroom-symbol-safe") {
+        if (timeline !== "past" || !state.timelines.present.puzzles["bedroom-light-reveal-puzzle"]?.solved) throw new Error("Primero hay que revelar los símbolos en el Mundo B.");
+        setObjectState(state, "past", action.targetId, { open: true, locked: false });
+        return;
+      }
       if (action.targetId === "bedroom-exit-door") {
-        if (timeline !== "past") throw new Error("La puerta solo puede desbloquearse desde el pasado.");
+        if (timeline !== "past") throw new Error("La puerta solo puede desbloquearse desde el Mundo A.");
         setObjectState(state, "past", "bedroom-exit-door", { open: true, locked: false });
         setObjectState(state, "present", "bedroom-exit-door", { locked: false });
+        return;
+      }
+      if (action.targetId === "living-room-painting-slot") {
+        if (timeline !== "past" || !state.timelines.past.puzzles["living-room-rainbow-books"]?.solved) throw new Error("Primero hay que ordenar los libros del arcoíris.");
+        setObjectState(state, "past", action.targetId, { placed: true });
+        setObjectState(state, "present", action.targetId, { placed: true });
+        return;
+      }
+      if (action.targetId === "living-room-chest") {
+        if (timeline !== "past" || !state.inventories.past.includes("living-room-vitrine-letter")) {
+          throw new Error("Primero hay que encontrar la carta de la vitrina.");
+        }
+        for (const era of ["past", "present"]) setObjectState(state, era, action.targetId, { locked: false });
         return;
       }
       setObjectState(state, timeline, action.targetId, { open: true });
       return;
     case "puzzle.solved":
+      if (action.targetId === "hallway-clock" && timeline !== "past") throw new Error("El reloj se ajusta en el Mundo A.");
+      if (action.targetId === "hallway-maze" && (timeline !== "present" || !state.timelines.past.puzzles["hallway-clock"]?.solved || !state.timelines.present.objects["hallway-maze-mirror"]?.open)) throw new Error("Primero hay que abrir el espejo y resolver el reloj en el Mundo A.");
+      if (action.targetId === "bathroom-hot-water" && timeline !== "past") throw new Error("El agua caliente debe activarse en el Mundo A.");
+      if (action.targetId === "bathroom-sequence" && (timeline !== "present" || !state.timelines.past.puzzles["bathroom-hot-water"]?.solved)) throw new Error("Primero hay que revelar la secuencia en el baño del Mundo A.");
+      if (action.targetId === "bedroom-radio" && (timeline !== "past" || !state.inventories.present.includes("bedroom-radio-note"))) throw new Error("Primero hay que recoger la nota de la radio en el Mundo B.");
+      if (action.targetId === "bedroom-electrical-panel" && (timeline !== "present" || !state.inventories.past.includes("bedroom-electrical-plan"))) throw new Error("Primero hay que recoger el plano eléctrico en el Mundo A.");
+      if (action.targetId === "living-room-rainbow-books" && timeline !== "past") throw new Error("Los libros se ordenan en el Mundo A.");
+      if (action.targetId === "living-room-embers" && (timeline !== "past" || !state.timelines.present.objects["living-room-fireplace"]?.open)) throw new Error("Primero hay que encender la chimenea en el Mundo B.");
+      if (action.targetId === "bedroom-sewing-box" && (timeline !== "past" || !state.timelines.present.puzzles["bedroom-family-photo"]?.solved)) throw new Error("Primero hay que ordenar la foto familiar en el Mundo B.");
       state.timelines[timeline].puzzles[action.targetId] = { solved: true, ...action.payload };
       return;
     case "item.pickup": {
+      if (action.targetId === "screwdriver" && (timeline !== "present" || !state.timelines.present.puzzles["bathroom-sequence"]?.solved)) {
+        throw new Error("Primero hay que resolver la secuencia del baño.");
+      }
       const inventory = state.inventories[timeline];
       if (!inventory.includes(action.targetId)) inventory.push(action.targetId);
       return;
@@ -138,11 +224,12 @@ const createRoom = async (displayName) => {
         const playerToken = randomUUID();
         const joinCode = makeJoinCode();
         await User.create({ id: userId, displayName }, { transaction });
-        await GameRoom.create({ id: roomId, joinCode, status: "waiting" }, { transaction });
+        const room = await GameRoom.create({ id: roomId, joinCode, status: "waiting" }, { transaction });
         await RoomPlayer.create(
           { id: playerId, roomId, userId, timeline: null, reconnectToken: playerToken },
           { transaction },
         );
+        await room.update({ creatorPlayerId: playerId }, { transaction });
         await GameState.create({ roomId, state: createInitialState() }, { transaction });
         return { roomId, joinCode, playerId, playerToken, timeline: null, isCreator: true };
       });
@@ -196,19 +283,22 @@ const selectTimeline = async (roomId, playerId, requestedTimeline) =>
         .filter(Boolean),
     );
     if (requestedTimeline && occupied.has(requestedTimeline))
-      throw new Error("Ese tiempo ya lo ha elegido el otro jugador.");
+      throw new Error("Ese mundo ya lo ha elegido el otro jugador.");
     await RoomPlayer.update({ timeline: requestedTimeline }, { where: { id: playerId }, transaction });
     return getLobbyState(roomId, transaction);
   });
 
-const startGame = async (roomId) =>
+const startGame = async (roomId, playerId) =>
   withTransaction(async (transaction) => {
+    const room = await GameRoom.findByPk(roomId, { transaction, lock: transaction.LOCK.UPDATE });
+    if (!room) throw new Error("La sala no existe.");
+    if (room.creatorPlayerId !== playerId) throw new Error("Solo quien creó la sala puede iniciar la partida.");
     const lobby = await getLobbyState(roomId, transaction);
     const selected = lobby.players.filter((entry) => entry.timeline);
     if (selected.length !== 2 || new Set(selected.map((entry) => entry.timeline)).size !== 2) {
-      throw new Error("Los dos jugadores deben elegir un tiempo distinto.");
+      throw new Error("Los dos jugadores deben elegir un mundo distinto.");
     }
-    await GameRoom.update({ status: "playing" }, { where: { id: roomId }, transaction });
+    await room.update({ status: "playing" }, { transaction });
     return lobby;
   });
 
@@ -272,13 +362,13 @@ io.on("connection", async (socket) => {
       io.to(socketRoom(roomId)).emit("lobby:state", lobby);
       acknowledge?.({ ok: true, ...lobby });
     } catch (error) {
-      acknowledge?.({ ok: false, error: error instanceof Error ? error.message : "No se pudo elegir el tiempo." });
+      acknowledge?.({ ok: false, error: error instanceof Error ? error.message : "No se pudo elegir el mundo." });
     }
   });
 
   socket.on("lobby:start", async (acknowledge) => {
     try {
-      const lobby = await startGame(roomId);
+      const lobby = await startGame(roomId, player.id);
       io.to(socketRoom(roomId)).emit("game:started", lobby);
       acknowledge?.({ ok: true, ...lobby });
     } catch (error) {

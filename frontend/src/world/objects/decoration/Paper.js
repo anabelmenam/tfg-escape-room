@@ -18,10 +18,12 @@ class Paper extends Entity {
     imagePadding = 36,
     content = null,
     onFocus = null,
+    focusOffset = new THREE.Vector3(0, 1.9, 1.4),
     collectible = false,
     inventoryIcon = null,
     inspectionTitle = null,
     itemName = "paper",
+    onCollect = null,
   } = {}) {
     super(id);
 
@@ -32,12 +34,14 @@ class Paper extends Entity {
     this.paperColor = paperColor;
     this.imageRequest = 0;
     this.onFocus = onFocus;
+    this.focusOffset = focusOffset.clone();
     this.collectible = collectible;
     this.itemName = itemName;
     this.inventoryIcon = inventoryIcon ?? (collectible ? imagePath : null);
     this.inspectionImage = collectible ? imagePath : null;
     this.inspectionTitle = inspectionTitle;
     this.inventoryInspectionKey = collectible ? "KeyR" : null;
+    this.onCollect = onCollect;
 
     this.texture = new THREE.CanvasTexture(this.canvas);
     this.texture.colorSpace = THREE.SRGBColorSpace;
@@ -186,6 +190,7 @@ class Paper extends Entity {
 
       this.object3D.visible = false;
       this.setEnabled(false);
+      this.onCollect?.(this);
       return;
     }
 
@@ -202,7 +207,7 @@ class Paper extends Entity {
 
   getFocusPosition() {
     this.object3D.updateMatrixWorld(true);
-    return this.object3D.localToWorld(new THREE.Vector3(0, 1.9, 1.4));
+    return this.object3D.localToWorld(this.focusOffset.clone());
   }
 
   getLookAtPosition() {

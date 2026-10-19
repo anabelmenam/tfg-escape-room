@@ -1,12 +1,8 @@
-import { Puzzle } from "./Puzzle.js";
-
-class BookPuzzle extends Puzzle {
+class BookPuzzle {
   constructor({ id = "book-puzzle", books = [], onSolved = null } = {}) {
-    super({
-      id,
-      onSolved,
-    });
-
+    this.id = id;
+    this.solved = false;
+    this.onSolved = onSolved;
     this.books = books;
     this.firstBookSelected = null;
     this.secondBookSelected = null;
@@ -15,6 +11,13 @@ class BookPuzzle extends Puzzle {
     this.books.forEach((book) => {
       this.slotPositions.set(book.currentSlot, book.object3D.position.clone());
     });
+  }
+
+  solve() {
+    if (this.solved) return;
+
+    this.solved = true;
+    this.onSolved?.();
   }
 
   handleBookInteraction(book) {

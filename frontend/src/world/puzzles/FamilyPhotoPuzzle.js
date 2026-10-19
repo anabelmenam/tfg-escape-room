@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { Entity } from "../objects/Entity.js";
+import { Entity } from "../objects/index.js";
 import { tInteraction, tItem } from "../../translations/index.js";
 
 class FamilyPhotoPuzzle extends Entity {

@@ -3,6 +3,7 @@ import { Entity } from "../Entity.js";
 import { tInteraction, tItem } from "../../../translations/index.js";
 import createBox from "../helpers/createBox.js";
 import { createWoodMaterials } from "../helpers/createWoodMaterials.js";
+import { MechanicalAudio } from "../helpers/MechanicalAudio.js";
 
 class Wardrobe extends Entity {
   constructor({
@@ -49,6 +50,8 @@ class Wardrobe extends Entity {
     this.closedDrawerZ = 1.42;
     this.openDrawerZ = 2.75;
     this.animationSpeed = 5;
+    this.doorAudio = new MechanicalAudio({ kind: "cabinetDoor", volume: 0.34 });
+    this.drawerAudio = new MechanicalAudio({ kind: "drawer", volume: 0.38 });
 
     this.createMaterials({
       woodColor,
@@ -483,6 +486,7 @@ class Wardrobe extends Entity {
     }
 
     this.doorStates[index] = true;
+    this.doorAudio.play("open", 4.6 / this.animationSpeed);
   }
 
   closeDoor(index) {
@@ -491,6 +495,7 @@ class Wardrobe extends Entity {
     }
 
     this.doorStates[index] = false;
+    this.doorAudio.play("close", 4.6 / this.animationSpeed);
   }
 
   toggleDoor(index) {
@@ -499,6 +504,7 @@ class Wardrobe extends Entity {
     }
 
     this.doorStates[index] = !this.doorStates[index];
+    this.doorAudio.play(this.doorStates[index] ? "open" : "close", 4.6 / this.animationSpeed);
   }
 
   openDrawer(index) {
@@ -507,6 +513,7 @@ class Wardrobe extends Entity {
     }
 
     this.drawerStates[index] = true;
+    this.drawerAudio.play("open", 4.3 / this.animationSpeed);
   }
 
   closeDrawer(index) {
@@ -515,6 +522,7 @@ class Wardrobe extends Entity {
     }
 
     this.drawerStates[index] = false;
+    this.drawerAudio.play("close", 4.3 / this.animationSpeed);
   }
 
   toggleDrawer(index) {
@@ -523,6 +531,7 @@ class Wardrobe extends Entity {
     }
 
     this.drawerStates[index] = !this.drawerStates[index];
+    this.drawerAudio.play(this.drawerStates[index] ? "open" : "close", 4.3 / this.animationSpeed);
   }
 
   closeAllDoors() {
@@ -574,6 +583,16 @@ class Wardrobe extends Entity {
 
       drawer.position.z = THREE.MathUtils.damp(drawer.position.z, targetZ, this.animationSpeed, deltaTime);
     });
+  }
+
+  setAudioListener(listener) {
+    this.doorAudio.setAudioListener(listener, this.object3D);
+    this.drawerAudio.setAudioListener(listener, this.object3D);
+  }
+
+  dispose() {
+    this.doorAudio.dispose();
+    this.drawerAudio.dispose();
   }
 
   getCollider() {

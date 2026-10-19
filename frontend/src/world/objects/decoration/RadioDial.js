@@ -32,7 +32,10 @@ const createRadioDialVisual = ({ index = null, brass = null, darkMaterial = null
   }
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
-  const face = new THREE.Mesh(new THREE.PlaneGeometry(0.42, 0.42), new THREE.MeshBasicMaterial({ map: texture, transparent: true }));
+  const face = new THREE.Mesh(
+    new THREE.PlaneGeometry(0.42, 0.42),
+    new THREE.MeshBasicMaterial({ map: texture, transparent: true }),
+  );
   indicator.add(face);
   for (let mark = 0; mark < 10; mark += 1) {
     const angle = -(mark * Math.PI * 2) / 10;
@@ -60,11 +63,13 @@ const createRadioDialVisual = ({ index = null, brass = null, darkMaterial = null
 };
 
 class RadioDial extends Entity {
-  constructor({ id = "radio-dial" } = {}) {
+  constructor({ id = "radio-dial", scale = 1 } = {}) {
     super(id);
     const visual = createRadioDialVisual();
     this.object3D = visual.object3D;
     this.needlePivot = visual.needlePivot;
+    this.object3D.scale.setScalar(scale);
+    this.inventoryIcon = "/images/icons/radio-dial.png";
   }
 
   setDialIndex(index) {

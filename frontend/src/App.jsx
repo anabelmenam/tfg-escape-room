@@ -7,17 +7,19 @@ const getTestSession = () => {
   if (!import.meta.env.DEV) return null;
   const params = new URLSearchParams(window.location.search);
   const timeline = params.get("test");
+  if (timeline === "icons") return { testMode: true, testPlayerRole: "C", testArea: "icons" };
   if (!["past", "present"].includes(timeline)) return null;
-  return { testMode: true, timeline, testArea: params.get("area") === "hallway" ? "hallway" : "bedroom" };
+  const area = params.get("area");
+  return { testMode: true, timeline, testArea: ["hallway", "children", "bathroom", "kitchen"].includes(area) ? area : "bedroom" };
 };
 
 const App = () => {
   const [session, setSession] = useState(getTestSession);
 
   if (!session) return <Lobby onEnterLobby={setSession} />;
-  if (!session.timeline) return <RoomLobby session={session} onStart={setSession} onBack={() => setSession(null)} />;
+  if (!session.timeline && !session.testPlayerRole) return <RoomLobby session={session} onStart={setSession} onBack={() => setSession(null)} />;
 
-  return <GameCanvas playerRole={session.timeline === "past" ? "A" : "B"} session={session} />;
+  return <GameCanvas playerRole={session.testPlayerRole ?? (session.timeline === "past" ? "A" : "B")} session={session} />;
 };
 
 export default App;

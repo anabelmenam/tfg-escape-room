@@ -1,8 +1,36 @@
 import * as THREE from "three";
 import { createRoom } from "./createRoom.js";
-import { Door, Lamp, Key, Shelf, Window, Cabinet, Chest, Switch, Sofa, Table, Book } from "../objects/index.js";
+import {
+  Door,
+  Lamp,
+  Key,
+  Shelf,
+  Cabinet,
+  Chest,
+  Lock,
+  Switch,
+  Sofa,
+  Table,
+  Book,
+  Paper,
+  Cushion,
+  Match,
+  Fireplace,
+  DisplayCase,
+  EmberClue,
+  EmberPuzzle,
+  FallenPainting,
+  PaintingSlot,
+  Window,
+  createBookStack,
+  createCandleCluster,
+  createPottedPlant,
+  createVase,
+  createWallFrameCluster,
+} from "../objects/index.js";
 
 import { BookPuzzle } from "../puzzles/index.js";
+import { tInteraction, tItem } from "../../translations/index.js";
 
 const livingRoomWoodStyle = {
   woodTexture: "/textures/furniture/wood2.jpg",
@@ -17,9 +45,66 @@ const livingRoomWoodStyle = {
   handleColor: 0x9b773d,
 };
 
-const createLivingRoom = async ({ onSwitchPress, eventManager, onDoorOpenChange, entrance = null } = {}) => {
-  const { room, roomColliders, bounds, doorOpening, windowOpenings } = createRoom({
-    width: 30,
+const drawAgedRiddle = (context, canvas) => {
+  const { width, height } = canvas;
+  const edge = 42;
+
+  context.fillStyle = "#d8bf83";
+  context.fillRect(0, 0, width, height);
+
+  const stain = context.createRadialGradient(width * 0.18, height * 0.15, 10, width * 0.18, height * 0.15, width * 0.7);
+  stain.addColorStop(0, "rgba(111, 67, 28, 0.16)");
+  stain.addColorStop(1, "rgba(111, 67, 28, 0)");
+  context.fillStyle = stain;
+  context.fillRect(0, 0, width, height);
+
+  context.strokeStyle = "rgba(84, 48, 24, 0.68)";
+  context.lineWidth = 9;
+  context.strokeRect(edge, edge, width - edge * 2, height - edge * 2);
+  context.strokeStyle = "rgba(111, 67, 28, 0.38)";
+  context.lineWidth = 3;
+  context.strokeRect(edge + 13, edge + 13, width - (edge + 13) * 2, height - (edge + 13) * 2);
+
+  context.fillStyle = "#4b2b1b";
+  context.textAlign = "center";
+  context.textBaseline = "middle";
+  context.font = "italic 62px Georgia, serif";
+  context.fillText("A quien encuentre esta carta", width / 2, 115);
+
+  context.font = "42px Georgia, serif";
+  const lines = [
+    "Cuando la flor despierta, nacen tres.",
+    "Bajo el sol del verano, arden ocho.",
+    "Cuando la hoja cae, queda uno.",
+    "Bajo la nieve, duermen seis.",
+    "Sigue el año y abre lo que guardamos.",
+  ];
+  lines.forEach((line, index) => context.fillText(line, width / 2, 235 + index * 74));
+
+  context.strokeStyle = "rgba(87, 45, 23, 0.5)";
+  context.lineWidth = 2;
+  context.beginPath();
+  context.moveTo(width * 0.25, height - 87);
+  context.quadraticCurveTo(width * 0.5, height - 63, width * 0.75, height - 87);
+  context.stroke();
+
+  context.font = "italic 34px Georgia, serif";
+  context.fillText("— La familia", width / 2, height - 52);
+};
+
+const createLivingRoom = async ({
+  timeline = "past",
+  onSwitchPress,
+  eventManager,
+  onDoorOpenChange,
+  entrance = null,
+  kitchenEntrance = null,
+  onLivingRoomAction = null,
+  onObjectFocus = null,
+  testMode = false,
+} = {}) => {
+  const { room, roomColliders, bounds, doorOpening, passageOpenings, windowOpenings, placeAgainstWall } = createRoom({
+    width: 26,
     depth: 30,
     wallColor: 0xb9aa91,
     floorColor: 0x594438,
@@ -39,86 +124,85 @@ const createLivingRoom = async ({ onSwitchPress, eventManager, onDoorOpenChange,
       x: 7,
       y: 7,
     },
+    door: entrance ? null : { wall: "front", position: 0, width: 5, height: 8 },
     windows: [
-      {
-        id: "living-room-window-1",
-        wall: "back",
-        position: -7,
-        width: 6,
-        height: 5,
-        bottom: 4,
-      },
-      {
-        id: "living-room-window-2",
-        wall: "back",
-        position: 7,
-        width: 6,
-        height: 5,
-        bottom: 4,
-      },
-      {
-        id: "living-room-window-3",
-        wall: "right",
-        position: -3,
-        width: 8,
-        height: 5,
-        bottom: 4,
-      },
+      { id: `living-room-${timeline}-window-1`, wall: "front", position: -6.5, width: 5.5, height: 6, bottom: 3.3 },
+      { id: `living-room-${timeline}-window-2`, wall: "front", position: 6.5, width: 5.5, height: 6, bottom: 3.3 },
     ],
-    passages: entrance ? [entrance] : [],
+    passages: [entrance, kitchenEntrance].filter(Boolean),
     omitWalls: entrance ? [entrance.wall] : [],
   });
 
   room.name = "Living Room";
 
+  const kitchenOpening = kitchenEntrance
+    ? passageOpenings.find((opening) => opening.id === kitchenEntrance.id)
+    : null;
+  const kitchenDoor = kitchenOpening
+    ? new Door({
+        id: "living-room-kitchen-door",
+        position: kitchenOpening.position.clone().add(
+          new THREE.Vector3(-kitchenOpening.width / 2, 0, 0).applyAxisAngle(
+            new THREE.Vector3(0, 1, 0),
+            kitchenOpening.rotationY,
+          ),
+        ),
+        rotationY: kitchenOpening.rotationY,
+        locked: false,
+      })
+    : null;
+
+  const windows = windowOpenings.map(
+    (opening) =>
+      new Window({
+        id: opening.id,
+        position: opening.position.clone(),
+        rotationY: opening.rotationY,
+        width: opening.width,
+        height: opening.height,
+        columns: 2,
+        rows: 2,
+        curtainColor: 0x746c68,
+      }),
+  );
+
   const ambientLight = new THREE.AmbientLight(0xffffff, 0.15);
   room.add(ambientLight);
 
-  const redKey = new Key({
-    id: "red-key",
-    position: new THREE.Vector3(0, 2, -2),
-    color: 0xff0000,
-    inventoryIcon: "/images/icons/red-key.png",
-  });
-  const blueKey = new Key({
-    id: "blue-key",
-    position: new THREE.Vector3(0, 2, -2),
-    color: 0x0000ff,
-    inventoryIcon: "/images/icons/blue-key.png",
-  });
+  const blueKey = doorOpening
+    ? new Key({
+        id: "blue-key",
+        position: new THREE.Vector3(0, 2, -2),
+      })
+    : null;
 
-  const doorPosition = doorOpening.position.clone();
-  doorPosition.x -= doorOpening.width / 2;
-  doorPosition.y = doorOpening.height / 2;
-  const door = new Door({
-    id: "living-room-exit-door",
-    position: doorPosition,
-    requiredKey: "blue-key",
-    onOpenChange: onDoorOpenChange,
-  });
+  const door = doorOpening
+    ? new Door({
+        id: "living-room-exit-door",
+        position: doorOpening.position.clone().add(new THREE.Vector3(-doorOpening.width / 2, 0, 0)),
+        requiredKey: "blue-key",
+        onOpenChange: onDoorOpenChange,
+      })
+    : null;
 
   const lightSwitch = new Switch({
     id: "living-room-switch",
     onPress: onSwitchPress,
-    position: new THREE.Vector3(4, 5, 14.5),
+    position: new THREE.Vector3(13, 3.5, 3.5),
   });
-  lightSwitch.object3D.position.set(4, 5, 14.5);
-  lightSwitch.object3D.rotation.y = Math.PI;
+  lightSwitch.object3D.rotation.y = -Math.PI / 2;
 
-  const windows = windowOpenings.map((windowOpening) => {
-    return new Window({
-      id: windowOpening.id,
-      position: windowOpening.position.clone(),
-      rotationY: windowOpening.rotationY,
-      width: windowOpening.width,
-      height: windowOpening.height,
-    });
+  const entranceLightSwitch = new Switch({
+    id: "living-room-entrance-switch",
+    onPress: onSwitchPress,
+    position: new THREE.Vector3((entrance?.position ?? 0) + (entrance?.width ?? 5) / 2 + 1.5, 3.5, -14.5),
   });
+
   const lamp1 = new Lamp({
     id: "living-room-lamp-1",
     position: new THREE.Vector3(0, 12, 0),
     eventManager,
-    linkedButton: "living-room-switch",
+    linkedButton: ["living-room-switch", "living-room-entrance-switch"],
   });
 
   const sofa = new Sofa({
@@ -165,18 +249,68 @@ const createLivingRoom = async ({ onSwitchPress, eventManager, onDoorOpenChange,
     createCollider: true,
   });
 
-  const table2 = new Table({
-    id: "living-room-table-2",
-    position: new THREE.Vector3(12, 0, 12),
-    rotationY: Math.PI / 2,
-    scale: 1,
-    width: 5,
-    height: 3,
-    depth: 5,
-    ...livingRoomWoodStyle,
-    hasShelf: false,
-    createCollider: true,
+  const fireplace = new Fireplace({
+    position: new THREE.Vector3(9, 1.7, -14.2),
+    onSolved: () => onLivingRoomAction?.("object.interact", "living-room-fireplace"),
   });
+  const displayCase = new DisplayCase();
+  displayCase.unlocked = false;
+  let hasVitrineLetter = false;
+  const vitrineLetter = new Paper({
+    id: "living-room-vitrine-letter",
+    width: 1.1,
+    height: 0.7,
+    collectible: true,
+    itemName: "family-letter",
+    paperColor: "#d8bf83",
+    content: drawAgedRiddle,
+    inspectionTitle: "Carta familiar envejecida",
+    onCollect: () => {
+      hasVitrineLetter = true;
+      onLivingRoomAction?.("item.pickup", "living-room-vitrine-letter");
+    },
+  });
+  vitrineLetter.object3D.position.set(0, 0.62, 0.3);
+  vitrineLetter.object3D.visible = false;
+  vitrineLetter.setEnabled(false);
+  displayCase.object3D.add(vitrineLetter.object3D);
+  displayCase.onOpen = () => {
+    vitrineLetter.object3D.visible = true;
+    vitrineLetter.setEnabled(true);
+    onLivingRoomAction?.("object.interact", "living-room-display-case");
+  };
+  const emberClue = timeline === "present" ? new EmberClue() : null;
+  const emberPuzzle =
+    timeline === "past"
+      ? new EmberPuzzle({
+          onFocus: onObjectFocus,
+          onSolved: () => { displayCase.unlock(); onLivingRoomAction?.("puzzle.solved", "living-room-embers"); },
+        })
+      : null;
+  emberClue?.object3D.position.set(0, 1.62, 0.18);
+  if (emberClue) emberClue.object3D.visible = false;
+  emberPuzzle?.object3D.position.set(-1.12, 0.34, 0.59);
+  emberPuzzle?.object3D.scale.setScalar(0.42);
+  if (emberClue) fireplace.object3D.add(emberClue.object3D);
+  if (emberPuzzle) displayCase.object3D.add(emberPuzzle.object3D);
+
+  const rainbowDrawing =
+    timeline === "present"
+      ? new Paper({
+          id: "living-room-rainbow-drawing",
+          width: 1.8,
+          height: 1.2,
+          rotation: new THREE.Euler(-Math.PI / 2, 0, 0),
+          onFocus: onObjectFocus,
+          focusOffset: new THREE.Vector3(0, -1.5, 2.1),
+          imagePath: "/images/puzzles/rainbow-drawing.png",
+          imagePadding: 0,
+        })
+      : null;
+  if (rainbowDrawing) {
+    rainbowDrawing.object3D.position.set(0, 2.1, 0);
+    table1.object3D.add(rainbowDrawing.object3D);
+  }
 
   const shelf1 = new Shelf({
     id: "living-room-shelf-1",
@@ -216,6 +350,7 @@ const createLivingRoom = async ({ onSwitchPress, eventManager, onDoorOpenChange,
     thickness: 0.3,
     ...livingRoomWoodStyle,
   });
+  shelf3.addToShelf(displayCase.object3D, { shelf: 1, x: 0, z: 0, placeOnSurface: false });
 
   const cabinet = new Cabinet({
     id: "living-room-cabinet",
@@ -230,6 +365,24 @@ const createLivingRoom = async ({ onSwitchPress, eventManager, onDoorOpenChange,
     ...livingRoomWoodStyle,
   });
   const cabinetInteractables = cabinet.getInteractables();
+  const agedDecor = true;
+  const tableBooks = createBookStack({ aged: agedDecor, scale: 1.05 });
+  tableBooks.position.set(-1.45, 2.18, 0.38);
+  const tableCandles = createCandleCluster({ aged: agedDecor, scale: 1.05, count: 2 });
+  tableCandles.position.set(1.4, 2.18, 0.2);
+  table1.object3D.add(tableBooks, tableCandles);
+  const cabinetVase = createVase({ aged: agedDecor, scale: 0.82 });
+  cabinetVase.position.set(0, 3.12, 0);
+  cabinet.object3D.add(cabinetVase);
+  const livingRoomPlant = createPottedPlant({ aged: agedDecor, scale: 1.2 });
+  livingRoomPlant.position.set(-10.5, 0, 12.2);
+  const livingRoomFrames = createWallFrameCluster({
+    aged: agedDecor,
+    scale: 0.95,
+    imagePaths: ["/images/decor/family-photo-1980s.png", "", ""],
+  });
+  livingRoomFrames.position.set(0, 7.1, 14.78);
+  livingRoomFrames.rotation.y = Math.PI;
 
   const chest = new Chest({
     id: "living-room-chest",
@@ -238,31 +391,58 @@ const createLivingRoom = async ({ onSwitchPress, eventManager, onDoorOpenChange,
     width: 1.5,
     height: 1,
     depth: 1,
-    locked: true,
+    locked: timeline === "past",
     ...livingRoomWoodStyle,
   });
 
-  const storageBench = new Chest({
-    id: "living-room-storage-bench",
-    position: new THREE.Vector3(-7, 0, -13),
-    scale: 1,
-    width: 7,
-    height: 2.5,
-    depth: 3,
-    locked: true,
-    requiredKey: "red-key",
-    ...livingRoomWoodStyle,
-  });
+  const studyKey =
+    timeline === "past"
+      ? new Key({
+          id: "study-key",
+          color: 0xb07c32,
+          scalar: 1.45,
+        })
+      : null;
+  if (studyKey) {
+    studyKey.setEnabled(false);
+    studyKey.object3D.visible = false;
+    studyKey.interact = (player) => {
+      if (!player.inventory.add(studyKey)) return;
+      studyKey.object3D.visible = false;
+      studyKey.setEnabled(false);
+      onLivingRoomAction?.("item.pickup", "study-key");
+    };
+  }
 
-  chest.addItem(redKey, {
-    position: new THREE.Vector3(-0.3, 0.25, 0),
-    scale: 1.5,
-  });
+  const chestLock =
+    timeline === "past"
+      ? new Lock({
+          id: "living-room-chest-lock",
+          position: new THREE.Vector3(0, 0.5, 0.59),
+          scale: 0.11,
+          password: "3816",
+          onFocus: onObjectFocus,
+          canUnlock: () => hasVitrineLetter,
+          onUnlock: () => {
+            chest.unlock();
+            onLivingRoomAction?.("object.interact", "living-room-chest");
+          },
+        })
+      : null;
+  if (chestLock) chest.object3D.add(chestLock.object3D);
+  chest.onOpenChange = ({ isOpen }) => {
+    if (!isOpen || !studyKey || studyKey.object3D.visible) return;
+    studyKey.object3D.visible = true;
+    studyKey.setEnabled(true);
+  };
 
-  storageBench.addItem(blueKey, {
-    position: new THREE.Vector3(0, 0.25, 0),
-    scale: 1.5,
-  });
+  if (studyKey) {
+    chest.addItem(studyKey, {
+      position: new THREE.Vector3(0, 0.22, 0),
+      scale: 1.4,
+      visible: false,
+    });
+  }
 
   shelf2.addToShelf(chest.object3D, {
     shelf: 1,
@@ -271,104 +451,172 @@ const createLivingRoom = async ({ onSwitchPress, eventManager, onDoorOpenChange,
     placeOnSurface: false,
   });
 
-  const book1 = new Book({
-    id: "book-1",
-    symbol: "cross",
-    currentSlot: 0,
-    correctSlot: 3,
-    rotationY: Math.PI / 2,
+  const fallenPainting = new FallenPainting({ position: new THREE.Vector3(-12.55, 1.5, 9.5), rotationY: Math.PI / 2 });
+  const paintingSlot = new PaintingSlot({
+    timeline,
+    position: new THREE.Vector3(13.5, 5.2, -3),
+    rotationY: -Math.PI / 2,
+    onPlaced: () => onLivingRoomAction?.("object.interact", "living-room-painting-slot"),
+    onPieceInserted: (index) => onLivingRoomAction?.("object.interact", `living-room-painting-piece-${index}`),
   });
-  shelf1.addToShelf(book1.object3D, {
-    shelf: 1,
-    x: 2.7,
-    z: 0,
+  if (paintingSlot.hiddenScissors) {
+    paintingSlot.hiddenScissors.onCollect = () => onLivingRoomAction?.("item.pickup", "living-room-scissors");
+  }
+
+  const match = new Match({
+    onCollect: () => onLivingRoomAction?.("item.pickup", "living-room-match"),
   });
 
-  const book2 = new Book({
-    id: "book-2",
-    symbol: "triangle",
-    currentSlot: 1,
-    correctSlot: 0,
-    rotationY: Math.PI / 2,
-  });
-  shelf1.addToShelf(book2.object3D, {
-    shelf: 1,
-    x: 3.2,
-    z: 0,
-  });
-  const book3 = new Book({
-    id: "book-3",
-    symbol: "square",
-    currentSlot: 2,
-    correctSlot: 2,
-    rotationY: Math.PI / 2,
-  });
-  shelf1.addToShelf(book3.object3D, {
-    shelf: 1,
-    x: 3.7,
-    z: 0,
-  });
+  const collectMatch = (player) => {
+    sofa.object3D.updateWorldMatrix(true, true);
+    const matchPosition = cushion.object3D.getWorldPosition(new THREE.Vector3());
+    sofa.object3D.worldToLocal(matchPosition);
+    match.object3D.position.copy(matchPosition);
+    sofa.object3D.add(match.object3D);
+    match.object3D.visible = true;
+    match.setEnabled(true);
+    match.interact(player);
+  };
 
-  const book4 = new Book({
-    id: "book-4",
-    symbol: "circle",
-    currentSlot: 3,
-    correctSlot: 1,
-    rotationY: Math.PI / 2,
-  });
-  shelf1.addToShelf(book4.object3D, {
-    shelf: 1,
-    x: 4.2,
-    z: 0,
-  });
+  const cushion =
+    timeline === "present"
+      ? new Cushion({
+          id: "living-room-sofa-cushion",
+          parent: sofa.object3D,
+          position: new THREE.Vector3(-2.1, 1.55, 0.1),
+          rotation: new THREE.Euler(-0.2, 1, 0.2),
+          color: 0x493027,
+          accentColor: 0xdab77d,
+          sewn: true,
+          onCut: () => {
+            onLivingRoomAction?.("object.interact", "living-room-sofa-cushion");
+          },
+          onSearch: (player) => {
+            collectMatch(player);
+            onLivingRoomAction?.("object.interact", "living-room-sofa-cushion");
+          },
+        })
+      : new Cushion({
+          id: "living-room-sofa-cushion",
+          parent: sofa.object3D,
+          position: new THREE.Vector3(-2.1, 1.55, 0.1),
+          rotation: new THREE.Euler(-0.2, 1, 0.2),
+          color: 0x493027,
+        });
 
-  const bookPuzzle = new BookPuzzle({
-    books: [book4, book2, book1, book3],
-    onSolved: () => {
-      chest.unlock();
-      shelf1.openMechanism({
-        angle: -Math.PI / 2,
-        duration: 2,
-        side: "left",
-      });
-    },
-  });
+  const decorativeCushions = [
+    new Cushion({
+      id: "living-room-sofa-cushion-right",
+      parent: sofa.object3D,
+      position: new THREE.Vector3(2.1, 1.55, -0.15),
+      rotation: new THREE.Euler(-0.2, -1, -0.2),
+      color: 0x493027,
+    }),
+    new Cushion({
+      id: "living-room-armchair-1-cushion",
+      parent: armchair1.object3D,
+      position: new THREE.Vector3(0, 1.55, -0.28),
+      rotation: new THREE.Euler(-0.16, 0, 0),
+      color: 0x493027,
+    }),
+    new Cushion({
+      id: "living-room-armchair-2-cushion",
+      parent: armchair2.object3D,
+      position: new THREE.Vector3(0, 1.55, -0.28),
+      rotation: new THREE.Euler(-0.16, 0, 0),
+      color: 0x493027,
+    }),
+  ];
+  if (timeline === "past") room.add(fallenPainting.object3D);
+  room.add(paintingSlot.object3D);
 
-  book4.setOnInteract(bookPuzzle.handleBookInteraction.bind(bookPuzzle));
-  book2.setOnInteract(bookPuzzle.handleBookInteraction.bind(bookPuzzle));
-  book3.setOnInteract(bookPuzzle.handleBookInteraction.bind(bookPuzzle));
-  book1.setOnInteract(bookPuzzle.handleBookInteraction.bind(bookPuzzle));
+  const rainbowBookData = [
+    ["orange", 0xeb8e3d, 1],
+    ["violet", 0xa7679c, 6],
+    ["green", 0x71a96d, 3],
+    ["red", 0xdf574b, 0],
+    ["blue", 0x4d92b8, 4],
+    ["yellow", 0xe3c84e, 2],
+    ["indigo", 0x6960aa, 5],
+  ];
+  const rainbowBooks =
+    timeline === "past"
+      ? rainbowBookData.map(([name, color, correctSlot], currentSlot) => {
+          const book = new Book({
+            id: `rainbow-book-${name}`,
+            color,
+            currentSlot,
+            correctSlot,
+            rotationY: Math.PI / 2,
+          });
+          const x = currentSlot === rainbowBookData.length - 1 ? 1.5 + currentSlot * 0.52 : 1.2 + currentSlot * 0.52;
+          shelf1.addToShelf(book.object3D, { shelf: 1, x, z: 0 });
+          return book;
+        })
+      : [];
+  let booksRevealed = false;
+  let shelfIsOpen = false;
+  const moveShelf = (open) => {
+    if (timeline !== "past" || !booksRevealed || shelfIsOpen === open || shelf1.isMechanismMoving) return;
+    shelfIsOpen = open;
+    shelf1.openMechanism({ angle: open ? -Math.PI / 2 : Math.PI / 2, duration: 2, side: "left" });
+  };
+  const revealBooksResult = () => {
+    booksRevealed = true;
+    moveShelf(true);
+    fallenPainting.reveal();
+  };
+  const bookPuzzle =
+    timeline === "past"
+      ? new BookPuzzle({
+          id: "living-room-rainbow-books",
+          books: rainbowBooks,
+          onSolved: () => {
+            revealBooksResult();
+            onLivingRoomAction?.("puzzle.solved", "living-room-rainbow-books");
+          },
+        })
+      : null;
+  rainbowBooks.forEach((book) => book.setOnInteract(bookPuzzle.handleBookInteraction.bind(bookPuzzle)));
+  if (testMode && timeline === "present") paintingSlot.setPlaced(true);
+  shelf1.interact = () => moveShelf(!shelfIsOpen);
+  shelf1.getInteractionText = () =>
+    timeline === "past" && booksRevealed ? tInteraction(shelfIsOpen ? "close" : "open", tItem("shelf")) : null;
 
   room.add(sofa.object3D);
   room.add(armchair1.object3D);
   room.add(armchair2.object3D);
+  room.add(...windows.map((window) => window.object3D));
   room.add(table1.object3D);
-  room.add(door.object3D);
+  if (door) room.add(door.object3D);
+  if (kitchenDoor) room.add(kitchenDoor.object3D);
   room.add(lightSwitch.object3D);
+  room.add(entranceLightSwitch.object3D);
   room.add(lamp1.object3D);
-  room.add(table2.object3D);
+  room.add(fireplace.object3D);
   room.add(shelf1.object3D);
   room.add(shelf2.object3D);
   room.add(shelf3.object3D);
   room.add(cabinet.object3D);
-  room.add(storageBench.object3D);
-  windows.forEach((window) => {
-    room.add(window.object3D);
-  });
+  room.add(livingRoomPlant);
+  if (entrance) room.add(livingRoomFrames);
+  placeAgainstWall(lightSwitch, "right");
+  placeAgainstWall(entranceLightSwitch, "back");
+  [shelf1, shelf2, shelf3].forEach((shelf) => placeAgainstWall(shelf, "left"));
+  placeAgainstWall(cabinet, "right");
+  placeAgainstWall(paintingSlot, "right");
 
+  room.updateMatrixWorld(true);
   const sofaCollider = sofa.getCollider();
   const armchair1Collider = armchair1.getCollider();
   const armchair2Collider = armchair2.getCollider();
   const table1Collider = table1.getCollider();
-  const table2Collider = table2.getCollider();
   const chestCollider = chest.getCollider();
+  const fireplaceCollider = fireplace.getCollider();
   const shelf1Collider = shelf1.getCollider();
   const shelf2Collider = shelf2.getCollider();
   const shelf3Collider = shelf3.getCollider();
-  const storageBenchCollider = storageBench.getCollider();
   const cabinetCollider = cabinet.getCollider();
-  const windowColliders = windows.map((window) => window.getCollider());
-
   return {
     room,
     roomColliders,
@@ -377,57 +625,113 @@ const createLivingRoom = async ({ onSwitchPress, eventManager, onDoorOpenChange,
       armchair1Collider,
       armchair2Collider,
       table1Collider,
-      table2Collider,
       chestCollider,
+      fireplaceCollider,
       shelf1Collider,
       shelf2Collider,
       shelf3Collider,
-      storageBenchCollider,
       cabinetCollider,
-      ...windowColliders,
+      ...windows.map((window) => window.getCollider()),
     ],
     bounds,
     door,
-    doorPassage: {
-      minX: doorOpening.position.x - doorOpening.width / 2,
-      maxX: doorOpening.position.x + doorOpening.width / 2,
-    },
+    doorPassage: doorOpening
+      ? {
+          minX: doorOpening.position.x - doorOpening.width / 2,
+          maxX: doorOpening.position.x + doorOpening.width / 2,
+        }
+      : null,
     interactables: [
       lightSwitch,
-      redKey,
-      blueKey,
-      door,
+      entranceLightSwitch,
+      ...(blueKey ? [blueKey] : []),
+      ...(door ? [door] : []),
+      ...(kitchenDoor ? [kitchenDoor] : []),
       chest,
+      ...(chestLock ? [chestLock] : []),
+      ...(studyKey ? [studyKey] : []),
       cabinet,
       ...cabinetInteractables,
-      storageBench,
-      book4,
-      book2,
-      book1,
-      book3,
+      ...(timeline === "past" ? [shelf1] : []),
+      ...rainbowBooks,
+      ...(rainbowDrawing ? [rainbowDrawing] : []),
+      ...(timeline === "past" ? [fallenPainting] : []),
+      paintingSlot,
+      ...(paintingSlot.hiddenScissors ? [paintingSlot.hiddenScissors] : []),
+      ...(cushion ? [cushion, match] : []),
+      fireplace,
+      displayCase,
+      vitrineLetter,
+      ...(emberPuzzle ? [emberPuzzle] : []),
     ],
     entities: [
       lightSwitch,
-      door,
+      entranceLightSwitch,
+      ...(door ? [door] : []),
+      ...(kitchenDoor ? [kitchenDoor] : []),
       lamp1,
-      redKey,
-      blueKey,
+      ...(blueKey ? [blueKey] : []),
       chest,
+      ...(chestLock ? [chestLock] : []),
+      ...(studyKey ? [studyKey] : []),
       sofa,
       armchair1,
       armchair2,
       table1,
-      table2,
       cabinet,
-      storageBench,
-      book4,
-      book2,
-      book1,
-      book3,
+      ...rainbowBooks,
+      ...(timeline === "past" ? [fallenPainting] : []),
+      ...(paintingSlot.hiddenScissors ? [paintingSlot.hiddenScissors] : []),
+      ...(cushion ? [cushion, match] : []),
+      fireplace,
+      displayCase,
+      vitrineLetter,
+      ...(emberPuzzle ? [emberPuzzle] : []),
+      ...decorativeCushions,
       shelf1,
+      paintingSlot,
     ],
-    spawnLookAt: new THREE.Vector3(0, 5.1, 0),
-    spawnPosition: new THREE.Vector3(0, 5.1, 8),
+    applyLivingRoomState: (state) => {
+      if (state.timelines?.past?.puzzles?.["living-room-rainbow-books"]?.solved) revealBooksResult();
+      const paintingState = state.timelines?.past?.objects?.["living-room-painting-slot"];
+      if (paintingState?.placed && timeline === "past") paintingSlot.setPlaced(true);
+      for (const index of paintingState?.restoredPieces ?? []) paintingSlot.restorePiece(index);
+      if (state.timelines?.past?.puzzles?.["living-room-painting"]?.solved) paintingSlot.setRestored();
+      const livingRoomState = state.timelines?.present?.objects;
+      const cushionState = livingRoomState?.["living-room-sofa-cushion"];
+      if (cushionState?.cut && cushion) {
+        cushion.setCut();
+        cushion.searched = Boolean(cushionState.searched);
+      }
+      if (state.timelines?.present?.objects?.["living-room-fireplace"]?.open) {
+        fireplace.solved = true;
+        fireplace.flame.visible = true;
+        if (emberClue) emberClue.object3D.visible = true;
+        emberPuzzle?.reveal();
+      }
+      if (state.timelines?.past?.puzzles?.["living-room-embers"]?.solved) {
+        emberPuzzle?.solve({ notify: false });
+        displayCase.unlock();
+      }
+      if (livingRoomState?.["living-room-display-case"]?.open) {
+        displayCase.setOpened();
+        vitrineLetter.object3D.visible = true;
+        vitrineLetter.setEnabled(true);
+      }
+      hasVitrineLetter = Boolean(state.inventories?.past?.includes("living-room-vitrine-letter"));
+      const chestState = state.timelines?.past?.objects?.["living-room-chest"] ?? state.timelines?.present?.objects?.["living-room-chest"];
+      if (chestState?.locked === false) {
+        chest.unlock();
+        chestLock?.setUnlocked();
+      }
+      if (studyKey && state.inventories?.[timeline]?.includes("study-key")) {
+        studyKey.object3D.visible = false;
+        studyKey.setEnabled(false);
+      }
+    },
+    spawnLookAt: new THREE.Vector3(0, 5.25, 0),
+    spawnPosition: new THREE.Vector3(0, 5.25, 8),
+    kitchenDoor,
   };
 };
 

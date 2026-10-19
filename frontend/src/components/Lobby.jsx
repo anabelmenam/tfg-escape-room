@@ -39,8 +39,8 @@ const Lobby = ({ onEnterLobby }) => {
     <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#110f10] px-5 py-10 text-[#f2e7d1] before:pointer-events-none before:absolute before:inset-6 before:border before:border-[#d5b67c]/20 after:pointer-events-none after:absolute after:inset-8 after:border after:border-[#d5b67c]/[.08]" style={{ backgroundImage: "radial-gradient(circle at 14% 10%, rgb(126 69 33 / 35%), transparent 31%), radial-gradient(circle at 86% 85%, rgb(68 91 95 / 25%), transparent 34%)" }}>
       <section className="relative z-10 w-full max-w-md rounded-sm border border-[#d7b77b]/40 bg-[#211916]/95 p-7 shadow-2xl shadow-black/60 sm:p-10">
         <p className="mb-3 text-center text-xs font-bold uppercase tracking-[0.24em] text-[#d8aa64]">Escape room cooperativo</p>
-        <h1 className="mb-3 font-serif text-4xl leading-none text-[#f5e8ce] sm:text-5xl">La casa entre tiempos</h1>
-        <p className="mb-8 leading-relaxed text-[#c9ba9e]">Dos jugadores. Dos épocas. Una misma casa que nunca cuenta toda la verdad.</p>
+        <h1 className="mb-3 font-serif text-4xl leading-none text-[#f5e8ce] sm:text-5xl">La casa entre mundos</h1>
+        <p className="mb-8 leading-relaxed text-[#c9ba9e]">Dos jugadores. Dos realidades paralelas. Una misma casa que nunca cuenta toda la verdad.</p>
 
         <label className="mb-2 block text-sm font-semibold text-[#e4d2ae]" htmlFor="player-name">Tu nombre</label>
         <input
@@ -80,19 +80,26 @@ const Lobby = ({ onEnterLobby }) => {
             <h2 className="font-bold text-[#e7c17d]">Modo de pruebas</h2>
             <p className="mt-1 text-sm text-[#c9ba9e]">Entra directamente, sin sala ni segundo jugador.</p>
             <div className="mt-3 grid grid-cols-2 gap-2">
-              {[ ["past", "Pasado"], ["present", "Presente"] ].map(([timeline, label]) => (
-                [ ["bedroom", "Dormitorio"], ["hallway", "Pasillo"] ].map(([area, areaLabel]) => (
+              {["past", "present"].flatMap((timeline) =>
+                [
+                  ["bedroom", "Dormitorio"],
+                  ["hallway", "Pasillo"],
+                  ["children", "Infantil"],
+                  ["bathroom", "Baño"],
+                  ["kitchen", "Cocina"],
+                ].map(([area, label]) => (
                   <a key={`${timeline}-${area}`} href={`?test=${timeline}&area=${area}`} className="rounded border border-[#806644] p-2 text-center text-sm hover:bg-[#49331f]">
-                    {label} · {areaLabel}
+                    {timeline === "past" ? "Mundo A" : "Mundo B"} · {label}
                   </a>
-                ))
-              ))}
+                )),
+              )}
+              <a href="?test=icons" className="rounded border border-[#806644] p-2 text-center text-sm hover:bg-[#49331f]">Estudio de iconos</a>
             </div>
           </div>
         )}
 
         {error && <p className="mt-5 rounded-sm border border-red-400/35 bg-red-950/35 px-3 py-2 text-sm text-red-200" role="alert">{error}</p>}
-        <p className="mt-6 text-center text-xs leading-relaxed text-[#958772]">Dentro de la sala elegiréis quién juega en el pasado y quién en el presente.</p>
+        <p className="mt-6 text-center text-xs leading-relaxed text-[#958772]">Dentro de la sala elegiréis quién juega en el Mundo A y quién en el Mundo B.</p>
       </section>
     </main>
   );

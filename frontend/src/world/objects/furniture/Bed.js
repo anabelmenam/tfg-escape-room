@@ -7,6 +7,7 @@ class Bed extends Entity {
     position = new THREE.Vector3(),
     rotationY = 0,
     scale = 1,
+    size = "double",
 
     woodColor = 0x5b3a29,
     headboardColor = woodColor,
@@ -27,6 +28,10 @@ class Bed extends Entity {
     pillowTextureRepeat = { x: 1, y: 1 },
   } = {}) {
     super(id);
+    if (!["single", "double"].includes(size)) {
+      throw new Error(`Tamaño de cama no válido: ${size}`);
+    }
+    this.bedSize = size;
     this.object3D = new THREE.Group();
     this.object3D.position.copy(position);
     this.object3D.rotation.y = rotationY;
@@ -163,9 +168,17 @@ class Bed extends Entity {
   }
 
   create() {
+    const single = this.bedSize === "single";
+    const baseWidth = single ? 3.4 : 6.2;
+    const mattressWidth = single ? 3.1 : 5.9;
+    const blanketWidth = single ? 3.4 : 6.2;
+    const blanketSideX = single ? 1.62 : 3.02;
+    const headboardWidth = single ? 3.8 : 6.6;
+    const legX = single ? 1.25 : 2.65;
+
     const base = this.createBox({
       name: "bed-base",
-      size: new THREE.Vector3(6.2, 0.55, 7.8),
+      size: new THREE.Vector3(baseWidth, 0.55, 7.8),
       position: new THREE.Vector3(0, 1, 0),
       material: this.woodMaterial,
     });
@@ -174,7 +187,7 @@ class Bed extends Entity {
 
     const mattress = this.createRoundedBox({
       name: "bed-mattress",
-      size: new THREE.Vector3(5.9, 0.75, 7.45),
+      size: new THREE.Vector3(mattressWidth, 0.75, 7.45),
       position: new THREE.Vector3(0, 1.65, 0),
       material: this.mattressMaterial,
       radius: 0.16,
@@ -184,7 +197,7 @@ class Bed extends Entity {
 
     const blanketTop = this.createRoundedBox({
       name: "bed-blanket-top",
-      size: new THREE.Vector3(6.2, 0.16, 5.45),
+      size: new THREE.Vector3(blanketWidth, 0.16, 5.45),
       position: new THREE.Vector3(0, 2.12, 1.03),
       material: this.blanketMaterial,
       radius: 0.1,
@@ -195,7 +208,7 @@ class Bed extends Entity {
     const blanketLeftSide = this.createRoundedBox({
       name: "bed-blanket-left-side",
       size: new THREE.Vector3(0.18, 0.78, 5.45),
-      position: new THREE.Vector3(-3.02, 1.8, 1.05),
+      position: new THREE.Vector3(-blanketSideX, 1.8, 1.05),
       material: this.blanketMaterial,
       radius: 0.07,
     });
@@ -205,7 +218,7 @@ class Bed extends Entity {
     const blanketRightSide = this.createRoundedBox({
       name: "bed-blanket-right-side",
       size: new THREE.Vector3(0.18, 0.78, 5.45),
-      position: new THREE.Vector3(3.02, 1.8, 1.05),
+      position: new THREE.Vector3(blanketSideX, 1.8, 1.05),
       material: this.blanketMaterial,
       radius: 0.07,
     });
@@ -214,7 +227,7 @@ class Bed extends Entity {
 
     const blanketFoot = this.createRoundedBox({
       name: "bed-blanket-foot",
-      size: new THREE.Vector3(6.05, 0.78, 0.18),
+      size: new THREE.Vector3(blanketWidth - 0.15, 0.78, 0.18),
       position: new THREE.Vector3(0, 1.8, 3.68),
       material: this.blanketMaterial,
       radius: 0.07,
@@ -222,27 +235,21 @@ class Bed extends Entity {
 
     this.object3D.add(blanketFoot);
 
-    const leftPillow = this.createRoundedBox({
-      name: "bed-pillow-left",
-      size: new THREE.Vector3(2.5, 0.45, 1.35),
-      position: new THREE.Vector3(-1.45, 2.15, -2.8),
-      material: this.pillowMaterial,
-      radius: 0.16,
+    const pillowPositions = single ? [0] : [-1.45, 1.45];
+    pillowPositions.forEach((x, index) => {
+      const pillow = this.createRoundedBox({
+        name: single ? "bed-pillow" : `bed-pillow-${index === 0 ? "left" : "right"}`,
+        size: new THREE.Vector3(single ? 2.35 : 2.5, 0.45, 1.35),
+        position: new THREE.Vector3(x, 2.15, -2.8),
+        material: this.pillowMaterial,
+        radius: 0.16,
+      });
+      this.object3D.add(pillow);
     });
-
-    const rightPillow = this.createRoundedBox({
-      name: "bed-pillow-right",
-      size: new THREE.Vector3(2.5, 0.45, 1.35),
-      position: new THREE.Vector3(1.45, 2.15, -2.8),
-      material: this.pillowMaterial,
-      radius: 0.16,
-    });
-
-    this.object3D.add(leftPillow, rightPillow);
 
     const headboard = this.createRoundedBox({
       name: "bed-headboard",
-      size: new THREE.Vector3(6.6, 3.8, 0.35),
+      size: new THREE.Vector3(headboardWidth, 3.8, 0.35),
       position: new THREE.Vector3(0, 2.5, -3.75),
       material: this.headboardMaterial,
       radius: 0.18,
@@ -251,10 +258,10 @@ class Bed extends Entity {
     this.object3D.add(headboard);
 
     const legPositions = [
-      [-2.65, 0.4, -3],
-      [2.65, 0.4, -3],
-      [-2.65, 0.4, 3],
-      [2.65, 0.4, 3],
+      [-legX, 0.4, -3],
+      [legX, 0.4, -3],
+      [-legX, 0.4, 3],
+      [legX, 0.4, 3],
     ];
 
     for (const [x, y, z] of legPositions) {

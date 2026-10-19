@@ -23,6 +23,7 @@ class Safe extends Entity {
 
     onFocus = null,
     onUnlock = null,
+    canUnlock = null,
   } = {}) {
     super(id);
 
@@ -55,6 +56,7 @@ class Safe extends Entity {
 
     this.onFocus = onFocus;
     this.onUnlock = onUnlock;
+    this.canUnlock = canUnlock;
 
     this.values = new Array(this.password.length).fill(0);
     this.displayMeshes = [];
@@ -326,7 +328,7 @@ class Safe extends Entity {
 
     const correct = this.password.every((value, index) => value === currentCombination[index]);
 
-    if (correct) {
+    if (correct && (this.canUnlock?.() ?? true)) {
       this.unlock();
     }
 

@@ -1,7 +1,6 @@
 import { useEffect, useRef } from "react";
 import { io } from "socket.io-client";
 import { Game } from "../game/Game";
-import { tInteraction } from "../translations";
 import { GAME_API_URL } from "../services/gameApi";
 
 const GameCanvas = ({ playerRole, session }) => {
@@ -19,6 +18,11 @@ const GameCanvas = ({ playerRole, session }) => {
     });
     const game = new Game(container, playerRole, {
       testArea: session.testMode ? session.testArea : null,
+      testMode: session.testMode,
+      onHallwayAction: (type, targetId) => socket?.emit("game:action", { actionId: crypto.randomUUID(), type, targetId }),
+      onBedroomAction: (type, targetId) => socket?.emit("game:action", { actionId: crypto.randomUUID(), type, targetId }),
+      onLivingRoomAction: (type, targetId) => socket?.emit("game:action", { actionId: crypto.randomUUID(), type, targetId }),
+      onBathroomAction: (type, targetId) => socket?.emit("game:action", { actionId: crypto.randomUUID(), type, targetId }),
       onDoorUnlocked: () => {
         socket?.emit("game:action", {
           actionId: crypto.randomUUID(),
@@ -49,11 +53,13 @@ const GameCanvas = ({ playerRole, session }) => {
     >
       {session.testMode && (
         <div className="absolute left-4 top-4 z-20 rounded border border-amber-200/40 bg-black/80 p-3 text-sm text-amber-50">
-          <p className="font-bold">Pruebas · {session.timeline === "past" ? "Pasado" : "Presente"} · {session.testArea === "hallway" ? "Pasillo" : "Dormitorio"}</p>
+          <p className="font-bold">Pruebas · {session.testArea === "icons" ? "Estudio de iconos" : `${session.timeline === "past" ? "Mundo A" : "Mundo B"} · ${{ hallway: "Pasillo", children: "Habitación infantil", bathroom: "Baño", kitchen: "Cocina", bedroom: "Dormitorio" }[session.testArea]}`}</p>
           <p className="mt-1 text-xs">Esc libera el cursor · Recargar reinicia la prueba</p>
           <div className="mt-2 flex gap-4 underline">
-            <a href={`?test=${session.timeline === "past" ? "present" : "past"}&area=${session.testArea}`}>Cambiar época</a>
-            <a href={`?test=${session.timeline}&area=${session.testArea === "hallway" ? "bedroom" : "hallway"}`}>Cambiar zona</a>
+            {session.testArea !== "icons" && <>
+              <a href={`?test=${session.timeline === "past" ? "present" : "past"}&area=${session.testArea}`}>Cambiar mundo</a>
+              <a href={`?test=${session.timeline}&area=${{ bedroom: "hallway", hallway: "children", children: "bathroom", bathroom: "kitchen", kitchen: "bedroom" }[session.testArea]}`}>Cambiar zona</a>
+            </>}
             <a href={window.location.pathname}>Salir de pruebas</a>
           </div>
         </div>
@@ -67,16 +73,10 @@ const GameCanvas = ({ playerRole, session }) => {
 
       <div
         id="interaction-text"
-        className="pointer-events-none absolute bottom-20 left-1/2 z-10 hidden -translate-x-1/2 rounded bg-black/70 px-4 py-2 text-lg font-semibold text-white"
+        className="pointer-events-none absolute bottom-32 left-1/2 z-10 hidden -translate-x-1/2 rounded bg-black/70 px-4 py-2 text-lg font-semibold text-white"
       />
 
-      <div
-        id="focus-exit-hint"
-        className="pointer-events-none absolute bottom-20 left-1/2 z-10 hidden -translate-x-1/2 rounded bg-black/70 px-4 py-2 text-lg font-semibold text-white"
-      >
-        {tInteraction("exit")}
-      </div>
-
+      <p id="inventory-selected-name" className="pointer-events-none absolute bottom-24 left-1/2 z-20 hidden -translate-x-1/2 rounded bg-black/70 px-3 py-1 text-sm font-semibold text-amber-50" />
       <div id="inventory" className="pointer-events-none absolute bottom-5 left-1/2 z-20 flex -translate-x-1/2 gap-2">
         {[0, 1, 2, 3, 4].map((index) => (
           <div

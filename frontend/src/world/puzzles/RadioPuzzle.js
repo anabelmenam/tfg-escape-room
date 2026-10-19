@@ -1,7 +1,6 @@
 import * as THREE from "three";
-import { Entity } from "../objects/Entity.js";
+import { Entity, createRadioDialVisual } from "../objects/index.js";
 import { tInteraction, tItem } from "../../translations/index.js";
-import { createRadioDialVisual } from "../objects/decoration/RadioDial.js";
 
 class RadioPuzzle extends Entity {
   constructor({
@@ -14,6 +13,8 @@ class RadioPuzzle extends Entity {
     dialItem = null,
     missingDialIndex = 2,
     solution = [7, 2, 5, 4],
+    canSolve = null,
+    onSolved = null,
   } = {}) {
     super(id);
     this.onFocus = onFocus;
@@ -23,6 +24,8 @@ class RadioPuzzle extends Entity {
     this.hasMissingDial = dialItem === null;
     this.values = [0, 0, 0, 0];
     this.solution = solution;
+    this.canSolve = canSolve;
+    this.onSolved = onSolved;
     this.isSolved = false;
     this.drawerProgress = 0;
     this.dialNeedles = [];
@@ -187,9 +190,10 @@ class RadioPuzzle extends Entity {
     this.values[index] = this.values[index] === 9 ? 0 : this.values[index] + 1;
     this.updateDialIndicator(index);
 
-    if (this.values.every((value, valueIndex) => value === this.solution[valueIndex])) {
+    if (this.values.every((value, valueIndex) => value === this.solution[valueIndex]) && (this.canSolve?.() ?? true)) {
       this.isSolved = true;
       this.exitFocusRequested = true;
+      this.onSolved?.(this);
     }
   }
 

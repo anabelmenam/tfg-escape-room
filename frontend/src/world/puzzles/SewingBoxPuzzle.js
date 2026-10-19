@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { Entity } from "../objects/Entity.js";
+import { Entity } from "../objects/index.js";
 import { tInteraction, tItem } from "../../translations/index.js";
 
 class SewingBoxPuzzle extends Entity {
@@ -12,6 +12,7 @@ class SewingBoxPuzzle extends Entity {
     onSolved = null,
     planPaper,
     requiredKey = null,
+    canSolve = null,
   } = {}) {
     super(id);
     if (!planPaper) throw new Error("SewingBoxPuzzle necesita un plano eléctrico.");
@@ -20,6 +21,7 @@ class SewingBoxPuzzle extends Entity {
     this.onSolved = onSolved;
     this.planPaper = planPaper;
     this.requiredKey = requiredKey;
+    this.canSolve = canSolve;
     this.isLocked = requiredKey !== null;
     this.isOpen = false;
     this.targetOpen = false;
@@ -166,6 +168,7 @@ class SewingBoxPuzzle extends Entity {
 
   selectSpool(slot) {
     if (!this.isFocused || this.isSolved || !this.spools[slot]) return;
+    if (!(this.canSolve?.() ?? true)) return;
     if (this.selectedSlot === null) {
       this.selectedSlot = slot;
       this.setSpoolSelected(slot, true);
@@ -178,7 +181,7 @@ class SewingBoxPuzzle extends Entity {
     const firstSlot = this.selectedSlot;
     this.clearSelection();
     this.swapSpools(firstSlot, slot);
-    if (this.spoolOrder.every((color, index) => color === this.correctOrder[index])) {
+    if (this.spoolOrder.every((color, index) => color === this.correctOrder[index]) && (this.canSolve?.() ?? true)) {
       this.isSolved = true;
       this.planPaper.object3D.visible = true;
       this.planPaper.setEnabled(true);

@@ -26,6 +26,7 @@ export const GameRoom = sequelize.define(
       defaultValue: "waiting",
       validate: { isIn: [["waiting", "playing", "finished"]] },
     },
+    creatorPlayerId: { type: DataTypes.UUID, allowNull: true },
     createdAt: date(),
     finishedAt: { type: DataTypes.DATE, allowNull: true },
   },

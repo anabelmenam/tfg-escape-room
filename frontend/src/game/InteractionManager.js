@@ -21,7 +21,6 @@ export class InteractionManager {
 
   update() {
     if (this.player.isFocused) {
-      this.setInteractable(null);
       return;
     }
 

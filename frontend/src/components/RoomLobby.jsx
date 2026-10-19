@@ -3,8 +3,8 @@ import { io } from "socket.io-client";
 import { GAME_API_URL } from "../services/gameApi";
 
 const timelineInfo = {
-  past: { title: "Pasado", subtitle: "La casa aún conserva sus secretos", symbol: "◷" },
-  present: { title: "Presente", subtitle: "Solo quedan las huellas", symbol: "◴" },
+  past: { title: "Mundo A", subtitle: "Una realidad de la casa", symbol: "◇" },
+  present: { title: "Mundo B", subtitle: "La realidad paralela de la casa", symbol: "◆" },
 };
 
 const RoomLobby = ({ session, onStart, onBack }) => {
@@ -32,7 +32,7 @@ const RoomLobby = ({ session, onStart, onBack }) => {
   const chooseTimeline = (timeline) => {
     setError("");
     socketRef.current?.emit("lobby:select-timeline", { timeline }, (result) => {
-      if (!result?.ok) setError(result?.error ?? "No se ha podido elegir ese tiempo.");
+      if (!result?.ok) setError(result?.error ?? "No se ha podido elegir ese mundo.");
     });
   };
 
@@ -60,8 +60,8 @@ const RoomLobby = ({ session, onStart, onBack }) => {
 
       <section className="mx-auto max-w-5xl py-12 text-center">
         <p className="mb-3 text-center text-xs font-bold uppercase tracking-[0.24em] text-[#d8aa64]">Antes de comenzar</p>
-        <h1 className="mb-3 font-serif text-5xl text-[#f5e8ce] sm:text-6xl">Elige tu tiempo</h1>
-        <p className="mx-auto mb-10 max-w-xl leading-relaxed text-[#c9ba9e]">Cada jugador ve una época distinta. Lo que hagáis puede cambiar la partida del otro.</p>
+        <h1 className="mb-3 font-serif text-5xl text-[#f5e8ce] sm:text-6xl">Elige tu mundo</h1>
+        <p className="mx-auto mb-10 max-w-xl leading-relaxed text-[#c9ba9e]">Cada jugador explora una realidad paralela. Lo que hagáis puede cambiar la partida del otro.</p>
         {session.isCreator && (
           <button type="button" className="mb-8 rounded-sm border border-[#d7b77b]/50 bg-[#1a120e] px-5 py-3 text-sm text-[#c9ba9e] transition hover:bg-[#392416]" onClick={copyCode} title="Copiar código de sala">
             Comparte el código <strong className="ml-2 font-mono text-lg tracking-[0.16em] text-[#f3cc7c]">{session.joinCode}</strong>
@@ -77,7 +77,7 @@ const RoomLobby = ({ session, onStart, onBack }) => {
               <button
                 key={timeline}
                 type="button"
-                className={`relative min-h-64 overflow-hidden rounded-sm border p-8 text-left transition before:absolute before:inset-0 before:opacity-25 before:transition hover:before:opacity-50 disabled:cursor-not-allowed disabled:opacity-60 ${timeline === "past" ? "border-[#b96e38]/55 bg-[#28170f] before:bg-[radial-gradient(circle_at_30%_25%,#d28037,transparent_46%)]" : "border-[#6995a3]/55 bg-[#101e25] before:bg-[radial-gradient(circle_at_70%_25%,#5d99b5,transparent_46%)]"} ${selectedBySelf ? "ring-2 ring-[#f1ca74] ring-offset-2 ring-offset-[#110f10] before:opacity-50" : ""}`}
+                className={`relative min-h-64 overflow-hidden rounded-sm border border-[#9a8061]/55 bg-[#1d1917] p-8 text-left transition before:absolute before:inset-0 before:bg-[radial-gradient(circle_at_50%_25%,#817160,transparent_46%)] before:opacity-25 before:transition hover:before:opacity-50 disabled:cursor-not-allowed disabled:opacity-60 ${selectedBySelf ? "ring-2 ring-[#f1ca74] ring-offset-2 ring-offset-[#110f10] before:opacity-50" : ""}`}
                 disabled={Boolean(occupiedByOther)}
                 onClick={() => chooseTimeline(selectedBySelf ? null : timeline)}
               >
@@ -90,11 +90,15 @@ const RoomLobby = ({ session, onStart, onBack }) => {
           })}
         </div>
 
-        <p className="mt-7 text-sm text-[#bcae95]">{bothPlayersReady ? "Los dos tiempos están elegidos." : "Pulsa tu elección de nuevo si quieres dejarla libre."}</p>
+        <p className="mt-7 text-sm text-[#bcae95]">{bothPlayersReady ? "Los dos mundos están elegidos." : "Pulsa tu elección de nuevo si quieres dejarla libre."}</p>
         {error && <p className="mt-5 rounded-sm border border-red-400/35 bg-red-950/35 px-3 py-2 text-sm text-red-200" role="alert">{error}</p>}
-        <button type="button" className="mt-4 w-full max-w-sm rounded-sm bg-[#bd7939] px-4 py-3 font-bold text-[#1d120b] transition hover:bg-[#d69851] disabled:cursor-not-allowed disabled:bg-[#69513a] disabled:text-[#b6a38d]" disabled={!bothPlayersReady} onClick={startGame}>
-          Comenzar partida
-        </button>
+        {session.isCreator ? (
+          <button type="button" className="mt-4 w-full max-w-sm rounded-sm bg-[#bd7939] px-4 py-3 font-bold text-[#1d120b] transition hover:bg-[#d69851] disabled:cursor-not-allowed disabled:bg-[#69513a] disabled:text-[#b6a38d]" disabled={!bothPlayersReady} onClick={startGame}>
+            Comenzar partida
+          </button>
+        ) : (
+          <p className="mt-6 text-sm text-[#bcae95]">Esperando a que quien creó la sala inicie la partida.</p>
+        )}
       </section>
     </main>
   );

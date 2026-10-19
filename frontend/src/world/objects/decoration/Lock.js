@@ -15,6 +15,7 @@ class Lock extends Entity {
     wheelColor = 0x222222,
     onFocus = null,
     onUnlock = null,
+    canUnlock = null,
   } = {}) {
     super(id);
 
@@ -41,6 +42,7 @@ class Lock extends Entity {
 
     this.onFocus = onFocus;
     this.onUnlock = onUnlock;
+    this.canUnlock = canUnlock;
 
     this.values = Array(digits).fill(0);
 
@@ -272,6 +274,9 @@ class Lock extends Entity {
 
   checkCombination() {
     if (this.getCombination() === this.password) {
+      if (this.canUnlock && !this.canUnlock()) {
+        return false;
+      }
       this.unlock();
 
       return true;
@@ -280,7 +285,7 @@ class Lock extends Entity {
     return false;
   }
 
-  unlock() {
+  unlock({ notify = true } = {}) {
     if (!this.locked) {
       return;
     }
@@ -291,9 +296,17 @@ class Lock extends Entity {
     this.shackleOpening = true;
     this.shackleOpenProgress = 0;
 
-    if (this.onUnlock) {
+    if (notify && this.onUnlock) {
       this.onUnlock(this);
     }
+  }
+
+  setUnlocked() {
+    this.unlock({ notify: false });
+    this.shackleOpening = false;
+    this.shackleOpenProgress = 1;
+    this.shackle.position.y = 0.8;
+    this.shackle.rotation.z = -Math.PI / 8;
   }
 
   setFocused(focused) {

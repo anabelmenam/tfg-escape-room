@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { tInteraction, tItem } from "../../../translations";
+import { MechanicalAudio } from "./MechanicalAudio.js";
 
 class DrawerManager {
   constructor({ ownerId, drawerSpeed = 5, lockedDrawers = [], requiredDrawerKeys = {} } = {}) {
@@ -12,6 +13,7 @@ class DrawerManager {
 
     this.lockedDrawers = new Set(lockedDrawers);
     this.requiredDrawerKeys = requiredDrawerKeys;
+    this.audio = new MechanicalAudio({ kind: "drawer", volume: 0.38 });
   }
 
   registerDrawer({ drawer, index, closedZ, openZ }) {
@@ -83,6 +85,7 @@ class DrawerManager {
     state.isOpen = !state.isOpen;
 
     state.targetZ = state.isOpen ? drawer.userData.openZ : drawer.userData.closedZ;
+    this.audio.play(state.isOpen ? "open" : "close", 4.3 / this.drawerSpeed);
 
     return true;
   }
@@ -97,6 +100,7 @@ class DrawerManager {
 
     state.isOpen = true;
     state.targetZ = drawer.userData.openZ;
+    this.audio.play("open", 4.3 / this.drawerSpeed);
 
     return true;
   }
@@ -111,6 +115,7 @@ class DrawerManager {
 
     state.isOpen = false;
     state.targetZ = drawer.userData.closedZ;
+    this.audio.play("close", 4.3 / this.drawerSpeed);
 
     return true;
   }
@@ -153,6 +158,14 @@ class DrawerManager {
 
   getInteractables() {
     return this.interactables;
+  }
+
+  setAudioListener(listener, anchor) {
+    this.audio.setAudioListener(listener, anchor);
+  }
+
+  dispose() {
+    this.audio.dispose();
   }
 
   addObject(index, object3D, position = new THREE.Vector3()) {

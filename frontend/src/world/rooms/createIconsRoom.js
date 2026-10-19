@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { createRoom } from "./createRoom.js";
-import { Fuse } from "../objects/index.js";
+import { ClockHand } from "../objects/index.js";
 
 const createIconsRoom = () => {
   const { room, colliders, bounds } = createRoom({
@@ -10,10 +10,7 @@ const createIconsRoom = () => {
 
   room.name = "Icon Studio";
 
-  const objectPosition = new THREE.Vector3(0, 5.45, -4);
-
   const backgroundGeometry = new THREE.PlaneGeometry(12, 12);
-
   const backgroundMaterial = new THREE.MeshBasicMaterial({
     color: 0x9b8065,
     side: THREE.DoubleSide,
@@ -21,7 +18,6 @@ const createIconsRoom = () => {
   });
 
   const background = new THREE.Mesh(backgroundGeometry, backgroundMaterial);
-
   background.position.set(0, 5, -5);
   room.add(background);
 
@@ -32,49 +28,39 @@ const createIconsRoom = () => {
     thickness: 0.08,
     color: 0xffffff,
   });
-
   captureFrame.position.set(0, 5.37, -4.9);
   room.add(captureFrame);
 
   const centerMarkerGeometry = new THREE.CircleGeometry(0.05, 16);
-
   const centerMarkerMaterial = new THREE.MeshBasicMaterial({
     color: 0xff0000,
     depthTest: false,
   });
 
   const centerMarker = new THREE.Mesh(centerMarkerGeometry, centerMarkerMaterial);
-
   centerMarker.position.set(0, 5.5, -4.84);
   centerMarker.renderOrder = 10;
 
   const ambientLight = new THREE.AmbientLight(0xffffff, 2);
-
   room.add(ambientLight);
 
   const mainLight = new THREE.PointLight(0xffffff, 120, 50);
-
   mainLight.position.set(3, 8, 4);
   room.add(mainLight);
 
   const fillLight = new THREE.PointLight(0xffffff, 80, 50);
-
   fillLight.position.set(-3, 7, 2);
   room.add(fillLight);
 
   const topLight = new THREE.PointLight(0xffffff, 60, 40);
-
   topLight.position.set(0, 10, -1);
   room.add(topLight);
 
-  const object = new Fuse({
-    id: "red-key",
-    position: objectPosition,
-    color: 0xff0000,
-    inventoryIcon: "/images/icons/key.png",
-  });
-
-  object.object3D.rotation.set(0, 0, 0);
+  const objectPosition = new THREE.Vector3(-0.25, 5.65, -4);
+  const object = new ClockHand();
+  object.object3D.scale.setScalar(2);
+  object.object3D.position.copy(objectPosition);
+  object.object3D.rotation.set(Math.PI, 0, -Math.PI / 4);
 
   room.add(object.object3D);
 

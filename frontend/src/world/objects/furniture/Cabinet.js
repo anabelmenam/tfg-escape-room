@@ -399,6 +399,14 @@ class Cabinet extends Entity {
     this.drawerManager.update(deltaTime);
   }
 
+  setAudioListener(listener) {
+    this.drawerManager.setAudioListener(listener, this.object3D);
+  }
+
+  dispose() {
+    this.drawerManager.dispose();
+  }
+
   addObjectToDrawerAt(row, column, object3D, localPosition = new THREE.Vector3()) {
     const drawerIndex = this.getDrawerIndex(row, column);
 

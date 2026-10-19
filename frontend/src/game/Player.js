@@ -73,7 +73,11 @@ export class Player {
     this.orbitControls.enabled = false;
 
     document.getElementById("crosshair")?.classList.add("hidden");
-    document.getElementById("focus-exit-hint")?.classList.remove("hidden");
+    const interactionText = document.getElementById("interaction-text");
+    if (interactionText) {
+      interactionText.textContent = "[E] Salir";
+      interactionText.classList.remove("hidden");
+    }
     this.domElement.style.cursor = "default";
 
     if (this.fpControls.isLocked) {
@@ -93,7 +97,11 @@ export class Player {
     this.camera.quaternion.copy(this.focusPreviousQuaternion);
     this.focusedObject = null;
     this.isFocused = false;
-    document.getElementById("focus-exit-hint")?.classList.add("hidden");
+    const interactionText = document.getElementById("interaction-text");
+    if (interactionText) {
+      interactionText.textContent = "";
+      interactionText.classList.add("hidden");
+    }
 
     if (this.isFirstPerson) {
       this.requestPointerLock();

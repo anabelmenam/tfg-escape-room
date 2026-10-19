@@ -3,7 +3,13 @@ import { Entity } from "../Entity";
 import { tInteraction, tItem } from "../../../translations";
 
 class Key extends Entity {
-  constructor({ id, position = new THREE.Vector3(), color = 0xffd700, scalar = 1, inventoryIcon = null } = {}) {
+  constructor({
+    id,
+    position = new THREE.Vector3(),
+    color = 0xb9b4ac,
+    scalar = 1,
+    inventoryIcon = "/images/icons/key.png",
+  } = {}) {
     super(id);
     this.color = color;
     this.inventoryIcon = inventoryIcon;
