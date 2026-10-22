@@ -9,6 +9,7 @@ import {
   Table,
   Paper,
   Key,
+  FinalBolt,
   createKeyBowl,
   createUmbrellaStand,
   createVase,
@@ -34,18 +35,18 @@ const hallwayWoodStyle = {
 
 const hallwayTimelineConfig = {
   past: {
-    wallColor: 0xa7a49c,
-    floorColor: 0x4e4541,
-    ceilingColor: 0x8b8983,
-    carpetColor: 0x51484c,
-    carpetSideColor: 0x242426,
+    wallColor: 0xc8b89d,
+    floorColor: 0x6a4d3c,
+    ceilingColor: 0xb0a18c,
+    carpetColor: 0x762d34,
+    carpetSideColor: 0x3d1c20,
   },
   present: {
-    wallColor: 0xa7a49c,
-    floorColor: 0x4e4541,
-    ceilingColor: 0x8b8983,
-    carpetColor: 0x51484c,
-    carpetSideColor: 0x242426,
+    wallColor: 0xc8b89d,
+    floorColor: 0x6a4d3c,
+    ceilingColor: 0xb0a18c,
+    carpetColor: 0x762d34,
+    carpetSideColor: 0x3d1c20,
   },
 };
 
@@ -55,7 +56,9 @@ const createHallway = ({
   entranceZ = 12.5,
   onObjectFocus = null,
   onHallwayAction = null,
+  testMode = false,
 } = {}) => {
+  const temporaryReviewAccess = testMode;
   const timelineConfig = hallwayTimelineConfig[timeline];
   if (!timelineConfig) {
     throw new Error(`Timeline no válido para Hallway: ${timeline}`);
@@ -104,18 +107,19 @@ const createHallway = ({
   const livingRoomDoor = new Door({
     id: "hallway-living-room-door",
     position: livingRoomDoorPosition,
-    //requiredKey: "living-room-key",
+    requiredKey: temporaryReviewAccess ? null : timeline === "present" ? "living-room-key" : null,
+    locked: !temporaryReviewAccess,
     onUnlock: () => onHallwayAction?.("object.interact", "hallway-living-room-door"),
   });
   room.add(livingRoomDoor.object3D);
 
   const hallwayDoorSpecs = [
-    ["hallway-children-room-door", "hallway-children-room-opening"],
-    ["hallway-bathroom-door", "hallway-bathroom-opening"],
-    ["hallway-kitchen-door", "hallway-kitchen-opening"],
-    ["hallway-street-door", "hallway-street-opening"],
+    { id: "hallway-children-room-door", openingId: "hallway-children-room-opening", requiredKey: temporaryReviewAccess ? null : timeline === "past" ? "study-key" : null, locked: !temporaryReviewAccess },
+    { id: "hallway-bathroom-door", openingId: "hallway-bathroom-opening" },
+    { id: "hallway-kitchen-door", openingId: "hallway-kitchen-opening", requiredKey: temporaryReviewAccess ? null : timeline === "past" ? "crowbar" : null, locked: !temporaryReviewAccess },
+    { id: "hallway-street-door", openingId: "hallway-street-opening", locked: true },
   ];
-  const hallwayDoors = hallwayDoorSpecs.map(([id, openingId]) => {
+  const hallwayDoors = hallwayDoorSpecs.map(({ id, openingId, requiredKey = null, locked = false }) => {
     const opening = passageOpenings.find((entry) => entry.id === openingId);
     const position = opening.position
       .clone()
@@ -124,10 +128,31 @@ const createHallway = ({
       id,
       position,
       rotationY: opening.rotationY,
-      locked: false,
+      requiredKey,
+      locked,
+      onUnlock: ["hallway-children-room-door", "hallway-kitchen-door"].includes(id)
+        ? () => onHallwayAction?.("object.interact", id)
+        : null,
     });
     room.add(door.object3D);
     return door;
+  });
+  const streetDoor = hallwayDoors.find((door) => door.id === "hallway-street-door");
+  const finalBoltSpecs = [
+    { id: "final-bolt-bedroom", keyId: "final-key-bedroom", symbol: "moon", color: 0x9aa7ba },
+    { id: "final-bolt-living-room", keyId: "final-key-living-room", symbol: "flame", color: 0xb56b38 },
+    { id: "final-bolt-children", keyId: "final-key-children", symbol: "star", color: 0xc6a044 },
+    { id: "final-bolt-bathroom", keyId: "final-key-bathroom", symbol: "wave", color: 0x4f91ad },
+  ];
+  const finalBolts = finalBoltSpecs.map((spec, index) => {
+    const bolt = new FinalBolt({
+      ...spec,
+      onUnlock: () => onHallwayAction?.("object.interact", spec.id),
+    });
+    bolt.object3D.position.set(-.45, 2.15 - index * 1.43, streetDoor.thickness / 2 + .11);
+    bolt.object3D.scale.setScalar(.78);
+    streetDoor.doorMesh.add(bolt.object3D);
+    return bolt;
   });
 
   const hallwayLamps = [connectionX + 10, connectionX + 30].map((lampX, index) => {
@@ -143,6 +168,7 @@ const createHallway = ({
     hallwayLamps.forEach((lamp) => lamp.setActive(active));
   };
   setHallwayLights(false);
+  room.add(new THREE.AmbientLight(0xfff4df, 0.3));
 
   const hallwaySwitches = [];
   const onHallwaySwitchPress = (pressedSwitch) => {
@@ -195,13 +221,13 @@ const createHallway = ({
     hasFringes: false,
   });
 
-  const agedDecor = true;
+  const agedDecor = false;
   const consoleVase = createVase({ aged: agedDecor, scale: 0.72, flowers: true });
-  consoleVase.position.set(-0.72, 2.62, 0);
+  consoleVase.position.set(-0.72, 2.51, 0);
   consoleTable.object3D.add(consoleVase);
 
   const keyBowl = createKeyBowl({ aged: agedDecor, scale: 0.82 });
-  keyBowl.position.set(0.9, 2.59, 0);
+  keyBowl.position.set(0.9, 2.51, 0);
   consoleTable.object3D.add(keyBowl);
 
   const umbrellaStand = createUmbrellaStand({ aged: agedDecor, scale: 0.95 });
@@ -218,7 +244,7 @@ const createHallway = ({
   });
   const noteMesh = mazeNote.object3D.children[0];
   noteMesh.material.dispose();
-  noteMesh.material = new THREE.MeshBasicMaterial({ map: mazeNote.texture, side: THREE.DoubleSide });
+  noteMesh.material = new THREE.MeshStandardMaterial({ map: mazeNote.texture, roughness: 0.95, side: THREE.DoubleSide });
   mazeNote.object3D.visible = false;
   mazeNote.setEnabled(false);
   mazeNote.getFocusPosition = () => {
@@ -266,6 +292,11 @@ const createHallway = ({
       ? () => onHallwayAction?.("object.interact", "hallway-maze-mirror")
       : null,
   });
+  if (testMode && timeline === "present") {
+    maze.available = true;
+    mazeMirror.setReleased(true);
+    mazeMirror.setOpen(true);
+  }
   if (maze) room.add(maze.object3D);
   if (mazeMirror) room.add(mazeMirror.object3D);
   if (timeline === "past") room.add(mazeNote.object3D);
@@ -338,6 +369,27 @@ const createHallway = ({
         livingRoomKey.object3D.visible = false;
         livingRoomKey.setEnabled(false);
       }
+      const childrenRoomDoorUnlocked = ["past", "present"].some(
+        (era) => state.timelines?.[era]?.objects?.["hallway-children-room-door"]?.locked === false,
+      );
+      if (childrenRoomDoorUnlocked) {
+        hallwayDoors.find((door) => door.id === "hallway-children-room-door")?.unlock({ notify: false });
+      }
+      const kitchenDoorUnlocked = ["past", "present"].some(
+        (era) => state.timelines?.[era]?.objects?.["hallway-kitchen-door"]?.locked === false
+          || state.timelines?.[era]?.objects?.["living-room-kitchen-door"]?.locked === false,
+      );
+      if (kitchenDoorUnlocked) {
+        hallwayDoors.find((door) => door.id === "hallway-kitchen-door")?.unlock({ notify: false });
+      }
+      finalBolts.forEach((bolt) => {
+        const unlocked = ["past", "present"].some((era) => state.timelines?.[era]?.objects?.[bolt.id]?.unlocked);
+        if (unlocked) bolt.unlock();
+      });
+      const finalDoorState = state.timelines?.past?.objects?.["hallway-street-door"]
+        ?? state.timelines?.present?.objects?.["hallway-street-door"];
+      if (finalDoorState?.locked === false) streetDoor.unlock({ notify: false });
+      if (finalDoorState?.open) streetDoor.open({ notify: false });
     },
     interactables: [
       clock,
@@ -345,10 +397,11 @@ const createHallway = ({
       hallwayExitSwitch,
       livingRoomDoor,
       ...hallwayDoors,
+      ...finalBolts,
       ...(timeline === "present" ? [mazeMirror] : []),
       ...(timeline === "past" ? [mazeNote] : [maze]),
     ],
-    entities: [clock, hallwaySwitch, hallwayExitSwitch, livingRoomDoor, ...hallwayDoors, ...hallwayLamps, ...(mazeMirror ? [mazeMirror] : []), ...(maze ? [maze] : [mazeNote])],
+    entities: [clock, hallwaySwitch, hallwayExitSwitch, livingRoomDoor, ...hallwayDoors, ...finalBolts, ...hallwayLamps, ...(mazeMirror ? [mazeMirror] : []), ...(maze ? [maze] : [mazeNote])],
     mirror: mazeMirror,
     clock,
     hallwaySwitch,

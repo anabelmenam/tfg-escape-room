@@ -17,8 +17,9 @@ import {
   createPottedPlant,
   createSoapDish,
   createTrashBin,
+  FinalKey,
 } from "../objects/index.js";
-import { BathroomSteamPuzzle, STEAM_SEQUENCE } from "../puzzles/index.js";
+import { BathroomSteamPuzzle, STEAM_SEQUENCE, BathroomMosaicPuzzle } from "../puzzles/index.js";
 import { tInteraction, tItem } from "../../translations/index.js";
 
 const createSinkWaterControl = ({ id, vanity }) => {
@@ -40,22 +41,22 @@ const createSinkWaterControl = ({ id, vanity }) => {
 
 const bathroomConfig = {
   past: {
-    wallColor: 0xa7a49c,
-    floorColor: 0x596663,
-    fixtureColor: 0xb9b7ad,
-    cabinetColor: 0x51443b,
-    metalColor: 0x77756e,
-    textileColor: 0x4e6462,
-    ambientIntensity: 0.24,
+    wallColor: 0xc8b89d,
+    floorColor: 0x8ba6a2,
+    fixtureColor: 0xf1ead9,
+    cabinetColor: 0x7b573d,
+    metalColor: 0xb9aa83,
+    textileColor: 0x668e8a,
+    ambientIntensity: 0.38,
   },
   present: {
-    wallColor: 0xa7a49c,
-    floorColor: 0x596663,
-    fixtureColor: 0xb9b7ad,
-    cabinetColor: 0x51443b,
-    metalColor: 0x77756e,
-    textileColor: 0x4e6462,
-    ambientIntensity: 0.24,
+    wallColor: 0xc8b89d,
+    floorColor: 0x8ba6a2,
+    fixtureColor: 0xf1ead9,
+    cabinetColor: 0x7b573d,
+    metalColor: 0xb9aa83,
+    textileColor: 0x668e8a,
+    ambientIntensity: 0.38,
   },
 };
 
@@ -89,19 +90,19 @@ const createBathroom = ({
     door: { wall: "right", position: 0, width: 5, height: 8 },
     omitWalls: ["right"],
     windows: [
-      { id: `bathroom-${timeline}-window`, wall: "back", position: -3.7, width: 3.4, height: 3.4, bottom: 4.4 },
+      { id: `bathroom-${timeline}-window`, wall: "left", position: 0.45, width: 6.2, height: 4.8, bottom: 4.15 },
     ],
   });
   room.name = `Bathroom-${timeline}`;
   room.userData.timeline = timeline;
 
-  const ambientLight = new THREE.AmbientLight(0xb6c2bd, config.ambientIntensity);
+  const ambientLight = new THREE.AmbientLight(0xe8f3ed, config.ambientIntensity);
   const lamp = new Lamp({
     id: `bathroom-${timeline}-lamp`,
     position: new THREE.Vector3(0, height, 0),
     intensityScale: 0.78,
   });
-  lamp.setActive(testMode);
+  lamp.setActive(false);
   const lightSwitch = new Switch({
     id: `bathroom-${timeline}-switch`,
     position: new THREE.Vector3(width / 2, 3.5, -3.4),
@@ -120,7 +121,7 @@ const createBathroom = ({
         height: opening.height,
         glassColor: 0xcfe4df,
         glassOpacity: 0.58,
-        columns: 2,
+        columns: 3,
         rows: 2,
       }),
   );
@@ -228,13 +229,13 @@ const createBathroom = ({
     hasFringes: false,
   });
 
-  const agedDecor = true;
+  const agedDecor = false;
   const toiletries = createBottleSet({ aged: agedDecor, scale: 0.62 });
-  toiletries.position.set(-1.35, 2.85, 0.05);
+  toiletries.position.set(-1.35, 2.79, -0.34);
   vanity.object3D.add(toiletries);
 
   const soapDish = createSoapDish({ aged: agedDecor, scale: 0.72 });
-  soapDish.position.set(1.38, 2.85, 0.05);
+  soapDish.position.set(1.38, 2.79, 0.05);
   vanity.object3D.add(soapDish);
 
   const trashBin = createTrashBin({ aged: agedDecor, scale: 0.88 });
@@ -242,6 +243,34 @@ const createBathroom = ({
 
   const bathroomPlant = createPottedPlant({ aged: agedDecor, scale: 0.75 });
   bathroomPlant.position.set(6.25, 0, -3.75);
+  const mosaicPuzzle = new BathroomMosaicPuzzle({
+    timeline,
+    onFocus: onObjectFocus,
+    onSolved: () => onBathroomAction?.("puzzle.solved", "bathroom-mosaic"),
+    onInsert: () => onBathroomAction?.("object.interact", "bathroom-mosaic", { operation: "insert-tile" }),
+  });
+  mosaicPuzzle.object3D.position.set(2.6, 5.4, 4.82);
+  mosaicPuzzle.object3D.rotation.y = Math.PI;
+  mosaicPuzzle.object3D.scale.setScalar(.76);
+  const finalBathroomKey = timeline === "past"
+    ? new FinalKey({
+        id: "final-key-bathroom",
+        symbol: "wave",
+        color: 0x4f91ad,
+        onCollect: () => onBathroomAction?.("item.pickup", "final-key-bathroom"),
+      })
+    : null;
+  if (finalBathroomKey) {
+    finalBathroomKey.object3D.position.set(0, 0, .58);
+    finalBathroomKey.object3D.scale.setScalar(.42);
+    finalBathroomKey.object3D.visible = false;
+    finalBathroomKey.setEnabled(false);
+    mosaicPuzzle.compartment.add(finalBathroomKey.object3D);
+  }
+  if (testMode && screwdriver) {
+    screwdriver.object3D.visible = true;
+    screwdriver.setEnabled(true);
+  }
   room.add(
     ambientLight,
     lamp.object3D,
@@ -255,14 +284,14 @@ const createBathroom = ({
     bathMat.object3D,
     trashBin,
     bathroomPlant,
+    mosaicPuzzle.object3D,
     ...(steamPuzzle ? [steamPuzzle.effects3D] : []),
   );
   placeAgainstWall(lightSwitch, "right");
 
   [vanity.object3D, toilet.object3D, bathtub.object3D, towelRail.object3D, mirror.object3D].forEach((object) => {
-    applyAgedFurnitureAppearance(object, { intensity: 0.38, wearColor: 0x666860 });
+    applyAgedFurnitureAppearance(object, { intensity: 0.12, wearColor: 0x666860 });
   });
-
   room.updateMatrixWorld(true);
   const solidFurniture = [vanity, toilet, bathtub];
 
@@ -284,6 +313,8 @@ const createBathroom = ({
       ...(sinkWaterControl ? [sinkWaterControl] : []),
       ...(sequenceLock ? [sequenceLock] : []),
       ...(screwdriver ? [screwdriver] : []),
+      mosaicPuzzle,
+      ...(finalBathroomKey ? [finalBathroomKey] : []),
     ],
     entities: [
       lightSwitch,
@@ -296,6 +327,8 @@ const createBathroom = ({
       ...(steamPuzzle ? [steamPuzzle] : []),
       ...(sequenceLock ? [sequenceLock] : []),
       ...(screwdriver ? [screwdriver] : []),
+      mosaicPuzzle,
+      ...(finalBathroomKey ? [finalBathroomKey] : []),
     ],
     applyBathroomState: (state) => {
       hotWaterClueKnown = Boolean(state.timelines?.past?.puzzles?.["bathroom-hot-water"]?.solved) || testMode;
@@ -309,6 +342,19 @@ const createBathroom = ({
       if (state.inventories?.present?.includes("screwdriver") && screwdriver) {
         screwdriver.object3D.visible = false;
         screwdriver.setEnabled(false);
+      }
+      const mosaicState = state.timelines?.present?.puzzles?.["bathroom-mosaic"];
+      if (mosaicState?.tileInserted && timeline === "present") mosaicPuzzle.insertMissingTile();
+      const mosaicSolved = Boolean(mosaicState?.solved);
+      if (mosaicSolved) {
+        if (timeline === "present") mosaicPuzzle.solve({ notify: false });
+        else {
+          mosaicPuzzle.revealCompartment();
+          const unavailable = state.inventories?.past?.includes("final-key-bathroom")
+            || ["past", "present"].some((era) => state.timelines?.[era]?.objects?.["final-bolt-bathroom"]?.unlocked);
+          if (!unavailable) finalBathroomKey?.reveal();
+          else if (finalBathroomKey) { finalBathroomKey.object3D.visible = false; finalBathroomKey.setEnabled(false); }
+        }
       }
     },
     lightSwitch,

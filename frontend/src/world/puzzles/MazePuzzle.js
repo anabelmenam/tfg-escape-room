@@ -33,7 +33,7 @@ export class MazePuzzle extends Entity {
       new THREE.BoxGeometry(3.4, 3.4, 0.18),
       new THREE.MeshStandardMaterial({ color: 0x4a2a17 }),
     );
-    const panel = new THREE.Mesh(new THREE.PlaneGeometry(3.1, 3.1), new THREE.MeshBasicMaterial({ map: this.texture }));
+    const panel = new THREE.Mesh(new THREE.PlaneGeometry(3.1, 3.1), new THREE.MeshStandardMaterial({ map: this.texture, roughness: .88 }));
     panel.position.z = 0.1;
     this.object3D.add(frame, panel);
 

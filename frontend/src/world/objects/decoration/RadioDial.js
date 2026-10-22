@@ -34,7 +34,7 @@ const createRadioDialVisual = ({ index = null, brass = null, darkMaterial = null
   texture.colorSpace = THREE.SRGBColorSpace;
   const face = new THREE.Mesh(
     new THREE.PlaneGeometry(0.42, 0.42),
-    new THREE.MeshBasicMaterial({ map: texture, transparent: true }),
+    new THREE.MeshStandardMaterial({ map: texture, transparent: true, roughness: .65 }),
   );
   indicator.add(face);
   for (let mark = 0; mark < 10; mark += 1) {

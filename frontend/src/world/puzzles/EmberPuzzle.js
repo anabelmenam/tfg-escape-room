@@ -104,7 +104,7 @@ class EmberPuzzle extends Entity {
 
   reveal() {
     this.available = true;
-    this.trySolve();
+    if (!this.isSolved) this.trySolve();
   }
 
   rotateEmber(index) {
@@ -124,6 +124,7 @@ class EmberPuzzle extends Entity {
   }
 
   solve({ notify = true } = {}) {
+    if (this.isSolved) return;
     this.values = [...SOLUTION];
     this.values.forEach((value, index) => { this.dials[index].group.remove(this.dials[index].pointer); this.dials[index].pointer = createSeasonIcon(value); if ([1, 2].includes(value)) this.dials[index].pointer.scale.setScalar(0.66); this.dials[index].pointer.position.z = 0.05; this.dials[index].pointer.traverse((child) => (child.userData.emberIndex = index)); this.dials[index].group.add(this.dials[index].pointer); });
     this.isSolved = true;

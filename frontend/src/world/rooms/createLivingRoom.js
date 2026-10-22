@@ -22,6 +22,7 @@ import {
   FallenPainting,
   PaintingSlot,
   Window,
+  FinalKey,
   createBookStack,
   createCandleCluster,
   createPottedPlant,
@@ -43,6 +44,57 @@ const livingRoomWoodStyle = {
   interiorColor: 0x6b4734,
   drawerInteriorColor: 0x6b4734,
   handleColor: 0x9b773d,
+};
+
+const addCombinationLockHasp = (chest) => {
+  const metal = new THREE.MeshStandardMaterial({ color: 0x655744, roughness: 0.48, metalness: 0.72 });
+  const darkMetal = new THREE.MeshStandardMaterial({ color: 0x292622, roughness: 0.56, metalness: 0.68 });
+  const frontZ = chest.depth / 2 + 0.035;
+
+  // The chest's ornamental key lock would sit behind the combination lock.
+  chest.bodyGroup.getObjectByName(`${chest.id}-lock`)?.removeFromParent();
+  chest.bodyGroup.getObjectByName(`${chest.id}-keyhole`)?.removeFromParent();
+
+  const lowerPlate = new THREE.Mesh(new THREE.BoxGeometry(0.31, 0.17, 0.045), metal);
+  lowerPlate.position.set(0, chest.bodyHeight - 0.12, frontZ);
+  chest.bodyGroup.add(lowerPlate);
+
+  const upperPlate = new THREE.Mesh(new THREE.BoxGeometry(0.31, 0.16, 0.045), metal);
+  upperPlate.position.set(0, 0.105, 0.03);
+  chest.lidGroup.add(upperPlate);
+
+  const tongueShape = new THREE.Shape();
+  tongueShape.moveTo(-0.075, 0.14);
+  tongueShape.lineTo(0.075, 0.14);
+  tongueShape.lineTo(0.075, -0.16);
+  tongueShape.lineTo(-0.075, -0.16);
+  tongueShape.closePath();
+  const shackleOpening = new THREE.Path();
+  shackleOpening.absellipse(0, -0.09, 0.043, 0.052, 0, Math.PI * 2, false);
+  tongueShape.holes.push(shackleOpening);
+  const tongue = new THREE.Mesh(
+    new THREE.ExtrudeGeometry(tongueShape, { depth: 0.035, bevelEnabled: true, bevelSize: 0.006, bevelThickness: 0.006, bevelSegments: 2 }),
+    metal,
+  );
+  tongue.position.set(0, -0.02, 0.05);
+  chest.lidGroup.add(tongue);
+
+  const rivetGeometry = new THREE.CylinderGeometry(0.025, 0.025, 0.018, 14);
+  [-0.12, 0.12].forEach((x) => {
+    const lowerRivet = new THREE.Mesh(rivetGeometry, darkMetal);
+    lowerRivet.rotation.x = Math.PI / 2;
+    lowerRivet.position.set(x, chest.bodyHeight - 0.12, frontZ + 0.037);
+    chest.bodyGroup.add(lowerRivet);
+
+    const upperRivet = lowerRivet.clone();
+    upperRivet.position.set(x, 0.105, 0.063);
+    chest.lidGroup.add(upperRivet);
+  });
+
+  [lowerPlate, upperPlate, tongue].forEach((part) => {
+    part.castShadow = true;
+    part.receiveShadow = true;
+  });
 };
 
 const drawAgedRiddle = (context, canvas) => {
@@ -134,6 +186,7 @@ const createLivingRoom = async ({
   });
 
   room.name = "Living Room";
+  const temporaryReviewAccess = testMode;
 
   const kitchenOpening = kitchenEntrance
     ? passageOpenings.find((opening) => opening.id === kitchenEntrance.id)
@@ -148,10 +201,11 @@ const createLivingRoom = async ({
           ),
         ),
         rotationY: kitchenOpening.rotationY,
-        locked: false,
+        requiredKey: temporaryReviewAccess ? null : timeline === "past" ? "crowbar" : null,
+        locked: !temporaryReviewAccess,
+        onUnlock: () => onLivingRoomAction?.("object.interact", "living-room-kitchen-door"),
       })
     : null;
-
   const windows = windowOpenings.map(
     (opening) =>
       new Window({
@@ -162,7 +216,7 @@ const createLivingRoom = async ({
         height: opening.height,
         columns: 2,
         rows: 2,
-        curtainColor: 0x746c68,
+        curtainColor: 0xa47b63,
       }),
   );
 
@@ -253,49 +307,54 @@ const createLivingRoom = async ({
     position: new THREE.Vector3(9, 1.7, -14.2),
     onSolved: () => onLivingRoomAction?.("object.interact", "living-room-fireplace"),
   });
-  const displayCase = new DisplayCase();
-  displayCase.unlocked = false;
+  const displayCase = timeline === "past" ? new DisplayCase() : null;
+  if (displayCase) displayCase.unlocked = false;
   let hasVitrineLetter = false;
-  const vitrineLetter = new Paper({
+  const vitrineLetter = timeline === "past" ? new Paper({
     id: "living-room-vitrine-letter",
     width: 1.1,
     height: 0.7,
     collectible: true,
     itemName: "family-letter",
     paperColor: "#d8bf83",
+    backColor: "#c5a66d",
     content: drawAgedRiddle,
     inspectionTitle: "Carta familiar envejecida",
     onCollect: () => {
       hasVitrineLetter = true;
       onLivingRoomAction?.("item.pickup", "living-room-vitrine-letter");
     },
-  });
-  vitrineLetter.object3D.position.set(0, 0.62, 0.3);
-  vitrineLetter.object3D.visible = false;
-  vitrineLetter.setEnabled(false);
-  displayCase.object3D.add(vitrineLetter.object3D);
-  displayCase.onOpen = () => {
+  }) : null;
+  if (vitrineLetter && displayCase) {
+    vitrineLetter.object3D.position.set(0.34, 0.185, 0.08);
+    vitrineLetter.object3D.rotation.set(Math.PI / 2, 0, -0.08);
     vitrineLetter.object3D.visible = true;
-    vitrineLetter.setEnabled(true);
-    onLivingRoomAction?.("object.interact", "living-room-display-case");
-  };
+    vitrineLetter.setEnabled(false);
+    displayCase.object3D.add(vitrineLetter.object3D);
+    displayCase.onOpen = () => {
+      vitrineLetter.object3D.visible = true;
+      vitrineLetter.setEnabled(true);
+      onLivingRoomAction?.("object.interact", "living-room-display-case");
+    };
+  }
   const emberClue = timeline === "present" ? new EmberClue() : null;
   const emberPuzzle =
     timeline === "past"
       ? new EmberPuzzle({
           onFocus: onObjectFocus,
-          onSolved: () => { displayCase.unlock(); onLivingRoomAction?.("puzzle.solved", "living-room-embers"); },
+          onSolved: () => { displayCase?.unlock(); onLivingRoomAction?.("puzzle.solved", "living-room-embers"); },
         })
       : null;
   emberClue?.object3D.position.set(0, 1.62, 0.18);
   if (emberClue) emberClue.object3D.visible = false;
-  emberPuzzle?.object3D.position.set(-1.12, 0.34, 0.59);
+  emberPuzzle?.object3D.position.set(-1.12, -0.98, 0.03);
   emberPuzzle?.object3D.scale.setScalar(0.42);
   if (emberClue) fireplace.object3D.add(emberClue.object3D);
-  if (emberPuzzle) displayCase.object3D.add(emberPuzzle.object3D);
+  if (emberPuzzle && displayCase) displayCase.frontLid.add(emberPuzzle.object3D);
+  if (testMode) emberPuzzle?.reveal();
 
   const rainbowDrawing =
-    timeline === "present"
+    timeline === "past"
       ? new Paper({
           id: "living-room-rainbow-drawing",
           width: 1.8,
@@ -314,10 +373,10 @@ const createLivingRoom = async ({
 
   const shelf1 = new Shelf({
     id: "living-room-shelf-1",
-    position: new THREE.Vector3(-13.5, 0, 9.5),
+    position: new THREE.Vector3(-13.5, 0, 9.75),
     rotationY: Math.PI / 2,
     backWall: true,
-    width: 10,
+    width: 9.5,
     height: 7,
     depth: 2,
     shelves: 4,
@@ -340,17 +399,47 @@ const createLivingRoom = async ({
 
   const shelf3 = new Shelf({
     id: "living-room-shelf-3",
-    position: new THREE.Vector3(-13.5, 0, -9.5),
+    position: new THREE.Vector3(-13.5, 0, -9.75),
     rotationY: Math.PI / 2,
     backWall: true,
-    width: 10,
+    width: 9.5,
     height: 7,
     depth: 2,
     shelves: 4,
     thickness: 0.3,
     ...livingRoomWoodStyle,
   });
-  shelf3.addToShelf(displayCase.object3D, { shelf: 1, x: 0, z: 0, placeOnSurface: false });
+  if (displayCase) shelf3.addToShelf(displayCase.object3D, { shelf: 1, x: 0, z: 0, placeOnSurface: false });
+
+  const addShelfDecor = (shelf, specifications) => {
+    specifications.forEach(({ kind, shelf: level, x, z = 0, scale = 1 }) => {
+      let decoration;
+      if (kind === "books") decoration = createBookStack({ aged: false, scale });
+      if (kind === "vase") decoration = createVase({ aged: false, scale });
+      if (kind === "candles") decoration = createCandleCluster({ aged: false, scale, count: 2 });
+      if (decoration) shelf.addToShelf(decoration, { shelf: level, x, z });
+    });
+  };
+  addShelfDecor(shelf1, [
+    { kind: "books", shelf: 0, x: -2.7, scale: 1.15 },
+    { kind: "vase", shelf: 0, x: 2.55, scale: .8 },
+    { kind: "candles", shelf: 2, x: -2.7, scale: .95 },
+    { kind: "books", shelf: 3, x: 2.25, scale: 1.05 },
+  ]);
+  addShelfDecor(shelf2, [
+    { kind: "books", shelf: 0, x: -2.55, scale: 1.12 },
+    { kind: "candles", shelf: 0, x: 2.65, scale: .9 },
+    { kind: "vase", shelf: 2, x: -2.75, scale: .72 },
+    { kind: "books", shelf: 2, x: 2.35, scale: 1.08 },
+    { kind: "candles", shelf: 3, x: 0, scale: .92 },
+  ]);
+  addShelfDecor(shelf3, [
+    { kind: "books", shelf: 0, x: -2.55, scale: 1.1 },
+    { kind: "vase", shelf: 0, x: 2.65, scale: .76 },
+    { kind: "candles", shelf: 2, x: -2.65, scale: .9 },
+    { kind: "books", shelf: 2, x: 2.35, scale: 1.02 },
+    { kind: "vase", shelf: 3, x: 0, scale: .68 },
+  ]);
 
   const cabinet = new Cabinet({
     id: "living-room-cabinet",
@@ -365,21 +454,25 @@ const createLivingRoom = async ({
     ...livingRoomWoodStyle,
   });
   const cabinetInteractables = cabinet.getInteractables();
-  const agedDecor = true;
+  const agedDecor = false;
   const tableBooks = createBookStack({ aged: agedDecor, scale: 1.05 });
-  tableBooks.position.set(-1.45, 2.18, 0.38);
+  tableBooks.position.set(-1.45, 2.01, 0.38);
   const tableCandles = createCandleCluster({ aged: agedDecor, scale: 1.05, count: 2 });
-  tableCandles.position.set(1.4, 2.18, 0.2);
+  tableCandles.position.set(1.4, 2.01, 0.2);
   table1.object3D.add(tableBooks, tableCandles);
   const cabinetVase = createVase({ aged: agedDecor, scale: 0.82 });
-  cabinetVase.position.set(0, 3.12, 0);
+  cabinetVase.position.set(0, 3.01, 0);
   cabinet.object3D.add(cabinetVase);
   const livingRoomPlant = createPottedPlant({ aged: agedDecor, scale: 1.2 });
-  livingRoomPlant.position.set(-10.5, 0, 12.2);
+  livingRoomPlant.position.set(11.55, 0, -9.35);
   const livingRoomFrames = createWallFrameCluster({
     aged: agedDecor,
     scale: 0.95,
-    imagePaths: ["/images/decor/family-photo-1980s.png", "", ""],
+    imagePaths: [
+      "/images/decor/family-photo-1980s.png",
+      "/images/decor/couple-photo-1980s.png",
+      "/images/decor/bedroom-landscape.png",
+    ],
   });
   livingRoomFrames.position.set(0, 7.1, 14.78);
   livingRoomFrames.rotation.y = Math.PI;
@@ -394,6 +487,7 @@ const createLivingRoom = async ({
     locked: timeline === "past",
     ...livingRoomWoodStyle,
   });
+  addCombinationLockHasp(chest);
 
   const studyKey =
     timeline === "past"
@@ -403,11 +497,28 @@ const createLivingRoom = async ({
           scalar: 1.45,
         })
       : null;
+  const finalLivingRoomKey = timeline === "present"
+    ? new FinalKey({
+        id: "final-key-living-room",
+        symbol: "flame",
+        color: 0xb56b38,
+        onCollect: () => onLivingRoomAction?.("item.pickup", "final-key-living-room"),
+      })
+    : null;
+  let finalLivingRoomKeyEarned = false;
+  let finalLivingRoomKeyUnavailable = false;
+  if (finalLivingRoomKey) {
+    finalLivingRoomKey.object3D.visible = false;
+    finalLivingRoomKey.setEnabled(false);
+    chest.addItem(finalLivingRoomKey, { position: new THREE.Vector3(0, .22, 0), scale: 1.15, visible: false });
+  }
+  let studyKeyUnavailable = false;
   if (studyKey) {
     studyKey.setEnabled(false);
     studyKey.object3D.visible = false;
     studyKey.interact = (player) => {
       if (!player.inventory.add(studyKey)) return;
+      studyKeyUnavailable = true;
       studyKey.object3D.visible = false;
       studyKey.setEnabled(false);
       onLivingRoomAction?.("item.pickup", "study-key");
@@ -418,11 +529,11 @@ const createLivingRoom = async ({
     timeline === "past"
       ? new Lock({
           id: "living-room-chest-lock",
-          position: new THREE.Vector3(0, 0.5, 0.59),
-          scale: 0.11,
+          position: new THREE.Vector3(0, 0.405, 0.61),
+          scale: 0.074,
           password: "3816",
           onFocus: onObjectFocus,
-          canUnlock: () => hasVitrineLetter,
+          canUnlock: () => testMode || hasVitrineLetter,
           onUnlock: () => {
             chest.unlock();
             onLivingRoomAction?.("object.interact", "living-room-chest");
@@ -431,9 +542,14 @@ const createLivingRoom = async ({
       : null;
   if (chestLock) chest.object3D.add(chestLock.object3D);
   chest.onOpenChange = ({ isOpen }) => {
-    if (!isOpen || !studyKey || studyKey.object3D.visible) return;
-    studyKey.object3D.visible = true;
-    studyKey.setEnabled(true);
+    if (!isOpen) return;
+    if (studyKey && !studyKeyUnavailable && !studyKey.object3D.visible) {
+      studyKey.object3D.visible = true;
+      studyKey.setEnabled(true);
+    }
+    if (finalLivingRoomKey && finalLivingRoomKeyEarned && !finalLivingRoomKeyUnavailable && !finalLivingRoomKey.object3D.visible) {
+      finalLivingRoomKey.reveal();
+    }
   };
 
   if (studyKey) {
@@ -451,7 +567,8 @@ const createLivingRoom = async ({
     placeOnSurface: false,
   });
 
-  const fallenPainting = new FallenPainting({ position: new THREE.Vector3(-12.55, 1.5, 9.5), rotationY: Math.PI / 2 });
+  const fallenPainting = new FallenPainting({ position: new THREE.Vector3(-12.55, 1.5, 9.75), rotationY: Math.PI / 2 });
+  if (testMode && timeline === "past") fallenPainting.reveal();
   const paintingSlot = new PaintingSlot({
     timeline,
     position: new THREE.Vector3(13.5, 5.2, -3),
@@ -540,7 +657,7 @@ const createLivingRoom = async ({
     ["indigo", 0x6960aa, 5],
   ];
   const rainbowBooks =
-    timeline === "past"
+    timeline === "present"
       ? rainbowBookData.map(([name, color, correctSlot], currentSlot) => {
           const book = new Book({
             id: `rainbow-book-${name}`,
@@ -549,7 +666,7 @@ const createLivingRoom = async ({
             correctSlot,
             rotationY: Math.PI / 2,
           });
-          const x = currentSlot === rainbowBookData.length - 1 ? 1.5 + currentSlot * 0.52 : 1.2 + currentSlot * 0.52;
+          const x = 1.1 + currentSlot * 0.52;
           shelf1.addToShelf(book.object3D, { shelf: 1, x, z: 0 });
           return book;
         })
@@ -557,17 +674,17 @@ const createLivingRoom = async ({
   let booksRevealed = false;
   let shelfIsOpen = false;
   const moveShelf = (open) => {
-    if (timeline !== "past" || !booksRevealed || shelfIsOpen === open || shelf1.isMechanismMoving) return;
+    if (!booksRevealed || shelfIsOpen === open || shelf1.isMechanismMoving) return;
     shelfIsOpen = open;
     shelf1.openMechanism({ angle: open ? -Math.PI / 2 : Math.PI / 2, duration: 2, side: "left" });
   };
   const revealBooksResult = () => {
     booksRevealed = true;
     moveShelf(true);
-    fallenPainting.reveal();
+    if (timeline === "past") fallenPainting.reveal();
   };
   const bookPuzzle =
-    timeline === "past"
+    timeline === "present"
       ? new BookPuzzle({
           id: "living-room-rainbow-books",
           books: rainbowBooks,
@@ -581,7 +698,7 @@ const createLivingRoom = async ({
   if (testMode && timeline === "present") paintingSlot.setPlaced(true);
   shelf1.interact = () => moveShelf(!shelfIsOpen);
   shelf1.getInteractionText = () =>
-    timeline === "past" && booksRevealed ? tInteraction(shelfIsOpen ? "close" : "open", tItem("shelf")) : null;
+    booksRevealed ? tInteraction(shelfIsOpen ? "close" : "open", tItem("shelf")) : null;
 
   room.add(sofa.object3D);
   room.add(armchair1.object3D);
@@ -650,9 +767,10 @@ const createLivingRoom = async ({
       chest,
       ...(chestLock ? [chestLock] : []),
       ...(studyKey ? [studyKey] : []),
+      ...(finalLivingRoomKey ? [finalLivingRoomKey] : []),
       cabinet,
       ...cabinetInteractables,
-      ...(timeline === "past" ? [shelf1] : []),
+      shelf1,
       ...rainbowBooks,
       ...(rainbowDrawing ? [rainbowDrawing] : []),
       ...(timeline === "past" ? [fallenPainting] : []),
@@ -660,8 +778,8 @@ const createLivingRoom = async ({
       ...(paintingSlot.hiddenScissors ? [paintingSlot.hiddenScissors] : []),
       ...(cushion ? [cushion, match] : []),
       fireplace,
-      displayCase,
-      vitrineLetter,
+      ...(displayCase ? [displayCase] : []),
+      ...(vitrineLetter ? [vitrineLetter] : []),
       ...(emberPuzzle ? [emberPuzzle] : []),
     ],
     entities: [
@@ -674,6 +792,7 @@ const createLivingRoom = async ({
       chest,
       ...(chestLock ? [chestLock] : []),
       ...(studyKey ? [studyKey] : []),
+      ...(finalLivingRoomKey ? [finalLivingRoomKey] : []),
       sofa,
       armchair1,
       armchair2,
@@ -684,15 +803,15 @@ const createLivingRoom = async ({
       ...(paintingSlot.hiddenScissors ? [paintingSlot.hiddenScissors] : []),
       ...(cushion ? [cushion, match] : []),
       fireplace,
-      displayCase,
-      vitrineLetter,
+      ...(displayCase ? [displayCase] : []),
+      ...(vitrineLetter ? [vitrineLetter] : []),
       ...(emberPuzzle ? [emberPuzzle] : []),
       ...decorativeCushions,
       shelf1,
       paintingSlot,
     ],
     applyLivingRoomState: (state) => {
-      if (state.timelines?.past?.puzzles?.["living-room-rainbow-books"]?.solved) revealBooksResult();
+      if (state.timelines?.present?.puzzles?.["living-room-rainbow-books"]?.solved) revealBooksResult();
       const paintingState = state.timelines?.past?.objects?.["living-room-painting-slot"];
       if (paintingState?.placed && timeline === "past") paintingSlot.setPlaced(true);
       for (const index of paintingState?.restoredPieces ?? []) paintingSlot.restorePiece(index);
@@ -711,23 +830,43 @@ const createLivingRoom = async ({
       }
       if (state.timelines?.past?.puzzles?.["living-room-embers"]?.solved) {
         emberPuzzle?.solve({ notify: false });
-        displayCase.unlock();
+        displayCase?.unlock();
       }
-      if (livingRoomState?.["living-room-display-case"]?.open) {
+      const displayCaseState = state.timelines?.past?.objects?.["living-room-display-case"];
+      if (displayCaseState?.open && displayCase && vitrineLetter) {
         displayCase.setOpened();
         vitrineLetter.object3D.visible = true;
         vitrineLetter.setEnabled(true);
       }
       hasVitrineLetter = Boolean(state.inventories?.past?.includes("living-room-vitrine-letter"));
+      if (hasVitrineLetter) {
+        if (vitrineLetter) {
+          vitrineLetter.object3D.visible = false;
+          vitrineLetter.setEnabled(false);
+        }
+      }
       const chestState = state.timelines?.past?.objects?.["living-room-chest"] ?? state.timelines?.present?.objects?.["living-room-chest"];
       if (chestState?.locked === false) {
+        finalLivingRoomKeyEarned = true;
         chest.unlock();
         chestLock?.setUnlocked();
       }
-      if (studyKey && state.inventories?.[timeline]?.includes("study-key")) {
+      if (finalLivingRoomKey) {
+        finalLivingRoomKeyUnavailable = state.inventories?.present?.includes("final-key-living-room")
+          || ["past", "present"].some((era) => state.timelines?.[era]?.objects?.["final-bolt-living-room"]?.unlocked);
+        if (finalLivingRoomKeyUnavailable) { finalLivingRoomKey.object3D.visible = false; finalLivingRoomKey.setEnabled(false); }
+      }
+      const childrenRoomDoorUnlocked = state.timelines?.past?.objects?.["hallway-children-room-door"]?.locked === false;
+      if (studyKey && (state.inventories?.[timeline]?.includes("study-key") || childrenRoomDoorUnlocked)) {
+        studyKeyUnavailable = true;
         studyKey.object3D.visible = false;
         studyKey.setEnabled(false);
       }
+      const kitchenDoorUnlocked = ["past", "present"].some((era) =>
+        state.timelines?.[era]?.objects?.["living-room-kitchen-door"]?.locked === false
+        || state.timelines?.[era]?.objects?.["hallway-kitchen-door"]?.locked === false,
+      );
+      if (kitchenDoorUnlocked) kitchenDoor?.unlock({ notify: false });
     },
     spawnLookAt: new THREE.Vector3(0, 5.25, 0),
     spawnPosition: new THREE.Vector3(0, 5.25, 8),

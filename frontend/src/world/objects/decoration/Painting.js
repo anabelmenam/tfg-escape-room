@@ -157,7 +157,7 @@ class PaintingSlot extends Entity {
     if (!this.isPlaced) {
       const shadow = new THREE.Mesh(
         new THREE.PlaneGeometry(3, 2),
-        new THREE.MeshBasicMaterial({ color: 0x16181a, transparent: true, opacity: 0.72, side: THREE.DoubleSide }),
+        new THREE.MeshStandardMaterial({ color: 0x16181a, transparent: true, opacity: 0.72, roughness: 1, side: THREE.DoubleSide }),
       );
       shadow.position.z = -0.07;
       this.object3D.add(shadow);

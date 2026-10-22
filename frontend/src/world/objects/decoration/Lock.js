@@ -191,10 +191,11 @@ class Lock extends Entity {
 
     texture.colorSpace = THREE.SRGBColorSpace;
 
-    const material = new THREE.MeshBasicMaterial({
+    const material = new THREE.MeshStandardMaterial({
       map: texture,
       transparent: true,
       side: THREE.DoubleSide,
+      roughness: 0.8,
     });
 
     const geometry = new THREE.PlaneGeometry(0.35, 0.45);

@@ -9,6 +9,7 @@ export class InteractionManager {
     this.raycaster = new THREE.Raycaster();
 
     this.interactable = null;
+    this.interactableControl = null;
     this.occluders = [];
     this.interactionDistance = 8;
 
@@ -45,7 +46,9 @@ export class InteractionManager {
       return;
     }
     const entity = this.findEntityFromObject(intersection.object);
-    this.setInteractable(entity);
+    const detectedControl = this.findControlFromObject(intersection.object, entity);
+    const control = entity?.resolveInteractionControl?.(detectedControl, intersection) ?? detectedControl;
+    this.setInteractable(entity, control);
   }
 
   findEntityFromObject(object) {
@@ -66,21 +69,40 @@ export class InteractionManager {
     return null;
   }
 
-  setInteractable(entity) {
+  findControlFromObject(object, entity) {
+    if (!entity) return null;
+
+    let currentObject = object;
+    while (currentObject) {
+      if (currentObject.userData?.roomPuzzleControl) {
+        return currentObject.userData.roomPuzzleControl;
+      }
+      if (currentObject === entity.object3D) break;
+      currentObject = currentObject.parent;
+    }
+
+    return null;
+  }
+
+  setInteractable(entity, control = null) {
     const interactionText = document.getElementById("interaction-text");
     if (!interactionText) {
       return;
     }
 
-    const text = entity?.enabled ? entity.getInteractionText?.(this.player) : null;
+    const text = entity?.enabled
+      ? entity.getInteractionText?.(this.player, control)
+      : null;
     if (!entity || !text) {
       this.interactable = null;
+      this.interactableControl = null;
       interactionText.textContent = "";
       interactionText.classList.add("hidden");
       return;
     }
 
     this.interactable = entity;
+    this.interactableControl = control;
     interactionText.textContent = text;
     interactionText.classList.remove("hidden");
   }
@@ -92,8 +114,12 @@ export class InteractionManager {
     }
 
     const currentInteractable = this.interactable;
-    currentInteractable.interact(this.player);
-    if (!currentInteractable.enabled || !currentInteractable.getInteractionText?.(this.player)) {
+    const currentControl = this.interactableControl;
+    currentInteractable.interact(this.player, currentControl);
+    if (
+      !currentInteractable.enabled ||
+      !currentInteractable.getInteractionText?.(this.player, currentControl)
+    ) {
       this.setInteractable(null);
     }
   }

@@ -213,11 +213,13 @@ class Shelf extends Entity {
     object.position.set(0, 0, 0);
     object.updateMatrixWorld(true);
 
-    const objectSize = this.getObjectLocalSize(object);
+    const objectBounds = this.getObjectLocalBounds(object);
+    const objectSize = objectBounds.getSize(new THREE.Vector3());
+    const objectCenter = objectBounds.getCenter(new THREE.Vector3());
     const shelfY = this.getShelfHeight(shelf);
-    const finalX = this.clampXPosition(x, objectSize.x);
-    const finalZ = this.clampZPosition(z, objectSize.z);
-    const finalY = placeOnSurface ? shelfY + objectSize.y / 2 : shelfY;
+    const finalX = this.clampXPosition(x, objectSize.x) - objectCenter.x;
+    const finalZ = this.clampZPosition(z, objectSize.z) - objectCenter.z;
+    const finalY = placeOnSurface ? shelfY - objectBounds.min.y : shelfY;
 
     object.position.set(finalX, finalY, finalZ);
     object.userData.shelfIndex = shelf;
@@ -236,21 +238,22 @@ class Shelf extends Entity {
     return this.shelfLevels[shelf];
   }
 
-  getObjectLocalSize(object) {
+  getObjectLocalBounds(object) {
     object.updateMatrixWorld(true);
 
-    const box = new THREE.Box3().setFromObject(object);
-    const size = new THREE.Vector3();
+    const worldBounds = new THREE.Box3().setFromObject(object);
+    const inverseContentMatrix = this.contentGroup.matrixWorld.clone().invert();
+    const localBounds = new THREE.Box3().makeEmpty();
 
-    box.getSize(size);
+    for (const x of [worldBounds.min.x, worldBounds.max.x]) {
+      for (const y of [worldBounds.min.y, worldBounds.max.y]) {
+        for (const z of [worldBounds.min.z, worldBounds.max.z]) {
+          localBounds.expandByPoint(new THREE.Vector3(x, y, z).applyMatrix4(inverseContentMatrix));
+        }
+      }
+    }
 
-    const worldScale = this.contentGroup.getWorldScale(new THREE.Vector3());
-
-    size.x /= Math.abs(worldScale.x) || 1;
-    size.y /= Math.abs(worldScale.y) || 1;
-    size.z /= Math.abs(worldScale.z) || 1;
-
-    return size;
+    return localBounds;
   }
 
   clampXPosition(x, objectWidth) {

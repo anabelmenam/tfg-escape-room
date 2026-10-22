@@ -35,6 +35,7 @@ export class Player {
     this.focusedObject = null;
     this.focusPreviousPosition = new THREE.Vector3();
     this.focusPreviousQuaternion = new THREE.Quaternion();
+    this.focusPreviousUp = new THREE.Vector3();
 
     this.fpControls = new PointerLockControls(camera, domElement);
     this.fpControls.addEventListener("lock", () => {
@@ -60,6 +61,10 @@ export class Player {
     this.orbitControls.update();
   }
 
+  setMouseSensitivity(sensitivity) {
+    this.fpControls.pointerSpeed = THREE.MathUtils.clamp(sensitivity, 0.2, 2);
+  }
+
   focusObject(object) {
     if (this.isFocused) {
       return;
@@ -69,13 +74,14 @@ export class Player {
     this.focusedObject = object;
     this.focusPreviousPosition.copy(this.camera.position);
     this.focusPreviousQuaternion.copy(this.camera.quaternion);
+    this.focusPreviousUp.copy(this.camera.up);
     object.setFocused?.(true);
     this.orbitControls.enabled = false;
 
     document.getElementById("crosshair")?.classList.add("hidden");
     const interactionText = document.getElementById("interaction-text");
     if (interactionText) {
-      interactionText.textContent = "[E] Salir";
+      interactionText.textContent = object.getFocusHint?.() ?? "[E] Salir";
       interactionText.classList.remove("hidden");
     }
     this.domElement.style.cursor = "default";
@@ -84,6 +90,7 @@ export class Player {
       this.fpControls.unlock();
     }
     this.camera.position.copy(object.getFocusPosition());
+    this.camera.up.copy(object.getFocusUp?.() ?? new THREE.Vector3(0, 1, 0));
     this.camera.lookAt(object.getLookAtPosition());
   }
 
@@ -95,6 +102,7 @@ export class Player {
     this.focusedObject.setFocused?.(false);
     this.camera.position.copy(this.focusPreviousPosition);
     this.camera.quaternion.copy(this.focusPreviousQuaternion);
+    this.camera.up.copy(this.focusPreviousUp);
     this.focusedObject = null;
     this.isFocused = false;
     const interactionText = document.getElementById("interaction-text");

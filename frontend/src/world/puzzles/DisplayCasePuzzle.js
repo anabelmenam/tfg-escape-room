@@ -79,8 +79,6 @@ class DisplayCase extends Entity {
     const material = this.keepsakeSlots[index]?.material;
     if (material) {
       material.color.setHex(0xb68a43);
-      material.emissive.setHex(0x3f2407);
-      material.emissiveIntensity = 0.35;
     }
     if (this.insertedKeepsakes.size === this.keepsakeIds.length) this.unlock();
     return true;

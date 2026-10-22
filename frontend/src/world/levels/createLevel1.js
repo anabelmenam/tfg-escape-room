@@ -12,7 +12,7 @@ const timelineByPlayerRole = {
   B: "present",
 };
 
-const createLevel1 = async ({ playerRole, onSwitchPress, eventManager, onDoorOpenChange, onDoorUnlocked, onObjectFocus, testArea = null, onHallwayAction = null, onBedroomAction = null, onLivingRoomAction = null, onBathroomAction = null, testMode = false } = {}) => {
+const createLevel1 = async ({ playerRole, onSwitchPress, eventManager, onDoorOpenChange, onDoorUnlocked, onObjectFocus, isFlashlightOn = null, testArea = null, onHallwayAction = null, onBedroomAction = null, onChildrenRoomAction = null, onKitchenAction = null, onLivingRoomAction = null, onBathroomAction = null, testMode = false } = {}) => {
   if (playerRole === "A" || playerRole === "B") {
     const timeline = timelineByPlayerRole[playerRole];
     const bedroom = await createBedroom({
@@ -29,6 +29,7 @@ const createLevel1 = async ({ playerRole, onSwitchPress, eventManager, onDoorOpe
       onHallwayAction,
       onObjectFocus,
       timeline,
+      testMode,
       entranceX: bedroom.doorOpening.position.x,
       entranceZ: bedroom.doorOpening.position.z,
     });
@@ -43,9 +44,9 @@ const createLevel1 = async ({ playerRole, onSwitchPress, eventManager, onDoorOpe
       entrance: { id: "hallway-living-room-connection", wall: "back", position: livingRoomEntrancePosition, width: 5, height: 8 },
       kitchenEntrance: { id: "living-room-kitchen-connection", wall: "right", position: 7, width: 5, height: 8 },
     });
-    const childrenRoom = createChildrenRoom({ timeline, testMode });
+    const childrenRoom = createChildrenRoom({ timeline, onObjectFocus, onChildrenRoomAction, isFlashlightOn, testMode });
     const bathroom = createBathroom({ timeline, onObjectFocus, onBathroomAction, testMode });
-    const kitchen = createKitchen({ timeline, testMode });
+    const kitchen = createKitchen({ timeline, onObjectFocus, onKitchenAction, testMode });
     childrenRoom.room.position.set(
       hallway.room.position.x + hallway.childrenRoomOpening.position.x,
       0,

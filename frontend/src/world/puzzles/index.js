@@ -12,6 +12,15 @@ import { FamilyKeepsake } from "./FamilyKeepsakePuzzle.js";
 import { EmberClue, EmberPuzzle } from "./EmberPuzzle.js";
 import { BathroomSteamPuzzle, STEAM_SEQUENCE } from "./BathroomSteamPuzzle.js";
 import { HallwayMazeMirror } from "./HallwayMazeMirror.js";
+import { BlockConstructionPuzzle } from "./BlockConstructionPuzzle.js";
+import { MusicPuzzle } from "./MusicPuzzle.js";
+import { PhotoBoardPuzzle, MEMORIES, MEMORY_PHOTO_IDS } from "./PhotoBoardPuzzle.js";
+import { KitchenIngredient, KitchenNapkin, MosaicTile } from "./KitchenItems.js";
+import { RecipePuzzle } from "./RecipePuzzle.js";
+import { StovePuzzle } from "./StovePuzzle.js";
+import { TableSettingPuzzle } from "./TableSettingPuzzle.js";
+import { OvenControlPuzzle } from "./OvenControlPuzzle.js";
+import { BathroomMosaicPuzzle } from "./BathroomMosaicPuzzle.js";
 
 export {
   BookPuzzle,
@@ -31,5 +40,18 @@ export {
   BathroomSteamPuzzle,
   STEAM_SEQUENCE,
   HallwayMazeMirror,
+  BlockConstructionPuzzle,
+  MusicPuzzle,
+  PhotoBoardPuzzle,
+  MEMORIES,
+  MEMORY_PHOTO_IDS,
+  KitchenIngredient,
+  KitchenNapkin,
+  RecipePuzzle,
+  StovePuzzle,
+  TableSettingPuzzle,
+  OvenControlPuzzle,
+  MosaicTile,
+  BathroomMosaicPuzzle,
 };
 export { ClockPuzzle } from "./ClockPuzzle.js";

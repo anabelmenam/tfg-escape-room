@@ -96,8 +96,9 @@ class AlarmClock extends Entity {
 
     this.screenTexture = this.createScreenTexture();
 
-    const material = new THREE.MeshBasicMaterial({
+    const material = new THREE.MeshStandardMaterial({
       map: this.screenTexture,
+      roughness: 0.5,
     });
 
     this.screen = new THREE.Mesh(geometry, material);

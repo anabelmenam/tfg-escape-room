@@ -258,9 +258,10 @@ class Safe extends Entity {
     const texture = new THREE.CanvasTexture(canvas);
     texture.colorSpace = THREE.SRGBColorSpace;
 
-    const material = new THREE.MeshBasicMaterial({
+    const material = new THREE.MeshStandardMaterial({
       map: texture,
       transparent: true,
+      roughness: 0.65,
     });
 
     const mesh = new THREE.Mesh(new THREE.PlaneGeometry(width * 0.75, width * 0.75), material);

@@ -145,11 +145,12 @@ class Book extends Entity {
     const texture = new THREE.CanvasTexture(canvas);
     texture.colorSpace = THREE.SRGBColorSpace;
 
-    const material = new THREE.MeshBasicMaterial({
+    const material = new THREE.MeshStandardMaterial({
       map: texture,
       transparent: true,
       side: THREE.DoubleSide,
       depthWrite: false,
+      roughness: 0.9,
     });
 
     const geometry = new THREE.PlaneGeometry(this.depth * 0.7, this.height * 0.35);

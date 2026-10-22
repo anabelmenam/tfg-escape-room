@@ -9,10 +9,12 @@ class Key extends Entity {
     color = 0xb9b4ac,
     scalar = 1,
     inventoryIcon = "/images/icons/key.png",
+    onCollect = null,
   } = {}) {
     super(id);
     this.color = color;
     this.inventoryIcon = inventoryIcon;
+    this.onCollect = onCollect;
     this.object3D = this.createObject();
     this.object3D.position.copy(position);
     this.object3D.rotateZ(Math.PI / 2);
@@ -114,6 +116,7 @@ class Key extends Entity {
 
     this.object3D.visible = false;
     this.setEnabled(false);
+    this.onCollect?.();
   }
 
   update() {

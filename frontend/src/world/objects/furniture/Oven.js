@@ -36,8 +36,6 @@ class Oven extends Entity {
     const enamel = new THREE.MeshStandardMaterial({ color: 0x111416, roughness: 0.34, metalness: 0.22 });
     const displayMaterial = new THREE.MeshStandardMaterial({
       color: 0x182126,
-      emissive: 0x35505a,
-      emissiveIntensity: 0.35,
       roughness: 0.18,
       metalness: 0.22,
     });

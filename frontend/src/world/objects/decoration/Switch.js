@@ -9,6 +9,7 @@ class Switch extends Entity {
 
     this.onPress = onPress;
     this.powerAvailable = powerAvailable;
+    this.audioController = null;
 
     this.createPlate();
     this.createLever();
@@ -62,6 +63,9 @@ class Switch extends Entity {
     }
 
     this.setActive(!this.active);
+    this.audioController?.play("switchToggle", {
+      playbackRate: this.active ? 1.08 : 0.92,
+    });
 
     if (this.onPress) {
       this.onPress(this);
@@ -70,6 +74,10 @@ class Switch extends Entity {
 
   interact() {
     this.press();
+  }
+
+  setAudioListener(audioController) {
+    this.audioController = audioController;
   }
 
   setPowerAvailable(available) {
@@ -82,6 +90,10 @@ class Switch extends Entity {
 
   getInteractionText() {
     return this.powerAvailable ? tInteraction("pressSwitch") : tInteraction("noPower");
+  }
+
+  dispose() {
+    this.audioController = null;
   }
 }
 

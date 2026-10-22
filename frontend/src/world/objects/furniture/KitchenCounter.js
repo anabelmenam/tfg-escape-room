@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { Entity } from "../Entity.js";
 import createBox from "../helpers/createBox.js";
 import { HingedPanelManager } from "../helpers/HingedPanelManager.js";
+import { DrawerManager } from "../helpers/DrawerManager.js";
 import { loadTexture } from "../helpers/loadTexture.js";
 import { createRoundedPullHandle } from "../helpers/createRoundedPullHandle.js";
 import { createCurvedFaucet } from "../helpers/createCurvedFaucet.js";
@@ -54,6 +55,7 @@ class KitchenCounter extends Entity {
     this.object3D.position.copy(position);
     this.object3D.rotation.y = rotationY;
     this.panelManager = new HingedPanelManager({ ownerId: id });
+    this.drawerManager = new DrawerManager({ ownerId: id, drawerSpeed: 7 });
 
     const woodMap = loadTexture({
       path: "/textures/furniture/kitchen-cabinet-sage-enamel.png",
@@ -118,59 +120,68 @@ class KitchenCounter extends Entity {
       }
       const hingeSign = index === doorCount - 1 && doorCount > 1 ? 1 : -1;
       const leafWidth = bayWidth - 0.1;
-      const leafHeight = 2.28;
+      const hasDrawer = hasSink && doorCount > 1 && index === 0;
+      const leafHeight = hasDrawer ? 1.7 : 2.28;
       const door = new THREE.Group();
-      door.position.set(x + hingeSign * leafWidth / 2, 1.32, 1.12);
+      door.position.set(x + hingeSign * leafWidth / 2, hasDrawer ? 1.03 : 1.32, 1.12);
       const handle = createRoundedPullHandle({
         material: metal,
         height: 0.72,
       });
-      handle.position.set(-hingeSign * (leafWidth - 0.25), 0.55, 0.13);
+      handle.position.set(-hingeSign * (leafWidth - 0.25), hasDrawer ? 0.3 : 0.55, 0.13);
       door.add(
         createBox({ width: leafWidth, height: leafHeight, depth: 0.12, position: new THREE.Vector3(-hingeSign * leafWidth / 2, 0, 0), material: cabinet }),
         handle,
       );
       this.object3D.add(door);
       this.panelManager.register({ panel: door, index, openRotation: hingeSign < 0 ? -Math.PI / 2 : Math.PI / 2 });
+      if (hasDrawer) {
+        const drawer = new THREE.Group();
+        drawer.position.set(x, 2.18, 1.12);
+        drawer.add(
+          createBox({ width: leafWidth, height: 0.6, depth: 0.12, position: new THREE.Vector3(0, 0.06, 0), material: cabinet }),
+          createBox({ width: leafWidth - 0.12, height: 0.09, depth: 1.68, position: new THREE.Vector3(0, -0.2, -0.85), material: dark }),
+          createBox({ width: 0.09, height: 0.37, depth: 1.68, position: new THREE.Vector3(-leafWidth / 2 + 0.08, 0, -0.85), material: dark }),
+          createBox({ width: 0.09, height: 0.37, depth: 1.68, position: new THREE.Vector3(leafWidth / 2 - 0.08, 0, -0.85), material: dark }),
+          createBox({ width: leafWidth - 0.12, height: 0.37, depth: 0.09, position: new THREE.Vector3(0, 0, -1.64), material: dark }),
+        );
+        const drawerHandle = createRoundedPullHandle({ material: metal, height: 0.52 });
+        drawerHandle.rotation.z = Math.PI / 2;
+        drawerHandle.position.z = 0.13;
+        drawer.add(drawerHandle);
+        this.object3D.add(drawer);
+        this.drawerManager.registerDrawer({ drawer, index: 0, closedZ: 1.12, openZ: 2.38 });
+      }
     });
 
     if (hasSink) {
-      const basinMaterial = new THREE.MeshStandardMaterial({ color: 0x777a78, roughness: 0.34, metalness: 0.68, side: THREE.DoubleSide });
+      const basinMaterial = new THREE.MeshStandardMaterial({ color: 0xa8aaa6, roughness: 0.24, metalness: 0.82, side: THREE.DoubleSide });
       const basin = new THREE.Group();
       basin.name = `${id}-rectangular-sink`;
       basin.userData.fillable = true;
       basin.userData.fillLevel = 0;
       this.sinkBasin = basin;
-      const basinBottom = createBox({
-        width: 1.42,
-        height: 0.07,
-        depth: 0.88,
-        position: new THREE.Vector3(0, 2.08, 0.08),
-        material: basinMaterial,
-      });
-      const basinWallHeight = 0.7;
-      const basinWallY = 2.4;
-      const cornerGeometry = new THREE.CylinderGeometry(0.085, 0.07, basinWallHeight, 18);
-      const leftWall = createBox({ width: 0.1, height: basinWallHeight, depth: 1, position: new THREE.Vector3(-0.76, basinWallY, 0.08), material: basinMaterial });
-      const rightWall = createBox({ width: 0.1, height: basinWallHeight, depth: 1, position: new THREE.Vector3(0.76, basinWallY, 0.08), material: basinMaterial });
-      const backWall = createBox({ width: 1.42, height: basinWallHeight, depth: 0.1, position: new THREE.Vector3(0, basinWallY, -0.46), material: basinMaterial });
-      const frontWall = createBox({ width: 1.42, height: basinWallHeight, depth: 0.1, position: new THREE.Vector3(0, basinWallY, 0.62), material: basinMaterial });
-      leftWall.rotation.z = -0.1;
-      rightWall.rotation.z = 0.1;
-      backWall.rotation.x = 0.1;
-      frontWall.rotation.x = -0.1;
-      basin.add(
-        basinBottom,
-        leftWall,
-        rightWall,
-        backWall,
-        frontWall,
+      const floorShape = createRoundedRectanglePath(1.46, 0.94, 0.16);
+      const basinBottom = new THREE.Mesh(new THREE.ShapeGeometry(floorShape, 32), basinMaterial);
+      basinBottom.rotation.x = -Math.PI / 2;
+      basinBottom.position.set(0, 2.1, 0.08);
+
+      const wallShape = createRoundedRectanglePath(1.66, 1.14, 0.2);
+      wallShape.holes.push(createRoundedRectanglePath(1.46, 0.94, 0.15, true));
+      const basinWalls = new THREE.Mesh(
+        new THREE.ExtrudeGeometry(wallShape, {
+          depth: 0.65,
+          bevelEnabled: true,
+          bevelSize: 0.025,
+          bevelThickness: 0.025,
+          bevelSegments: 3,
+          curveSegments: 24,
+        }),
+        basinMaterial,
       );
-      [[-0.71, -0.41], [0.71, -0.41], [-0.71, 0.57], [0.71, 0.57]].forEach(([x, z]) => {
-        const corner = new THREE.Mesh(cornerGeometry, basinMaterial);
-        corner.position.set(x, basinWallY, z);
-        basin.add(corner);
-      });
+      basinWalls.rotation.x = Math.PI / 2;
+      basinWalls.position.set(0, 2.77, 0.08);
+      basin.add(basinBottom, basinWalls);
 
       const drainDark = new THREE.MeshStandardMaterial({ color: 0x2f3434, roughness: 0.3, metalness: 0.78 });
       const drain = new THREE.Group();
@@ -214,19 +225,26 @@ class KitchenCounter extends Entity {
   }
 
   getInteractables() {
-    return this.panelManager.getInteractables();
+    return [...this.panelManager.getInteractables(), ...this.drawerManager.getInteractables()];
+  }
+
+  addObjectToDrawer(index, object3D, position = new THREE.Vector3()) {
+    return this.drawerManager.addObject(index, object3D, position);
   }
 
   update(deltaTime) {
     this.panelManager.update(deltaTime);
+    this.drawerManager.update(deltaTime);
   }
 
   setAudioListener(listener) {
     this.panelManager.setAudioListener(listener, this.object3D);
+    this.drawerManager.setAudioListener(listener, this.object3D);
   }
 
   dispose() {
     this.panelManager.dispose();
+    this.drawerManager.dispose();
   }
 
   getCollider() {

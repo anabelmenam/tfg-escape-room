@@ -12,6 +12,7 @@ class Paper extends Entity {
     width = 1.4,
     height = 1,
     paperColor = "#e7d5aa",
+    backColor = null,
     text = null,
     imagePath = null,
     imageFit = "contain",
@@ -53,17 +54,28 @@ class Paper extends Entity {
     this.object3D.rotation.y += rotationY;
     this.object3D.scale.setScalar(scale);
 
+    const paperGeometry = new THREE.PlaneGeometry(width, height);
     const paperMaterial = new THREE.MeshStandardMaterial({
       map: this.texture,
       roughness: 0.92,
-      side: THREE.DoubleSide,
+      side: backColor ? THREE.FrontSide : THREE.DoubleSide,
     });
-    const paper = new THREE.Mesh(new THREE.PlaneGeometry(width, height), paperMaterial);
+    const paper = new THREE.Mesh(paperGeometry, paperMaterial);
     paper.castShadow = true;
     paper.receiveShadow = true;
 
     paper.userData.ignoreAging = true;
     this.object3D.add(paper);
+    if (backColor) {
+      const paperBack = new THREE.Mesh(
+        paperGeometry,
+        new THREE.MeshStandardMaterial({ color: backColor, roughness: 0.96, side: THREE.BackSide }),
+      );
+      paperBack.castShadow = true;
+      paperBack.receiveShadow = true;
+      paperBack.userData.ignoreAging = true;
+      this.object3D.add(paperBack);
+    }
 
     if (content) {
       this.setContent(content);

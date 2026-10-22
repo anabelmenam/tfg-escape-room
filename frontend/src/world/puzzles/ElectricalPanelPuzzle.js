@@ -20,6 +20,7 @@ class ElectricalPanelPuzzle extends Entity {
     this.isOpen = false;
     this.hasFuse = false;
     this.isSolved = false;
+    this.audioController = null;
 
     this.correctSwitches = [1, 3, 4, 7];
     this.targetDoorAngle = 0;
@@ -105,7 +106,7 @@ class ElectricalPanelPuzzle extends Entity {
 
     const indicator = new THREE.Mesh(
       new THREE.CircleGeometry(0.07, 16),
-      new THREE.MeshStandardMaterial({ color: 0x3c1212, emissive: 0x000000, roughness: 0.35 }),
+      new THREE.MeshStandardMaterial({ color: 0x3c1212, roughness: 0.35 }),
     );
     indicator.position.set(x + 0.23, y + 0.14, -0.045);
     indicator.userData.electricalSwitchIndex = index;
@@ -135,12 +136,13 @@ class ElectricalPanelPuzzle extends Entity {
   toggleSwitch(index) {
     if (this.isSolved || index < 0 || index >= this.switchStates.length) return;
     this.switchStates[index] = !this.switchStates[index];
+    this.audioController?.play("switchToggle", {
+      playbackRate: this.switchStates[index] ? 1.08 : 0.92,
+    });
     this.switchLevers[index].rotation.z = this.switchStates[index] ? -0.62 : 0.62;
 
     const indicatorMaterial = this.indicators[index].material;
     indicatorMaterial.color.setHex(this.switchStates[index] ? 0x85df74 : 0x3c1212);
-    indicatorMaterial.emissive.setHex(this.switchStates[index] ? 0x2f9f2a : 0x000000);
-    indicatorMaterial.emissiveIntensity = this.switchStates[index] ? 1.2 : 0;
 
     const isCorrect = this.switchStates.every((isEnabled, switchIndex) => {
       return isEnabled === this.correctSwitches.includes(switchIndex + 1);
@@ -180,6 +182,10 @@ class ElectricalPanelPuzzle extends Entity {
 
   setFocused(focused) {
     this.isFocused = focused;
+  }
+
+  setAudioListener(audioController) {
+    this.audioController = audioController;
   }
 
   interact(player) {
@@ -222,6 +228,10 @@ class ElectricalPanelPuzzle extends Entity {
   getLookAtPosition() {
     this.object3D.updateMatrixWorld(true);
     return this.object3D.localToWorld(new THREE.Vector3(0, -0.1, 0));
+  }
+
+  dispose() {
+    this.audioController = null;
   }
 }
 

@@ -3,9 +3,10 @@ import { Entity } from "../Entity.js";
 import { tInteraction, tItem } from "../../../translations/index.js";
 
 class Flashlight extends Entity {
-  constructor({ id = "flashlight", position = new THREE.Vector3(), scale = 1 } = {}) {
+  constructor({ id = "flashlight", position = new THREE.Vector3(), scale = 1, onCollect = null } = {}) {
     super(id);
     this.inventoryIcon = "/images/icons/flashlight.png";
+    this.onCollect = onCollect;
     this.object3D = this.createObject();
     this.object3D.position.copy(position);
     this.object3D.scale.setScalar(scale);
@@ -19,8 +20,6 @@ class Flashlight extends Entity {
     const accentMaterial = new THREE.MeshStandardMaterial({ color: 0xd09a2c, metalness: 0.65, roughness: 0.28 });
     const lensMaterial = new THREE.MeshStandardMaterial({
       color: 0xffedb0,
-      emissive: 0x8e6a25,
-      emissiveIntensity: 0.32,
       roughness: 0.16,
     });
 
@@ -87,6 +86,7 @@ class Flashlight extends Entity {
 
     this.object3D.visible = false;
     this.setEnabled(false);
+    this.onCollect?.();
   }
 
   getInteractionText() {

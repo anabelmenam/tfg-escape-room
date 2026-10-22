@@ -163,10 +163,10 @@ class BathroomVanity extends Entity {
       new THREE.SphereGeometry(0.8, 32, 16, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2),
       basinMaterial,
     );
-    basin.position.set(0, 3.11, basinZ);
+    basin.position.set(0, 3.25, basinZ);
     basin.scale.set(1, 0.54, 0.72);
     const drain = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 0.025, 20), this.metalMaterial);
-    drain.position.set(0, 2.7, basinZ);
+    drain.position.set(0, 2.84, basinZ);
     this.faucet = createCurvedFaucet({
       material: this.metalMaterial,
       surfaceY: 2.78,
@@ -188,7 +188,7 @@ class BathroomVanity extends Entity {
     });
     this.waterSurface = new THREE.Mesh(new THREE.CircleGeometry(0.7, 36), waterMaterial);
     this.waterSurface.rotation.x = -Math.PI / 2;
-    this.waterSurface.position.set(0, 2.73, basinZ);
+    this.waterSurface.position.set(0, 2.87, basinZ);
     this.waterSurface.scale.set(0.35, 0.35 * 0.72, 1);
     this.waterSurface.visible = false;
     this.waterSurface.renderOrder = 2;
@@ -254,7 +254,7 @@ class BathroomVanity extends Entity {
     this.waterFill = THREE.MathUtils.damp(this.waterFill, this.waterFillTarget, 1.25, deltaTime);
     if (this.waterSurface) {
       const fill = THREE.MathUtils.smoothstep(this.waterFill, 0, 1);
-      this.waterSurface.position.y = THREE.MathUtils.lerp(2.73, 3.055, fill);
+      this.waterSurface.position.y = THREE.MathUtils.lerp(2.87, 3.195, fill);
       const spread = THREE.MathUtils.lerp(0.35, 1, fill);
       this.waterSurface.scale.set(spread, spread * 0.72, 1);
       this.waterSurface.visible = this.waterFillTarget > 0 || this.waterFill > 0.01;

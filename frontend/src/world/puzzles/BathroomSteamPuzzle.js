@@ -42,11 +42,12 @@ class BathroomSteamPuzzle extends Entity {
 
     const texture = new THREE.CanvasTexture(canvas);
     texture.colorSpace = THREE.SRGBColorSpace;
-    const fogMaterial = new THREE.MeshBasicMaterial({
+    const fogMaterial = new THREE.MeshStandardMaterial({
       map: texture,
       transparent: true,
       opacity: 0,
       depthWrite: false,
+      roughness: 1,
     });
     this.clue = new THREE.Mesh(new THREE.PlaneGeometry(2.25, 2.85), fogMaterial);
     this.clue.position.set(2.55, 5.35, -4.61);
@@ -65,11 +66,12 @@ class BathroomSteamPuzzle extends Entity {
     numbersTexture.colorSpace = THREE.SRGBColorSpace;
     this.numbers = new THREE.Mesh(
       new THREE.PlaneGeometry(2.25, 2.85),
-      new THREE.MeshBasicMaterial({
+      new THREE.MeshStandardMaterial({
         map: numbersTexture,
         transparent: true,
         opacity: 0,
         depthWrite: false,
+        roughness: 1,
       }),
     );
     this.numbers.position.set(2.55, 5.35, -4.595);

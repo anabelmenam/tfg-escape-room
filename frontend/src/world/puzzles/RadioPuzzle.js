@@ -44,14 +44,12 @@ class RadioPuzzle extends Entity {
     const cloth = new THREE.MeshStandardMaterial({ color: 0x6d5540, roughness: 0.95 });
     const glass = new THREE.MeshPhysicalMaterial({
       color: 0xffd9a0,
-      emissive: 0x6b2308,
-      emissiveIntensity: 0.45,
       transparent: true,
       opacity: 0.42,
       roughness: 0.12,
       metalness: 0,
     });
-    const filament = new THREE.MeshStandardMaterial({ color: 0xff9d38, emissive: 0xff4d08, emissiveIntensity: 2.8 });
+    const filament = new THREE.MeshStandardMaterial({ color: 0xff9d38, roughness: .5 });
 
     const body = new THREE.Mesh(new THREE.BoxGeometry(4.1, 1.9, 1.28, 5, 3, 2), wood);
     body.position.y = 0.08;

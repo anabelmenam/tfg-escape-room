@@ -28,6 +28,7 @@ import { Oven } from "./furniture/Oven.js";
 import { CooktopCounter } from "./furniture/CooktopCounter.js";
 import { Button } from "./decoration/Button.js";
 import { Key } from "./decoration/Key.js";
+import { GlobePushpin } from "./decoration/GlobePushpin.js";
 import { Switch } from "./decoration/Switch.js";
 import { Carpet } from "./decoration/Carpet.js";
 import { Decoration } from "./decoration/Decoration.js";
@@ -41,6 +42,11 @@ import { Paper } from "./decoration/Paper.js";
 import { DeskLamp } from "./decoration/DeskLamp.js";
 import { Fuse } from "./decoration/Fuse.js";
 import { Flashlight } from "./decoration/Flashlight.js";
+import { Crowbar } from "./decoration/Crowbar.js";
+import { BoltCutters } from "./decoration/BoltCutters.js";
+import { FinalKey } from "./decoration/FinalKey.js";
+import { FinalBolt } from "./decoration/FinalBolt.js";
+import { WardrobeChains } from "./decoration/WardrobeChains.js";
 import { RadioDial, createRadioDialVisual } from "./decoration/RadioDial.js";
 import { Frame } from "./decoration/Frame.js";
 import { FallenPainting, PaintingFragment, PaintingSlot } from "./decoration/Painting.js";
@@ -90,6 +96,7 @@ export {
   Bed,
   Button,
   Key,
+  GlobePushpin,
   Lamp,
   Sofa,
   Door,
@@ -113,6 +120,11 @@ export {
   DeskLamp,
   Fuse,
   Flashlight,
+  Crowbar,
+  BoltCutters,
+  FinalKey,
+  FinalBolt,
+  WardrobeChains,
   RadioDial,
   createRadioDialVisual,
   Frame,

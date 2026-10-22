@@ -8,20 +8,27 @@ import { InteractableManager } from "./InteractableManager.js";
 import { GameState } from "./GameState";
 import { EventManager } from "./EventManager.js";
 import { EntityManager } from "./EntityManager.js";
+import { GameAudio } from "./GameAudio.js";
 import { createLevel1 } from "../world/levels/createLevel1.js";
 import { tItem } from "../translations/index.js";
 
 export class Game {
-  constructor(container, playerRole = "A", { onDoorUnlocked, onHallwayAction, onBedroomAction, onLivingRoomAction, onBathroomAction, testArea = null, testMode = false } = {}) {
+  constructor(container, playerRole = "A", { onDoorUnlocked, onHallwayAction, onBedroomAction, onChildrenRoomAction, onKitchenAction, onLivingRoomAction, onBathroomAction, onReady = null, onPauseRequest = null, audioController = null, testArea = null, testMode = false } = {}) {
     this.playerRole = playerRole;
     this.testArea = testArea;
     this.timeline = null;
     this.onDoorUnlocked = onDoorUnlocked;
     this.onHallwayAction = onHallwayAction;
     this.onBedroomAction = onBedroomAction;
+    this.onChildrenRoomAction = onChildrenRoomAction;
+    this.onKitchenAction = onKitchenAction;
     this.onLivingRoomAction = onLivingRoomAction;
     this.onBathroomAction = onBathroomAction;
     this.testMode = testMode;
+    this.onReady = onReady;
+    this.onPauseRequest = onPauseRequest;
+    this.ready = false;
+    this.paused = false;
     this.sharedState = null;
     this.roomData = null;
     this.container = container;
@@ -29,8 +36,21 @@ export class Game {
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
     this.camera.position.set(200, 100, 0);
-    this.audioListener = new THREE.AudioListener();
-    this.camera.add(this.audioListener);
+    this.gameAudio = audioController ?? new GameAudio();
+    this.ownsGameAudio = !audioController;
+    this.loadingProgress = { loaded: 0, total: 0 };
+    this.loadingManagerHandlers = {
+      onStart: THREE.DefaultLoadingManager.onStart,
+      onProgress: THREE.DefaultLoadingManager.onProgress,
+    };
+    THREE.DefaultLoadingManager.onStart = (url, loaded, total) => {
+      this.loadingProgress = { loaded, total };
+      this.loadingManagerHandlers.onStart?.(url, loaded, total);
+    };
+    THREE.DefaultLoadingManager.onProgress = (url, loaded, total) => {
+      this.loadingProgress = { loaded, total };
+      this.loadingManagerHandlers.onProgress?.(url, loaded, total);
+    };
 
     this.timer = new THREE.Timer();
     this.timer.connect(document);
@@ -64,9 +84,20 @@ export class Game {
     this.input = new Input();
     this.collisionManager = new CollisionManager();
     this.player = new Player(this.camera, this.renderer.domElement, this.input, this.collisionManager);
-    this.player.inventory.onChange = () => {
+    this.knownInventoryIds = new Set();
+    this.player.inventory.onChange = (inventory) => {
+      const currentIds = new Set(inventory.getAll().filter(Boolean).map((item) => item.id));
+      const pickedUpItem = [...currentIds].some((id) => !this.knownInventoryIds.has(id));
+      this.knownInventoryIds = currentIds;
+      if (this.ready && pickedUpItem) this.gameAudio.playPickup();
       this.updateInventoryUI();
     };
+    this._onPointerUnlock = () => {
+      if (this.ready && !this.paused && !this.inventoryInspectionOpen && !this.player.isFocused && this.player.isFirstPerson) {
+        this.onPauseRequest?.();
+      }
+    };
+    this.player.fpControls.addEventListener("unlock", this._onPointerUnlock);
     this.inventoryInspectionOpen = false;
     this.inventoryInspectionKey = null;
     this.updateInventoryUI();
@@ -83,18 +114,35 @@ export class Game {
     });
 
     this._onKeyDown = (event) => {
-      void this.audioListener.context.resume().catch(() => {});
+      this.gameAudio.unlock();
+      if (!this.ready) return;
+      if (this.paused) {
+        if (event.code === "Escape") this.onPauseRequest?.();
+        return;
+      }
       if (this.inventoryInspectionOpen) {
+        if (event.code === "Escape") this.closeInventoryInspection();
         return;
       }
 
       if (this.player.isFocused) {
+        if (/^Digit[1-5]$/.test(event.code)) {
+          this.player.selectInventorySlot(Number(event.code.slice(-1)) - 1);
+          return;
+        }
         if (this.player.focusedObject?.handleKey?.(event.code)) { event.preventDefault(); return; }
         if (event.code === "Escape" || event.code === "KeyE") {
           event.preventDefault();
           this.player.focusedObject?.closePanel?.();
           this.player.exitFocus();
         }
+        return;
+      }
+
+      if (event.code === "Escape") {
+        event.preventDefault();
+        if (this.player.fpControls.isLocked) this.player.fpControls.unlock();
+        else this.onPauseRequest?.();
         return;
       }
 
@@ -143,6 +191,7 @@ export class Game {
     window.addEventListener("keydown", this._onKeyDown);
 
     this._onWheel = (event) => {
+      if (!this.ready) return;
       const inventory = this.player.inventory;
 
       if (!inventory) {
@@ -176,7 +225,8 @@ export class Game {
     document.getElementById("inventory-inspection-close")?.addEventListener("click", this._onInspectionClose);
 
     this._onClick = (event) => {
-      void this.audioListener.context.resume().catch(() => {});
+      this.gameAudio.unlock();
+      if (!this.ready) return;
       if (!this.player.isFocused) {
         this.player.requestPointerLock();
         return;
@@ -197,7 +247,21 @@ export class Game {
         return;
       }
 
-      const hit = intersections[0].object;
+      const findControl = (object, key) => {
+        let current = object;
+        while (current && current !== focusedObject.object3D) {
+          if (current.userData?.[key] !== undefined) return current.userData[key];
+          current = current.parent;
+        }
+        return undefined;
+      };
+      const intersection = focusedObject.resolveFocusedIntersection?.(intersections) ?? intersections.find(({ object }) =>
+        findControl(object, "childrenPuzzleControl")?.kind === "block",
+      ) ?? intersections.find(({ object }) =>
+        findControl(object, "childrenPuzzleControl") !== undefined
+        || findControl(object, "roomPuzzleControl") !== undefined,
+      ) ?? intersections[0];
+      const hit = intersection.object;
       const digitIndex = hit.userData.lockDigitIndex ?? hit.userData.safeDigitIndex;
       const photoFragmentSlot = hit.userData.photoFragmentSlot;
       const sewingSpoolSlot = hit.userData.sewingSpoolSlot;
@@ -205,6 +269,13 @@ export class Game {
       const emberIndex = hit.userData.emberIndex;
       const radioDialIndex = hit.userData.radioDialIndex;
       const clockHand = hit.userData.clockHand;
+      const childrenPuzzleControl = findControl(hit, "childrenPuzzleControl");
+      const roomPuzzleControl = findControl(hit, "roomPuzzleControl");
+
+      if (childrenPuzzleControl !== undefined || roomPuzzleControl !== undefined) {
+        focusedObject.handleControl?.(roomPuzzleControl ?? childrenPuzzleControl, this.player, intersection);
+        return;
+      }
 
       if (clockHand !== undefined) {
         focusedObject.advanceHand?.(clockHand);
@@ -256,7 +327,7 @@ export class Game {
     this.rafId = 0;
     this.environmentTexture = null;
     this.loop = this.loop.bind(this);
-    this.init();
+    void this.init();
     this.loop();
   }
 
@@ -281,8 +352,12 @@ export class Game {
   }
 
   async init() {
-    await this.loadEnvironment();
+    await Promise.all([this.loadEnvironment(), this.gameAudio.load()]);
 
+    const withGameAudio = (handler) => (type, ...args) => {
+      this.gameAudio.playAction(type);
+      handler?.(type, ...args);
+    };
     const roomData = await createLevel1({
       playerRole: this.playerRole,
       testArea: this.testArea,
@@ -302,13 +377,16 @@ export class Game {
       onDoorUnlocked: () => {
         if (this.timeline === "past") this.onDoorUnlocked?.();
       },
-      onHallwayAction: this.onHallwayAction,
-      onBedroomAction: this.onBedroomAction,
-      onLivingRoomAction: this.onLivingRoomAction,
-      onBathroomAction: this.onBathroomAction,
+      onHallwayAction: withGameAudio(this.onHallwayAction),
+      onBedroomAction: withGameAudio(this.onBedroomAction),
+      onChildrenRoomAction: withGameAudio(this.onChildrenRoomAction),
+      onKitchenAction: withGameAudio(this.onKitchenAction),
+      onLivingRoomAction: withGameAudio(this.onLivingRoomAction),
+      onBathroomAction: withGameAudio(this.onBathroomAction),
       onObjectFocus: (object) => {
         this.player.focusObject(object);
       },
+      isFlashlightOn: () => this.flashlightOn,
     });
 
     this.roomData = roomData;
@@ -317,7 +395,7 @@ export class Game {
     this.scene.userData.timeline = this.timeline;
 
     for (const entity of roomData.entities ?? []) {
-      entity.setAudioListener?.(this.audioListener);
+      entity.setAudioListener?.(this.gameAudio);
       this.entityManager.add(entity);
     }
 
@@ -349,6 +427,36 @@ export class Game {
     }
 
     this.applySharedState(this.sharedState);
+    await this.waitForAssets();
+    this.ready = true;
+    this.onReady?.();
+  }
+
+  waitForAssets() {
+    return new Promise((resolve) => {
+      let stableFrames = 0;
+      const check = () => {
+        const { loaded, total } = this.loadingProgress;
+        stableFrames = total === 0 || loaded >= total ? stableFrames + 1 : 0;
+        if (stableFrames >= 3) resolve();
+        else requestAnimationFrame(check);
+      };
+      requestAnimationFrame(check);
+    });
+  }
+
+  pause() {
+    if (!this.ready || this.paused) return;
+    this.paused = true;
+    this.player.orbitControls.enabled = false;
+    if (this.player.fpControls.isLocked) this.player.fpControls.unlock();
+  }
+
+  resume() {
+    if (!this.ready || !this.paused) return;
+    this.paused = false;
+    if (this.player.isFirstPerson) this.player.requestPointerLock();
+    else this.player.orbitControls.enabled = true;
   }
 
   applySharedState(state) {
@@ -357,8 +465,16 @@ export class Game {
     if (!this.roomData || !this.timeline) return;
     this.roomData.hallway?.applyHallwayState(state);
     this.roomData.bedroom?.applyBedroomState(state);
+    this.roomData.childrenRoom?.applyChildrenRoomState(state);
+    this.roomData.kitchen?.applyKitchenState(state);
     this.roomData.livingRoom?.applyLivingRoomState(state);
     this.roomData.bathroom?.applyBathroomState(state);
+    if (state.timelines?.past?.puzzles?.["children-globe"]?.solved) {
+      this.player.inventory.remove("children-photo-order-note");
+    }
+    if (state.timelines?.present?.puzzles?.["kitchen-recipe"]?.solved) {
+      this.player.inventory.remove("kitchen-recipe-note");
+    }
     const doorState = state.timelines?.[this.timeline]?.objects?.["bedroom-exit-door"];
     if (!doorState) return;
     const door = this.roomData.door;
@@ -507,10 +623,20 @@ export class Game {
     this.timer.update();
 
     const delta = this.timer.getDelta();
-    this.player.update(delta);
-    this.interactionManager.update();
-    this.entityManager.update(delta);
-    this.updateFlashlight();
+    if (this.ready && !this.paused) {
+      this.player.update(delta);
+      this.interactionManager.update();
+      this.entityManager.update(delta);
+      this.updateFlashlight();
+      const moving = ["KeyW", "KeyA", "KeyS", "KeyD"].some((code) => this.input.isPressed(code));
+      const running = this.input.isPressed("ControlLeft") || this.input.isPressed("ControlRight");
+      this.gameAudio.updateFootsteps(delta, {
+        moving: moving && this.player.isFirstPerson && !this.player.isFocused,
+        running,
+        crouching: this.player.isCrouching,
+        grounded: this.player.isGrounded,
+      });
+    }
 
     if (this.player.focusedObject?.exitFocusRequested) {
       this.player.focusedObject.exitFocusRequested = false;
@@ -529,9 +655,10 @@ export class Game {
     this.interactionManager.dispose();
     this.interactableManager.dispose();
     this.entityManager.dispose();
-    this.camera.remove(this.audioListener);
-    this.audioListener.gain.disconnect();
-
+    this.player.fpControls.removeEventListener("unlock", this._onPointerUnlock);
+    if (this.ownsGameAudio) this.gameAudio.dispose();
+    THREE.DefaultLoadingManager.onStart = this.loadingManagerHandlers.onStart;
+    THREE.DefaultLoadingManager.onProgress = this.loadingManagerHandlers.onProgress;
     this.timer.disconnect();
 
     if (this.environmentTexture) {

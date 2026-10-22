@@ -11,11 +11,19 @@ class DeskLamp extends Entity {
     targetOffset = new THREE.Vector3(0, 0, 0.8),
     onToggle = null,
     powerAvailable = true,
+    lightColor = 0x8b63ff,
+    bulbColor = 0xb99cff,
+    emissiveColor = 0x6d3cff,
+    lightIntensity = 300,
   } = {}) {
     super(id);
 
     this.onToggle = onToggle;
     this.powerAvailable = powerAvailable;
+    this.lightColor = lightColor;
+    this.bulbColor = bulbColor;
+    this.emissiveColor = emissiveColor;
+    this.lightIntensity = lightIntensity;
     this.isActive = false;
     this.object3D = new THREE.Group();
     this.object3D.name = id ?? "desk-lamp";
@@ -92,7 +100,7 @@ class DeskLamp extends Entity {
 
   createLight(targetOffset) {
 
-    this.light = new THREE.SpotLight(0x8b63ff, 300, 1.9, Math.PI / 6, 0.72, 1.7);
+    this.light = new THREE.SpotLight(this.lightColor, this.lightIntensity, 1.9, Math.PI / 6, 0.72, 1.7);
     this.light.position.set(0.48, 0.98, 0);
     this.light.castShadow = true;
     this.light.shadow.mapSize.set(512, 512);
@@ -109,9 +117,9 @@ class DeskLamp extends Entity {
   setActive(active, { notify = true } = {}) {
     const changed = this.isActive !== active;
     this.isActive = active;
-    this.light.intensity = active ? 300 : 0;
-    this.bulbMaterial.color.setHex(active ? 0xb99cff : 0x4d4d42);
-    this.bulbMaterial.emissive.setHex(active ? 0x6d3cff : 0x000000);
+    this.light.intensity = active ? this.lightIntensity : 0;
+    this.bulbMaterial.color.setHex(active ? this.bulbColor : 0x4d4d42);
+    this.bulbMaterial.emissive.setHex(active ? this.emissiveColor : 0x000000);
     this.bulbMaterial.emissiveIntensity = active ? 2.4 : 0;
 
     if (changed && notify) {
