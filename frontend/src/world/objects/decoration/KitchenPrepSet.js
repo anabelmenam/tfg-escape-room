@@ -4,6 +4,8 @@ import { createAmbientMaterial as material, finishMesh } from "./AmbientDecorUti
 
 const createKitchenPrepSet = ({ aged = false, scale = 1 } = {}) => {
   const group = new THREE.Group();
+  group.name = "ambient-kitchen-prep";
+  group.userData.ambientDescriptionKey = "prepSet";
   const board = createBox({ width: 1.35, height: 0.08, depth: 0.82, position: new THREE.Vector3(0, 0.04, 0), material: material(aged ? 0x665442 : 0xa9794f, 0.9) });
   const loaf = finishMesh(new THREE.Mesh(new THREE.CapsuleGeometry(0.26, 0.7, 6, 14), material(aged ? 0x78634a : 0xb9824c, 0.92)));
   loaf.rotation.z = Math.PI / 2;

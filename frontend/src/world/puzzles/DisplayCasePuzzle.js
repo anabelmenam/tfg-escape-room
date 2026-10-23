@@ -127,7 +127,7 @@ class DisplayCase extends Entity {
     if (!this.unlocked) {
       const selected = player?.inventory.getSelectedItem();
       return this.keepsakeIds.includes(selected?.id)
-        ? tInteraction("insert", tItem("family-keepsake"))
+        ? tInteraction("insert", tItem(selected.id))
         : tInteraction("needKeepsakes");
     }
     return tInteraction(this.opened ? "close" : "open", tItem("display-case"));

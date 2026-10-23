@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { Entity } from "../objects/index.js";
 import { tInteraction, tItem } from "../../translations/index.js";
 import { finishBathroomObject, markBathroomControl } from "./BathroomPuzzleUtils.js";
-import { createAzulejo } from "./AzulejoModels.js";
+import { createTile } from "./TileModels.js";
 
 const CORRECT_ORDER = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 const SCRAMBLED_ORDER = [4, 0, 7, 2, null, 8, 1, 6, 3];
@@ -19,8 +19,8 @@ class BathroomMosaicPuzzle extends Entity {
     this.slotPositions = CORRECT_ORDER.map((index) => new THREE.Vector3((index % 3 - 1) * 1.22, (1 - Math.floor(index / 3)) * 1.22, .1));
 
     CORRECT_ORDER.forEach((tileId) => {
-      const tile = new THREE.Group(); tile.name = `bathroom-azulejo-${tileId}`; tile.userData.tileId = tileId;
-      tile.add(createAzulejo({ tileId, size: 1.13, depth: .1 }));
+      const tile = new THREE.Group(); tile.name = `bathroom-tile-${tileId}`; tile.userData.tileId = tileId;
+      tile.add(createTile({ tileId, size: 1.13, depth: .1 }));
       markBathroomControl(tile, { kind: "mosaic-tile", value: tileId });
       this.tiles.set(tileId, tile); this.object3D.add(tile);
     });

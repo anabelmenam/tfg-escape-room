@@ -4,6 +4,8 @@ import { createAmbientMaterial as material, finishMesh } from "./AmbientDecorUti
 
 const createArtSupplies = ({ aged = false, scale = 1, variant = "cup" } = {}) => {
   const group = new THREE.Group();
+  group.name = "ambient-art-supplies";
+  group.userData.ambientDescriptionKey = "artSupplies";
   const paperColor = aged ? 0xb3aa96 : 0xf0e7cf;
   const pencilColors = aged ? [0x6c5550, 0x4f6067, 0x6f6545, 0x5c6851] : [0xc54f43, 0x3f78a0, 0xd0a232, 0x55935a];
   group.add(createBox({ width: 1.25, height: 0.025, depth: 0.9, position: new THREE.Vector3(0, 0.015, 0), material: material(paperColor, 0.98) }));

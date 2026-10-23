@@ -8,7 +8,7 @@ class Key extends Entity {
     position = new THREE.Vector3(),
     color = 0xb9b4ac,
     scalar = 1,
-    inventoryIcon = "/images/icons/key.png",
+    inventoryIcon = "/images/icons/shared/key.png",
     onCollect = null,
   } = {}) {
     super(id);

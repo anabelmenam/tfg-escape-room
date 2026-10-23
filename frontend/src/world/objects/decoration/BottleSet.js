@@ -3,6 +3,8 @@ import { createAmbientMaterial as material, finishMesh } from "./AmbientDecorUti
 
 const createBottleSet = ({ aged = false, scale = 1 } = {}) => {
   const group = new THREE.Group();
+  group.name = "ambient-bottle-set";
+  group.userData.ambientDescriptionKey = "toiletries";
   const colors = aged ? [0x48504b, 0x4d4941, 0x55514b] : [0x668676, 0x80684d, 0x7d5b5e];
   [-0.38, 0, 0.38].forEach((x, index) => {
     const height = 0.55 + index * 0.13;

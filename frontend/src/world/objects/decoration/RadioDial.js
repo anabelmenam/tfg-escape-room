@@ -69,7 +69,7 @@ class RadioDial extends Entity {
     this.object3D = visual.object3D;
     this.needlePivot = visual.needlePivot;
     this.object3D.scale.setScalar(scale);
-    this.inventoryIcon = "/images/icons/radio-dial.png";
+    this.inventoryIcon = "/images/icons/bedroom/radio-dial.png";
   }
 
   setDialIndex(index) {

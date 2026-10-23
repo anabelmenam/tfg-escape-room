@@ -1,10 +1,10 @@
 import * as THREE from "three";
 
-const ATLAS_PATH = "/images/puzzles/bathroom-mosaic/blue-azulejos-atlas.png";
+const ATLAS_PATH = "/images/puzzles/bathroom-mosaic/blue-tiles-atlas.png";
 const atlas = new THREE.TextureLoader().load(ATLAS_PATH);
 atlas.colorSpace = THREE.SRGBColorSpace;
 
-const createAzulejoTexture = (tileId) => {
+const createTileTexture = (tileId) => {
   const texture = atlas.clone();
   const column = tileId % 3;
   const row = Math.floor(tileId / 3);
@@ -14,8 +14,8 @@ const createAzulejoTexture = (tileId) => {
   return texture;
 };
 
-const createAzulejo = ({ tileId, size = 1.1, depth = 0.1 } = {}) => {
-  const texture = createAzulejoTexture(tileId);
+const createTile = ({ tileId, size = 1.1, depth = 0.1 } = {}) => {
+  const texture = createTileTexture(tileId);
   const material = new THREE.MeshPhysicalMaterial({
     map: texture,
     roughness: 0.24,
@@ -25,8 +25,8 @@ const createAzulejo = ({ tileId, size = 1.1, depth = 0.1 } = {}) => {
   const mesh = new THREE.Mesh(new THREE.BoxGeometry(size, size, depth), material);
   mesh.castShadow = true;
   mesh.receiveShadow = true;
-  mesh.userData.azulejoTexture = texture;
+  mesh.userData.tileTexture = texture;
   return mesh;
 };
 
-export { createAzulejo };
+export { createTile };

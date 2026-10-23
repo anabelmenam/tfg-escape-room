@@ -6,6 +6,7 @@ class Crowbar extends Entity {
   constructor({ id = "crowbar", onCollect = null } = {}) {
     super(id);
     this.itemName = "crowbar";
+    this.inventoryIcon = "/images/icons/children-room/crowbar.png";
     this.onCollect = onCollect;
     this.object3D = new THREE.Group();
     this.object3D.name = id;

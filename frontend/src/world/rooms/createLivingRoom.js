@@ -412,32 +412,29 @@ const createLivingRoom = async ({
   if (displayCase) shelf3.addToShelf(displayCase.object3D, { shelf: 1, x: 0, z: 0, placeOnSurface: false });
 
   const addShelfDecor = (shelf, specifications) => {
-    specifications.forEach(({ kind, shelf: level, x, z = 0, scale = 1 }) => {
+    specifications.forEach(({ kind, shelf: level, x, z = 0, scale = 1, variant = 0, rotationY = 0 }) => {
       let decoration;
-      if (kind === "books") decoration = createBookStack({ aged: false, scale });
+      if (kind === "books") decoration = createBookStack({ aged: false, scale, variant });
       if (kind === "vase") decoration = createVase({ aged: false, scale });
       if (kind === "candles") decoration = createCandleCluster({ aged: false, scale, count: 2 });
-      if (decoration) shelf.addToShelf(decoration, { shelf: level, x, z });
+      if (decoration) shelf.addToShelf(decoration, { shelf: level, x, z, rotationY });
     });
   };
   addShelfDecor(shelf1, [
-    { kind: "books", shelf: 0, x: -2.7, scale: 1.15 },
+    { kind: "books", shelf: 0, x: -2.7, scale: 1.05, variant: 0, rotationY: -.08 },
     { kind: "vase", shelf: 0, x: 2.55, scale: .8 },
     { kind: "candles", shelf: 2, x: -2.7, scale: .95 },
-    { kind: "books", shelf: 3, x: 2.25, scale: 1.05 },
   ]);
   addShelfDecor(shelf2, [
-    { kind: "books", shelf: 0, x: -2.55, scale: 1.12 },
     { kind: "candles", shelf: 0, x: 2.65, scale: .9 },
     { kind: "vase", shelf: 2, x: -2.75, scale: .72 },
-    { kind: "books", shelf: 2, x: 2.35, scale: 1.08 },
+    { kind: "books", shelf: 2, x: 2.35, scale: 1.02, variant: 1, rotationY: .11 },
     { kind: "candles", shelf: 3, x: 0, scale: .92 },
   ]);
   addShelfDecor(shelf3, [
-    { kind: "books", shelf: 0, x: -2.55, scale: 1.1 },
+    { kind: "books", shelf: 0, x: -2.55, scale: .96, variant: 2, rotationY: -.04 },
     { kind: "vase", shelf: 0, x: 2.65, scale: .76 },
     { kind: "candles", shelf: 2, x: -2.65, scale: .9 },
-    { kind: "books", shelf: 2, x: 2.35, scale: 1.02 },
     { kind: "vase", shelf: 3, x: 0, scale: .68 },
   ]);
 
@@ -455,11 +452,6 @@ const createLivingRoom = async ({
   });
   const cabinetInteractables = cabinet.getInteractables();
   const agedDecor = false;
-  const tableBooks = createBookStack({ aged: agedDecor, scale: 1.05 });
-  tableBooks.position.set(-1.45, 2.01, 0.38);
-  const tableCandles = createCandleCluster({ aged: agedDecor, scale: 1.05, count: 2 });
-  tableCandles.position.set(1.4, 2.01, 0.2);
-  table1.object3D.add(tableBooks, tableCandles);
   const cabinetVase = createVase({ aged: agedDecor, scale: 0.82 });
   cabinetVase.position.set(0, 3.01, 0);
   cabinet.object3D.add(cabinetVase);
@@ -469,9 +461,9 @@ const createLivingRoom = async ({
     aged: agedDecor,
     scale: 0.95,
     imagePaths: [
-      "/images/decor/family-photo-1980s.png",
+      "/images/decor/family-breakfast.png",
+      "/images/decor/family-picnic.png",
       "/images/decor/couple-photo-1980s.png",
-      "/images/decor/bedroom-landscape.png",
     ],
   });
   livingRoomFrames.position.set(0, 7.1, 14.78);
@@ -751,6 +743,7 @@ const createLivingRoom = async ({
       ...windows.map((window) => window.getCollider()),
     ],
     bounds,
+    table1,
     door,
     doorPassage: doorOpening
       ? {

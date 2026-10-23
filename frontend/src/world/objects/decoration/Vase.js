@@ -3,6 +3,8 @@ import { createAmbientMaterial as material, finishMesh } from "./AmbientDecorUti
 
 const createVase = ({ aged = false, flowers = true, scale = 1 } = {}) => {
   const group = new THREE.Group();
+  group.name = "ambient-vase";
+  group.userData.ambientDescriptionKey = aged ? "oldVase" : "vase";
   const profile = [new THREE.Vector2(0.32, 0), new THREE.Vector2(0.44, 0.22), new THREE.Vector2(0.36, 0.65), new THREE.Vector2(0.2, 0.9), new THREE.Vector2(0.19, 1.03)];
   group.add(finishMesh(new THREE.Mesh(new THREE.LatheGeometry(profile, 28), material(aged ? 0x5d6664 : 0x789a94, 0.42))));
   if (flowers) {

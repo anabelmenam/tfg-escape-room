@@ -5,7 +5,7 @@ import { tInteraction, tItem } from "../../../translations/index.js";
 class Flashlight extends Entity {
   constructor({ id = "flashlight", position = new THREE.Vector3(), scale = 1, onCollect = null } = {}) {
     super(id);
-    this.inventoryIcon = "/images/icons/flashlight.png";
+    this.inventoryIcon = "/images/icons/bedroom/flashlight.png";
     this.onCollect = onCollect;
     this.object3D = this.createObject();
     this.object3D.position.copy(position);

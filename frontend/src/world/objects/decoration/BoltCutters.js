@@ -62,6 +62,7 @@ class BoltCutters extends Entity {
   constructor({ onCollect = null } = {}) {
     super("bolt-cutters");
     this.itemName = "bolt-cutters";
+    this.inventoryIcon = "/images/icons/children-room/bolt-cutters.png";
     this.onCollect = onCollect;
     this.object3D = createBoltCuttersModel();
     this.object3D.name = this.id;

@@ -4,6 +4,8 @@ import { createAmbientMaterial as material, finishMesh } from "./AmbientDecorUti
 
 const createKitchenCanisterSet = ({ aged = false, scale = 1 } = {}) => {
   const group = new THREE.Group();
+  group.name = "ambient-kitchen-canisters";
+  group.userData.ambientDescriptionKey = "canisters";
   [-0.45, 0, 0.45].forEach((x, index) => {
     const height = 0.62 + index * 0.1;
     const ceramic = material(aged ? 0x77736a : 0xd9d0b7, 0.58);

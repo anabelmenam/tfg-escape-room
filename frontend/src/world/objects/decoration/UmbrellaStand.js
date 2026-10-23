@@ -3,6 +3,8 @@ import { createAmbientMaterial as material, finishMesh } from "./AmbientDecorUti
 
 const createUmbrellaStand = ({ aged = false, scale = 1 } = {}) => {
   const group = new THREE.Group();
+  group.name = "ambient-umbrella-stand";
+  group.userData.ambientDescriptionKey = "umbrellaStand";
   const standMaterial = material(aged ? 0x315866 : 0x5c807c, 0.42, 0.25);
   const rimMaterial = material(aged ? 0x9b7245 : 0xc19a63, 0.34, 0.55);
   const stand = finishMesh(new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.36, 1.25, 22, 1, true), standMaterial));

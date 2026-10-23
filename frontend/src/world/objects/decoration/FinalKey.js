@@ -3,6 +3,12 @@ import { Entity } from "../Entity.js";
 import { tInteraction, tItem } from "../../../translations/index.js";
 
 const SYMBOLS = { moon: "☾", flame: "♨", star: "✦", wave: "≋" };
+const FINAL_KEY_ICONS = {
+  moon: "/images/icons/bedroom/moon-key.png",
+  flame: "/images/icons/living-room/flame-key.png",
+  star: "/images/icons/children-room/star-key.png",
+  wave: "/images/icons/bathroom/wave-key.png",
+};
 
 const createSymbolTexture = (symbol, foreground = "#f5df9b", background = "#332417") => {
   const canvas = document.createElement("canvas"); canvas.width = 256; canvas.height = 256;
@@ -22,7 +28,7 @@ class FinalKey extends Entity {
     const darkMetal = new THREE.MeshStandardMaterial({ color: 0x352b24, metalness: .82, roughness: .34 });
     const ring = new THREE.Mesh(new THREE.TorusGeometry(.38, .09, 16, 40), metal);
     const medallion = new THREE.Mesh(new THREE.CylinderGeometry(.25, .25, .08, 32), darkMetal); medallion.rotation.x = Math.PI / 2;
-    const { texture, icon } = createSymbolTexture(symbol); this.symbolTexture = texture; this.inventoryIcon = icon;
+    const { texture } = createSymbolTexture(symbol); this.symbolTexture = texture; this.inventoryIcon = FINAL_KEY_ICONS[symbol];
     const emblem = new THREE.Mesh(new THREE.CircleGeometry(.2, 32), new THREE.MeshStandardMaterial({ map: texture, roughness: .55 })); emblem.position.z = .046;
     const shaft = new THREE.Mesh(new THREE.BoxGeometry(.14, .92, .12), metal); shaft.position.y = -.78;
     const collar = new THREE.Mesh(new THREE.BoxGeometry(.32, .16, .16), darkMetal); collar.position.y = -.39;

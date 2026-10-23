@@ -3,6 +3,8 @@ import { createAmbientMaterial as material, finishMesh } from "./AmbientDecorUti
 
 const createSoapDish = ({ aged = false, scale = 1 } = {}) => {
   const group = new THREE.Group();
+  group.name = "ambient-soap-dish";
+  group.userData.ambientDescriptionKey = "soapDish";
   const dishMaterial = material(aged ? 0x77746d : 0xc8c2b3, 0.34);
   const dish = finishMesh(
     new THREE.Mesh(

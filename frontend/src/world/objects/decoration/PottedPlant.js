@@ -3,6 +3,8 @@ import { createAmbientMaterial as material, finishMesh } from "./AmbientDecorUti
 
 const createPottedPlant = ({ aged = false, scale = 1 } = {}) => {
   const group = new THREE.Group();
+  group.name = "ambient-potted-plant";
+  group.userData.ambientDescriptionKey = "plant";
   const potMaterial = material(aged ? 0x554d46 : 0x9a5d3e, 0.88);
   const soilMaterial = material(0x2c2119, 1);
   const stemMaterial = material(aged ? 0x394436 : 0x496d3f, 0.9);

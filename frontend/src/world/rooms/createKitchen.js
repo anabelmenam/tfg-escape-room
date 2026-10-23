@@ -238,9 +238,9 @@ const createKitchen = ({
     aged: agedDecor,
     scale: 0.8,
     imagePaths: [
-      "/images/decor/kitchen-still-life.png",
-      "/images/decor/bedroom-landscape.png",
-      "/images/decor/couple-photo-1980s.png",
+      "/images/decor/family-breakfast.png",
+      "/images/decor/family-picnic.png",
+      "/images/decor/family-photo-1980s.png",
     ],
   });
   kitchenFrames.position.set(-6.35, 7, depth / 2 - 0.22);

@@ -4,6 +4,8 @@ import { createAmbientMaterial as material, finishMesh } from "./AmbientDecorUti
 
 const createLaundryBasket = ({ aged = false, scale = 1 } = {}) => {
   const group = new THREE.Group();
+  group.name = "ambient-laundry-basket";
+  group.userData.ambientDescriptionKey = "laundryBasket";
   const basket = finishMesh(new THREE.Mesh(new THREE.CylinderGeometry(0.58, 0.52, 0.82, 20, 1, true), material(aged ? 0x5f574e : 0x8b7257, 0.95)));
   basket.position.y = 0.41;
   const towelA = createBox({ width: 0.7, height: 0.2, depth: 0.48, position: new THREE.Vector3(0, 0.82, 0), material: material(aged ? 0x65706d : 0x86aaa4, 0.98) });

@@ -3,12 +3,14 @@ import GameCanvas from "./components/GameCanvas";
 import Lobby from "./components/Lobby";
 import RoomLobby from "./components/RoomLobby";
 import { GameAudio } from "./game/GameAudio.js";
+import { getLanguage } from "./translations/index.js";
 
 const getTestSession = () => {
   if (!import.meta.env.DEV) return null;
   const params = new URLSearchParams(window.location.search);
   const timeline = params.get("test");
   if (timeline === "icons") return { testMode: true, testPlayerRole: "C", testArea: "icons" };
+  if (timeline === "ending") return { testMode: true, timeline: "present", testArea: "hallway", endingPreview: true };
   if (!["past", "present"].includes(timeline)) return null;
   const area = params.get("area");
   return { testMode: true, timeline, testArea: ["hallway", "children", "bathroom", "kitchen"].includes(area) ? area : "bedroom" };
@@ -23,6 +25,7 @@ const readSetting = (key, fallback, { min = 0, max = 1 } = {}) => {
 
 const App = () => {
   const [session, setSession] = useState(getTestSession);
+  const [language, setLanguageState] = useState(getLanguage);
   const [audioController] = useState(() => new GameAudio());
   const [audioSettings, setAudioSettings] = useState(() => ({
     music: readSetting("music-volume", 1),
@@ -66,6 +69,8 @@ const App = () => {
   if (!session) {
     return (
       <Lobby
+        language={language}
+        onLanguageChange={setLanguageState}
         onEnterLobby={setSession}
         audioSettings={audioSettings}
         onAudioSettingChange={changeAudioSetting}
@@ -80,6 +85,8 @@ const App = () => {
     <GameCanvas
       playerRole={session.testPlayerRole ?? (session.timeline === "past" ? "A" : "B")}
       session={session}
+      language={language}
+      onLanguageChange={setLanguageState}
       audioController={audioController}
       audioSettings={audioSettings}
       onAudioSettingChange={changeAudioSetting}

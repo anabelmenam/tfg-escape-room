@@ -60,8 +60,8 @@ class PaintingFragment extends Entity {
     this.index = index;
     this.paintingPieceIndex = index;
     this.inventoryIcon = index === 0
-      ? "/images/icons/painting-fragment-1.png"
-      : "/images/icons/painting-fragment-2.png";
+      ? "/images/icons/living-room/painting-fragment-1.png"
+      : "/images/icons/living-room/painting-fragment-2.png";
     this.object3D = new THREE.Group();
     this.object3D.name = id;
     this.object3D.position.copy(position);
@@ -93,7 +93,7 @@ class FallenPainting extends Entity {
     visible = false,
   } = {}) {
     super(id);
-    this.inventoryIcon = "/images/icons/fallen-painting.png";
+    this.inventoryIcon = "/images/icons/living-room/fallen-painting.png";
     this.object3D = createPainting({ pieces: initialPieces });
     this.object3D.name = id;
     this.object3D.position.copy(position);

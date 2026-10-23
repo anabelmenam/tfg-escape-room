@@ -2,6 +2,7 @@ import { useState } from "react";
 import { createGameRoom, joinGameRoom } from "../services/gameApi";
 import AudioSettings from "./AudioSettings";
 import MouseSettings from "./MouseSettings";
+import LanguageSettings from "./LanguageSettings";
 
 const controls = [
   ["W A S D", "Moverse"],
@@ -35,7 +36,7 @@ const MenuButton = ({ children, secondary = false, onClick }) => (
   </button>
 );
 
-const Lobby = ({ onEnterLobby, audioSettings, onAudioSettingChange, mouseSensitivity, onMouseSensitivityChange }) => {
+const Lobby = ({ onEnterLobby, audioSettings, onAudioSettingChange, mouseSensitivity, onMouseSensitivityChange, onLanguageChange }) => {
   const [view, setView] = useState("menu");
   const [name, setName] = useState("");
   const [joinCode, setJoinCode] = useState("");
@@ -84,6 +85,7 @@ const Lobby = ({ onEnterLobby, audioSettings, onAudioSettingChange, mouseSensiti
               <MenuButton secondary onClick={() => setView("settings")}>Ajustes</MenuButton>
               <MenuButton secondary onClick={() => setView("controls")}>Controles</MenuButton>
             </div>
+            <div className="mx-auto mt-6 max-w-sm"><LanguageSettings onChange={onLanguageChange} /></div>
           </>
         )}
 
@@ -122,6 +124,7 @@ const Lobby = ({ onEnterLobby, audioSettings, onAudioSettingChange, mouseSensiti
                     </div>
                   </div>
                   <a href="?test=icons" className="col-span-2 justify-self-center rounded border border-[#b58a4d] bg-[#171210]/70 px-8 py-3 text-center text-sm font-semibold text-[#e7c17d] hover:bg-[#49331f]">Estudio de iconos</a>
+                  <a href="?test=ending" className="col-span-2 justify-self-center rounded border border-[#b58a4d] bg-[#171210]/70 px-8 py-3 text-center text-sm font-semibold text-[#e7c17d] hover:bg-[#49331f]">Ver final</a>
                 </div>
               </div>
             )}

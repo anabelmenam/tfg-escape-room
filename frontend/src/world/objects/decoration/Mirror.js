@@ -6,6 +6,7 @@ class Mirror extends Entity {
     super(id);
     const group = new THREE.Group();
     group.name = id;
+    group.userData.ambientDescriptionKey = "mirror";
     group.position.copy(position);
     group.rotation.y = rotationY;
     group.scale.setScalar(scale);

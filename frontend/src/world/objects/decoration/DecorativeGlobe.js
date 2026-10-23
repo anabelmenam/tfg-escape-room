@@ -3,6 +3,8 @@ import { createAmbientMaterial as material, finishMesh } from "./AmbientDecorUti
 
 const createDecorativeGlobe = ({ aged = false, scale = 1 } = {}) => {
   const group = new THREE.Group();
+  group.name = "ambient-decorative-globe";
+  group.userData.ambientDescriptionKey = "decorativeGlobe";
   const metalMaterial = material(aged ? 0x655b4d : 0x9b7441, 0.38, 0.35);
   const globe = finishMesh(new THREE.Mesh(new THREE.SphereGeometry(0.48, 28, 18), material(aged ? 0x586663 : 0x5d8d96, 0.72)));
   globe.position.y = 0.78;

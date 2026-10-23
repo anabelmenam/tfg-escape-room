@@ -10,6 +10,7 @@ import {
   Paper,
   Key,
   FinalBolt,
+  FinalThreshold,
   createKeyBowl,
   createUmbrellaStand,
   createVase,
@@ -56,6 +57,7 @@ const createHallway = ({
   entranceZ = 12.5,
   onObjectFocus = null,
   onHallwayAction = null,
+  isInteractHeld = () => false,
   testMode = false,
 } = {}) => {
   const temporaryReviewAccess = testMode;
@@ -149,11 +151,29 @@ const createHallway = ({
       ...spec,
       onUnlock: () => onHallwayAction?.("object.interact", spec.id),
     });
-    bolt.object3D.position.set(-.45, 2.15 - index * 1.43, streetDoor.thickness / 2 + .11);
-    bolt.object3D.scale.setScalar(.78);
-    streetDoor.doorMesh.add(bolt.object3D);
+    const fixedBoltPosition = new THREE.Vector3(
+      5.7,
+      3.05 - index * .68,
+      streetDoor.thickness / 2 + .11,
+    ).applyAxisAngle(new THREE.Vector3(0, 1, 0), streetDoor.closedRotation);
+    fixedBoltPosition.add(streetDoor.object3D.position);
+    bolt.object3D.position.copy(fixedBoltPosition);
+    bolt.object3D.rotation.y = streetDoor.closedRotation;
+    bolt.object3D.scale.setScalar(.56);
+    room.add(bolt.object3D);
     return bolt;
   });
+  const finalThreshold = new FinalThreshold({
+    timeline,
+    isInteractHeld,
+    onHoldChange: (holding) => onHallwayAction?.(
+      "object.interact",
+      "hallway-final-threshold",
+      { operation: holding ? "hold-start" : "hold-end" },
+    ),
+  });
+  finalThreshold.object3D.position.set(1.65, 0, streetDoor.thickness / 2 + .15);
+  streetDoor.doorMesh.add(finalThreshold.object3D);
 
   const hallwayLamps = [connectionX + 10, connectionX + 30].map((lampX, index) => {
     const lamp = new Lamp({
@@ -386,6 +406,7 @@ const createHallway = ({
         const unlocked = ["past", "present"].some((era) => state.timelines?.[era]?.objects?.[bolt.id]?.unlocked);
         if (unlocked) bolt.unlock();
       });
+      finalThreshold.applyEndingState(state.ending);
       const finalDoorState = state.timelines?.past?.objects?.["hallway-street-door"]
         ?? state.timelines?.present?.objects?.["hallway-street-door"];
       if (finalDoorState?.locked === false) streetDoor.unlock({ notify: false });
@@ -398,10 +419,11 @@ const createHallway = ({
       livingRoomDoor,
       ...hallwayDoors,
       ...finalBolts,
+      finalThreshold,
       ...(timeline === "present" ? [mazeMirror] : []),
       ...(timeline === "past" ? [mazeNote] : [maze]),
     ],
-    entities: [clock, hallwaySwitch, hallwayExitSwitch, livingRoomDoor, ...hallwayDoors, ...finalBolts, ...hallwayLamps, ...(mazeMirror ? [mazeMirror] : []), ...(maze ? [maze] : [mazeNote])],
+    entities: [clock, hallwaySwitch, hallwayExitSwitch, livingRoomDoor, ...hallwayDoors, ...finalBolts, finalThreshold, ...hallwayLamps, ...(mazeMirror ? [mazeMirror] : []), ...(maze ? [maze] : [mazeNote])],
     mirror: mazeMirror,
     clock,
     hallwaySwitch,
@@ -411,6 +433,7 @@ const createHallway = ({
     hallwayCarpet,
     livingRoomDoor,
     hallwayDoors,
+    finalThreshold,
     livingRoomOpening,
     childrenRoomOpening,
     bathroomOpening,

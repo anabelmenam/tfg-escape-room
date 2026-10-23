@@ -415,7 +415,15 @@ const createChildrenRoom = ({
     photoBoardPuzzle.setAvailable(true);
   }
 
-  const wallArt = createWallFrameCluster({ aged: agedDecor, scale: 0.82 });
+  const wallArt = createWallFrameCluster({
+    aged: agedDecor,
+    scale: 0.82,
+    imagePaths: [
+      "/images/decor/family-picnic.png",
+      "/images/decor/family-breakfast.png",
+      "/images/decor/family-photo-1980s.png",
+    ],
+  });
   wallArt.position.set(6.9, 8.65, -9.78);
 
   room.add(

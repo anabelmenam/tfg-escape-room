@@ -6,6 +6,7 @@ class Screwdriver extends Entity {
   constructor({ id = "screwdriver", onCollect = null } = {}) {
     super(id);
     this.itemName = "screwdriver";
+    this.inventoryIcon = "/images/icons/bathroom/screwdriver.png";
     this.onCollect = onCollect;
     this.object3D = new THREE.Group();
     this.object3D.name = id;

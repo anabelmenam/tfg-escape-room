@@ -5,7 +5,7 @@ import { tInteraction, tItem } from "../../../translations/index.js";
 class Fuse extends Entity {
   constructor({ id = "fuse", position = new THREE.Vector3(), scale = 1 } = {}) {
     super(id);
-    this.inventoryIcon = "/images/icons/fuse.png";
+    this.inventoryIcon = "/images/icons/bedroom/fuse.png";
     this.object3D = this.createObject();
     this.object3D.position.copy(position);
     this.object3D.scale.setScalar(scale);

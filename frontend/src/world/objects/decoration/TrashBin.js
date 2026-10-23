@@ -3,6 +3,8 @@ import { createAmbientMaterial as material, finishMesh } from "./AmbientDecorUti
 
 const createTrashBin = ({ aged = false, scale = 1 } = {}) => {
   const group = new THREE.Group();
+  group.name = "ambient-trash-bin";
+  group.userData.ambientDescriptionKey = "trashBin";
   group.name = "bathroom-trash-bin";
 
   const shellMaterial = material(aged ? 0x5f625e : 0x9ba7a3, 0.5, 0.18);

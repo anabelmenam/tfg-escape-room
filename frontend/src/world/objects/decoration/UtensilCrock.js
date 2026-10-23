@@ -3,6 +3,8 @@ import { createAmbientMaterial as material, finishMesh } from "./AmbientDecorUti
 
 const createUtensilCrock = ({ aged = false, scale = 1 } = {}) => {
   const group = new THREE.Group();
+  group.name = "ambient-utensil-crock";
+  group.userData.ambientDescriptionKey = "utensils";
   const ceramic = material(aged ? 0x68645d : 0xc4b59a, 0.58);
   const crock = finishMesh(new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.25, 0.58, 28, 1, true), ceramic));
   crock.position.y = 0.29;

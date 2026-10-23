@@ -4,6 +4,8 @@ import { createAmbientMaterial as material, finishMesh } from "./AmbientDecorUti
 
 const createPerfumeTray = ({ aged = false, scale = 1 } = {}) => {
   const group = new THREE.Group();
+  group.name = "ambient-perfume-tray";
+  group.userData.ambientDescriptionKey = "perfume";
   const trayMaterial = material(aged ? 0x68625b : 0xb49a75, 0.38, 0.18);
   group.add(createBox({ width: 1.15, height: 0.06, depth: 0.62, position: new THREE.Vector3(0, 0.03, 0), material: trayMaterial }));
   [[-0.3, 0.28, 0x8b716f], [0.05, 0.42, 0x6f8a88], [0.36, 0.32, 0xa88b62]].forEach(([x, height, color], index) => {

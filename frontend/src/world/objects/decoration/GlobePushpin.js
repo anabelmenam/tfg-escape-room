@@ -5,6 +5,7 @@ import { tInteraction, tItem } from "../../../translations/index.js";
 class GlobePushpin extends Entity {
   constructor({ onCollect = null } = {}) {
     super("globe-pushpin");
+    this.inventoryIcon = "/images/icons/children-room/push-pin.png";
     this.onCollect = onCollect;
     this.object3D = new THREE.Group();
     const headMaterial = new THREE.MeshStandardMaterial({ color: 0xc62828, roughness: .35 });

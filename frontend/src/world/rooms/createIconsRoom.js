@@ -1,6 +1,5 @@
 import * as THREE from "three";
 import { createRoom } from "./createRoom.js";
-import { ClockHand } from "../objects/index.js";
 
 const createIconsRoom = () => {
   const { room, colliders, bounds } = createRoom({
@@ -56,13 +55,14 @@ const createIconsRoom = () => {
   topLight.position.set(0, 10, -1);
   room.add(topLight);
 
-  const objectPosition = new THREE.Vector3(-0.25, 5.65, -4);
-  const object = new ClockHand();
-  object.object3D.scale.setScalar(2);
-  object.object3D.position.copy(objectPosition);
-  object.object3D.rotation.set(Math.PI, 0, -Math.PI / 4);
+  const objectPosition = new THREE.Vector3(0, 5.7, -4);
 
-  room.add(object.object3D);
+  let object;
+  object.name = `icon-studio-${object.name}`;
+  object.position.copy(objectPosition);
+  object.scale.setScalar(0.7);
+
+  room.add(object);
 
   return {
     room,

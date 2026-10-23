@@ -363,7 +363,7 @@ const createBedroom = async ({
     position: new THREE.Vector3(-1.75, 7.45, -12.34),
     width: 5.8,
     height: 3.35,
-    imagePath: "/images/decor/bedroom-landscape.png",
+    imagePath: "/images/decor/family-breakfast.png",
     mount: "wall",
     frameColor: agedDecor ? 0x403a35 : 0x5d402b,
     matColor: agedDecor ? 0x858077 : 0xd8c7a3,

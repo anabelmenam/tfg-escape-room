@@ -5,6 +5,7 @@ import { tInteraction, tItem } from "../../translations/index.js";
 class Scissors extends Entity {
   constructor({ id = "living-room-scissors", onCollect = null } = {}) {
     super(id);
+    this.inventoryIcon = "/images/icons/living-room/scissors.png";
     this.onCollect = onCollect;
     this.object3D = new THREE.Group();
     this.object3D.name = id;

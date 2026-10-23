@@ -75,6 +75,7 @@ import { createUmbrellaStand } from "./decoration/UmbrellaStand.js";
 import { createUtensilCrock } from "./decoration/UtensilCrock.js";
 import { createVase } from "./decoration/Vase.js";
 import { createWallFrameCluster } from "./decoration/WallFrameCluster.js";
+import { FinalThreshold } from "./decoration/FinalThreshold.js";
 import createBox from "./helpers/createBox.js";
 import { createCurvedFaucet } from "./helpers/createCurvedFaucet.js";
 import { createRoundedPullHandle } from "./helpers/createRoundedPullHandle.js";
@@ -84,7 +85,6 @@ import { Scissors } from "../puzzles/ScissorsPuzzle.js";
 import { Cushion, Match } from "../puzzles/CushionPuzzle.js";
 import { Fireplace } from "../puzzles/FireplacePuzzle.js";
 import { DisplayCase } from "../puzzles/DisplayCasePuzzle.js";
-import { FamilyKeepsake } from "../puzzles/FamilyKeepsakePuzzle.js";
 import { EmberClue, EmberPuzzle } from "../puzzles/EmberPuzzle.js";
 
 export {
@@ -136,7 +136,6 @@ export {
   Match,
   Fireplace,
   DisplayCase,
-  FamilyKeepsake,
   EmberClue,
   EmberPuzzle,
   Safe,
@@ -179,6 +178,7 @@ export {
   createUtensilCrock,
   createVase,
   createWallFrameCluster,
+  FinalThreshold,
   createWoodMaterials,
   clearTextureCache,
   loadTexture,

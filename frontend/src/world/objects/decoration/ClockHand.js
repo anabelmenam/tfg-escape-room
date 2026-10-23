@@ -4,7 +4,7 @@ import { Entity } from "../Entity.js";
 class ClockHand extends Entity {
   constructor() {
     super("clock-hand");
-    this.inventoryIcon = "/images/icons/clock-hand.png";
+    this.inventoryIcon = "/images/icons/bedroom/clock-hand.png";
     this.object3D = new THREE.Group();
     this.object3D.name = this.id;
     const metal = new THREE.MeshStandardMaterial({ color: 0x211b1a, metalness: 0.6, roughness: 0.35 });

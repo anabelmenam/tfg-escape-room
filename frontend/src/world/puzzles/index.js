@@ -8,7 +8,6 @@ import { Scissors } from "./ScissorsPuzzle.js";
 import { Cushion, Match } from "./CushionPuzzle.js";
 import { Fireplace } from "./FireplacePuzzle.js";
 import { DisplayCase } from "./DisplayCasePuzzle.js";
-import { FamilyKeepsake } from "./FamilyKeepsakePuzzle.js";
 import { EmberClue, EmberPuzzle } from "./EmberPuzzle.js";
 import { BathroomSteamPuzzle, STEAM_SEQUENCE } from "./BathroomSteamPuzzle.js";
 import { HallwayMazeMirror } from "./HallwayMazeMirror.js";
@@ -34,7 +33,6 @@ export {
   Match,
   Fireplace,
   DisplayCase,
-  FamilyKeepsake,
   EmberClue,
   EmberPuzzle,
   BathroomSteamPuzzle,

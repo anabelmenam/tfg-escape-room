@@ -3,6 +3,8 @@ import { createAmbientMaterial as material, finishMesh } from "./AmbientDecorUti
 
 const createFruitBowl = ({ aged = false, scale = 1 } = {}) => {
   const group = new THREE.Group();
+  group.name = "ambient-fruit-bowl";
+  group.userData.ambientDescriptionKey = "fruitBowl";
   const bowlColor = aged ? 0x544b43 : 0x8b6648;
   const bowlProfile = [
     new THREE.Vector2(0.3, 0.04),

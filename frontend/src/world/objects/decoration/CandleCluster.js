@@ -3,6 +3,8 @@ import { createAmbientMaterial as material, finishMesh } from "./AmbientDecorUti
 
 const createCandleCluster = ({ aged = false, scale = 1, count = 3 } = {}) => {
   const group = new THREE.Group();
+  group.name = "ambient-candle-cluster";
+  group.userData.ambientDescriptionKey = "candles";
   const candleCount = Math.max(0, Math.floor(count));
   const plateMaterial = material(aged ? 0x77746c : 0xc8b58e, 0.32, 0.08);
   Array.from({ length: candleCount }, (_, index) => {

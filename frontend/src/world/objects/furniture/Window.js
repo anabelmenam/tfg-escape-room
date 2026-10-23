@@ -44,6 +44,8 @@ class Window extends Entity {
     this.hasCurtains = hasCurtains;
 
     this.object3D = new THREE.Group();
+    this.object3D.name = id;
+    this.object3D.userData.ambientDescriptionKey = "window";
     this.object3D.position.copy(position);
     this.object3D.rotation.y = rotationY;
     this.object3D.scale.setScalar(scale);

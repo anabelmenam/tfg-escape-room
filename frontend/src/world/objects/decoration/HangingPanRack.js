@@ -4,6 +4,8 @@ import { createAmbientMaterial as material, finishMesh } from "./AmbientDecorUti
 
 const createHangingPanRack = ({ aged = false, scale = 1 } = {}) => {
   const group = new THREE.Group();
+  group.name = "ambient-hanging-pans";
+  group.userData.ambientDescriptionKey = "hangingPans";
   const metalMaterial = material(aged ? 0x56534d : 0x8a674a, 0.34, 0.55);
   group.add(createBox({ width: 3.1, height: 0.11, depth: 0.12, position: new THREE.Vector3(0, 0.72, 0), material: metalMaterial }));
   [-1, 0, 1].forEach((x, index) => {

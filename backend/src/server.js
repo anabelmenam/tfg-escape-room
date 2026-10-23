@@ -98,6 +98,38 @@ const reduceAction = (state, player, action) => {
   const timeline = player.timeline;
   switch (action.type) {
     case "object.interact":
+      if (action.targetId === "hallway-final-threshold") {
+        const allUnlocked = Object.keys(finalLocks).every((lockId) => state.timelines.past.objects[lockId]?.unlocked);
+        if (!allUnlocked) throw new Error("Primero hay que abrir los cuatro cerrojos.");
+        state.ending ??= { phase: "threshold", holding: { past: false, present: false }, choice: null, sacrificeTimeline: null };
+        if (state.ending.phase !== "threshold") return;
+        state.ending.holding ??= { past: false, present: false };
+        state.ending.holding[timeline] = action.payload?.operation === "hold-start";
+        if (state.ending.holding.past && state.ending.holding.present) {
+          state.ending.phase = "opening";
+          state.ending.crossed = { past: false, present: false };
+          for (const era of ["past", "present"]) {
+            setObjectState(state, era, "hallway-street-door", { locked: false, open: true });
+          }
+        }
+        return;
+      }
+      if (action.targetId === "hallway-final-crossed") {
+        if (state.ending?.phase !== "opening") return;
+        state.ending.crossed ??= { past: false, present: false };
+        state.ending.crossed[timeline] = true;
+        if (state.ending.crossed.past && state.ending.crossed.present) state.ending.phase = "choice";
+        return;
+      }
+      if (action.targetId === "hallway-final-choice") {
+        if (state.ending?.phase !== "choice") throw new Error("La puerta todavía no está preparada.");
+        const choice = action.payload?.choice;
+        if (!["together", "sacrifice"].includes(choice)) throw new Error("Ese desenlace no es válido.");
+        state.ending.phase = "complete";
+        state.ending.choice = choice;
+        state.ending.sacrificeTimeline = choice === "sacrifice" ? timeline : null;
+        return;
+      }
       if (finalLocks[action.targetId]) {
         const lock = finalLocks[action.targetId];
         const keyIndex = state.inventories[timeline].indexOf(lock.keyId);
@@ -106,7 +138,9 @@ const reduceAction = (state, player, action) => {
         for (const era of ["past", "present"]) setObjectState(state, era, action.targetId, { unlocked: true });
         const allUnlocked = Object.keys(finalLocks).every((lockId) => state.timelines.past.objects[lockId]?.unlocked);
         if (allUnlocked) {
-          for (const era of ["past", "present"]) setObjectState(state, era, "hallway-street-door", { locked: false, open: true });
+          state.ending ??= { phase: "locked", holding: { past: false, present: false }, choice: null, sacrificeTimeline: null };
+          state.ending.phase = "threshold";
+          state.ending.holding = { past: false, present: false };
         }
         return;
       }

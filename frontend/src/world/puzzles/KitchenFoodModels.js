@@ -19,11 +19,35 @@ const createTomatoes = () => {
   return group;
 };
 
+const createCarrotGeometry = (bendDirection = 1) => {
+  const profile = [
+    new THREE.Vector2(.012, -.41),
+    new THREE.Vector2(.035, -.36),
+    new THREE.Vector2(.064, -.24),
+    new THREE.Vector2(.086, -.06),
+    new THREE.Vector2(.102, .17),
+    new THREE.Vector2(.096, .31),
+    new THREE.Vector2(.072, .38),
+    new THREE.Vector2(.025, .41),
+  ];
+  const geometry = new THREE.LatheGeometry(profile, 24);
+  const positions = geometry.attributes.position;
+  for (let vertex = 0; vertex < positions.count; vertex += 1) {
+    const y = positions.getY(vertex);
+    const normalizedHeight = (y + .41) / .82;
+    const curve = Math.sin(normalizedHeight * Math.PI) * .032 * bendDirection;
+    positions.setX(vertex, positions.getX(vertex) + curve);
+  }
+  positions.needsUpdate = true;
+  geometry.computeVertexNormals();
+  return geometry;
+};
+
 const createCarrots = () => {
   const group = new THREE.Group();
   [-.14, .14].forEach((z, index) => {
     const carrot = new THREE.Mesh(
-      new THREE.ConeGeometry(.14, .82, 20),
+      createCarrotGeometry(index === 0 ? -1 : 1),
       new THREE.MeshStandardMaterial({ color: index === 0 ? 0xe17a2d : 0xd96f27, roughness: .84 }),
     );
     carrot.rotation.z = -Math.PI / 2;
@@ -31,24 +55,27 @@ const createCarrots = () => {
     carrot.position.set(.02, .15, z);
     group.add(carrot);
 
-    const collar = new THREE.Mesh(
-      new THREE.CylinderGeometry(.07, .085, .1, 12),
-      new THREE.MeshStandardMaterial({ color: 0x527c3f, roughness: .9 }),
+    const leafShape = new THREE.Shape();
+    leafShape.moveTo(0, 0);
+    leafShape.bezierCurveTo(-.12, .055, -.3, .08, -.46, 0);
+    leafShape.bezierCurveTo(-.3, -.08, -.12, -.055, 0, 0);
+    const leaf = new THREE.Mesh(
+      new THREE.ShapeGeometry(leafShape, 10),
+      new THREE.MeshStandardMaterial({
+        color: index === 0 ? 0x527f40 : 0x648f4b,
+        roughness: .9,
+        side: THREE.DoubleSide,
+      }),
     );
-    collar.rotation.z = Math.PI / 2;
-    collar.position.set(-.42, .15, z);
-    group.add(collar);
-
-    [-.23, 0, .23].forEach((angle, leafIndex) => {
-      const leaf = new THREE.Mesh(
-        new THREE.ConeGeometry(.045, .34 - leafIndex * .025, 8),
-        new THREE.MeshStandardMaterial({ color: leafIndex === 1 ? 0x527c3f : 0x638c49, roughness: .9 }),
-      );
-      leaf.rotation.z = Math.PI / 2 + angle;
-      leaf.rotation.y = index === 0 ? -.15 : .15;
-      leaf.position.set(-.5, .18 + Math.abs(angle) * .12, z + (leafIndex - 1) * .055);
-      group.add(leaf);
-    });
+    leaf.position.set(-.4, .17, z);
+    leaf.rotation.set(index === 0 ? -.12 : .12, 0, index === 0 ? -.13 : .1);
+    const vein = new THREE.Mesh(
+      new THREE.BoxGeometry(.4, .009, .008),
+      new THREE.MeshStandardMaterial({ color: 0x365d30, roughness: .95 }),
+    );
+    vein.position.set(-.2, 0, .006);
+    leaf.add(vein);
+    group.add(leaf);
 
     [[-.12, .255], [.08, .225], [.25, .19]].forEach(([x, y], ridgeIndex) => {
       const ridge = new THREE.Mesh(

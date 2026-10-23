@@ -1,3 +1,39 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@keyframes ending-light-bloom {
+  0% { transform: scale(0); opacity: 0; }
+  18% { opacity: 1; }
+  100% { transform: scale(18); opacity: 1; }
+}
+
+.ending-light-bloom {
+  animation: ending-light-bloom 1.25s cubic-bezier(.65, 0, .35, 1) forwards;
+}
+
+.ending-cinematic #inventory,
+.ending-cinematic #inventory-selected-name,
+.ending-cinematic #interaction-text,
+.ending-cinematic #ambient-inspection,
+.ending-cinematic #crosshair {
+  display: none !important;
+}
+
+@keyframes ending-screen-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes ending-panel-in {
+  from { opacity: 0; transform: translateY(28px) scale(.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.ending-screen-in {
+  animation: ending-screen-in 1.15s ease-out both;
+}
+
+.ending-panel-in {
+  animation: ending-panel-in 1.35s .35s cubic-bezier(.22, 1, .36, 1) both;
+}

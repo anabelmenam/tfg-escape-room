@@ -67,6 +67,8 @@ const createArtworkTexture = ({ index, aged }) => {
 
 const createWallFrameCluster = ({ aged = false, scale = 1, imagePaths = [] } = {}) => {
   const group = new THREE.Group();
+  group.name = "ambient-family-frames";
+  group.userData.ambientDescriptionKey = "familyFrames";
   const frameMaterial = material(aged ? 0x453d37 : 0x65472f, 0.78);
   [[-1.15, 0.25, 1.25, 1.65], [0.15, -0.05, 1.05, 1.3], [1.25, 0.35, 0.9, 1.15]].forEach(([x, y, width, height], index) => {
     const frame = createBox({ width, height, depth: 0.1, position: new THREE.Vector3(x, y, 0), material: frameMaterial });

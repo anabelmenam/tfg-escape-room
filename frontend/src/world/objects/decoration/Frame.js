@@ -21,6 +21,7 @@ class Frame extends Entity {
     this.mount = mount;
     this.object3D = new THREE.Group();
     this.object3D.name = id;
+    this.object3D.userData.ambientDescriptionKey = "framedPicture";
     this.object3D.position.copy(position);
     this.object3D.rotation.copy(rotation);
     this.object3D.rotation.y += rotationY;
