@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { tInteraction } from "../../translations/index.js";
+import { tInteraction, tItem } from "../../translations/index.js";
 import { FocusPuzzle, mark, shadows } from "./KitchenPuzzleBase.js";
 
 class OvenControlPuzzle extends FocusPuzzle {
@@ -69,7 +69,7 @@ class OvenControlPuzzle extends FocusPuzzle {
   handleControl(control) { if (this.timeline !== "past" || !this.available || this.isSolved || control?.kind !== "oven-dial") return; const index = control.value; this.values[index] = (this.values[index] + 1) % 5; this.dials[index].rotation.z = -this.values[index] * Math.PI * .4; this.updateDisplay(); this.trySolve(); }
   trySolve() { if (!this.isSolved && this.values.every((value, position) => value === this.solution[position]) && (this.canSolve?.() ?? true)) this.solve(); }
   solve({ notify = true } = {}) { if (this.isSolved) return; this.isSolved = true; this.values = [...this.solution]; this.dials.forEach((dial, index) => { dial.rotation.z = -this.solution[index] * Math.PI * .4; }); this.updateDisplay(); if (notify) this.onSolved?.(); }
-  getInteractionText() { if (!this.available || this.isSolved) return null; return tInteraction("examine", this.timeline === "present" ? "el indicador encendido del horno" : "los mandos del horno"); }
+  getInteractionText() { if (!this.available || this.isSolved) return null; return tInteraction("examine", tItem(this.timeline === "present" ? "oven-indicator" : "oven-controls")); }
   getFocusPosition() { this.object3D.updateWorldMatrix(true, false); return this.object3D.localToWorld(this.timeline === "present" ? new THREE.Vector3(0, 1.8, 3.5) : new THREE.Vector3(0, .3, 3)); }
   getLookAtPosition() { this.object3D.updateWorldMatrix(true, false); return this.object3D.localToWorld(new THREE.Vector3()); }
   dispose() { this.texture?.dispose(); this.valueTexture?.dispose(); this.valueMaterial?.dispose(); }

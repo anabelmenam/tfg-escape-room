@@ -219,7 +219,7 @@ class Paper extends Entity {
       return tInteraction("pickUp", tItem(this.itemName));
     }
 
-    return this.onFocus ? "[E] Examinar nota" : null;
+    return this.onFocus ? tInteraction("examine", tItem("note")) : null;
   }
 
   getFocusPosition() {

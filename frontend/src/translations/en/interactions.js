@@ -23,6 +23,9 @@ interactions: {
     turnOn: (i) => `[E] Turn on ${i}`,
     turnOff: (i) => `[E] Turn off ${i}`,
     unscrew: (i) => `[E] Unscrew ${i}`,
+    listen: (i) => `[E] Listen to ${i}`,
     exit: () => "[E] Exit",
+    mazeTitle: () => "Solve the maze",
+    mazeSolution: () => "The key's path",
   }
 };

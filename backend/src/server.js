@@ -362,6 +362,13 @@ const reduceAction = (state, player, action) => {
         setObjectState(state, "present", action.targetId, { hasFuse: true });
         return;
       }
+      if (action.targetId === "bedroom-radio" && action.payload?.operation === "insert-dial") {
+        const dialIndex = state.inventories.past.indexOf("radio-dial");
+        if (timeline !== "past" || dialIndex === -1) throw new Error("Necesitas seleccionar la rueda de la radio.");
+        state.inventories.past.splice(dialIndex, 1);
+        setObjectState(state, "past", action.targetId, { hasDial: true });
+        return;
+      }
       if (action.targetId === "bedroom-exit-door") {
         if (timeline !== "past") throw new Error("La puerta solo puede desbloquearse desde el Mamá.");
         const keyIndex = state.inventories.past.indexOf("bedroom-key");

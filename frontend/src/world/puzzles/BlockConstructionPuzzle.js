@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
-import { tInteraction } from "../../translations/index.js";
+import { tInteraction, tItem } from "../../translations/index.js";
 import { CASTLE_PIECES, ChildrenPuzzle, configureChildrenMeshes, markChildrenControl } from "./ChildrenPuzzleBase.js";
 
 class BlockConstructionPuzzle extends ChildrenPuzzle {
@@ -302,7 +302,7 @@ class BlockConstructionPuzzle extends ChildrenPuzzle {
     this.blocks.forEach((block, index) => block.position.copy(this.startPositions[index]));
   }
   solve({ notify = true } = {}) { if (this.isSolved) return; this.selectedBlock = null; this.selectedBlockY = null; this.isSolved = true; this.placed = CASTLE_PIECES.map((_, index) => index); CASTLE_PIECES.forEach((piece, index) => this.blocks[index].position.set(...piece.target)); if (notify) this.onSolved?.(); this.liftMat({ notify }); }
-  getInteractionText() { if (this.timeline === "past" && this.isSolved) return this.matLifted ? null : tInteraction("move", "la construcción"); return tInteraction("examine", "los bloques"); }
+  getInteractionText() { if (this.timeline === "past" && this.isSolved) return this.matLifted ? null : tInteraction("move", tItem("block-construction")); return tInteraction("examine", tItem("blocks")); }
   getFocusPosition() { this.object3D.updateWorldMatrix(true, false); return this.object3D.localToWorld(new THREE.Vector3(0, 5.2, 9)); }
   getLookAtPosition() { this.object3D.updateWorldMatrix(true, false); return this.object3D.localToWorld(new THREE.Vector3(0, 2.6, 0)); }
 }

@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { Entity } from "../Entity.js";
+import { tInteraction, tItem } from "../../../translations/index.js";
 
 class ClockHand extends Entity {
   constructor({ onCollect = null } = {}) {
@@ -17,7 +18,7 @@ class ClockHand extends Entity {
   }
 
   getInteractionText() {
-    return this.object3D.visible ? "[E] Recoger aguja del reloj" : null;
+    return this.object3D.visible ? tInteraction("pickUp", tItem(this.id)) : null;
   }
 
   interact(player) {

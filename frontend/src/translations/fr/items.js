@@ -94,6 +94,20 @@ const itemPairs = {
   decorativeGlobe: "globe décoratif",
   artSupplies: "matériel de dessin",
   plateStack: "assiettes",
+  radio: "radio",
+  blocks: "blocs",
+  "block-construction": "construction",
+  xylophone: "xylophone à symboles",
+  "music-sequence": "séquence de symboles",
+  ingredient: "ingrédient",
+  napkin: "serviette",
+  seasons: "saisons",
+  "stove-controls": "commandes de la cuisinière",
+  "oven-indicator": "écran allumé du four",
+  "oven-controls": "commandes du four",
+  chains: "chaînes",
+  note: "note",
+  noticeboard: "tableau d'affichage",
 };
 
 export default {

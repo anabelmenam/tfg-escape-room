@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { Entity } from "../objects/index.js";
-import { tInteraction } from "../../translations/index.js";
+import { tInteraction, tItem } from "../../translations/index.js";
 
 const SOLUTION = [0, 1, 2, 3]; // primavera, verano, otoño, invierno
 const SEASON_COLORS = [0x6f9b54, 0xe1b342, 0xb86a32, 0xc7d4df];
@@ -135,7 +135,7 @@ class EmberPuzzle extends Entity {
   }
 
   interact() { if (!this.isSolved) this.onFocus?.(this); }
-  getInteractionText() { return this.isSolved ? null : tInteraction("examine", "estaciones"); }
+  getInteractionText() { return this.isSolved ? null : tInteraction("examine", tItem("seasons")); }
   setFocused(focused) { this.focused = focused; }
   getFocusPosition() { this.object3D.updateWorldMatrix(true, false); return this.object3D.localToWorld(new THREE.Vector3(0, 0, 2.5)); }
   getLookAtPosition() { this.object3D.updateWorldMatrix(true, false); return this.object3D.localToWorld(new THREE.Vector3()); }

@@ -282,7 +282,7 @@ class PhotoBoardPuzzle extends ChildrenPuzzle {
   getInteractionText(player) {
     if (!this.available) return null;
     if (this.timeline === "past" && this.isSolved) {
-      return this.targetHingeAngle < -.1 ? "[E] Cerrar corcho" : "[E] Abrir corcho";
+      return this.targetHingeAngle < -.1 ? tInteraction("close", tItem("noticeboard")) : tInteraction("open", tItem("noticeboard"));
     }
     if (this.timeline === "present") return tInteraction("pickUp", tItem(this.itemName));
     if (this.timeline === "past" && !this.pinInserted && player?.inventory.hasSelected("globe-pushpin")) {

@@ -11,6 +11,7 @@ class RadioPuzzle extends Entity {
     onFocus = null,
     key = null,
     dialItem = null,
+    onDialInserted = null,
     missingDialIndex = 2,
     solution = [7, 2, 5, 4],
     canSolve = null,
@@ -20,6 +21,7 @@ class RadioPuzzle extends Entity {
     this.onFocus = onFocus;
     this.key = key;
     this.dialItem = dialItem;
+    this.onDialInserted = onDialInserted;
     this.missingDialIndex = missingDialIndex;
     this.hasMissingDial = dialItem === null;
     this.values = [0, 0, 0, 0];
@@ -175,21 +177,26 @@ class RadioPuzzle extends Entity {
     this.dialNeedles[this.missingDialIndex] = dial.needlePivot;
     this.updateDialIndicator(this.missingDialIndex);
     this.dialSlot.add(dial.object3D);
+    this.onDialInserted?.();
     return true;
   }
 
+  restoreDialState() {
+    if (this.hasMissingDial || !this.dialItem) return;
+    this.hasMissingDial = true;
+    this.dialItem.object3D.visible = true;
+    this.dialItem.object3D.position.set(0, 0, 0.04);
+    this.dialItem.object3D.rotation.set(0, 0, 0);
+    this.dialItem.object3D.scale.setScalar(1);
+    this.dialItem.setEnabled(false);
+    this.dialItem.setDialIndex(this.missingDialIndex);
+    this.dialNeedles[this.missingDialIndex] = this.dialItem.needlePivot;
+    this.updateDialIndicator(this.missingDialIndex);
+    this.dialSlot.add(this.dialItem.object3D);
+  }
+
   restoreSolvedState() {
-    if (!this.hasMissingDial && this.dialItem) {
-      this.hasMissingDial = true;
-      this.dialItem.object3D.visible = true;
-      this.dialItem.object3D.position.set(0, 0, 0.04);
-      this.dialItem.object3D.rotation.set(0, 0, 0);
-      this.dialItem.object3D.scale.setScalar(1);
-      this.dialItem.setEnabled(false);
-      this.dialItem.setDialIndex(this.missingDialIndex);
-      this.dialNeedles[this.missingDialIndex] = this.dialItem.needlePivot;
-      this.dialSlot.add(this.dialItem.object3D);
-    }
+    this.restoreDialState();
     this.values = [...this.solution];
     this.values.forEach((_, index) => this.updateDialIndicator(index));
     this.isSolved = true;
@@ -232,7 +239,7 @@ class RadioPuzzle extends Entity {
     if (!this.hasMissingDial) {
       return player?.hasSelected(this.dialItem?.id) ? tInteraction("insert", tItem(this.dialItem.id)) : tInteraction("needItem", tItem(this.dialItem?.id));
     }
-    return this.isSolved ? null : tInteraction("examine", "radio");
+    return this.isSolved ? null : tInteraction("examine", tItem("radio"));
   }
 
   getFocusPosition() {

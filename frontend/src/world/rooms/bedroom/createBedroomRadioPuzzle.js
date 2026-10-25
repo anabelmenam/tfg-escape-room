@@ -44,6 +44,7 @@ const createBedroomRadioPuzzle = ({
         onFocus,
         key,
         dialItem: testMode ? null : radioDial,
+        onDialInserted: () => onAction?.("object.interact", "bedroom-radio", { operation: "insert-dial" }),
         canSolve: () => clues.radioNote,
         onSolved: () => onAction?.("puzzle.solved", "bedroom-radio"),
       })
@@ -101,6 +102,7 @@ const createBedroomRadioPuzzle = ({
 
   const applyState = (state) => {
     const radioSolved = Boolean(state.timelines?.past?.puzzles?.["bedroom-radio"]?.solved);
+    if (state.timelines?.past?.objects?.["bedroom-radio"]?.hasDial) radio?.restoreDialState();
     const sewingSolved = Boolean(state.timelines?.past?.puzzles?.["bedroom-sewing-box"]?.solved);
     if (radioSolved) radio?.restoreSolvedState();
     if (sewingSolved) sewingBox?.solve({ notify: false });

@@ -94,6 +94,20 @@ const itemPairs = {
   decorativeGlobe: "decorative globe",
   artSupplies: "drawing supplies",
   plateStack: "plates",
+  radio: "radio",
+  blocks: "blocks",
+  "block-construction": "construction",
+  xylophone: "symbol xylophone",
+  "music-sequence": "symbol sequence",
+  ingredient: "ingredient",
+  napkin: "napkin",
+  seasons: "seasons",
+  "stove-controls": "stove controls",
+  "oven-indicator": "illuminated oven display",
+  "oven-controls": "oven controls",
+  chains: "chains",
+  note: "note",
+  noticeboard: "noticeboard",
 };
 
 export default {

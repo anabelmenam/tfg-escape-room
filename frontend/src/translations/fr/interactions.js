@@ -23,6 +23,9 @@ interactions: {
     turnOn: (i) => `[E] Ouvrir ${i}`,
     turnOff: (i) => `[E] Fermer ${i}`,
     unscrew: (i) => `[E] Dévisser ${i}`,
+    listen: (i) => `[E] Écouter ${i}`,
     exit: () => "[E] Sortir",
+    mazeTitle: () => "Résolvez le labyrinthe",
+    mazeSolution: () => "Le chemin de la clé",
   }
 };

@@ -58,9 +58,9 @@ class TableSettingPuzzle extends FocusPuzzle {
   getInteractionText(player = this.player, control = null) {
     if (!this.available || this.isSolved || this.timeline === "past" || control?.kind !== "place-setting") return null;
     const placed = this.placements[control.value]; if (placed) return tInteraction("pickUp", tItem(placed));
-    const selected = player?.inventory.getSelectedItem(); return selected && this.napkinsById.has(selected.id) ? tInteraction("insert", tItem(selected.id)) : tInteraction("needItem", "una servilleta");
+    const selected = player?.inventory.getSelectedItem(); return selected && this.napkinsById.has(selected.id) ? tInteraction("insert", tItem(selected.id)) : tInteraction("needItem", tItem("napkin"));
   }
-  getFocusHint() { return "[E] Salir"; }
+  getFocusHint() { return tInteraction("exit"); }
   dispose() { this.labelTextures.forEach((texture) => texture.dispose()); this.napkinLabelTextures.forEach((texture) => texture.dispose()); }
 }
 

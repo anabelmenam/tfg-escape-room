@@ -131,7 +131,7 @@ class WardrobeChains extends Entity {
   getInteractionText(player) {
     if (this.isCut || this.isCutting) return null;
     return player?.inventory.hasSelected("bolt-cutters")
-      ? tInteraction("cut", "las cadenas")
+      ? tInteraction("cut", tItem("chains"))
       : tInteraction("needItem", tItem("bolt-cutters"));
   }
 }

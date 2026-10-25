@@ -23,6 +23,9 @@ interactions: {
     turnOn: (item) => `[E] Abrir ${item}`,
     turnOff: (item) => `[E] Cerrar ${item}`,
     unscrew: (item) => `[E] Desatornillar ${item}`,
+    listen: (item) => `[E] Escuchar ${item}`,
     exit: () => "[E] Salir",
+    mazeTitle: () => "Resuelve el laberinto",
+    mazeSolution: () => "El camino de la llave",
   }
 };

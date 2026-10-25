@@ -2,6 +2,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { PointerLockControls } from "three/examples/jsm/controls/PointerLockControls.js";
 import { Inventory } from "./Inventory.js";
 import * as THREE from "three";
+import { tInteraction } from "../translations/index.js";
 export class Player {
   constructor(camera, domElement, input, collisionManager) {
     this.camera = camera;
@@ -81,7 +82,7 @@ export class Player {
     document.getElementById("crosshair")?.classList.add("hidden");
     const interactionText = document.getElementById("interaction-text");
     if (interactionText) {
-      interactionText.textContent = object.getFocusHint?.() ?? "[E] Salir";
+      interactionText.textContent = object.getFocusHint?.() ?? tInteraction("exit");
       interactionText.classList.remove("hidden");
     }
     this.domElement.style.cursor = "default";

@@ -88,7 +88,7 @@ class MusicPuzzle extends ChildrenPuzzle {
   setAudioListener(audioController) { this.audioController = audioController; }
   playTone(note) { this.audioController?.playXylophoneTone([261.63, 293.66, 329.63, 392][note]); }
   solve({ notify = true } = {}) { if (this.isSolved) return; this.isSolved = true; this.notes = [...MELODY]; this.keys.forEach((key) => key.material.color.setHex(0x4e7654)); if (this.timeline === "past") this.openBox(); if (notify) this.onSolved?.(); }
-  getInteractionText(player) { if (!this.available) return this.timeline === "past" ? "La caja de música no tiene llave" : null; if (this.timeline === "past") { if (!this.keyInserted) return player?.inventory.hasSelected("music-box-key") ? tInteraction("insert", tItem("music-box-key")) : tInteraction("needItem", tItem("music-box-key")); return "[E] Escuchar la secuencia de símbolos"; } if (this.isSolved) return null; return tInteraction("examine", "el xilófono de símbolos"); }
+  getInteractionText(player) { if (!this.available) return this.timeline === "past" ? tInteraction("needItem", tItem("music-box-key")) : null; if (this.timeline === "past") { if (!this.keyInserted) return player?.inventory.hasSelected("music-box-key") ? tInteraction("insert", tItem("music-box-key")) : tInteraction("needItem", tItem("music-box-key")); return tInteraction("listen", tItem("music-sequence")); } if (this.isSolved) return null; return tInteraction("examine", tItem("xylophone")); }
   dispose() { this.clearMelody(); this.audioController = null; }
 }
 

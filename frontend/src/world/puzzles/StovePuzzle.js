@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { tInteraction } from "../../translations/index.js";
+import { tInteraction, tItem } from "../../translations/index.js";
 import { FocusPuzzle, mark, shadows } from "./KitchenPuzzleBase.js";
 
 class StovePuzzle extends FocusPuzzle {
@@ -108,7 +108,7 @@ class StovePuzzle extends FocusPuzzle {
 
   getInteractionText() {
     if (this.timeline !== "present" || !this.available || this.isSolved) return null;
-    return tInteraction("examine", "los mandos de los fogones");
+    return tInteraction("examine", tItem("stove-controls"));
   }
 }
 

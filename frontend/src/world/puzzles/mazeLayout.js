@@ -1,3 +1,5 @@
+import { tInteraction } from "../../translations/index.js";
+
 // Coordinates are [column, row], starting at the top left in both eras.
 export const MAZE_SIZE = 9;
 export const MAZE_ROUTE = [
@@ -43,7 +45,7 @@ export function drawMaze(ctx, canvas, { solution = false } = {}) {
   ctx.fillStyle = "#3d2b1e";
   ctx.textAlign = "center";
   ctx.font = `bold ${size * 0.038}px serif`;
-  ctx.fillText(solution ? "El camino de la llave" : "Resuelve el laberinto", size / 2, size * 0.065);
+  ctx.fillText(tInteraction(solution ? "mazeSolution" : "mazeTitle"), size / 2, size * 0.065);
   ctx.strokeStyle = "#503b28";
   ctx.lineWidth = size * 0.005;
   if (solution) {
