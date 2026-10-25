@@ -14,6 +14,12 @@ const frontendOrigin = process.env.FRONTEND_ORIGIN ?? "http://localhost:5173";
 const app = express();
 app.use(cors({ origin: frontendOrigin, credentials: true }));
 app.use(express.json({ limit: "1mb" }));
+app.use("/api", (request, response, next) => {
+  response.setHeader("Cache-Control", "private, no-store, max-age=0");
+  response.setHeader("Pragma", "no-cache");
+  response.setHeader("Vary", "Cookie, Origin");
+  next();
+});
 const httpServer = createServer(app);
 
 const io = new Server(httpServer, {

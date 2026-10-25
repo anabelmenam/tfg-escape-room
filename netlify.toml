@@ -12,6 +12,11 @@
   status = 200
   force = true
 
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    Cache-Control = "private, no-store, max-age=0"
+
 [[redirects]]
   from = "/socket.io/*"
   to = "https://tfg-escape-room.onrender.com/socket.io/:splat"
