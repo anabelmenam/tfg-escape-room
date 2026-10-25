@@ -122,6 +122,7 @@ const createBedroomPowerPuzzles = ({
       lightRevealPuzzle?.setRevealed(true);
     }
     electricalPanel?.applyState({ hasFuse: electricalState?.hasFuse, solved: electricalSolved });
+    if (!electricalSolved) electricalPanel?.trySolve();
     if (electricalSolved) {
       lightSwitch1.setPowerAvailable(true);
       lightSwitch2.setPowerAvailable(true);
@@ -129,6 +130,7 @@ const createBedroomPowerPuzzles = ({
     }
     if (state.timelines?.present?.objects?.["bedroom-lock"]?.open) desk.unlockDrawer(0);
     if (state.timelines?.past?.objects?.["bedroom-symbol-safe"]?.open) safe?.open();
+    else safe?.checkPassword();
     if (state.timelines?.present?.puzzles?.["bedroom-family-photo"]?.solved) familyPhoto?.solve({ notify: false });
   };
 

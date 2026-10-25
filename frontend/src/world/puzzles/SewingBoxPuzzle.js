@@ -168,7 +168,6 @@ class SewingBoxPuzzle extends Entity {
 
   selectSpool(slot) {
     if (!this.isFocused || this.isSolved || !this.spools[slot]) return;
-    if (!(this.canSolve?.() ?? true)) return;
     if (this.selectedSlot === null) {
       this.selectedSlot = slot;
       this.setSpoolSelected(slot, true);
@@ -181,7 +180,11 @@ class SewingBoxPuzzle extends Entity {
     const firstSlot = this.selectedSlot;
     this.clearSelection();
     this.swapSpools(firstSlot, slot);
-    if (this.spoolOrder.every((color, index) => color === this.correctOrder[index]) && (this.canSolve?.() ?? true)) {
+    this.trySolve();
+  }
+
+  trySolve() {
+    if (!this.isSolved && this.spoolOrder.every((color, index) => color === this.correctOrder[index]) && (this.canSolve?.() ?? true)) {
       this.isSolved = true;
       this.planPaper.object3D.visible = true;
       this.planPaper.setEnabled(true);

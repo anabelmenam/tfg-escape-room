@@ -66,7 +66,7 @@ class MusicPuzzle extends ChildrenPuzzle {
     colors.forEach((color, index) => { const key = new THREE.Mesh(new RoundedBoxGeometry(.78, .16, 1.68 - index * .12, 3, .04), new THREE.MeshStandardMaterial({ color, roughness: .42, metalness: .2 })); key.position.set(-1.47 + index * .98, .42, 0); markChildrenControl(key, { kind: "music-note", value: index }); this.keys.push(key); this.object3D.add(key); const symbol = new THREE.Mesh(new THREE.PlaneGeometry(.34, .34), createSymbolMaterial(MUSIC_SYMBOLS[index])); symbol.rotation.x = -Math.PI / 2; symbol.position.set(key.position.x, .515, 0); markChildrenControl(symbol, { kind: "music-note", value: index }); this.object3D.add(symbol); [-.48, .48].forEach((z) => { const pin = new THREE.Mesh(new THREE.CylinderGeometry(.045, .045, .03, 12), metal); pin.position.set(key.position.x, .51, z); markChildrenControl(pin, { kind: "music-note", value: index }); this.object3D.add(pin); }); });
   }
   interact(player) { if (!this.available) return; if (this.timeline === "past") { if (!this.keyInserted) { if (!player?.inventory.hasSelected("music-box-key")) return; player.inventory.remove("music-box-key"); this.setKeyInserted(); } this.playMelody(); if (this.previewOpenOnPlay) this.openBox(); return; } if (!this.isSolved) this.onFocus?.(this); }
-  handleControl(control) { if (!this.available) return; if (control?.kind === "music-play" && this.timeline === "past") { this.playMelody(); return; } if (control?.kind !== "music-note" || this.timeline !== "present" || this.isSolved) return; this.playTone(control.value); const expected = MELODY[this.notes.length]; this.notes = control.value === expected ? [...this.notes, control.value] : []; if (this.notes.length === MELODY.length) this.solve(); }
+  handleControl(control) { if (!this.available) return; if (control?.kind === "music-play" && this.timeline === "past") { this.playMelody(); return; } if (control?.kind !== "music-note" || this.timeline !== "present" || this.isSolved) return; this.playTone(control.value); const expected = MELODY[this.notes.length]; this.notes = control.value === expected ? [...this.notes, control.value] : []; this.trySolve(); }
   playMelody() {
     if (this.isMelodyPlaying) return;
     this.clearMelody();
@@ -83,7 +83,8 @@ class MusicPuzzle extends ChildrenPuzzle {
   clearMelody() { this.melodyTimers.forEach((timer) => clearTimeout(timer)); this.melodyTimers = []; this.symbolMaterials.forEach((_, index) => this.setSymbolActive(index, false)); this.isMelodyPlaying = false; }
   setSymbolActive(index, active) { this.symbolMaterials[index]?.color.setHex(active ? SYMBOL_LIGHT_COLOR : 0x62584d); }
   openBox() { if (this.lidGroup) this.lidGroup.rotation.x = -1.08; }
-  setKeyInserted({ notify = true } = {}) { if (this.keyInserted) return; this.keyInserted = true; if (notify) this.onKeyInserted?.(); }
+  setKeyInserted({ notify = true } = {}) { if (this.keyInserted) return; this.keyInserted = true; this.trySolve(); if (notify) this.onKeyInserted?.(); }
+  trySolve() { if (this.timeline === "present" && this.keyInserted && this.notes.length === MELODY.length) this.solve(); }
   setAudioListener(audioController) { this.audioController = audioController; }
   playTone(note) { this.audioController?.playXylophoneTone([261.63, 293.66, 329.63, 392][note]); }
   solve({ notify = true } = {}) { if (this.isSolved) return; this.isSolved = true; this.notes = [...MELODY]; this.keys.forEach((key) => key.material.color.setHex(0x4e7654)); if (this.timeline === "past") this.openBox(); if (notify) this.onSolved?.(); }

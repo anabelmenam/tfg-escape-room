@@ -157,8 +157,8 @@ const createBedroom = async ({
     addStoryNote: (object3D) => (timeline === "past" ? furniture.nightstand1 : furniture.nightstand2)
       .addObjectToDrawer(1, object3D, new THREE.Vector3(0, -.16, -.52)),
     applyBedroomState: (state) => {
-      radioPuzzle.applyState(state);
       powerPuzzles.applyState(state);
+      radioPuzzle.applyState(state);
       if (flashlight && state.inventories?.present?.includes("flashlight")) {
         flashlight.object3D.visible = false;
         flashlight.setEnabled(false);

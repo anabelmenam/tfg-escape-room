@@ -16,6 +16,7 @@ import { FlashlightController } from "./controllers/FlashlightController.js";
 import { MultiplayerSync } from "./controllers/MultiplayerSync.js";
 import { GameInputController } from "./controllers/GameInputController.js";
 import { initializeGameLevel } from "./initializeGameLevel.js";
+import { preloadGameImages } from "./preloadGameImages.js";
 
 export class Game {
   constructor(container, playerRole = "A", options = {}) {
@@ -129,7 +130,7 @@ export class Game {
   }
 
   async init() {
-    await Promise.all([this.loadEnvironment(), this.gameAudio.load()]);
+    await Promise.all([this.loadEnvironment(), this.gameAudio.load(), preloadGameImages()]);
     await initializeGameLevel(this);
     await this.waitForAssets();
     this.ready = true;

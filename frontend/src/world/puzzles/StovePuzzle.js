@@ -3,10 +3,11 @@ import { tInteraction } from "../../translations/index.js";
 import { FocusPuzzle, mark, shadows } from "./KitchenPuzzleBase.js";
 
 class StovePuzzle extends FocusPuzzle {
-  constructor({ timeline, onFocus, onSolved }) {
+  constructor({ timeline, onFocus, onSolved, canSolve = null }) {
     super("kitchen-stove", { onFocus });
     this.timeline = timeline;
     this.onSolved = onSolved;
+    this.canSolve = canSolve;
     this.values = [0, 0, 0, 0];
     this.solution = [3, 1, 4, 2];
     this.dials = [];
@@ -87,7 +88,11 @@ class StovePuzzle extends FocusPuzzle {
     this.values[index] = (this.values[index] + 1) % 5;
     this.dials[index].rotation.z = -this.values[index] * Math.PI * 2 / 5;
     this.setFlameLevel(index, this.values[index]);
-    if (this.values.every((value, position) => value === this.solution[position])) this.solve();
+    this.trySolve();
+  }
+
+  trySolve() {
+    if (!this.isSolved && this.values.every((value, position) => value === this.solution[position]) && (this.canSolve?.() ?? true)) this.solve();
   }
 
   solve({ notify = true } = {}) {

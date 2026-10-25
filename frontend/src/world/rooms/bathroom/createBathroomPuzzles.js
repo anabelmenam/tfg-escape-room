@@ -38,6 +38,7 @@ const createBathroomPuzzles = ({ timeline, testMode, vanity, onFocus, onAction }
   const applyState = (state) => {
     hotWaterClueKnown = Boolean(state.timelines?.past?.puzzles?.["bathroom-hot-water"]?.solved) || testMode;
     if (hotWaterClueKnown && timeline === "past") steam?.activate({ notify: false });
+    if (hotWaterClueKnown) sequenceLock?.checkCombination();
     if (state.timelines?.present?.puzzles?.["bathroom-sequence"]?.solved && timeline === "present") { sequenceLock?.setUnlocked(); vanity.unlockDrawer(0); screwdriver?.setEnabled(true); }
     if (screwdriver && state.inventories?.present?.includes("screwdriver")) { screwdriver.object3D.visible = false; screwdriver.setEnabled(false); }
     const mosaicState = state.timelines?.present?.puzzles?.["bathroom-mosaic"];

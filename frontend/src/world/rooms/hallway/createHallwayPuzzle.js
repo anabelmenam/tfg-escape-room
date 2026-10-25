@@ -5,6 +5,7 @@ import { MazePuzzle } from "../../puzzles/MazePuzzle.js";
 import { drawMaze } from "../../puzzles/mazeLayout.js";
 
 const createHallwayPuzzle = ({ timeline, testMode, onFocus, onAction }) => {
+  let clockSolved = testMode;
   const note = new Paper({
     id: "hallway-maze-note",
     width: .83,
@@ -31,12 +32,12 @@ const createHallwayPuzzle = ({ timeline, testMode, onFocus, onAction }) => {
     onCollect: () => onAction?.("item.pickup", "living-room-key"),
   });
   livingRoomKey.setEnabled(false);
-  const maze = timeline === "present" ? new MazePuzzle({ position: new THREE.Vector3(16, 5.15, 0), rotationY: Math.PI, onFocus, key: livingRoomKey, onSolved: () => onAction?.("puzzle.solved", "hallway-maze") }) : null;
+  const maze = timeline === "present" ? new MazePuzzle({ position: new THREE.Vector3(16, 5.15, 0), rotationY: Math.PI, onFocus, key: livingRoomKey, canSolve: () => clockSolved, onSolved: () => onAction?.("puzzle.solved", "hallway-maze") }) : null;
   const mirror = new HallwayMazeMirror({ position: new THREE.Vector3(16, 5.15, 0), rotationY: Math.PI, showScrews: timeline === "present", onToggle: timeline === "present" ? () => onAction?.("object.interact", "hallway-maze-mirror") : null });
   if (testMode && maze) { maze.available = true; mirror.setReleased(true); mirror.setOpen(true); }
   const applyState = (state) => {
-    const clockSolved = Boolean(state.timelines?.past?.puzzles?.["hallway-clock"]?.solved);
-    if (maze && clockSolved) maze.available = true;
+    clockSolved = Boolean(state.timelines?.past?.puzzles?.["hallway-clock"]?.solved) || testMode;
+    maze?.trySolve();
     if (clockSolved && timeline === "past") { clock.solve({ notify: false }); revealNote(); }
     if (timeline === "past" && state.inventories?.past?.includes("hallway-maze-note")) note.setCollected(true);
     if (state.timelines?.present?.puzzles?.["hallway-maze"]?.solved) maze?.solve({ notify: false });

@@ -3,8 +3,8 @@ import { tInteraction } from "../../translations/index.js";
 import { FocusPuzzle, mark, shadows } from "./KitchenPuzzleBase.js";
 
 class OvenControlPuzzle extends FocusPuzzle {
-  constructor({ timeline, onFocus, onSolved }) {
-    super("kitchen-oven", { onFocus }); this.timeline = timeline; this.onSolved = onSolved; this.values = [0, 0]; this.solution = [3, 2]; this.dials = [];
+  constructor({ timeline, onFocus, onSolved, canSolve = null }) {
+    super("kitchen-oven", { onFocus }); this.timeline = timeline; this.onSolved = onSolved; this.canSolve = canSolve; this.values = [0, 0]; this.solution = [3, 2]; this.dials = [];
     this.clueRevealed = false;
     if (timeline === "past") this.createPresentControls();
     else {
@@ -66,7 +66,8 @@ class OvenControlPuzzle extends FocusPuzzle {
   }
   revealClue() { if (this.timeline !== "present" || this.clueRevealed) return; this.clueRevealed = true; this.object3D.visible = true; this.valueMaterial.emissiveIntensity = 1.35; this.setAvailable(true); }
   interact() { if (this.available && !this.isSolved) this.onFocus?.(this); }
-  handleControl(control) { if (this.timeline !== "past" || !this.available || this.isSolved || control?.kind !== "oven-dial") return; const index = control.value; this.values[index] = (this.values[index] + 1) % 5; this.dials[index].rotation.z = -this.values[index] * Math.PI * .4; this.updateDisplay(); if (this.values.every((value, position) => value === this.solution[position])) this.solve(); }
+  handleControl(control) { if (this.timeline !== "past" || !this.available || this.isSolved || control?.kind !== "oven-dial") return; const index = control.value; this.values[index] = (this.values[index] + 1) % 5; this.dials[index].rotation.z = -this.values[index] * Math.PI * .4; this.updateDisplay(); this.trySolve(); }
+  trySolve() { if (!this.isSolved && this.values.every((value, position) => value === this.solution[position]) && (this.canSolve?.() ?? true)) this.solve(); }
   solve({ notify = true } = {}) { if (this.isSolved) return; this.isSolved = true; this.values = [...this.solution]; this.dials.forEach((dial, index) => { dial.rotation.z = -this.solution[index] * Math.PI * .4; }); this.updateDisplay(); if (notify) this.onSolved?.(); }
   getInteractionText() { if (!this.available || this.isSolved) return null; return tInteraction("examine", this.timeline === "present" ? "el indicador encendido del horno" : "los mandos del horno"); }
   getFocusPosition() { this.object3D.updateWorldMatrix(true, false); return this.object3D.localToWorld(this.timeline === "present" ? new THREE.Vector3(0, 1.8, 3.5) : new THREE.Vector3(0, .3, 3)); }

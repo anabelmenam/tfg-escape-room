@@ -146,11 +146,12 @@ class ElectricalPanelPuzzle extends Entity {
     const indicatorMaterial = this.indicators[index].material;
     indicatorMaterial.color.setHex(this.switchStates[index] ? 0x85df74 : 0x3c1212);
 
-    const isCorrect = this.switchStates.every((isEnabled, switchIndex) => {
-      return isEnabled === this.correctSwitches.includes(switchIndex + 1);
-    });
+    this.trySolve();
+  }
 
-    if (isCorrect && (this.canSolve?.() ?? true)) {
+  trySolve() {
+    const isCorrect = this.switchStates.every((isEnabled, switchIndex) => isEnabled === this.correctSwitches.includes(switchIndex + 1));
+    if (!this.isSolved && isCorrect && (this.canSolve?.() ?? true)) {
       this.isSolved = true;
       this.exitFocusRequested = true;
       this.onSolved?.(this);

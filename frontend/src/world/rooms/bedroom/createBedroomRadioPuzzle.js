@@ -104,6 +104,7 @@ const createBedroomRadioPuzzle = ({
     const sewingSolved = Boolean(state.timelines?.past?.puzzles?.["bedroom-sewing-box"]?.solved);
     if (radioSolved) radio?.restoreSolvedState();
     if (sewingSolved) sewingBox?.solve({ notify: false });
+    else sewingBox?.trySolve();
     clues.radioNote ||= Boolean(state.inventories?.present?.includes("bedroom-radio-note")
       || radioSolved);
     clues.electricalPlan ||= Boolean(state.inventories?.past?.includes("bedroom-electrical-plan")

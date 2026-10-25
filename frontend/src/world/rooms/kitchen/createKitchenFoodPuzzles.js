@@ -64,6 +64,7 @@ const createKitchenFoodPuzzles = ({ timeline, testMode, furniture, appliancePuzz
     onFocus,
     onSolved: () => {
       appliancePuzzles.stove.setAvailable(true);
+      appliancePuzzles.stove.trySolve();
       appliancePuzzles.stove.revealClue();
     },
     onPlacementChange: (payload) => onAction?.("object.interact", "kitchen-family-table", payload),

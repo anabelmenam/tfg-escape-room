@@ -13,14 +13,15 @@ const DIRECTIONS = {
 };
 
 export class MazePuzzle extends Entity {
-  constructor({ position, rotationY = 0, onFocus, onSolved, key }) {
+  constructor({ position, rotationY = 0, onFocus, onSolved, key, canSolve = null }) {
     super("hallway-maze");
     this.onFocus = onFocus;
     this.onSolved = onSolved;
     this.key = key;
+    this.canSolve = canSolve;
     this.cell = [...MAZE_ROUTE[0]];
     this.isSolved = false;
-    this.available = false;
+    this.available = true;
     this.object3D = new THREE.Group();
     this.object3D.position.copy(position);
     this.object3D.rotation.y = rotationY;
@@ -61,8 +62,12 @@ export class MazePuzzle extends Entity {
       return;
     }
     this.cell = [...next];
-    if (this.cell.every((value, i) => value === MAZE_ROUTE.at(-1)[i])) this.solve();
+    this.trySolve();
     this.redraw();
+  }
+
+  trySolve() {
+    if (!this.isSolved && this.cell.every((value, i) => value === MAZE_ROUTE.at(-1)[i]) && (this.canSolve?.() ?? true)) this.solve();
   }
 
   handleKey(code) {

@@ -21,6 +21,7 @@ const createMusicPuzzle = ({ timeline, testMode, desk, onFocus, onAction }) => {
     onKeyInserted: () => onAction?.("puzzle.solved", "children-music-key"),
     previewOpenOnPlay: testMode,
   });
+  if (timeline === "present") puzzle.setAvailable(true);
   puzzle.object3D.position.set(0, 3.31, 0);
   puzzle.object3D.scale.setScalar(0.68);
   desk.object3D.add(puzzle.object3D);
