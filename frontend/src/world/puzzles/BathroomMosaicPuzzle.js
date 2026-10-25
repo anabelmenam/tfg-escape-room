@@ -17,6 +17,11 @@ class BathroomMosaicPuzzle extends Entity {
     this.order = character === "mum" ? [...CORRECT_ORDER] : [...SCRAMBLED_ORDER];
     this.tiles = new Map(); this.object3D = new THREE.Group(); this.object3D.name = this.id;
     this.panel = new THREE.Group(); this.panel.name = "bathroom-mosaic-panel"; this.object3D.add(this.panel);
+    const backing = new THREE.Mesh(
+      new THREE.BoxGeometry(3.72, 3.72, .12),
+      new THREE.MeshStandardMaterial({ color: 0x54483a, roughness: .82, metalness: .08 }),
+    );
+    backing.name = "bathroom-mosaic-backing"; backing.position.z = -.02; this.panel.add(backing);
     this.rearMount = new THREE.Group(); this.rearMount.name = "bathroom-mosaic-rear"; this.rearMount.position.z = -.18; this.panel.add(this.rearMount);
     this.slotPositions = CORRECT_ORDER.map((index) => new THREE.Vector3((index % 3 - 1) * 1.22, (1 - Math.floor(index / 3)) * 1.22, .1));
 
@@ -71,6 +76,7 @@ class BathroomMosaicPuzzle extends Entity {
       const progress = Math.min(this.flipAnimation.elapsed / this.flipAnimation.duration, 1);
       const eased = progress * progress * (3 - 2 * progress);
       this.panel.rotation.y = THREE.MathUtils.lerp(this.flipAnimation.from, Math.PI, eased);
+      this.panel.position.z = THREE.MathUtils.lerp(this.flipAnimation.fromZ, .28, eased);
       if (progress >= 1) this.flipAnimation = null;
     }
   }
@@ -86,8 +92,8 @@ class BathroomMosaicPuzzle extends Entity {
   }
   turnPanel({ animate = false } = {}) {
     if (this.panel.rotation.y === Math.PI && !animate) return;
-    if (animate) this.flipAnimation = { from: this.panel.rotation.y, elapsed: 0, duration: 1.05 };
-    else { this.flipAnimation = null; this.panel.rotation.y = Math.PI; }
+    if (animate) this.flipAnimation = { from: this.panel.rotation.y, fromZ: this.panel.position.z, elapsed: 0, duration: 1.05 };
+    else { this.flipAnimation = null; this.panel.rotation.y = Math.PI; this.panel.position.z = .28; }
   }
   setFocused() {}
   getInteractionText(player) {
