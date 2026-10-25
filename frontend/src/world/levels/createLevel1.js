@@ -6,66 +6,16 @@ import { createIconsRoom } from "../rooms/createIconsRoom.js";
 import { createChildrenRoom } from "../rooms/createChildrenRoom.js";
 import { createBathroom } from "../rooms/createBathroom.js";
 import { createKitchen } from "../rooms/createKitchen.js";
+import { createToyBasket } from "../objects/index.js";
 import { t, tInteraction, tItem } from "../../translations/index.js";
+import { createFamilyStoryNotes } from "./createFamilyStoryNotes.js";
 
 const timelineByPlayerRole = {
   A: "past",
   B: "present",
 };
 
-const createAmbientProp = ({ kind, color = 0x6b4634 } = {}) => {
-  const group = new THREE.Group();
-  group.name = `ambient-${kind}`;
-  group.userData.ambientDescriptionKey = kind;
-  const paperMaterial = new THREE.MeshStandardMaterial({ color: 0xcbb991, roughness: .96 });
-  const coverMaterial = new THREE.MeshStandardMaterial({ color, roughness: .84 });
-  if (kind === "scatteredLetters") {
-    for (let index = 0; index < 3; index += 1) {
-      const book = new THREE.Mesh(new THREE.BoxGeometry(1.15 - index * .08, .13, .76), coverMaterial);
-      book.position.set(index * .12, .08 + index * .14, index * .05);
-      book.rotation.y = (index - 1) * .12;
-      group.add(book);
-    }
-    for (let index = 0; index < 4; index += 1) {
-      const letter = new THREE.Mesh(new THREE.PlaneGeometry(.72, .5), paperMaterial);
-      letter.rotation.x = -Math.PI / 2;
-      letter.rotation.z = -.4 + index * .27;
-      letter.position.set(.75 + index * .22, .018 + index * .004, -.32 + (index % 2) * .32);
-      group.add(letter);
-    }
-  } else if (kind === "teaSet") {
-    const tray = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, .08, 28), coverMaterial);
-    tray.position.y = .05;
-    group.add(tray);
-    [-.38, .35].forEach((x) => {
-      const cup = new THREE.Mesh(new THREE.CylinderGeometry(.22, .18, .38, 18), paperMaterial);
-      cup.position.set(x, .28, 0);
-      group.add(cup);
-    });
-    const pot = new THREE.Mesh(new THREE.SphereGeometry(.36, 20, 14), paperMaterial);
-    pot.position.set(0, .4, .42);
-    group.add(pot);
-  } else if (kind === "forgottenToys") {
-    const basket = new THREE.Mesh(new THREE.BoxGeometry(1.45, .55, 1), coverMaterial);
-    basket.position.y = .28;
-    group.add(basket);
-    [0xd36b5d, 0x557da0, 0xd2aa43, 0x6d9567].forEach((toyColor, index) => {
-      const toy = new THREE.Mesh(new THREE.SphereGeometry(.23, 14, 10), new THREE.MeshStandardMaterial({ color: toyColor, roughness: .8 }));
-      toy.position.set(-.48 + index * .31, .68 + (index % 2) * .12, -.12 + (index % 2) * .28);
-      group.add(toy);
-    });
-  } else if (kind === "spiceJars") {
-    [0x9b513c, 0xb78a3f, 0x657747, 0x7e5944].forEach((spiceColor, index) => {
-      const jar = new THREE.Mesh(new THREE.CylinderGeometry(.22, .24, .62, 16), new THREE.MeshStandardMaterial({ color: spiceColor, roughness: .54 }));
-      jar.position.set(-.55 + index * .38, .32, 0);
-      group.add(jar);
-    });
-  }
-  group.traverse((object) => { if (object.isMesh) { object.castShadow = true; object.receiveShadow = true; } });
-  return group;
-};
-
-const createLevel1 = async ({ playerRole, onSwitchPress, eventManager, onDoorOpenChange, onDoorUnlocked, onObjectFocus, isFlashlightOn = null, isInteractHeld = null, testArea = null, onHallwayAction = null, onBedroomAction = null, onChildrenRoomAction = null, onKitchenAction = null, onLivingRoomAction = null, onBathroomAction = null, testMode = false } = {}) => {
+const createLevel1 = async ({ playerRole, onSwitchPress, eventManager, onDoorOpenChange, onDoorUnlocked, onObjectFocus, isFlashlightOn = null, isInteractHeld = null, testArea = null, onHallwayAction = null, onBedroomAction = null, onChildrenRoomAction = null, onKitchenAction = null, onLivingRoomAction = null, onBathroomAction = null, onStoryNoteCollected = null, testMode = false } = {}) => {
   if (playerRole === "A" || playerRole === "B") {
     const timeline = timelineByPlayerRole[playerRole];
     const bedroom = await createBedroom({
@@ -121,18 +71,25 @@ const createLevel1 = async ({ playerRole, onSwitchPress, eventManager, onDoorOpe
       0,
       hallway.room.position.z + hallway.dimensions.depth / 2 + 15,
     );
+    const storyNotes = createFamilyStoryNotes({
+      timeline,
+      rooms: { bedroom, hallway, livingRoom, childrenRoom, bathroom, kitchen },
+      actions: {
+        bedroom: onBedroomAction,
+        hallway: onHallwayAction,
+        livingRoom: onLivingRoomAction,
+        childrenRoom: onChildrenRoomAction,
+        bathroom: onBathroomAction,
+        kitchen: onKitchenAction,
+      },
+      onNoteCollected: onStoryNoteCollected,
+    });
     const level = new THREE.Group();
     level.name = `Level 1-${timeline}`;
     level.add(bedroom.room, hallway.room, livingRoom.room, childrenRoom.room, bathroom.room, kitchen.room);
-    const atmosphericClutter = [
-      [livingRoom.table1.object3D, new THREE.Vector3(0, 2.02, 0), "teaSet", 0x8a714d],
-      [childrenRoom.room, new THREE.Vector3(6.1, .02, 7.1), "forgottenToys", 0x4e6881],
-    ];
-    atmosphericClutter.forEach(([parent, position, kind, color]) => {
-      const clutter = createAmbientProp({ kind, color });
-      clutter.position.copy(position);
-      parent.add(clutter);
-    });
+    const toyBasket = createToyBasket({ aged: false, scale: .92 });
+    toyBasket.position.set(6.1, .02, 7.1);
+    childrenRoom.room.add(toyBasket);
 
     const ambientInteractables = [];
     level.traverse((object) => {
@@ -174,6 +131,7 @@ const createLevel1 = async ({ playerRole, onSwitchPress, eventManager, onDoorOpe
       childrenRoom,
       bathroom,
       kitchen,
+      storyNotes,
       wallColliders,
       roomColliders: [
         ...bedroom.roomColliders,
@@ -213,8 +171,8 @@ const createLevel1 = async ({ playerRole, onSwitchPress, eventManager, onDoorOpe
         minZ: Math.min(bedroom.bounds.minZ, hallway.bounds.minZ, livingRoom.room.position.z + livingRoom.bounds.minZ, childrenRoom.room.position.z + childrenRoom.bounds.minZ, bathroom.room.position.z + bathroom.bounds.minZ, kitchen.room.position.z + kitchen.bounds.minZ),
         maxZ: Math.max(bedroom.bounds.maxZ, hallway.bounds.maxZ, livingRoom.room.position.z + livingRoom.bounds.maxZ, childrenRoom.room.position.z + childrenRoom.bounds.maxZ, bathroom.room.position.z + bathroom.bounds.maxZ, kitchen.room.position.z + kitchen.bounds.maxZ),
       },
-      interactables: [...bedroom.interactables, ...hallway.interactables, ...livingRoom.interactables, ...childrenRoom.interactables, ...bathroom.interactables, ...kitchen.interactables, ...ambientInteractables],
-      entities: [...bedroom.entities, ...hallway.entities, ...livingRoom.entities, ...childrenRoom.entities, ...bathroom.entities, ...kitchen.entities],
+      interactables: [...bedroom.interactables, ...hallway.interactables, ...livingRoom.interactables, ...childrenRoom.interactables, ...bathroom.interactables, ...kitchen.interactables, ...storyNotes, ...ambientInteractables],
+      entities: [...bedroom.entities, ...hallway.entities, ...livingRoom.entities, ...childrenRoom.entities, ...bathroom.entities, ...kitchen.entities, ...storyNotes],
     };
   }
 

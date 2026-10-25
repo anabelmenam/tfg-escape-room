@@ -37,3 +37,13 @@
 .ending-panel-in {
   animation: ending-panel-in 1.35s .35s cubic-bezier(.22, 1, .36, 1) both;
 }
+
+@keyframes story-note-found {
+  0% { opacity: 0; transform: translate(-50%, -12px); }
+  12%, 82% { opacity: 1; transform: translate(-50%, 0); }
+  100% { opacity: 0; transform: translate(-50%, -8px); }
+}
+
+.story-note-notification:not(.hidden) {
+  animation: story-note-found 4.5s ease both;
+}

@@ -25,6 +25,7 @@ class Paper extends Entity {
     inspectionTitle = null,
     itemName = "paper",
     onCollect = null,
+    archiveOnly = false,
   } = {}) {
     super(id);
 
@@ -43,6 +44,7 @@ class Paper extends Entity {
     this.inspectionTitle = inspectionTitle;
     this.inventoryInspectionKey = collectible ? "KeyR" : null;
     this.onCollect = onCollect;
+    this.archiveOnly = archiveOnly;
 
     this.texture = new THREE.CanvasTexture(this.canvas);
     this.texture.colorSpace = THREE.SRGBColorSpace;
@@ -196,17 +198,20 @@ class Paper extends Entity {
 
   interact(player) {
     if (this.collectible) {
-      if (!player?.inventory.add(this)) {
+      if (!this.archiveOnly && !player?.inventory.add(this)) {
         return;
       }
-
-      this.object3D.visible = false;
-      this.setEnabled(false);
+      this.setCollected(true);
       this.onCollect?.(this);
       return;
     }
 
     this.onFocus?.(this);
+  }
+
+  setCollected(collected) {
+    this.object3D.visible = !collected;
+    this.setEnabled(!collected);
   }
 
   getInteractionText() {

@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { tInteraction, tItem } from "../../translations/index.js";
 import { FocusPuzzle, mark, paperTexture, shadows } from "./KitchenPuzzleBase.js";
-import { createKitchenFoodModel } from "./KitchenFoodModels.js";
+import { createKitchenFoodModel } from "./createKitchenFoodModel.js";
 
 class RecipePuzzle extends FocusPuzzle {
   constructor({ timeline, onFocus, onSolved, onPlacementChange = null, onCollect = null, ingredients = [] }) {

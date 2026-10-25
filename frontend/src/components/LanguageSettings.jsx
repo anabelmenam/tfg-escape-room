@@ -8,9 +8,9 @@ const LanguageSettings = ({ onChange = null }) => (
       value={getLanguage()}
       onChange={(event) => { setLanguage(event.target.value); onChange?.(event.target.value); }}
     >
-      <option value="es">Español</option>
-      <option value="en">English</option>
-      <option value="fr">Français</option>
+      <option value="es">{t("ui.spanish")}</option>
+      <option value="en">{t("ui.english")}</option>
+      <option value="fr">{t("ui.french")}</option>
     </select>
   </label>
 );

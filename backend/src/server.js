@@ -4,14 +4,15 @@ import express from "express";
 import cors from "cors";
 import { Server } from "socket.io";
 import { z } from "zod";
-import { withTransaction } from "./db.js";
-import { User, GameRoom, RoomPlayer, GameState, GameEvent } from "./models/index.js";
+import { sequelize, withTransaction } from "./db.js";
+import { User, GameRoom, RoomPlayer, GameState, GameEvent, PlayerCheckpoint } from "./models/index.js";
 import { createInitialState } from "./state.js";
+import { clearSession, createSession, hashPassword, publicUser, requireUser, verifyPassword } from "./auth.js";
 
 const port = Number(process.env.PORT ?? 3010);
 const frontendOrigin = process.env.FRONTEND_ORIGIN ?? "http://localhost:5173";
 const app = express();
-app.use(cors({ origin: frontendOrigin }));
+app.use(cors({ origin: frontendOrigin, credentials: true }));
 app.use(express.json({ limit: "1mb" }));
 const httpServer = createServer(app);
 
@@ -19,7 +20,6 @@ const io = new Server(httpServer, {
   cors: { origin: frontendOrigin, methods: ["GET", "POST"] },
 });
 
-const createRoomSchema = z.object({ displayName: z.string().trim().min(1).max(40) });
 const actionSchema = z.object({
   actionId: z.string().uuid(),
   type: z.enum(["object.interact", "puzzle.solved", "item.pickup"]),
@@ -27,14 +27,49 @@ const actionSchema = z.object({
   payload: z.record(z.unknown()).default({}),
 });
 const movementSchema = z.object({
-  position: z.object({ x: z.number(), y: z.number(), z: z.number() }),
-  rotationY: z.number(),
+  position: z.object({ x: z.number().min(-500).max(500), y: z.number().min(-20).max(200), z: z.number().min(-500).max(500) }),
+  rotationY: z.number().min(-Math.PI * 4).max(Math.PI * 4),
+  roomKey: z.string().max(40).nullable().optional(),
+});
+const checkpointMetaSchema = z.object({
+  diaryEntries: z.array(z.string().max(100)).max(50),
+  hintHistory: z.array(z.object({ id: z.string().max(140), text: z.string().max(1000) })).max(100),
 });
 const timelineSelectionSchema = z.object({ timeline: z.enum(["past", "present"]).nullable() });
+const credentialsSchema = z.object({ email: z.string().trim().email().max(254).transform((value) => value.toLowerCase()), password: z.string().min(8).max(128) });
+const registerSchema = credentialsSchema.extend({ displayName: z.string().trim().min(1).max(40) });
+const saveSlotSchema = z.object({ slotNumber: z.number().int().min(1).max(3) });
+const createSavedRoomSchema = saveSlotSchema.extend({ name: z.string().trim().min(1).max(50).default("Partida") });
 
 const socketRoom = (roomId) => `game:${roomId}`;
 const normaliseCode = (code) => code.trim().toUpperCase();
 const makeJoinCode = () => Math.random().toString(36).slice(2, 8).toUpperCase();
+const lastCheckpointWrite = new Map();
+const playerSockets = new Map();
+
+const updateCheckpoint = async (playerId, roomId, patch) => {
+  const [updated] = await PlayerCheckpoint.update({ ...patch, updatedAt: new Date() }, { where: { playerId } });
+  if (updated) return;
+  try {
+    await PlayerCheckpoint.create({ playerId, roomId, ...patch, updatedAt: new Date() });
+  } catch (error) {
+    const [retried] = await PlayerCheckpoint.update({ ...patch, updatedAt: new Date() }, { where: { playerId } });
+    if (!retried) throw error;
+  }
+};
+
+const saveCheckpoint = async (roomId, playerId, movement, force = false) => {
+  const now = Date.now();
+  if (!force && now - (lastCheckpointWrite.get(playerId) ?? 0) < 5000) return;
+  lastCheckpointWrite.set(playerId, now);
+  await updateCheckpoint(playerId, roomId, { position: movement.position, rotationY: movement.rotationY, roomKey: movement.roomKey ?? null });
+  await GameRoom.update({ lastActivityAt: new Date() }, { where: { id: roomId } });
+};
+
+const ensureFreeSlot = async (userId, slotNumber, transaction) => {
+  const occupied = await RoomPlayer.findOne({ where: { userId, slotNumber }, transaction, lock: transaction.LOCK.UPDATE });
+  if (occupied) { const error = new Error("SAVE_SLOT_OCCUPIED"); error.status = 409; throw error; }
+};
 
 const getPlayerFromToken = async (roomId, token) => {
   const player = await RoomPlayer.findOne({
@@ -87,6 +122,7 @@ const memoryPhotoIds = [
   "children-memory-photo-park",
   "children-memory-photo-station",
 ];
+const familyStoryNoteIds = new Set(Array.from({ length: 10 }, (_, index) => `family-note-${String(index + 1).padStart(2, "0")}`));
 const finalLocks = {
   "final-bolt-bedroom": { keyId: "final-key-bedroom", timeline: "present" },
   "final-bolt-living-room": { keyId: "final-key-living-room", timeline: "present" },
@@ -390,6 +426,11 @@ const reduceAction = (state, player, action) => {
       state.timelines[timeline].puzzles[action.targetId] = { ...state.timelines[timeline].puzzles[action.targetId], solved: true, ...action.payload };
       return;
     case "item.pickup": {
+      if (familyStoryNoteIds.has(action.targetId)) {
+        state.journalEntries ??= [];
+        if (!state.journalEntries.includes(action.targetId)) state.journalEntries.push(action.targetId);
+        return;
+      }
       if (action.targetId === "final-key-bedroom" && (timeline !== "present" || !state.timelines.past.puzzles["bedroom-radio"]?.solved)) throw new Error("Primero hay que completar la radio.");
       if (action.targetId === "final-key-living-room" && (timeline !== "present" || state.timelines.past.objects["living-room-chest"]?.locked !== false)) throw new Error("Primero hay que abrir el cofre del salón.");
       if (action.targetId === "final-key-children" && (timeline !== "past" || !state.timelines.past.puzzles["children-wardrobe-chains"]?.solved)) throw new Error("Primero hay que cortar las cadenas del armario.");
@@ -449,55 +490,63 @@ const applyAction = async (roomId, player, action) =>
       },
       { transaction },
     );
+    await GameRoom.update({
+      lastActivityAt: new Date(),
+      ...(nextState.ending?.phase === "complete" ? { status: "finished", finishedAt: new Date() } : {}),
+    }, { where: { id: roomId }, transaction });
     return { revision: nextRevision, state: nextState };
   });
 
-const createRoom = async (displayName) => {
+const createRoom = async (user, { slotNumber, name }) => {
   for (let attempt = 0; attempt < 5; attempt += 1) {
     try {
       return await withTransaction(async (transaction) => {
         const roomId = randomUUID();
         const playerId = randomUUID();
-        const userId = randomUUID();
         const playerToken = randomUUID();
         const joinCode = makeJoinCode();
-        await User.create({ id: userId, displayName }, { transaction });
-        const room = await GameRoom.create({ id: roomId, joinCode, status: "waiting" }, { transaction });
+        await ensureFreeSlot(user.id, slotNumber, transaction);
+        const room = await GameRoom.create({ id: roomId, joinCode, name, status: "waiting" }, { transaction });
         await RoomPlayer.create(
-          { id: playerId, roomId, userId, timeline: null, reconnectToken: playerToken },
+          { id: playerId, roomId, userId: user.id, timeline: null, reconnectToken: playerToken, slotNumber },
           { transaction },
         );
         await room.update({ creatorPlayerId: playerId }, { transaction });
         await GameState.create({ roomId, state: createInitialState() }, { transaction });
-        return { roomId, joinCode, playerId, playerToken, timeline: null, isCreator: true };
+        return { roomId, joinCode, playerId, playerToken, timeline: null, isCreator: true, showIntroduction: true };
       });
     } catch (error) {
-      if (attempt === 4) throw error;
+      const joinCodeCollision = error?.name === "SequelizeUniqueConstraintError" && error?.fields?.join_code;
+      if (!joinCodeCollision || attempt === 4) throw error;
     }
   }
   throw new Error("No se pudo crear la sala.");
 };
 
-const joinRoom = async (joinCode, displayName) =>
+const joinRoom = async (joinCode, user, { slotNumber }) =>
   withTransaction(async (transaction) => {
     const currentRoom = await GameRoom.findOne({
       where: { joinCode: normaliseCode(joinCode) },
       transaction,
       lock: transaction.LOCK.UPDATE,
     });
-    if (!currentRoom) throw new Error("No existe una sala con ese código.");
-    if (currentRoom.status !== "waiting") throw new Error("La sala ya está completa o terminó.");
+    if (!currentRoom) { const error = new Error("ROOM_NOT_FOUND"); error.status = 404; throw error; }
+    if (currentRoom.status !== "waiting") { const error = new Error("ROOM_NOT_JOINABLE"); error.status = 409; throw error; }
     const playerId = randomUUID();
-    const userId = randomUUID();
     const playerToken = randomUUID();
-    await User.create({ id: userId, displayName }, { transaction });
+    await ensureFreeSlot(user.id, slotNumber, transaction);
+    const existingPlayer = await RoomPlayer.findOne({ where: { roomId: currentRoom.id, userId: user.id }, transaction });
+    if (existingPlayer) { const error = new Error("ALREADY_IN_ROOM"); error.status = 409; throw error; }
+    const playerCount = await RoomPlayer.count({ where: { roomId: currentRoom.id }, transaction });
+    if (playerCount >= 2) { const error = new Error("ROOM_FULL"); error.status = 409; throw error; }
     await RoomPlayer.create(
       {
         id: playerId,
         roomId: currentRoom.id,
-        userId,
+        userId: user.id,
         timeline: null,
         reconnectToken: playerToken,
+        slotNumber,
       },
       { transaction },
     );
@@ -508,6 +557,7 @@ const joinRoom = async (joinCode, displayName) =>
       playerToken,
       timeline: null,
       isCreator: false,
+      showIntroduction: true,
     };
   });
 
@@ -536,21 +586,73 @@ const startGame = async (roomId, playerId) =>
     if (selected.length !== 2 || new Set(selected.map((entry) => entry.timeline)).size !== 2) {
       throw new Error("Los dos jugadores deben elegir un mundo distinto.");
     }
+    if (lobby.players.some((entry) => !entry.connected)) {
+      throw new Error("Los dos jugadores deben estar conectados para empezar.");
+    }
     await room.update({ status: "playing" }, { transaction });
     return lobby;
   });
 
 app.get("/health", (request, response) => response.json({ ok: true }));
 
-app.post("/api/rooms", async (request, reply) => {
-  const input = createRoomSchema.parse(request.body);
-  return reply.status(201).json(await createRoom(input.displayName));
+app.post("/api/auth/register", async (request, response) => {
+  const input = registerSchema.parse(request.body);
+  const existing = await User.findOne({ where: sequelize.where(sequelize.fn("lower", sequelize.col("email")), input.email) });
+  if (existing) return response.status(409).json({ error: "EMAIL_IN_USE" });
+  const user = await User.create({ id: randomUUID(), displayName: input.displayName, email: input.email, passwordHash: await hashPassword(input.password) });
+  await createSession(user.id, response);
+  return response.status(201).json({ user: publicUser(user) });
 });
 
-app.post("/api/rooms/:joinCode/join", async (request, reply) => {
-  const input = createRoomSchema.parse(request.body);
+app.post("/api/auth/login", async (request, response) => {
+  const input = credentialsSchema.parse(request.body);
+  const user = await User.findOne({ where: sequelize.where(sequelize.fn("lower", sequelize.col("email")), input.email) });
+  if (!user || !(await verifyPassword(input.password, user.passwordHash))) return response.status(401).json({ error: "INVALID_CREDENTIALS" });
+  await createSession(user.id, response);
+  return response.json({ user: publicUser(user) });
+});
+
+app.post("/api/auth/logout", async (request, response) => { await clearSession(request, response); return response.status(204).end(); });
+app.get("/api/auth/me", requireUser, (request, response) => response.json({ user: publicUser(request.user) }));
+
+app.get("/api/save-slots", requireUser, async (request, response) => {
+  const players = await RoomPlayer.findAll({
+    where: { userId: request.user.id },
+    include: [{ model: GameRoom, as: "room", required: true }, { model: PlayerCheckpoint, as: "checkpoint", required: false }],
+    order: [["slotNumber", "ASC"]],
+  });
+  return response.json({ slots: players.map((player) => ({
+    slotNumber: player.slotNumber,
+    roomId: player.roomId,
+    playerId: player.id,
+    playerToken: player.reconnectToken,
+    timeline: player.timeline,
+    isCreator: player.room.creatorPlayerId === player.id,
+    joinCode: player.room.joinCode,
+    name: player.room.name,
+    status: player.room.status,
+    updatedAt: player.room.lastActivityAt,
+    checkpoint: player.checkpoint ? { position: player.checkpoint.position, rotationY: player.checkpoint.rotationY, roomKey: player.checkpoint.roomKey, diaryEntries: player.checkpoint.diaryEntries, hintHistory: player.checkpoint.hintHistory } : null,
+  })) });
+});
+
+app.post("/api/rooms", requireUser, async (request, reply) => {
+  const input = createSavedRoomSchema.parse(request.body);
+  return reply.status(201).json(await createRoom(request.user, input));
+});
+
+app.post("/api/rooms/:joinCode/join", requireUser, async (request, reply) => {
+  const input = saveSlotSchema.parse(request.body);
   const params = z.object({ joinCode: z.string().length(6) }).parse(request.params);
-  return reply.json(await joinRoom(params.joinCode, input.displayName));
+  return reply.json(await joinRoom(params.joinCode, request.user, input));
+});
+
+app.delete("/api/rooms/:roomId", requireUser, async (request, response) => {
+  const { roomId } = z.object({ roomId: z.string().uuid() }).parse(request.params);
+  const membership = await RoomPlayer.findOne({ where: { roomId, userId: request.user.id } });
+  if (!membership) return response.status(404).json({ error: "ROOM_NOT_FOUND" });
+  await GameRoom.destroy({ where: { id: roomId } });
+  return response.status(204).end();
 });
 
 app.get("/api/rooms/:roomId/state", async (request, reply) => {
@@ -590,6 +692,9 @@ io.use(async (socket, next) => {
 
 io.on("connection", async (socket) => {
   const { roomId, player } = socket.data.auth;
+  const sockets = playerSockets.get(player.id) ?? new Set();
+  sockets.add(socket.id);
+  playerSockets.set(player.id, sockets);
   await RoomPlayer.update({ connected: true }, { where: { id: player.id } });
   await socket.join(socketRoom(roomId));
 
@@ -616,6 +721,8 @@ io.on("connection", async (socket) => {
 
   socket.on("game:action", async (rawAction, acknowledge) => {
     try {
+      const connectedPlayers = await RoomPlayer.count({ where: { roomId, connected: true } });
+      if (connectedPlayers !== 2) throw new Error("Tu compañero debe estar conectado para jugar.");
       const action = actionSchema.parse(rawAction);
       const snapshot = await applyAction(roomId, player, action);
       io.to(socketRoom(roomId)).emit("game:state-updated", { ...snapshot, action, actorPlayerId: player.id });
@@ -625,30 +732,54 @@ io.on("connection", async (socket) => {
     }
   });
 
+  let latestMovement = null;
   socket.on("player:movement", (rawMovement) => {
     const movement = movementSchema.safeParse(rawMovement);
     if (!movement.success) return;
+    latestMovement = movement.data;
+    void saveCheckpoint(roomId, player.id, movement.data).catch((error) => console.error("No se pudo guardar el punto de continuación:", error));
     socket
       .to(socketRoom(roomId))
       .emit("player:moved", { playerId: player.id, timeline: player.timeline, ...movement.data });
   });
 
-  socket.on("disconnect", () => {
-    void RoomPlayer.update({ connected: false }, { where: { id: player.id } });
-    socket
-      .to(socketRoom(roomId))
-      .emit("room:presence", { playerId: player.id, timeline: player.timeline, connected: false });
-    void getLobbyState(roomId).then((lobby) => io.to(socketRoom(roomId)).emit("lobby:state", lobby));
+  socket.on("player:checkpoint-meta", async (rawMeta) => {
+    const meta = checkpointMetaSchema.safeParse(rawMeta);
+    if (!meta.success) return;
+    try {
+      await updateCheckpoint(player.id, roomId, {
+        diaryEntries: meta.data.diaryEntries,
+        hintHistory: meta.data.hintHistory,
+      });
+      await GameRoom.update({ lastActivityAt: new Date() }, { where: { id: roomId } });
+    } catch (error) {
+      console.error("No se pudieron guardar el diario y las pistas:", error);
+    }
+  });
+
+  socket.on("disconnect", async () => {
+    if (latestMovement) void saveCheckpoint(roomId, player.id, latestMovement, true).catch((error) => console.error("No se pudo guardar la salida del jugador:", error));
+    lastCheckpointWrite.delete(player.id);
+    const activeSockets = playerSockets.get(player.id);
+    activeSockets?.delete(socket.id);
+    if (activeSockets?.size) return;
+    playerSockets.delete(player.id);
+    await RoomPlayer.update({ connected: false }, { where: { id: player.id } });
+    socket.to(socketRoom(roomId)).emit("room:presence", { playerId: player.id, timeline: player.timeline, connected: false });
+    const lobby = await getLobbyState(roomId);
+    io.to(socketRoom(roomId)).emit("lobby:state", lobby);
   });
   const snapshot = await getSnapshot(roomId);
+  const checkpoint = await PlayerCheckpoint.findByPk(player.id, { raw: true });
   const lobby = await getLobbyState(roomId);
-  socket.emit("game:state", { ...snapshot, player });
+  socket.emit("game:state", { ...snapshot, player, checkpoint });
   socket
     .to(socketRoom(roomId))
     .emit("room:presence", { playerId: player.id, timeline: player.timeline, connected: true });
   io.to(socketRoom(roomId)).emit("lobby:state", lobby);
 });
 
+await RoomPlayer.update({ connected: false }, { where: { connected: true } });
 await new Promise((resolve, reject) => {
   httpServer.once("error", reject);
   httpServer.listen(port, "0.0.0.0", resolve);

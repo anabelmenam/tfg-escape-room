@@ -1,8 +1,8 @@
 import * as THREE from "three";
 import { Entity } from "../objects/index.js";
 import { tInteraction, tItem } from "../../translations/index.js";
-import { finishBathroomObject, markBathroomControl } from "./BathroomPuzzleUtils.js";
-import { createTile } from "./TileModels.js";
+import { finishBathroomObject, markBathroomControl } from "./bathroomPuzzleHelpers.js";
+import { createTile } from "./createTile.js";
 
 const CORRECT_ORDER = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 const SCRAMBLED_ORDER = [4, 0, 7, 2, null, 8, 1, 6, 3];

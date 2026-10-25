@@ -2,19 +2,28 @@ export const GAME_API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:30
 
 const request = async (path, options = {}) => {
   const response = await fetch(`${GAME_API_URL}${path}`, {
+    credentials: "include",
     headers: { "Content-Type": "application/json", ...options.headers },
     ...options,
   });
-  const body = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(body.error ?? "No se ha podido conectar con el servidor.");
+  const body = response.status === 204 ? {} : await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(body.error ?? "REQUEST_FAILED");
   return body;
 };
 
-export const createGameRoom = (displayName) =>
-  request("/api/rooms", { method: "POST", body: JSON.stringify({ displayName }) });
+export const registerAccount = (details) => request("/api/auth/register", { method: "POST", body: JSON.stringify(details) });
+export const loginAccount = (details) => request("/api/auth/login", { method: "POST", body: JSON.stringify(details) });
+export const logoutAccount = () => request("/api/auth/logout", { method: "POST" });
+export const getCurrentAccount = () => request("/api/auth/me");
+export const getSaveSlots = () => request("/api/save-slots");
 
-export const joinGameRoom = (joinCode, displayName) =>
+export const createGameRoom = (slotNumber, name) =>
+  request("/api/rooms", { method: "POST", body: JSON.stringify({ slotNumber, name }) });
+
+export const joinGameRoom = (joinCode, slotNumber) =>
   request(`/api/rooms/${encodeURIComponent(joinCode)}/join`, {
     method: "POST",
-    body: JSON.stringify({ displayName }),
+    body: JSON.stringify({ slotNumber }),
   });
+
+export const deleteGameRoom = (roomId) => request(`/api/rooms/${roomId}`, { method: "DELETE" });

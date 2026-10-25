@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { Entity } from "../Entity.js";
-import { Scissors } from "../../puzzles/ScissorsPuzzle.js";
+import { Scissors } from "../../puzzles/Scissors.js";
 import { tInteraction, tItem } from "../../../translations/index.js";
 
 const paintingColumns = 3;

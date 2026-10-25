@@ -1,4 +1,5 @@
 import { Minus, Plus } from "lucide-react";
+import { t } from "../translations/index.js";
 
 const MouseSettings = ({ idPrefix = "mouse", sensitivity, onChange }) => {
   const min = 0.2;
@@ -16,10 +17,10 @@ const MouseSettings = ({ idPrefix = "mouse", sensitivity, onChange }) => {
       <div className="mb-3 flex items-start justify-between gap-4">
         <div>
           <label className="font-bold text-[#ead8b5]" htmlFor={`${idPrefix}-sensitivity`}>
-            Sensibilidad del ratón
+            {t("menu.mouseSensitivity")}
           </label>
 
-          <p className="mt-1 text-sm text-[#a99a83]">Velocidad de giro de la cámara en primera persona.</p>
+          <p className="mt-1 text-sm text-[#a99a83]">{t("menu.mouseDescription")}</p>
         </div>
 
         <span className="min-w-12 text-right font-mono text-sm text-[#e7c17d]">{sensitivity.toFixed(1)}×</span>
@@ -28,7 +29,7 @@ const MouseSettings = ({ idPrefix = "mouse", sensitivity, onChange }) => {
       <div className="flex items-center gap-3">
         <button
           type="button"
-          aria-label="Reducir sensibilidad del ratón"
+          aria-label={t("menu.lowerSensitivity")}
           onClick={() => changeSensitivity(-step)}
           disabled={sensitivity <= min}
           className="text-[#9d8a6d] transition-colors hover:text-[#e7c17d] disabled:cursor-not-allowed disabled:opacity-30"
@@ -49,7 +50,7 @@ const MouseSettings = ({ idPrefix = "mouse", sensitivity, onChange }) => {
 
         <button
           type="button"
-          aria-label="Aumentar sensibilidad del ratón"
+          aria-label={t("menu.raiseSensitivity")}
           onClick={() => changeSensitivity(step)}
           disabled={sensitivity >= max}
           className="text-[#e7c17d] transition-colors hover:text-[#f5d49a] disabled:cursor-not-allowed disabled:opacity-30"

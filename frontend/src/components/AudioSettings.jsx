@@ -1,4 +1,5 @@
 import { Minus, Plus } from "lucide-react";
+import { t } from "../translations/index.js";
 
 const VolumeControl = ({ id, label, description, value, onChange }) => {
   const step = 0.05;
@@ -25,7 +26,7 @@ const VolumeControl = ({ id, label, description, value, onChange }) => {
       <div className="flex items-center gap-3">
         <button
           type="button"
-          aria-label={`Bajar volumen de ${label}`}
+          aria-label={t("menu.lowerVolume").replace("{label}", label)}
           onClick={() => changeVolume(-step)}
           disabled={value <= 0}
           className="text-[#9d8a6d] transition-colors hover:text-[#e7c17d] disabled:cursor-not-allowed disabled:opacity-30"
@@ -46,7 +47,7 @@ const VolumeControl = ({ id, label, description, value, onChange }) => {
 
         <button
           type="button"
-          aria-label={`Subir volumen de ${label}`}
+          aria-label={t("menu.raiseVolume").replace("{label}", label)}
           onClick={() => changeVolume(step)}
           disabled={value >= 1}
           className="text-[#e7c17d] transition-colors hover:text-[#f5d49a] disabled:cursor-not-allowed disabled:opacity-30"
@@ -62,24 +63,24 @@ const AudioSettings = ({ idPrefix = "audio", settings, onChange }) => (
   <div>
     <VolumeControl
       id={`${idPrefix}-music-volume`}
-      label="Música"
-      description="Banda sonora ambiental."
+      label={t("menu.music")}
+      description={t("menu.musicDescription")}
       value={settings.music}
       onChange={(value) => onChange("music", value)}
     />
 
     <VolumeControl
       id={`${idPrefix}-effects-volume`}
-      label="Interacciones"
-      description="Puertas, interruptores, objetos y puzles."
+      label={t("menu.effects")}
+      description={t("menu.effectsDescription")}
       value={settings.effects}
       onChange={(value) => onChange("effects", value)}
     />
 
     <VolumeControl
       id={`${idPrefix}-footsteps-volume`}
-      label="Pasos"
-      description="Sonido del movimiento de los jugadores."
+      label={t("menu.footsteps")}
+      description={t("menu.footstepsDescription")}
       value={settings.footsteps}
       onChange={(value) => onChange("footsteps", value)}
     />

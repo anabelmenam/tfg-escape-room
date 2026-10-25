@@ -4,6 +4,7 @@ export const createInitialState = () => ({
     present: { objects: {}, puzzles: {} },
   },
   inventories: { past: [], present: [] },
+  journalEntries: [],
   ending: {
     phase: "locked",
     holding: { past: false, present: false },

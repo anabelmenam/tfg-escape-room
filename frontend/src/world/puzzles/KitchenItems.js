@@ -2,8 +2,8 @@ import * as THREE from "three";
 import { Entity } from "../objects/index.js";
 import { tInteraction, tItem } from "../../translations/index.js";
 import { createNapkinLabelTexture, shadows } from "./KitchenPuzzleBase.js";
-import { createKitchenFoodModel } from "./KitchenFoodModels.js";
-import { createTile } from "./TileModels.js";
+import { createKitchenFoodModel } from "./createKitchenFoodModel.js";
+import { createTile } from "./createTile.js";
 
 const createNapkinFabricTexture = () => {
   const canvas = document.createElement("canvas");
