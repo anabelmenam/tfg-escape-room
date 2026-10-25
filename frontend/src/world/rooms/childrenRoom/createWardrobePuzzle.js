@@ -29,7 +29,7 @@ const createWardrobePuzzle = ({ timeline, wardrobe, onAction }) => {
   }
 
   const rewardDoors = wardrobe.getInteractables().filter((item) => item.id.includes("-door-"));
-  let unlocked = false;
+  let unlocked = timeline !== "past";
   let rewardRevealed = false;
   const revealReward = () => {
     if (!unlocked || rewardRevealed) return;
@@ -45,7 +45,7 @@ const createWardrobePuzzle = ({ timeline, wardrobe, onAction }) => {
     rewardDoors.forEach((door) => { door.enabled = true; });
   };
   rewardDoors.forEach((door) => {
-    door.enabled = false;
+    door.enabled = timeline !== "past";
     const openDoor = door.interact;
     door.interact = (...args) => {
       openDoor(...args);

@@ -33,7 +33,7 @@ const createBlockPuzzle = ({ timeline, desk, onFocus, onAction }) => {
 
   const applyState = (state) => {
     const solved = Boolean(state.timelines?.past?.puzzles?.["children-blocks"]?.solved);
-    if (solved) {
+    if (solved && timeline === "past") {
       puzzle.solve({ notify: false });
       revealPushpin();
     }

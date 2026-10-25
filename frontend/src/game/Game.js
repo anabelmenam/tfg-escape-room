@@ -38,6 +38,7 @@ export class Game {
     this.ready = false;
     this.paused = false;
     this.sharedState = null;
+    this.applyingSharedState = false;
     this.localJournalEntries = testMode
       ? Array.from({ length: 10 }, (_, index) => `family-note-${String(index + 1).padStart(2, "0")}`)
       : [];
@@ -166,6 +167,7 @@ export class Game {
     if (!state) return;
     this.sharedState = state;
     if (!this.roomData || !this.timeline) return;
+    this.applyingSharedState = true;
     this.roomData.hallway?.applyHallwayState(state);
     this.roomData.bedroom?.applyBedroomState(state);
     this.roomData.childrenRoom?.applyChildrenRoomState(state);
@@ -195,6 +197,19 @@ export class Game {
       if (doorState.locked === false) door.unlock({ notify: false });
       if (doorState.open) door.open();
     }
+    for (const entity of this.roomData.entities ?? []) {
+      const objectState = state.timelines?.[this.timeline]?.objects?.[entity?.id];
+      if (!objectState) continue;
+      if (typeof objectState.active === "boolean" && typeof entity.setActive === "function" && entity.active !== objectState.active) {
+        entity.setActive(objectState.active);
+        entity.onPress?.(entity);
+      }
+      if (typeof objectState.open === "boolean" && typeof entity.open === "function" && typeof entity.close === "function") {
+        if (objectState.open && !entity.isOpen) entity.open();
+        else if (!objectState.open && entity.isOpen) entity.close();
+      }
+    }
+    this.applyingSharedState = false;
   }
 
   applyCheckpoint(checkpoint) {

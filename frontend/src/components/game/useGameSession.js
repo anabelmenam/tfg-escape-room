@@ -16,19 +16,8 @@ const useGameSession = ({ containerRef, gameRef, socketRef, playerRole, session,
     let active = true;
     const socket = session.testMode ? null : io(GAME_API_URL, { auth: { roomId: session.roomId, playerToken: session.playerToken } });
     socketRef.current = socket;
-    let companionConnected = Boolean(session.testMode);
-    let pausedByCompanion = false;
     const updateCompanionConnection = (connected) => {
-      companionConnected = connected;
       setCompanionConnected(connected);
-      if (!game.ready) return;
-      if (connected && pausedByCompanion) {
-        game.resume({ lockPointer: false });
-        pausedByCompanion = false;
-      } else if (!connected) {
-        pausedByCompanion = !game.paused;
-        game.pause();
-      }
     };
     const game = new Game(container, playerRole, {
       testArea: session.testMode ? session.testArea : null,
@@ -39,7 +28,6 @@ const useGameSession = ({ containerRef, gameRef, socketRef, playerRole, session,
       audioController,
       onReady: () => {
         if (!active) return;
-        if (!companionConnected) { pausedByCompanion = true; game.pause(); }
         setIsLoading(false);
       },
       onPauseRequest: () => {

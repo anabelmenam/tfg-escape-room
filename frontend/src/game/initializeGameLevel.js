@@ -30,11 +30,15 @@ const positionEndingPreview = (game, roomData) => {
 };
 
 export const initializeGameLevel = async (game) => {
-  const withAudio = (handler) => (type, ...args) => { game.gameAudio.playAction(type); handler?.(type, ...args); };
+  const completionObjects = new Set(["bedroom-symbol-safe", "living-room-fireplace", "living-room-chest"]);
+  const withAudio = (handler) => (type, targetId, ...args) => {
+    game.gameAudio.playAction(type === "object.interact" && completionObjects.has(targetId) ? "puzzle.solved" : type);
+    handler?.(type, targetId, ...args);
+  };
   const roomData = await createLevel1({
     playerRole: game.playerRole, testArea: game.testArea, testMode: game.testMode,
     onSwitchPress: (lightSwitch) => {
-      const active = game.gameState.toggle(lightSwitch.id); lightSwitch.setActive(active);
+      const active = lightSwitch.active; game.gameState.set(lightSwitch.id, active);
       game.eventManager.emit("buttonPressed", { id: lightSwitch.id, active });
     },
     eventManager: game.eventManager,
@@ -58,7 +62,24 @@ export const initializeGameLevel = async (game) => {
   game.scene.userData.timeline = game.timeline;
   if (game.endingPreview) game.sharedState = createEndingPreviewState();
   game.multiplayer.initialize();
-  for (const entity of roomData.entities ?? []) { entity.setAudioListener?.(game.gameAudio); game.entityManager.add(entity); }
+  for (const entity of roomData.entities ?? []) {
+    entity.setAudioListener?.(game.gameAudio);
+    if (typeof entity.press === "function" && typeof entity.setActive === "function") {
+      const originalOnPress = entity.onPress;
+      entity.onPress = (switchObject) => {
+        originalOnPress?.(switchObject);
+        if (!game.applyingSharedState) game.onHallwayAction?.("object.interact", entity.id, { operation: "set-active", active: switchObject.active });
+      };
+    }
+    if (typeof entity.open === "function" && typeof entity.close === "function" && "isOpen" in entity) {
+      const originalOnOpenChange = entity.onOpenChange;
+      entity.onOpenChange = (open) => {
+        originalOnOpenChange?.(open);
+        if (!game.applyingSharedState) game.onHallwayAction?.("object.interact", entity.id, { operation: "set-open", open });
+      };
+    }
+    game.entityManager.add(entity);
+  }
   game.collisionManager.setObjectColliders(roomData.objectColliders ?? []);
   game.collisionManager.setWallColliders(roomData.wallColliders ?? []);
   game.scene.add(roomData.room);

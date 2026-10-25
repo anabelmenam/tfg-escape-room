@@ -31,7 +31,7 @@ const createKitchenAppliancePuzzles = ({ timeline, testMode, furniture, onFocus,
   });
   if (timeline === "past") ovenControls.object3D.position.set(0, 4.68, 1.49);
   else {
-    ovenControls.object3D.position.set(0, 3.14, 0);
+    ovenControls.object3D.position.set(0, 4.68, 1.49);
     ovenControls.object3D.scale.setScalar(.8);
   }
   oven.object3D.add(ovenControls.object3D);

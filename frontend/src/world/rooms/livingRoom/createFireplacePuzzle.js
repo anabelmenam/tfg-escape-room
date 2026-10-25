@@ -156,7 +156,8 @@ const createFireplacePuzzle = ({ timeline, testMode, sofa, armchairs, onAction, 
       vitrineLetter.setEnabled(true);
     }
     hasLetter = Boolean(state.inventories?.past?.includes("living-room-vitrine-letter"));
-    if (hasLetter && vitrineLetter) {
+    const chestOpened = state.timelines?.present?.objects?.["living-room-chest"]?.locked === false;
+    if ((hasLetter || chestOpened) && vitrineLetter) {
       vitrineLetter.object3D.visible = false;
       vitrineLetter.setEnabled(false);
     }

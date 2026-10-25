@@ -64,7 +64,14 @@ const useEndingSequence = ({ session, gameRef, setIsPaused }) => {
   const handleEndingChange = useCallback((game, socket, nextEnding) => {
     if (!session.endingPreview && nextEnding?.phase === "choice" && !tourStartedRef.current) {
       setEnding({ ...nextEnding, phase: "tour" });
-      playTour(game, () => setEnding(nextEnding));
+      playTour(game, () => {
+        socket?.emit("game:action", {
+          actionId: crypto.randomUUID(),
+          type: "object.interact",
+          targetId: "hallway-final-choice",
+          payload: { choice: "together" },
+        });
+      });
       return;
     }
     setEnding(nextEnding);

@@ -47,7 +47,7 @@ const createHallwayDoors = ({ timeline, testMode, passageOpenings, isInteractHel
     isInteractHeld,
     onHoldChange: (holding) => onAction?.("object.interact", "hallway-final-threshold", { operation: holding ? "hold-start" : "hold-end" }),
   });
-  threshold.object3D.position.set(1.65, 0, streetDoor.thickness / 2 + .15);
+  threshold.object3D.position.set(0, 0, streetDoor.thickness / 2 + .15);
   streetDoor.doorMesh.add(threshold.object3D);
 
   const applyState = (state, livingRoomKey) => {

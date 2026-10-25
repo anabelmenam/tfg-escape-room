@@ -45,6 +45,7 @@ const createKitchenFoodPuzzles = ({ timeline, testMode, furniture, appliancePuzz
         napkins[3].setEnabled(true);
         napkins[3].object3D.visible = true;
       }
+      onAction?.("puzzle.solved", "kitchen-recipe");
     },
     onPlacementChange: (payload) => onAction?.("object.interact", "kitchen-recipe", payload),
     onCollect: () => onAction?.("item.pickup", "kitchen-recipe-note"),
@@ -66,6 +67,7 @@ const createKitchenFoodPuzzles = ({ timeline, testMode, furniture, appliancePuzz
       appliancePuzzles.stove.setAvailable(true);
       appliancePuzzles.stove.trySolve();
       appliancePuzzles.stove.revealClue();
+      onAction?.("puzzle.solved", "kitchen-family-table");
     },
     onPlacementChange: (payload) => onAction?.("object.interact", "kitchen-family-table", payload),
     napkins,
@@ -73,6 +75,7 @@ const createKitchenFoodPuzzles = ({ timeline, testMode, furniture, appliancePuzz
   table.object3D.position.set(0, 2.72, 0);
   table.object3D.scale.setScalar(.9);
   diningTable.object3D.add(table.object3D);
+  if (timeline === "present") table.setAvailable(true);
 
   if (testMode) {
     recipe.setAvailable(true);

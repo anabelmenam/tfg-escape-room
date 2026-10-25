@@ -122,6 +122,8 @@ const createLivingRoom = async ({
     fireplacePuzzle,
     chestPuzzle,
   });
+  shelf1.endingHomePosition = shelf1.object3D.position.clone();
+  shelf1.endingHomeRotation = shelf1.object3D.rotation.y;
   return {
     room,
     roomColliders,

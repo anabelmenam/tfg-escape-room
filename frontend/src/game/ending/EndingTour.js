@@ -29,9 +29,11 @@ const applySolvedHouseState = (game) => {
 const resetFurniture = (entities = []) => {
   for (const entity of entities) {
     if (entity.id === "living-room-shelf-1" && entity.mechanismStartPosition) {
-      entity.object3D.position.copy(entity.mechanismStartPosition);
-      entity.object3D.rotation.y = entity.mechanismStartRotation;
-      entity.mechanismTargetRotation = entity.mechanismStartRotation;
+      entity.object3D.position.copy(entity.endingHomePosition ?? entity.mechanismStartPosition);
+      entity.object3D.rotation.y = entity.endingHomeRotation ?? entity.mechanismStartRotation;
+      entity.mechanismStartPosition.copy(entity.object3D.position);
+      entity.mechanismStartRotation = entity.object3D.rotation.y;
+      entity.mechanismTargetRotation = entity.object3D.rotation.y;
       entity.mechanismProgress = 0;
       entity.isMechanismMoving = false;
       entity.refreshCollider?.();
@@ -158,6 +160,8 @@ const startEndingHouseTour = (game, { onBeat, onFade, onComplete } = {}) => {
   game.paused = false;
   applySolvedHouseState(game);
   resetFurniture(game.roomData.entities);
+  if (game.remoteEcho?.object3D) game.remoteEcho.object3D.visible = false;
+  game.previewEchoes.forEach((echo) => { echo.object3D.visible = false; });
   const scenes = createTourScenes(game);
   const doors = closeTourDoors(game.roomData);
 

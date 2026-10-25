@@ -29,8 +29,8 @@ const getPastHint = (state, inventory) => {
   if (!solved(state, "past", "kitchen-oven")) return solved(state, "present", "kitchen-stove") ? "pastOven" : "pastWaitStove";
   if (!solved(state, "present", "bathroom-mosaic")) return "pastWaitMosaic";
   if (allBoltsOpen(state)) return "finalDoor";
-  if (has(inventory, "final-key-bedroom") || has(inventory, "final-key-children") || has(inventory, "final-key-bathroom")) return "pastFinalKeys";
-  if (object(state, "past", "final-bolt-bedroom").unlocked && object(state, "past", "final-bolt-children").unlocked && object(state, "past", "final-bolt-bathroom").unlocked) return "waitCompanionBolts";
+  if (has(inventory, "final-key-bedroom") || has(inventory, "final-key-children")) return "pastFinalKeys";
+  if (object(state, "past", "final-bolt-bedroom").unlocked && object(state, "past", "final-bolt-children").unlocked) return "waitCompanionBolts";
   return "pastCollectFinalKeys";
 };
 
@@ -58,8 +58,8 @@ const getPresentHint = (state, inventory) => {
   if (!solved(state, "present", "kitchen-stove")) return "presentStove";
   if (!solved(state, "present", "bathroom-mosaic")) return has(inventory, "bathroom-mosaic-tile") || state?.timelines?.present?.puzzles?.["bathroom-mosaic"]?.tileInserted ? "presentMosaic" : "presentOvenTile";
   if (allBoltsOpen(state)) return "finalDoor";
-  if (has(inventory, "final-key-living-room")) return "presentFinalKeys";
-  if (object(state, "past", "final-bolt-living-room").unlocked) return "waitCompanionBolts";
+  if (has(inventory, "final-key-living-room") || has(inventory, "final-key-bathroom")) return "presentFinalKeys";
+  if (object(state, "past", "final-bolt-living-room").unlocked && object(state, "past", "final-bolt-bathroom").unlocked) return "waitCompanionBolts";
   return "presentCollectFinalKeys";
 };
 

@@ -33,7 +33,9 @@ const createPhotoBoardPuzzle = ({ timeline, furniture, onFocus, onAction, onSolv
     puzzle.object3D.scale.setScalar(0.7);
   } else {
     puzzle.object3D.scale.setScalar(0.5);
-    desks[0].addObjectToDrawer(0, puzzle.object3D, new THREE.Vector3(0, -0.22, -0.92));
+    puzzle.object3D.position.set(0, 3.34, 0);
+    puzzle.object3D.rotation.z = -.08;
+    desks[0].object3D.add(puzzle.object3D);
   }
   if (musicBoxKey) puzzle.setHiddenReward(musicBoxKey);
 

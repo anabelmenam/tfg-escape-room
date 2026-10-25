@@ -1,6 +1,7 @@
-export const GAME_API_URL = import.meta.env.PROD
-  ? window.location.origin
-  : (import.meta.env.VITE_API_URL ?? "http://localhost:3010");
+const configuredApiUrl = import.meta.env.VITE_API_URL?.trim().replace(/^[-\s]+/, "").replace(/\/$/, "");
+
+export const GAME_API_URL = configuredApiUrl
+  || (import.meta.env.PROD ? "https://tfg-escape-room.onrender.com" : "http://localhost:3010");
 
 const request = async (path, options = {}) => {
   const response = await fetch(`${GAME_API_URL}${path}`, {

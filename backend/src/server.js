@@ -134,13 +134,26 @@ const finalLocks = {
   "final-bolt-bedroom": { keyId: "final-key-bedroom", timeline: "past" },
   "final-bolt-living-room": { keyId: "final-key-living-room", timeline: "present" },
   "final-bolt-children": { keyId: "final-key-children", timeline: "past" },
-  "final-bolt-bathroom": { keyId: "final-key-bathroom", timeline: "past" },
+  "final-bolt-bathroom": { keyId: "final-key-bathroom", timeline: "present" },
 };
 
 const reduceAction = (state, player, action) => {
+  const legacyBathroomKey = state.inventories.past.indexOf("final-key-bathroom");
+  if (legacyBathroomKey !== -1) {
+    state.inventories.past.splice(legacyBathroomKey, 1);
+    if (!state.inventories.present.includes("final-key-bathroom")) state.inventories.present.push("final-key-bathroom");
+  }
   const timeline = player.timeline;
   switch (action.type) {
     case "object.interact":
+      if (action.payload?.operation === "set-open") {
+        setObjectState(state, timeline, action.targetId, { open: Boolean(action.payload.open) });
+        return;
+      }
+      if (action.payload?.operation === "set-active") {
+        setObjectState(state, timeline, action.targetId, { active: Boolean(action.payload.active) });
+        return;
+      }
       if (action.targetId === "hallway-final-threshold") {
         const allUnlocked = Object.keys(finalLocks).every((lockId) => state.timelines.past.objects[lockId]?.unlocked);
         if (!allUnlocked) throw new Error("Primero hay que abrir los cuatro cerrojos.");
@@ -237,9 +250,7 @@ const reduceAction = (state, player, action) => {
         return;
       }
       if (action.targetId === "kitchen-family-table") {
-        if (timeline !== "present" || !state.timelines.present.puzzles["kitchen-recipe"]?.solved) {
-          throw new Error("Primero hay que completar la receta.");
-        }
+        if (timeline !== "present") throw new Error("La mesa se prepara en el Papá.");
         const seatIndex = Number(action.payload.seatIndex);
         if (!Number.isInteger(seatIndex) || seatIndex < 0 || seatIndex >= kitchenNapkinIds.length) {
           throw new Error("Ese puesto de la mesa no es válido.");
@@ -390,6 +401,8 @@ const reduceAction = (state, player, action) => {
         if (timeline !== "present" || !state.inventories.past.includes("living-room-vitrine-letter")) {
           throw new Error("Primero hay que encontrar la carta de la vitrina.");
         }
+        const letterIndex = state.inventories.past.indexOf("living-room-vitrine-letter");
+        if (letterIndex !== -1) state.inventories.past.splice(letterIndex, 1);
         setObjectState(state, "present", action.targetId, { locked: false });
         return;
       }
@@ -475,7 +488,7 @@ const reduceAction = (state, player, action) => {
       if (action.targetId === "final-key-bedroom" && (timeline !== "past" || !state.timelines.past.puzzles["bedroom-radio"]?.solved)) throw new Error("Primero hay que completar la radio.");
       if (action.targetId === "final-key-living-room" && (timeline !== "present" || state.timelines.present.objects["living-room-chest"]?.locked !== false)) throw new Error("Primero hay que abrir el cofre del salón.");
       if (action.targetId === "final-key-children" && (timeline !== "past" || !state.timelines.past.puzzles["children-wardrobe-chains"]?.solved)) throw new Error("Primero hay que cortar las cadenas del armario.");
-      if (action.targetId === "final-key-bathroom" && (timeline !== "past" || !state.timelines.present.puzzles["bathroom-mosaic"]?.solved)) throw new Error("Primero hay que completar el mosaico.");
+      if (action.targetId === "final-key-bathroom" && (timeline !== "present" || !state.timelines.present.puzzles["bathroom-mosaic"]?.solved)) throw new Error("Primero hay que completar el mosaico.");
       if (action.targetId === "flashlight" && timeline !== "present") throw new Error("La linterna solo existe en el Papá.");
       if (action.targetId === "crowbar" && (timeline !== "past" || !state.timelines.past.puzzles["children-wardrobe-chains"]?.solved)) {
         throw new Error("Primero hay que cortar las cadenas del armario.");

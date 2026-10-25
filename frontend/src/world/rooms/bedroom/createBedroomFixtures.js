@@ -30,12 +30,17 @@ const createBedroomFixtures = ({
   }));
 
   const lamp = new Lamp({ id: "bedroom-lamp", position: new THREE.Vector3(0, 12, 0) });
+  const switches = [];
+  const onPress = (pressed) => {
+    lamp.setActive(pressed.active);
+    switches.forEach((item) => { if (item !== pressed) item.setActive(pressed.active); });
+  };
   const lightSwitch1 = new Switch({
     id: `bedroom-${timeline}-switch1`,
     position: new THREE.Vector3(0, 4, 12),
     scale: 0.75,
     powerAvailable: timeline !== "present",
-    onPress: () => lamp.setActive(!lamp.getActive()),
+    onPress,
   });
   lightSwitch1.object3D.rotation.y = Math.PI;
   const lightSwitch2 = new Switch({
@@ -43,8 +48,9 @@ const createBedroomFixtures = ({
     position: new THREE.Vector3(3, 3.5, -12),
     scale: 0.75,
     powerAvailable: timeline !== "present",
-    onPress: () => lamp.setActive(!lamp.getActive()),
+    onPress,
   });
+  switches.push(lightSwitch1, lightSwitch2);
 
   const lights = [new THREE.AmbientLight(0xffffff, timelineConfig.ambientLightIntensity)];
   if (windowOpenings[0]) {

@@ -66,8 +66,7 @@ export class InventoryController {
     image.alt = tItem(item.itemName ?? item.id);
     title.textContent = tItem(item.itemName ?? item.id);
     hint.textContent = t("ui.closeInspection");
-    const translatedText = t(`papers.${item.id}`);
-    translation.textContent = translatedText.startsWith("papers.") ? "" : translatedText;
+    translation.textContent = "";
     this.game.inventoryInspectionOpen = true;
     this.game.inventoryInspectionKey = inspectionKey;
     panel.classList.remove("hidden");

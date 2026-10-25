@@ -28,10 +28,9 @@ class BathroomMosaicPuzzle extends Entity {
     if (timeline === "present") this.tiles.get(MISSING_TILE_ID).visible = false;
 
     this.compartment = new THREE.Group();
-    const recess = new THREE.Mesh(new THREE.BoxGeometry(.95, .95, .42), new THREE.MeshStandardMaterial({ color: 0x27231e, roughness: .92 }));
-    const lining = new THREE.Mesh(new THREE.BoxGeometry(.7, .68, .05), new THREE.MeshStandardMaterial({ color: 0x8d744d, roughness: .8 })); lining.position.z = .23;
-    const brass = new THREE.Mesh(new THREE.TorusGeometry(.16, .035, 10, 22), new THREE.MeshStandardMaterial({ color: 0xb2873e, metalness: .72, roughness: .3 })); brass.position.z = .28;
-    this.compartment.add(recess, lining, brass); this.compartment.position.set(0, 0, -.02); this.compartment.visible = false; this.object3D.add(this.compartment);
+    const recess = new THREE.Mesh(new THREE.BoxGeometry(1.02, 1.02, .52), new THREE.MeshStandardMaterial({ color: 0x27231e, roughness: .92 }));
+    const lining = new THREE.Mesh(new THREE.BoxGeometry(.82, .8, .05), new THREE.MeshStandardMaterial({ color: 0x8d744d, roughness: .8 })); lining.position.z = .15;
+    this.compartment.add(recess, lining); this.compartment.position.set(0, 0, -.08); this.compartment.visible = false; this.object3D.add(this.compartment);
     finishBathroomObject(this.object3D);
   }
 

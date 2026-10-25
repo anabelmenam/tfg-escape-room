@@ -31,8 +31,14 @@ const createBathroom = ({ timeline = "present", onObjectFocus = null, onBathroom
     room, roomColliders, objectColliders: assembly.objectColliders, bounds, dimensions: bathroomDimensions,
     interactables: assembly.interactables, entities: assembly.entities,
     applyBathroomState: puzzles.applyState,
-    addStoryNote: (object3D) => (timeline === "past" ? furniture.vanity : furniture.linenCabinet)
-      .addObjectToDrawer(timeline === "past" ? 0 : 1, object3D, new THREE.Vector3(-.5, -.08, -.55)),
+    addStoryNote: (object3D) => {
+      if (timeline === "past") furniture.vanity.addObjectToDrawer(0, object3D, new THREE.Vector3(-.5, -.08, -.55));
+      else {
+        object3D.position.set(.75, .72, -.58);
+        object3D.rotation.set(-Math.PI / 2, 0, .08);
+        furniture.vanity.object3D.add(object3D);
+      }
+    },
     lightSwitch: fixtures.lightSwitch,
     lamp: fixtures.lamp,
   };
