@@ -32,7 +32,12 @@ const createBathroomPuzzles = ({ character, testMode, vanity, onFocus, onAction 
   const mosaic = new BathroomMosaicPuzzle({ character, onFocus, onSolved: () => onAction?.("puzzle.solved", "bathroom-mosaic"), onInsert: () => onAction?.("object.interact", "bathroom-mosaic", { operation: "insert-tile" }) });
   mosaic.object3D.position.set(2.6, 5.4, 4.82); mosaic.object3D.rotation.y = Math.PI; mosaic.object3D.scale.setScalar(.76);
   const finalKey = character === "dad" ? new FinalKey({ id: "final-key-bathroom", symbol: "wave", color: 0x4f91ad, onCollect: () => onAction?.("item.pickup", "final-key-bathroom") }) : null;
-  if (finalKey) { finalKey.object3D.position.set(0, 0, 0); finalKey.object3D.scale.setScalar(.3); finalKey.object3D.visible = false; finalKey.setEnabled(false); mosaic.rearMount.add(finalKey.object3D); }
+  if (finalKey) {
+    finalKey.object3D.position.set(0, .18, 0);
+    finalKey.object3D.rotation.set(0, 0, 0);
+    finalKey.object3D.scale.setScalar(.3);
+    finalKey.object3D.visible = false; finalKey.setEnabled(false); mosaic.rearMount.add(finalKey.object3D);
+  }
   if (testMode && screwdriver) { screwdriver.object3D.visible = true; screwdriver.setEnabled(true); }
 
   const applyState = (state) => {

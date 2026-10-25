@@ -2,10 +2,7 @@ import * as THREE from "three";
 import { ENDING_EXIT } from "./endingConfig.js";
 
 const hidePlayers = (game) => {
-  if (game.remoteEcho?.object3D) game.remoteEcho.object3D.visible = false;
-  game.previewEchoes.forEach((echo) => {
-    echo.object3D.visible = false;
-  });
+  game.multiplayer.setCharactersHidden(true);
 };
 
 const getExitPath = (game, streetDoor) => {

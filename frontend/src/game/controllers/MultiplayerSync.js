@@ -11,6 +11,7 @@ export class MultiplayerSync {
     this.remoteEcho = null;
     this.previewEchoes = [];
     this.identity = null;
+    this.charactersHidden = false;
   }
   initialize() {
     const game = this.game;
@@ -32,6 +33,7 @@ export class MultiplayerSync {
     this.previewEchoes.forEach((echo, index) => {
       const position = center.clone().addScaledVector(right, index === 0 ? -1.35 : 1.35);
       echo.setTarget({ position: { x: position.x, y: 5.25, z: position.z }, rotationY: facingCamera + (index === 0 ? -.08 : .08) });
+      if (this.charactersHidden) echo.object3D.visible = false;
     });
   }
   update(delta) {
@@ -50,8 +52,21 @@ export class MultiplayerSync {
       this.lastPosition.copy(this.game.camera.position); this.lastRotationY = rotationY; this.heartbeatElapsed = 0;
     }
   }
-  updateRemote(movement) { if (this.remoteEcho && movement.character !== this.game.character) this.remoteEcho.setTarget(movement); }
-  setConnected({ character, connected }) { if (this.remoteEcho && character !== this.game.character) this.remoteEcho.setConnected(connected); }
+  updateRemote(movement) {
+    if (!this.remoteEcho || movement.character === this.game.character) return;
+    this.remoteEcho.setTarget(movement);
+    if (this.charactersHidden) this.remoteEcho.object3D.visible = false;
+  }
+  setConnected({ character, connected }) {
+    if (!this.remoteEcho || character === this.game.character) return;
+    this.remoteEcho.setConnected(connected);
+    if (this.charactersHidden) this.remoteEcho.object3D.visible = false;
+  }
+  setCharactersHidden(hidden = true) {
+    this.charactersHidden = hidden;
+    if (hidden && this.remoteEcho) this.remoteEcho.object3D.visible = false;
+    if (hidden) this.previewEchoes.forEach((echo) => { echo.object3D.visible = false; });
+  }
   setIdentity({ character, displayName }) { if (character !== this.game.character) { this.identity = { character, displayName }; this.remoteEcho?.setName(displayName); } }
   dispose() { this.remoteEcho?.dispose(); this.previewEchoes.forEach((echo) => echo.dispose()); }
 }

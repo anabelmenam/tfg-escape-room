@@ -28,7 +28,7 @@ class BathroomMosaicPuzzle extends Entity {
     });
     this.applyOrder(this.order);
     if (character === "dad") this.tiles.get(MISSING_TILE_ID).visible = false;
-    this.rearMount = new THREE.Group(); this.rearMount.name = "bathroom-mosaic-center-rear"; this.rearMount.position.z = -.12; this.tiles.get(4).add(this.rearMount);
+    this.rearMount = new THREE.Group(); this.rearMount.name = "bathroom-mosaic-center-rear"; this.rearMount.position.z = -.075; this.tiles.get(4).add(this.rearMount);
 
     finishBathroomObject(this.object3D);
   }
