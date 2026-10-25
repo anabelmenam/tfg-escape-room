@@ -22,7 +22,7 @@ const GameCanvas = ({ playerRole, session, isAdmin, audioController, audioSettin
   const [showStory, setShowStory] = useState(Boolean(session.showIntroduction) && !session.endingPreview);
   const [diaryEntries, setDiaryEntries] = useState(() => session.testMode ? testDiaryEntries : []);
   const [hintHistory, setHintHistory] = useState(() => (session.checkpoint?.hintHistory ?? []).slice(-1));
-  const [companionConnected, setCompanionConnected] = useState(Boolean(session.testMode));
+  const [companionConnected, setCompanionConnected] = useState(Boolean(session.testMode || session.endingReplay));
   const hintCountsRef = useRef({});
   const endingSequence = useEndingSequence({ session, gameRef, setIsPaused });
 
@@ -44,9 +44,9 @@ const GameCanvas = ({ playerRole, session, isAdmin, audioController, audioSettin
   });
 
   useEffect(() => {
-    if (session.testMode) return;
+    if (session.testMode || session.endingReplay) return;
     socketRef.current?.emit("player:checkpoint-meta", { diaryEntries, hintHistory });
-  }, [diaryEntries, hintHistory, session.testMode]);
+  }, [diaryEntries, hintHistory, session.endingReplay, session.testMode]);
 
   useEffect(() => {
     gameRef.current?.player.setMouseSensitivity(mouseSensitivity);
@@ -77,9 +77,9 @@ const GameCanvas = ({ playerRole, session, isAdmin, audioController, audioSettin
   return (
     <div ref={containerRef} className={`relative ${endingSequence.active ? "ending-cinematic" : ""}`} style={{ width: "100vw", height: "100vh" }}>
       {showStory && !isLoading && playerRole !== "C" && <StoryOverlay character={session.character} onContinue={() => setShowStory(false)} />}
-      <EndingOverlay ending={endingSequence.ending} showLight={endingSequence.showLight} tourBeat={endingSequence.tourBeat} tourFade={endingSequence.tourFade} character={session.character} endingPreview={session.endingPreview} onExit={onExit} />
+      <EndingOverlay ending={endingSequence.ending} showLight={endingSequence.showLight} tourBeat={endingSequence.tourBeat} tourFade={endingSequence.tourFade} character={session.character} endingPreview={session.endingPreview && !session.endingReplay} onExit={onExit} />
       {isLoading && <LoadingOverlay />}
-      {!session.testMode && !isLoading && !companionConnected && (
+      {!session.testMode && !session.endingReplay && !isLoading && !companionConnected && (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/85 px-6 text-center text-[#f2e7d1]">
           <div className="max-w-md border border-[#d7b77b]/40 bg-[#211916] p-9 shadow-2xl">
             <p className="text-xs font-bold uppercase tracking-[.24em] text-[#d8aa64]">{t("multiplayer.paused")}</p>

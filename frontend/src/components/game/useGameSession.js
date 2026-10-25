@@ -8,20 +8,21 @@ const emitAction = (socket, type, targetId, payload) => socket?.emit("game:actio
 });
 
 const useGameSession = ({ containerRef, gameRef, socketRef, playerRole, session, isAdmin, audioController, endingSequence, setIsLoading, setIsPaused, setPauseView, setDiaryEntries, setHintHistory, setCompanionConnected }) => {
-  const { handleHallwayAction, handleEndingChange, reset } = endingSequence;
+  const { handleHallwayAction, handleEndingChange, startEndingReplay, reset } = endingSequence;
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return undefined;
     let active = true;
-    const socket = session.testMode ? null : io(GAME_SOCKET_URL, { auth: { roomId: session.roomId, playerToken: session.playerToken } });
+    const localSession = session.testMode || session.endingReplay;
+    const socket = localSession ? null : io(GAME_SOCKET_URL, { auth: { roomId: session.roomId, playerToken: session.playerToken } });
     socketRef.current = socket;
     const updateCompanionConnection = (connected) => {
       setCompanionConnected(connected);
     };
     const game = new Game(container, playerRole, {
-      testArea: session.testMode ? session.testArea : null,
-      testMode: session.testMode,
+      testArea: localSession ? session.testArea : null,
+      testMode: localSession,
       isAdmin,
       endingPreview: Boolean(session.endingPreview),
       initialCheckpoint: session.checkpoint ?? null,
@@ -29,6 +30,7 @@ const useGameSession = ({ containerRef, gameRef, socketRef, playerRole, session,
       onReady: () => {
         if (!active) return;
         setIsLoading(false);
+        if (session.endingReplay) window.setTimeout(() => { if (active) startEndingReplay(game); }, 250);
       },
       onPauseRequest: () => {
         if (!active) return;
@@ -78,7 +80,7 @@ const useGameSession = ({ containerRef, gameRef, socketRef, playerRole, session,
       socket?.disconnect();
       game.dispose();
     };
-  }, [audioController, containerRef, gameRef, handleEndingChange, handleHallwayAction, isAdmin, playerRole, reset, session, setCompanionConnected, setDiaryEntries, setHintHistory, setIsLoading, setIsPaused, setPauseView, socketRef]);
+  }, [audioController, containerRef, gameRef, handleEndingChange, handleHallwayAction, isAdmin, playerRole, reset, session, setCompanionConnected, setDiaryEntries, setHintHistory, setIsLoading, setIsPaused, setPauseView, socketRef, startEndingReplay]);
 };
 
 export default useGameSession;

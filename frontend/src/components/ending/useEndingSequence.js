@@ -28,6 +28,23 @@ const useEndingSequence = ({ session, gameRef, setIsPaused }) => {
     }, ENDING_UI.tourStartDelay);
   }, []);
 
+  const startEndingReplay = useCallback((game) => {
+    if (cinematicStartedRef.current) return;
+    cinematicStartedRef.current = true;
+    const openingState = structuredClone(game.sharedState);
+    openingState.ending = { phase: "opening", holding: { mum: true, dad: true }, choice: null, sacrificeCharacter: null };
+    for (const character of ["mum", "dad"]) openingState.characters[character].objects["hallway-street-door"] = { locked: false, open: true };
+    game.applySharedState(openingState);
+    game.startEndingExit(() => {
+      game.pause();
+      playTour(game, () => {
+        const completeState = structuredClone(game.sharedState);
+        completeState.ending = { ...completeState.ending, phase: "complete", choice: "together", sacrificeCharacter: null };
+        game.applySharedState(completeState);
+      });
+    }, () => setShowLight(true));
+  }, [playTour]);
+
   const handleHallwayAction = useCallback((game, socket, type, targetId, payload = {}) => {
     if (!(session.endingPreview && targetId === "hallway-final-threshold")) {
       socket?.emit("game:action", { actionId: crypto.randomUUID(), type, targetId, payload });
@@ -101,7 +118,7 @@ const useEndingSequence = ({ session, gameRef, setIsPaused }) => {
   }, [ending?.phase, gameRef, setIsPaused]);
 
   const active = ["opening", "tour"].includes(ending?.phase) || showLight || tourBeat !== null || tourFade;
-  return { ending, showLight, tourBeat, tourFade, active, handleHallwayAction, handleEndingChange, reset };
+  return { ending, showLight, tourBeat, tourFade, active, handleHallwayAction, handleEndingChange, startEndingReplay, reset };
 };
 
 export default useEndingSequence;
