@@ -46,6 +46,7 @@ const normaliseCode = (code) => code.trim().toUpperCase();
 const makeJoinCode = () => Math.random().toString(36).slice(2, 8).toUpperCase();
 const lastCheckpointWrite = new Map();
 const playerSockets = new Map();
+const pendingDisconnects = new Map();
 
 const updateCheckpoint = async (playerId, roomId, patch) => {
   const [updated] = await PlayerCheckpoint.update({ ...patch, updatedAt: new Date() }, { where: { playerId } });
@@ -720,6 +721,11 @@ io.use(async (socket, next) => {
 
 io.on("connection", async (socket) => {
   const { roomId, player } = socket.data.auth;
+  const pendingDisconnect = pendingDisconnects.get(player.id);
+  if (pendingDisconnect) {
+    clearTimeout(pendingDisconnect);
+    pendingDisconnects.delete(player.id);
+  }
   const sockets = playerSockets.get(player.id) ?? new Set();
   sockets.add(socket.id);
   playerSockets.set(player.id, sockets);
@@ -785,17 +791,26 @@ io.on("connection", async (socket) => {
     }
   });
 
-  socket.on("disconnect", async () => {
+  socket.on("disconnect", () => {
     if (latestMovement) void saveCheckpoint(roomId, player.id, latestMovement, true).catch((error) => console.error("No se pudo guardar la salida del jugador:", error));
     lastCheckpointWrite.delete(player.id);
     const activeSockets = playerSockets.get(player.id);
     activeSockets?.delete(socket.id);
     if (activeSockets?.size) return;
     playerSockets.delete(player.id);
-    await RoomPlayer.update({ connected: false }, { where: { id: player.id } });
-    socket.to(socketRoom(roomId)).emit("room:presence", { playerId: player.id, timeline: player.timeline, connected: false });
-    const lobby = await getLobbyState(roomId);
-    io.to(socketRoom(roomId)).emit("lobby:state", lobby);
+    const timeout = setTimeout(async () => {
+      pendingDisconnects.delete(player.id);
+      if (playerSockets.get(player.id)?.size) return;
+      await RoomPlayer.update({ connected: false }, { where: { id: player.id } });
+      if (playerSockets.get(player.id)?.size) {
+        await RoomPlayer.update({ connected: true }, { where: { id: player.id } });
+        return;
+      }
+      io.to(socketRoom(roomId)).emit("room:presence", { playerId: player.id, timeline: player.timeline, connected: false });
+      const lobby = await getLobbyState(roomId);
+      io.to(socketRoom(roomId)).emit("lobby:state", lobby);
+    }, 750);
+    pendingDisconnects.set(player.id, timeout);
   });
   const snapshot = await getSnapshot(roomId);
   const checkpoint = await PlayerCheckpoint.findByPk(player.id, { raw: true });

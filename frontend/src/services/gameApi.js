@@ -1,4 +1,6 @@
-export const GAME_API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3010";
+export const GAME_API_URL = import.meta.env.PROD
+  ? window.location.origin
+  : (import.meta.env.VITE_API_URL ?? "http://localhost:3010");
 
 const request = async (path, options = {}) => {
   const response = await fetch(`${GAME_API_URL}${path}`, {

@@ -71,14 +71,16 @@ const useGameSession = ({ containerRef, gameRef, socketRef, playerRole, session,
     socket?.on("player:moved", (movement) => game.updateRemotePlayer(movement));
     socket?.on("room:presence", (presence) => {
       game.setRemotePlayerConnected(presence);
-      if (presence.timeline !== session.timeline) updateCompanionConnection(Boolean(presence.connected));
+      if (presence.playerId !== session.playerId) updateCompanionConnection(Boolean(presence.connected));
     });
     socket?.on("lobby:state", (lobby) => {
       const remotePlayer = lobby.players?.find((player) => player.id !== session.playerId);
-      if (remotePlayer) {
+      if (remotePlayer?.timeline && remotePlayer.timeline !== session.timeline) {
         game.setRemotePlayerIdentity(remotePlayer);
         updateCompanionConnection(Boolean(remotePlayer.connected));
-      } else updateCompanionConnection(false);
+      } else {
+        updateCompanionConnection(false);
+      }
     });
     return () => {
       active = false;

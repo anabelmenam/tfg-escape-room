@@ -7,6 +7,18 @@
   NODE_VERSION = "22"
 
 [[redirects]]
+  from = "/api/*"
+  to = "https://tfg-escape-room.onrender.com/api/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/socket.io/*"
+  to = "https://tfg-escape-room.onrender.com/socket.io/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
