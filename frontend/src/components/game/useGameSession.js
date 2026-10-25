@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { io } from "socket.io-client";
 import { Game } from "../../game/Game.js";
-import { GAME_API_URL } from "../../services/gameApi.js";
+import { GAME_SOCKET_URL } from "../../services/gameApi.js";
 
 const emitAction = (socket, type, targetId, payload) => socket?.emit("game:action", {
   actionId: crypto.randomUUID(), type, targetId, ...(payload ? { payload } : {}),
@@ -14,7 +14,7 @@ const useGameSession = ({ containerRef, gameRef, socketRef, playerRole, session,
     const container = containerRef.current;
     if (!container) return undefined;
     let active = true;
-    const socket = session.testMode ? null : io(GAME_API_URL, { auth: { roomId: session.roomId, playerToken: session.playerToken } });
+    const socket = session.testMode ? null : io(GAME_SOCKET_URL, { auth: { roomId: session.roomId, playerToken: session.playerToken } });
     socketRef.current = socket;
     const updateCompanionConnection = (connected) => {
       setCompanionConnected(connected);

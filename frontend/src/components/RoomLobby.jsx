@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import { io } from "socket.io-client";
-import { GAME_API_URL } from "../services/gameApi";
+import { GAME_SOCKET_URL } from "../services/gameApi";
 import { t } from "../translations/index.js";
 
 const characterInfo = {
@@ -16,7 +16,7 @@ const RoomLobby = ({ session, onStart, onBack }) => {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const socket = io(GAME_API_URL, {
+    const socket = io(GAME_SOCKET_URL, {
       auth: { roomId: session.roomId, playerToken: session.playerToken },
     });
     socketRef.current = socket;

@@ -1,7 +1,17 @@
-const configuredApiUrl = import.meta.env.VITE_API_URL?.trim().replace(/^[-\s]+/, "").replace(/\/$/, "");
+const cleanUrl = (value) => value?.trim().replace(/^[-\s]+/, "").replace(/\/$/, "");
+const configuredApiUrl = cleanUrl(import.meta.env.VITE_API_URL);
+const configuredSocketUrl = cleanUrl(import.meta.env.VITE_SOCKET_URL ?? import.meta.env.VITE_API_URL);
 
-export const GAME_API_URL = configuredApiUrl
-  || (import.meta.env.PROD ? "https://tfg-escape-room.onrender.com" : "http://localhost:3010");
+// En producción las peticiones HTTP pasan por el proxy de Netlify. Así la
+// cookie de sesión sigue siendo de primera parte y funciona también en Safari.
+export const GAME_API_URL = import.meta.env.PROD
+  ? window.location.origin
+  : (configuredApiUrl ?? "http://localhost:3010");
+
+// Netlify no mantiene de forma fiable la conexión WebSocket, por lo que esta
+// sí se abre directamente contra Render.
+export const GAME_SOCKET_URL = configuredSocketUrl
+  ?? (import.meta.env.PROD ? "https://tfg-escape-room.onrender.com" : "http://localhost:3010");
 
 const request = async (path, options = {}) => {
   const response = await fetch(`${GAME_API_URL}${path}`, {
