@@ -29,8 +29,8 @@ const migrateState = (state) => {
 export async function up(queryInterface, Sequelize, { transaction }) {
   const table = await queryInterface.describeTable("room_players", { transaction });
   if (table[OLD_COLUMN] && !table.character) await queryInterface.renameColumn("room_players", OLD_COLUMN, "character", { transaction });
-  await queryInterface.sequelize.query(`UPDATE room_players SET character = CASE WHEN character = :oldMum THEN 'mum' WHEN character = :oldDad THEN 'dad' ELSE character END`, { replacements: { oldMum: OLD_MUM, oldDad: OLD_DAD }, transaction });
   await queryInterface.sequelize.query(`ALTER TABLE room_players DROP CONSTRAINT IF EXISTS room_players_${OLD_COLUMN}_check`, { transaction });
+  await queryInterface.sequelize.query(`UPDATE room_players SET character = CASE WHEN character = :oldMum THEN 'mum' WHEN character = :oldDad THEN 'dad' ELSE character END`, { replacements: { oldMum: OLD_MUM, oldDad: OLD_DAD }, transaction });
   await queryInterface.sequelize.query(`DROP INDEX IF EXISTS room_players_unique_${OLD_COLUMN}_when_selected`, { transaction });
   const indexes = await queryInterface.showIndex("room_players", { transaction });
   if (!indexes.some(({ name }) => name === "room_players_unique_character_when_selected")) {
