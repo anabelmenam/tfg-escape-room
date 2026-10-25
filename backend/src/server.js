@@ -131,7 +131,7 @@ const memoryPhotoIds = [
 ];
 const familyStoryNoteIds = new Set(Array.from({ length: 10 }, (_, index) => `family-note-${String(index + 1).padStart(2, "0")}`));
 const finalLocks = {
-  "final-bolt-bedroom": { keyId: "final-key-bedroom", timeline: "present" },
+  "final-bolt-bedroom": { keyId: "final-key-bedroom", timeline: "past" },
   "final-bolt-living-room": { keyId: "final-key-living-room", timeline: "present" },
   "final-bolt-children": { keyId: "final-key-children", timeline: "past" },
   "final-bolt-bathroom": { keyId: "final-key-bathroom", timeline: "past" },
@@ -472,7 +472,7 @@ const reduceAction = (state, player, action) => {
         if (!state.journalEntries.includes(action.targetId)) state.journalEntries.push(action.targetId);
         return;
       }
-      if (action.targetId === "final-key-bedroom" && (timeline !== "present" || !state.timelines.past.puzzles["bedroom-radio"]?.solved)) throw new Error("Primero hay que completar la radio.");
+      if (action.targetId === "final-key-bedroom" && (timeline !== "past" || !state.timelines.past.puzzles["bedroom-radio"]?.solved)) throw new Error("Primero hay que completar la radio.");
       if (action.targetId === "final-key-living-room" && (timeline !== "present" || state.timelines.present.objects["living-room-chest"]?.locked !== false)) throw new Error("Primero hay que abrir el cofre del salón.");
       if (action.targetId === "final-key-children" && (timeline !== "past" || !state.timelines.past.puzzles["children-wardrobe-chains"]?.solved)) throw new Error("Primero hay que cortar las cadenas del armario.");
       if (action.targetId === "final-key-bathroom" && (timeline !== "past" || !state.timelines.present.puzzles["bathroom-mosaic"]?.solved)) throw new Error("Primero hay que completar el mosaico.");

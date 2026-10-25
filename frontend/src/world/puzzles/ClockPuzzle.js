@@ -45,6 +45,10 @@ class ClockPuzzle extends WallClock {
     this.minutePivot.visible = true;
     this.isSolved = true;
     this.setTime(CLOCK_SOLUTION.hour, CLOCK_SOLUTION.minute);
+    this.setEnabled(false);
+    this.object3D.traverse((object) => {
+      if (object.isMesh) object.raycast = () => {};
+    });
     if (notify) this.onSolved?.(this);
   }
 

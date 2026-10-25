@@ -10,6 +10,7 @@ class RadioPuzzle extends Entity {
     rotationY = 0,
     onFocus = null,
     key = null,
+    finalKey = null,
     dialItem = null,
     onDialInserted = null,
     missingDialIndex = 2,
@@ -20,6 +21,7 @@ class RadioPuzzle extends Entity {
     super(id);
     this.onFocus = onFocus;
     this.key = key;
+    this.finalKey = finalKey;
     this.dialItem = dialItem;
     this.onDialInserted = onDialInserted;
     this.missingDialIndex = missingDialIndex;
@@ -133,6 +135,14 @@ class RadioPuzzle extends Entity {
       this.key.object3D.position.set(-0.35, -0.13, -0.45);
       this.key.object3D.scale.setScalar(1.5);
       this.drawer.add(this.key.object3D);
+    }
+    if (this.finalKey) {
+      this.finalKey.object3D.rotation.set(-Math.PI / 2, 0, -Math.PI / 2);
+      this.finalKey.object3D.position.set(0.42, -0.13, -0.45);
+      this.finalKey.object3D.scale.setScalar(0.28);
+      this.finalKey.object3D.visible = false;
+      this.finalKey.setEnabled(false);
+      this.drawer.add(this.finalKey.object3D);
     }
     group.add(this.drawer);
 

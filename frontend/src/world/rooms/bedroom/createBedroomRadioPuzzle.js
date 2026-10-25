@@ -35,6 +35,15 @@ const createBedroomRadioPuzzle = ({
     planPaper.setEnabled(false);
   }
 
+  const finalKey = timeline === "past"
+    ? new FinalKey({
+        id: "final-key-bedroom",
+        symbol: "moon",
+        color: 0x9aa7ba,
+        onCollect: () => onAction?.("item.pickup", "final-key-bedroom"),
+      })
+    : null;
+
   const radio = timeline === "past"
     ? new RadioPuzzle({
         id: "bedroom-radio",
@@ -43,6 +52,7 @@ const createBedroomRadioPuzzle = ({
         scale: 0.5,
         onFocus,
         key,
+        finalKey,
         dialItem: testMode ? null : radioDial,
         onDialInserted: () => onAction?.("object.interact", "bedroom-radio", { operation: "insert-dial" }),
         canSolve: () => clues.radioNote,
@@ -50,21 +60,6 @@ const createBedroomRadioPuzzle = ({
       })
     : null;
   if (radio) cabinet.object3D.add(radio.object3D);
-
-  const finalKey = timeline === "present"
-    ? new FinalKey({
-        id: "final-key-bedroom",
-        symbol: "moon",
-        color: 0x9aa7ba,
-        onCollect: () => onAction?.("item.pickup", "final-key-bedroom"),
-      })
-    : null;
-  if (finalKey) {
-    finalKey.object3D.position.set(-.4, 3.45, .3);
-    finalKey.object3D.visible = false;
-    finalKey.setEnabled(false);
-    cabinet.object3D.add(finalKey.object3D);
-  }
 
   const radioNote = timeline === "present"
     ? new Paper({
@@ -121,7 +116,7 @@ const createBedroomRadioPuzzle = ({
     }
     if (finalKey) {
       const earned = radioSolved;
-      const unavailable = state.inventories?.present?.includes("final-key-bedroom")
+      const unavailable = state.inventories?.past?.includes("final-key-bedroom")
         || ["past", "present"].some((era) => state.timelines?.[era]?.objects?.["final-bolt-bedroom"]?.unlocked);
       if (earned && !unavailable) finalKey.reveal();
       else if (unavailable) {
