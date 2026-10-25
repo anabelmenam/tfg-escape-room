@@ -8,10 +8,18 @@ const paintingRows = 2;
 const paintingPieceCount = paintingColumns * paintingRows;
 const missingPieces = [0, 4];
 const initialPieces = [1, 2, 3, 5];
+const waitingLandscapePieces = [];
+const landscapeTexture = new THREE.TextureLoader().load("/images/puzzles/mountain-lake-landscape.png", () => {
+  waitingLandscapePieces.splice(0).forEach(({ material, index }) => {
+    material.map = createLandscapePieceTexture(index);
+    material.needsUpdate = true;
+  });
+});
+landscapeTexture.colorSpace = THREE.SRGBColorSpace;
 
 const createLandscapePieceTexture = (index) => {
-  const texture = new THREE.TextureLoader().load("/images/puzzles/mountain-lake-landscape.png");
-  texture.colorSpace = THREE.SRGBColorSpace;
+  if (!landscapeTexture.image) return null;
+  const texture = landscapeTexture.clone();
   texture.wrapS = THREE.ClampToEdgeWrapping;
   texture.wrapT = THREE.ClampToEdgeWrapping;
   const column = index % paintingColumns;
@@ -44,9 +52,12 @@ const createPainting = ({ complete = false, pieces = [] } = {}) => {
 
   const visiblePieces = complete ? Array.from({ length: paintingPieceCount }, (_, index) => index) : pieces;
   visiblePieces.forEach((index) => {
+    const texture = createLandscapePieceTexture(index);
+    const material = new THREE.MeshStandardMaterial({ map: texture, roughness: 0.85 });
+    if (!texture) waitingLandscapePieces.push({ material, index });
     const piece = new THREE.Mesh(
       new THREE.PlaneGeometry(0.83, 0.78),
-      new THREE.MeshStandardMaterial({ map: createLandscapePieceTexture(index), roughness: 0.85 }),
+      material,
     );
     piece.position.set(-0.85 + (index % paintingColumns) * 0.85, 0.4 - Math.floor(index / paintingColumns) * 0.8, 0.09);
     group.add(piece);

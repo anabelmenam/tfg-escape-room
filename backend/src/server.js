@@ -548,7 +548,7 @@ const createRoom = async (user, { slotNumber, name }) => {
         );
         await room.update({ creatorPlayerId: playerId }, { transaction });
         await GameState.create({ roomId, state: createInitialState() }, { transaction });
-        return { roomId, joinCode, playerId, playerToken, timeline: null, isCreator: true, showIntroduction: true };
+        return { roomId, joinCode, playerId, playerToken, timeline: null, status: "waiting", isCreator: true, showIntroduction: true };
       });
     } catch (error) {
       const joinCodeCollision = error?.name === "SequelizeUniqueConstraintError" && error?.fields?.join_code;
@@ -591,6 +591,7 @@ const joinRoom = async (joinCode, user, { slotNumber }) =>
       playerId,
       playerToken,
       timeline: null,
+      status: "waiting",
       isCreator: false,
       showIntroduction: true,
     };

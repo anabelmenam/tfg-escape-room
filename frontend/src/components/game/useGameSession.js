@@ -63,7 +63,7 @@ const useGameSession = ({ containerRef, gameRef, socketRef, playerRole, session,
       game.applySharedState(state);
       if (checkpoint) {
         game.applyCheckpoint(checkpoint);
-        setHintHistory(checkpoint.hintHistory ?? []);
+        setHintHistory((checkpoint.hintHistory ?? []).slice(-1));
       }
     };
     socket?.on("game:state", applyState);

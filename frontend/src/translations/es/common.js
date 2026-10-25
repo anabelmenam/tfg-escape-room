@@ -14,7 +14,7 @@ createGameScreen: {
   },
 characterSelection: {
     title: "Elige tu personaje",
-    description: "Cada jugador encarnará a uno de los padres en una realidad distinta de la casa.",
+    description: "Cada jugador encarnará a uno de los padres y descubrirá una perspectiva diferente de la casa.",
     mama: "Mamá",
     papa: "Papá",
     bothReady: "Mamá y Papá están preparados.",

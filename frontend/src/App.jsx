@@ -105,7 +105,9 @@ const App = () => {
       />
     );
   }
-  if (!session.timeline && !session.testPlayerRole) return <RoomLobby session={session} onStart={setSession} onBack={() => setSession(null)} />;
+  if ((!session.timeline || session.status === "waiting") && !session.testPlayerRole) {
+    return <RoomLobby session={session} onStart={setSession} onBack={() => setSession(null)} />;
+  }
 
   return (
     <GameCanvas

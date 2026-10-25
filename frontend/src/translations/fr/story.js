@@ -1,9 +1,9 @@
 export default {
 story: {
-    pastTitle: "La maison de l'autre côté",
-    presentTitle: "La maison de l'autre côté",
-    past: "Maman et Papa vivaient ensemble avec leurs enfants et partageaient la même maison, mais depuis longtemps chacun la ressentait différemment. Là où l'un se rappelait de l'affection, l'autre trouvait du silence ; là où l'un voyait un foyer, l'autre sentait une distance grandissante. Une nuit, la maison transforma ces deux façons de l'habiter en réalités séparées. Vous pouvez désormais vous voir comme des échos, mais pas vous rejoindre. Pour retrouver votre famille, vous devrez coopérer, reconstruire vos souvenirs communs et retrouver les mots restés silencieux.",
-    present: "Maman et Papa vivaient ensemble avec leurs enfants et partageaient la même maison, mais depuis longtemps chacun la ressentait différemment. Là où l'un se rappelait de l'affection, l'autre trouvait du silence ; là où l'un voyait un foyer, l'autre sentait une distance grandissante. Une nuit, la maison transforma ces deux façons de l'habiter en réalités séparées. Vous pouvez désormais vous voir comme des échos, mais pas vous rejoindre. Pour retrouver votre famille, vous devrez coopérer, reconstruire vos souvenirs communs et retrouver les mots restés silencieux.",
+    pastTitle: "La maison entre les souvenirs",
+    presentTitle: "La maison entre les souvenirs",
+    past: "Maman et Papa vivaient ensemble avec leurs enfants et partageaient la même maison, mais depuis longtemps chacun la ressentait différemment. Là où l'un se rappelait de l'affection, l'autre trouvait du silence ; là où l'un voyait un foyer, l'autre sentait une distance grandissante. Une nuit, la maison donna forme à ces deux manières de s'en souvenir et les sépara sur des parcours différents. Vous pouvez désormais vous voir comme des échos, mais pas vous rejoindre. Pour retrouver votre famille, vous devrez coopérer, reconstruire vos souvenirs communs et retrouver les mots restés silencieux.",
+    present: "Maman et Papa vivaient ensemble avec leurs enfants et partageaient la même maison, mais depuis longtemps chacun la ressentait différemment. Là où l'un se rappelait de l'affection, l'autre trouvait du silence ; là où l'un voyait un foyer, l'autre sentait une distance grandissante. Une nuit, la maison donna forme à ces deux manières de s'en souvenir et les sépara sur des parcours différents. Vous pouvez désormais vous voir comme des échos, mais pas vous rejoindre. Pour retrouver votre famille, vous devrez coopérer, reconstruire vos souvenirs communs et retrouver les mots restés silencieux.",
   },
 diaryBook: {
     introduction: "Introduction",

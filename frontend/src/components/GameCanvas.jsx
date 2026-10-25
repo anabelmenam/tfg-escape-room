@@ -21,7 +21,7 @@ const GameCanvas = ({ playerRole, session, isAdmin, audioController, audioSettin
   const [pauseView, setPauseView] = useState("menu");
   const [showStory, setShowStory] = useState(Boolean(session.showIntroduction) && !session.endingPreview);
   const [diaryEntries, setDiaryEntries] = useState(() => session.testMode ? testDiaryEntries : []);
-  const [hintHistory, setHintHistory] = useState(() => session.checkpoint?.hintHistory ?? []);
+  const [hintHistory, setHintHistory] = useState(() => (session.checkpoint?.hintHistory ?? []).slice(-1));
   const [companionConnected, setCompanionConnected] = useState(Boolean(session.testMode));
   const hintCountsRef = useRef({});
   const endingSequence = useEndingSequence({ session, gameRef, setIsPaused });
@@ -68,9 +68,9 @@ const GameCanvas = ({ playerRole, session, isAdmin, audioController, audioSettin
     const variants = t(`hints.messages.${hintId}`);
     const requestCount = hintCountsRef.current[hintId] ?? 0;
     const messages = Array.isArray(variants) ? variants : [variants];
-    const text = messages[Math.min(requestCount, messages.length - 1)];
+    const text = messages[requestCount % messages.length];
     hintCountsRef.current[hintId] = requestCount + 1;
-    setHintHistory((history) => [...history, { id: `${hintId}-${Date.now()}`, text }]);
+    setHintHistory([{ id: `${hintId}-${Date.now()}`, text }]);
     setPauseView("hints");
   };
 

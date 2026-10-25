@@ -1,9 +1,10 @@
 import { useState } from "react";
+import { ArrowLeft } from "lucide-react";
 import ControlsPanel from "../menu/ControlsPanel.jsx";
 import SettingsPanel from "../menu/SettingsPanel.jsx";
 import { t } from "../../translations/index.js";
 
-const BackButton = ({ onClick }) => <button type="button" onClick={onClick} className="mt-7 w-full rounded-lg border border-amber-100/35 px-5 py-3 font-semibold hover:bg-amber-50/10">{t("menu.back")}</button>;
+const BackButton = ({ onClick }) => <button type="button" onClick={onClick} className="mt-3 w-full rounded-lg border border-amber-100/35 px-4 py-2 text-sm font-semibold hover:bg-amber-50/10">{t("menu.back")}</button>;
 const withoutSignature = (text) => text.replace(/\s+—\s+(Mamá|Papá|Mum|Dad|Maman|Papa)\s*$/, "");
 
 const DiaryBook = ({ diaryEntries, onBack }) => {
@@ -18,7 +19,7 @@ const DiaryBook = ({ diaryEntries, onBack }) => {
 
   return <>
     <div className="relative overflow-hidden rounded-sm border border-[#6c4d31] bg-[#392719] p-2 shadow-2xl shadow-black/70">
-      <button type="button" onClick={onBack} className="absolute left-5 top-5 z-10 rounded-sm border border-[#72583d]/50 bg-[#e5d2a9]/90 px-3 py-1.5 text-sm font-semibold text-[#493426] shadow hover:bg-[#f1e1bd]">← {t("menu.back")}</button>
+      <button type="button" onClick={onBack} className="absolute left-5 top-5 z-10 flex items-center gap-2 rounded-sm border border-[#72583d]/50 bg-[#e5d2a9]/90 px-3 py-1.5 text-sm font-semibold text-[#493426] shadow hover:bg-[#f1e1bd]"><ArrowLeft size={17} aria-hidden="true" />{t("menu.back")}</button>
       <div className="grid h-[min(78vh,42rem)] grid-cols-2 overflow-hidden bg-[#e6d4aa] text-[#3e2c20]">
         <section className="relative overflow-hidden border-r border-[#8a6b47]/40 bg-[linear-gradient(90deg,#cdb88c_0%,#eadbb8_8%,#eadbb8_92%,#c8ae7b_100%)] px-6 pb-9 pt-7 md:px-9">
           <p className="text-center font-serif text-2xl font-semibold md:text-3xl">{t("ui.diary")}</p>
@@ -46,8 +47,8 @@ const DiaryBook = ({ diaryEntries, onBack }) => {
 };
 
 const PauseOverlay = ({ view, setView, diaryEntries, hintHistory, isAdmin, onRequestHint, onResume, onExit, audioSettings, onAudioSettingChange, mouseSensitivity, onMouseSensitivityChange, onLanguageChange }) => (
-  <div className="absolute inset-0 z-40 flex items-center justify-center overflow-y-auto bg-black/75 p-6 text-amber-50 backdrop-blur-sm">
-    <div className={`my-auto w-full rounded-sm border border-[#d7b77b]/40 bg-[#211916]/95 shadow-2xl shadow-black/60 ${view === "settings" || view === "diary" || view === "controls" ? "max-w-5xl" : "max-w-lg"} ${view === "diary" ? "p-2" : "p-7"}`}>
+  <div className="absolute inset-0 z-40 flex items-center justify-center overflow-hidden bg-black/75 p-3 text-amber-50 backdrop-blur-sm sm:p-4">
+    <div className={`w-full rounded-sm border border-[#d7b77b]/40 bg-[#211916]/95 shadow-2xl shadow-black/60 ${view === "settings" || view === "diary" || view === "controls" ? "max-w-5xl" : "max-w-lg"} ${view === "diary" ? "p-2" : "p-4 sm:p-5"}`}>
       {view === "menu" ? <>
         <h1 className="text-center font-serif text-3xl font-semibold">{t("ui.pause")}</h1>
         <div className="mt-7 flex flex-col gap-3">
@@ -62,7 +63,7 @@ const PauseOverlay = ({ view, setView, diaryEntries, hintHistory, isAdmin, onReq
         <h1 className="font-serif text-3xl font-semibold">{t("hints.title")}</h1>
         <p className="mt-2 text-sm text-amber-100/65">{t("hints.private")}</p>
         <div className="mt-5 max-h-[45vh] space-y-3 overflow-y-auto">
-          {hintHistory.map((hint, index) => <article key={hint.id} className="rounded border border-amber-100/20 bg-black/20 px-4 py-3 font-serif leading-relaxed"><span className="mr-2 text-xs font-bold text-amber-300">{index + 1}.</span>{hint.text}</article>)}
+          {hintHistory.map((hint) => <article key={hint.id} className="rounded border border-amber-100/20 bg-black/20 px-4 py-3 font-serif leading-relaxed">{hint.text}</article>)}
         </div>
         <button type="button" onClick={onRequestHint} className="mt-5 w-full rounded-lg bg-amber-200 px-5 py-3 font-semibold text-stone-900 hover:bg-amber-100">{t("hints.another")}</button>
         <BackButton onClick={() => setView("menu")} />

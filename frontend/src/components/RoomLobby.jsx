@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { ArrowLeft } from "lucide-react";
 import { io } from "socket.io-client";
 import { GAME_API_URL } from "../services/gameApi";
 import { t } from "../translations/index.js";
@@ -19,6 +20,9 @@ const RoomLobby = ({ session, onStart, onBack }) => {
       auth: { roomId: session.roomId, playerToken: session.playerToken },
     });
     socketRef.current = socket;
+    socket.once("connect", () => {
+      socket.emit("lobby:select-timeline", { timeline: null });
+    });
     socket.on("connect", () => setConnectionState("connected"));
     socket.on("connect_error", () => setConnectionState("connectionFailed"));
     socket.on("lobby:state", (lobby) => setPlayers(lobby.players ?? []));
@@ -26,7 +30,7 @@ const RoomLobby = ({ session, onStart, onBack }) => {
       const ownPlayer = lobby.players?.find((player) => player.id === session.playerId);
       if (ownPlayer?.timeline) {
         const character = ownPlayer.timeline === "past" ? "mum" : "dad";
-        onStart({ ...session, character, timeline: ownPlayer.timeline });
+        onStart({ ...session, status: "playing", character, timeline: ownPlayer.timeline });
       }
     });
 
@@ -66,8 +70,8 @@ const RoomLobby = ({ session, onStart, onBack }) => {
       }}
     >
       <header className="mx-auto flex max-w-6xl items-start justify-between gap-4 border-b border-[#d7b77b]/25 pb-4">
-        <button type="button" className="text-sm text-[#c9ba9e] transition hover:text-[#f5e8ce]" onClick={onBack}>
-          ← {t("roomLobby.leave")}
+        <button type="button" className="flex items-center gap-2 text-sm text-[#c9ba9e] transition hover:text-[#f5e8ce]" onClick={onBack}>
+          <ArrowLeft size={17} aria-hidden="true" /> {t("roomLobby.leave")}
         </button>
         <div>
           <p className="mb-3 text-center text-xs font-bold uppercase tracking-[0.24em] text-[#d8aa64]">

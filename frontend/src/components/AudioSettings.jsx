@@ -11,19 +11,19 @@ const VolumeControl = ({ id, label, description, value, onChange }) => {
   };
 
   return (
-    <div className="border-b border-[#675641]/55 py-5 last:border-b-0">
-      <div className="mb-3 flex items-start justify-between gap-4">
+    <div className="border-b border-[#675641]/55 py-3 last:border-b-0">
+      <div className="mb-2 flex items-start justify-between gap-3">
         <div>
           <label className="font-bold text-[#ead8b5]" htmlFor={id}>
             {label}
           </label>
-          <p className="mt-1 text-sm text-[#a99a83]">{description}</p>
+          <p className="mt-0.5 text-xs leading-snug text-[#a99a83] sm:text-sm">{description}</p>
         </div>
 
         <span className="min-w-12 text-right font-mono text-sm text-[#e7c17d]">{Math.round(value * 100)}%</span>
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2.5">
         <button
           type="button"
           aria-label={t("menu.lowerVolume").replace("{label}", label)}
@@ -31,7 +31,7 @@ const VolumeControl = ({ id, label, description, value, onChange }) => {
           disabled={value <= 0}
           className="text-[#9d8a6d] transition-colors hover:text-[#e7c17d] disabled:cursor-not-allowed disabled:opacity-30"
         >
-          <Minus size={18} />
+          <Minus size={16} />
         </button>
 
         <input
@@ -41,7 +41,7 @@ const VolumeControl = ({ id, label, description, value, onChange }) => {
           max="1"
           step={step}
           value={value}
-          className="h-2 w-full cursor-pointer accent-[#d99b55]"
+          className="h-1.5 w-full cursor-pointer accent-[#d99b55]"
           onChange={(event) => onChange(Number(event.target.value))}
         />
 
@@ -52,7 +52,7 @@ const VolumeControl = ({ id, label, description, value, onChange }) => {
           disabled={value >= 1}
           className="text-[#e7c17d] transition-colors hover:text-[#f5d49a] disabled:cursor-not-allowed disabled:opacity-30"
         >
-          <Plus size={18} />
+          <Plus size={16} />
         </button>
       </div>
     </div>

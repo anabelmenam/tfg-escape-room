@@ -24,7 +24,7 @@ class FamilyPhotoPuzzle extends Entity {
     this.fragments = [];
     this.slotPositions = [];
     this.selectedSlot = null;
-    this.photoTexture = new THREE.TextureLoader().load(imagePath);
+    this.photoTexture = new THREE.TextureLoader().load(imagePath, () => this.applyPhotoTextures());
     this.photoTexture.colorSpace = THREE.SRGBColorSpace;
     this.photoTexture.wrapS = THREE.RepeatWrapping;
     this.photoTexture.wrapT = THREE.RepeatWrapping;
@@ -82,19 +82,33 @@ class FamilyPhotoPuzzle extends Entity {
   }
 
   createFragment(index, width, height) {
+    const material = new THREE.MeshStandardMaterial({
+      roughness: 0.85,
+      metalness: 0,
+    });
+    const fragment = new THREE.Mesh(new THREE.PlaneGeometry(width, height), material);
+    fragment.userData.photoFragmentIndex = index;
+    return fragment;
+  }
+
+  applyPhotoTextures() {
+    if (!this.photoTexture.image) return;
+    this.fragments.forEach((fragment) => {
+      const index = fragment.userData.photoFragmentIndex;
+      fragment.material.map?.dispose();
+      fragment.material.map = this.createFragmentTexture(index);
+      fragment.material.needsUpdate = true;
+    });
+  }
+
+  createFragmentTexture(index) {
     const column = index % this.columns;
     const row = Math.floor(index / this.columns);
     const texture = this.photoTexture.clone();
     texture.repeat.set(1 / this.columns, 1 / this.rows);
     texture.offset.set(column / this.columns, 1 - (row + 1) / this.rows);
     texture.needsUpdate = true;
-    const material = new THREE.MeshStandardMaterial({
-      map: texture,
-      roughness: 0.85,
-      metalness: 0,
-    });
-    const fragment = new THREE.Mesh(new THREE.PlaneGeometry(width, height), material);
-    return fragment;
+    return texture;
   }
 
   setFocused(focused) {
