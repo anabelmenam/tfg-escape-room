@@ -9,11 +9,13 @@ class ElectricalPanelPuzzle extends Entity {
     rotationY = 0,
     scale = 1,
     onFocus = null,
+    onFuseInserted = null,
     onSolved = null,
     canSolve = null,
   } = {}) {
     super(id);
     this.onFocus = onFocus;
+    this.onFuseInserted = onFuseInserted;
     this.onSolved = onSolved;
     this.canSolve = canSolve;
     this.isFocused = false;
@@ -177,7 +179,20 @@ class ElectricalPanelPuzzle extends Entity {
     player.removeItemFromInventory("fuse");
     this.hasFuse = true;
     this.fuse.visible = true;
+    this.onFuseInserted?.();
     return true;
+  }
+
+  applyState({ hasFuse = false, solved = false } = {}) {
+    this.hasFuse = hasFuse || solved;
+    this.fuse.visible = this.hasFuse;
+    if (!solved) return;
+    this.isSolved = true;
+    this.switchStates = this.switchStates.map((_, index) => this.correctSwitches.includes(index + 1));
+    this.switchStates.forEach((enabled, index) => {
+      this.switchLevers[index].rotation.z = enabled ? -0.62 : 0.62;
+      this.indicators[index].material.color.setHex(enabled ? 0x85df74 : 0x3c1212);
+    });
   }
 
   setFocused(focused) {

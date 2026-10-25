@@ -1,0 +1,35 @@
+export default {
+ambient: {
+    plant: "The soil is damp. It looks as though someone watered it very recently.",
+    vase: "The flowers are still fresh. Someone was caring for this house until very recently.",
+    oldVase: "The dust forms a clean circle around its base. The vase was moved recently.",
+    familyFrames: "The family smiles in every photograph, but they never seem to be looking at quite the same place.",
+    scatteredLetters:
+      "Bills, greeting cards and unfinished letters. The family's life seems to have stopped without warning.",
+    teaSet: "A faint tea stain remains in the cups. Someone sat here tonight.",
+    forgottenToys:
+      "The toys are worn differently from how you remember them. This room belonged to different children—and somehow the same ones.",
+    spiceJars: "The jars are arranged too carefully. One label is written in handwriting you recognise as your own.",
+    mirror: "Your reflection takes a moment to copy you. For a second, another room seems to stand behind you.",
+    window: "There is no street outside, only motionless fog reflecting the lights of the house.",
+    framedPicture: "You recognise the place, but you do not remember the scene happening exactly this way.",
+    bookStack: "Finger marks cross the dust. Someone consulted these books very recently.",
+    candles: "The wax is still soft, although you do not remember seeing the candles lit.",
+    perfume: "One bottle carries your mother's perfume. In this house, its label bears another name.",
+    keyBowl: "There are gaps between the keys, as if the ones meant to open this house were missing.",
+    umbrellaStand: "The umbrellas are wet, yet it does not seem to have rained beyond the window.",
+    toiletries: "The bottles have been used in different amounts. Someone follows a very precise routine here.",
+    soapDish: "The soap is damp and has left a recent mark on the ceramic.",
+    trashBin: "Among the rubbish is a wrapper bearing a brand you do not recognise.",
+    fruitBowl: "The fruit looks freshly arranged. One apple has a bite nobody remembers taking.",
+    utensils: "The utensils are arranged with unusual precision.",
+    canisters: "Every jar is in place, but the labels shift slightly when you look away.",
+    prepSet: "The board bears fresh cuts and a faint smell of herbs.",
+    toyBasket: "You recognise almost every toy, though some have colours they never used to have.",
+    laundryBasket: "The clothes are still warm. Someone was here very recently.",
+    hangingPans: "One pan sways slowly even though the room is still.",
+    decorativeGlobe: "The map places cities differently. Its borders do not match the ones you know.",
+    artSupplies: "The pencils are worn down, with the same drawing repeated in several colours.",
+    plateStack: "Every plate is clean except one, which holds a faint trace of food.",
+  }
+};

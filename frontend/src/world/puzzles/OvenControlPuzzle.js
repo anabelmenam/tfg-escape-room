@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { tInteraction } from "../../translations/index.js";
-import { FocusPuzzle, mark, paperTexture, shadows } from "./KitchenPuzzleBase.js";
+import { FocusPuzzle, mark, shadows } from "./KitchenPuzzleBase.js";
 
 class OvenControlPuzzle extends FocusPuzzle {
   constructor({ timeline, onFocus, onSolved }) {
@@ -17,9 +17,6 @@ class OvenControlPuzzle extends FocusPuzzle {
     const metal = new THREE.MeshStandardMaterial({ color: 0x514b45, metalness: .68, roughness: .48 });
     this.object3D.add(new THREE.Mesh(new THREE.BoxGeometry(2.3, .07, 1.55), metal));
     [[0, -.76, 2.3, .09], [0, .76, 2.3, .09], [-1.1, 0, .09, 1.45], [1.1, 0, .09, 1.45]].forEach(([x, z, width, depth]) => { const rim = new THREE.Mesh(new THREE.BoxGeometry(width, .14, depth), metal); rim.position.set(x, .09, z); this.object3D.add(rim); });
-    [[-.75, -.38], [-.45, .31], [0, -.36], [.05, .37]].forEach(([x, z]) => { const burnt = new THREE.Mesh(new THREE.CylinderGeometry(.18, .2, .07, 20), new THREE.MeshStandardMaterial({ color: 0x39241a, roughness: .98 })); burnt.position.set(x, .08, z); this.object3D.add(burnt); });
-    this.texture = paperTexture(["AJUSTES DEL HORNO", "Temperatura y tiempo"], { sepia: true });
-    const note = new THREE.Mesh(new THREE.PlaneGeometry(1.02, .58), new THREE.MeshStandardMaterial({ map: this.texture, roughness: 1, side: THREE.DoubleSide })); note.rotation.x = -Math.PI / 2; note.position.set(.42, .08, -.3); note.rotation.z = .12; this.object3D.add(note);
     const valueCanvas = document.createElement("canvas"); valueCanvas.width = 768; valueCanvas.height = 256;
     const valueContext = valueCanvas.getContext("2d");
     valueContext.fillStyle = "#101714"; valueContext.fillRect(0, 0, 768, 256);
@@ -71,7 +68,7 @@ class OvenControlPuzzle extends FocusPuzzle {
   interact() { if (this.available && !this.isSolved) this.onFocus?.(this); }
   handleControl(control) { if (this.timeline !== "past" || !this.available || this.isSolved || control?.kind !== "oven-dial") return; const index = control.value; this.values[index] = (this.values[index] + 1) % 5; this.dials[index].rotation.z = -this.values[index] * Math.PI * .4; this.updateDisplay(); if (this.values.every((value, position) => value === this.solution[position])) this.solve(); }
   solve({ notify = true } = {}) { if (this.isSolved) return; this.isSolved = true; this.values = [...this.solution]; this.dials.forEach((dial, index) => { dial.rotation.z = -this.solution[index] * Math.PI * .4; }); this.updateDisplay(); if (notify) this.onSolved?.(); }
-  getInteractionText() { if (!this.available || this.isSolved) return null; return tInteraction("examine", this.timeline === "present" ? "la nota del horno" : "los mandos del horno"); }
+  getInteractionText() { if (!this.available || this.isSolved) return null; return tInteraction("examine", this.timeline === "present" ? "el indicador encendido del horno" : "los mandos del horno"); }
   getFocusPosition() { this.object3D.updateWorldMatrix(true, false); return this.object3D.localToWorld(this.timeline === "present" ? new THREE.Vector3(0, 1.8, 3.5) : new THREE.Vector3(0, .3, 3)); }
   getLookAtPosition() { this.object3D.updateWorldMatrix(true, false); return this.object3D.localToWorld(new THREE.Vector3()); }
   dispose() { this.texture?.dispose(); this.valueTexture?.dispose(); this.valueMaterial?.dispose(); }

@@ -178,6 +178,25 @@ class RadioPuzzle extends Entity {
     return true;
   }
 
+  restoreSolvedState() {
+    if (!this.hasMissingDial && this.dialItem) {
+      this.hasMissingDial = true;
+      this.dialItem.object3D.visible = true;
+      this.dialItem.object3D.position.set(0, 0, 0.04);
+      this.dialItem.object3D.rotation.set(0, 0, 0);
+      this.dialItem.object3D.scale.setScalar(1);
+      this.dialItem.setEnabled(false);
+      this.dialItem.setDialIndex(this.missingDialIndex);
+      this.dialNeedles[this.missingDialIndex] = this.dialItem.needlePivot;
+      this.dialSlot.add(this.dialItem.object3D);
+    }
+    this.values = [...this.solution];
+    this.values.forEach((_, index) => this.updateDialIndicator(index));
+    this.isSolved = true;
+    this.drawerProgress = 1;
+    this.drawer.position.z = 1.45;
+  }
+
   updateDialIndicator(index) {
 
     this.dialNeedles[index].rotation.z = -(this.values[index] * Math.PI * 2) / 10;

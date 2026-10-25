@@ -1,4 +1,5 @@
 import { useState } from "react";
+import ControlsPanel from "../menu/ControlsPanel.jsx";
 import SettingsPanel from "../menu/SettingsPanel.jsx";
 import { t } from "../../translations/index.js";
 
@@ -44,9 +45,9 @@ const DiaryBook = ({ diaryEntries, onBack }) => {
   </>;
 };
 
-const PauseOverlay = ({ view, setView, diaryEntries, hintHistory, onRequestHint, onResume, onExit, audioSettings, onAudioSettingChange, mouseSensitivity, onMouseSensitivityChange, onLanguageChange }) => (
-  <div className="absolute inset-0 z-40 flex items-center justify-center overflow-hidden bg-black/75 p-6 text-amber-50 backdrop-blur-sm">
-    <div className={`w-full rounded-sm border border-[#d7b77b]/40 bg-[#211916]/95 shadow-2xl shadow-black/60 ${view === "settings" || view === "diary" ? "max-w-5xl" : "max-w-lg"} ${view === "diary" ? "p-2" : "p-7"}`}>
+const PauseOverlay = ({ view, setView, diaryEntries, hintHistory, isAdmin, onRequestHint, onResume, onExit, audioSettings, onAudioSettingChange, mouseSensitivity, onMouseSensitivityChange, onLanguageChange }) => (
+  <div className="absolute inset-0 z-40 flex items-center justify-center overflow-y-auto bg-black/75 p-6 text-amber-50 backdrop-blur-sm">
+    <div className={`my-auto w-full rounded-sm border border-[#d7b77b]/40 bg-[#211916]/95 shadow-2xl shadow-black/60 ${view === "settings" || view === "diary" || view === "controls" ? "max-w-5xl" : "max-w-lg"} ${view === "diary" ? "p-2" : "p-7"}`}>
       {view === "menu" ? <>
         <h1 className="text-center font-serif text-3xl font-semibold">{t("ui.pause")}</h1>
         <div className="mt-7 flex flex-col gap-3">
@@ -66,10 +67,7 @@ const PauseOverlay = ({ view, setView, diaryEntries, hintHistory, onRequestHint,
         <button type="button" onClick={onRequestHint} className="mt-5 w-full rounded-lg bg-amber-200 px-5 py-3 font-semibold text-stone-900 hover:bg-amber-100">{t("hints.another")}</button>
         <BackButton onClick={() => setView("menu")} />
       </> : view === "controls" ? <>
-        <h1 className="font-serif text-3xl font-semibold">{t("ui.controls")}</h1>
-        <div className="mt-6 grid grid-cols-[auto_1fr] gap-x-5 gap-y-3 text-sm">
-          {["W A S D", "Mouse", "E", "Ctrl", "Shift", "Space", "Q", "1–5 / wheel", "I / R", "F", "Esc"].map((key, index) => <div className="contents" key={key}><span className="font-semibold text-amber-200">{key}</span><span>{t("menu.controlsList")[index]}</span></div>)}
-        </div>
+        <ControlsPanel isAdmin={isAdmin} />
         <BackButton onClick={() => setView("menu")} />
       </> : <>
         <SettingsPanel audioSettings={audioSettings} onAudioSettingChange={onAudioSettingChange} mouseSensitivity={mouseSensitivity} onMouseSensitivityChange={onMouseSensitivityChange} onLanguageChange={onLanguageChange} />

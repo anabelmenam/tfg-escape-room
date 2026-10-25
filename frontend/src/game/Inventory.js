@@ -1,5 +1,7 @@
+import { INVENTORY_SIZE } from "./inventoryConfig.js";
+
 export class Inventory {
-  constructor(size = 5) {
+  constructor(size = INVENTORY_SIZE) {
     this.size = size;
     this.items = new Array(size).fill(null);
     this.selectedIndex = 0;
@@ -72,6 +74,13 @@ export class Inventory {
   clear() {
     this.items = new Array(this.size).fill(null);
 
+    this.notifyChange();
+  }
+
+  restore(items) {
+    const restored = items.filter(Boolean).slice(0, this.size);
+    this.items = [...restored, ...new Array(this.size - restored.length).fill(null)];
+    if (this.selectedIndex >= this.size) this.selectedIndex = 0;
     this.notifyChange();
   }
 

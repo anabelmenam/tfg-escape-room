@@ -18,7 +18,10 @@ const createKitchenAppliancePuzzles = ({ timeline, testMode, furniture, onFocus,
   const ovenControls = new OvenControlPuzzle({
     timeline,
     onFocus,
-    onSolved: () => onAction?.("puzzle.solved", "kitchen-oven"),
+    onSolved: () => {
+      if (timeline === "past" && ovenDoor) ovenDoor.enabled = true;
+      onAction?.("puzzle.solved", "kitchen-oven");
+    },
   });
   if (timeline === "past") ovenControls.object3D.position.set(0, 4.68, 1.49);
   else {
@@ -44,7 +47,7 @@ const createKitchenAppliancePuzzles = ({ timeline, testMode, furniture, onFocus,
     mosaicTile.object3D.visible = true;
     mosaicTile.setEnabled(false);
   }
-  const ovenDoor = oven.getInteractables().find((item) => item.id === "kitchen-oven-panel-1");
+  const ovenDoor = oven.getInteractables().find((item) => item.id.endsWith("-oven-panel-1"));
   if (ovenDoor) ovenDoor.enabled = false;
   const openOvenWithReward = () => {
     if (timeline !== "present") return;
@@ -69,7 +72,10 @@ const createKitchenAppliancePuzzles = ({ timeline, testMode, furniture, onFocus,
     }
     const ovenSolved = Boolean(state.timelines?.past?.puzzles?.["kitchen-oven"]?.solved);
     if (ovenSolved) {
-      if (timeline === "past") ovenControls.solve({ notify: false });
+      if (timeline === "past") {
+        ovenControls.solve({ notify: false });
+        if (ovenDoor) ovenDoor.enabled = true;
+      }
       openOvenWithReward();
     }
     if (mosaicTile && (state.inventories?.present?.includes("bathroom-mosaic-tile")

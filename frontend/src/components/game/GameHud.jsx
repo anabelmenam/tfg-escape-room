@@ -1,4 +1,5 @@
 import { t } from "../../translations/index.js";
+import { INVENTORY_SIZE } from "../../game/inventoryConfig.js";
 
 const GameHud = ({ showCrosshair }) => <>
   {showCrosshair && <div id="crosshair" className="pointer-events-none absolute left-1/2 top-1/2 z-10 hidden h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white" />}
@@ -6,8 +7,8 @@ const GameHud = ({ showCrosshair }) => <>
   <div id="ambient-inspection" className="pointer-events-none absolute bottom-40 left-1/2 z-20 hidden max-w-xl -translate-x-1/2 rounded border border-amber-100/20 bg-black/80 px-5 py-3 text-center font-serif italic text-amber-50" />
   <div id="interaction-text" className="pointer-events-none absolute bottom-32 left-1/2 z-10 hidden -translate-x-1/2 rounded bg-black/70 px-4 py-2 text-lg font-semibold text-white" />
   <p id="inventory-selected-name" className="pointer-events-none absolute bottom-24 left-1/2 z-20 hidden -translate-x-1/2 rounded bg-black/70 px-3 py-1 text-sm font-semibold text-amber-50" />
-  <div id="inventory" className="pointer-events-none absolute bottom-5 left-1/2 z-20 flex -translate-x-1/2 gap-2">
-    {[0, 1, 2, 3, 4].map((index) => <div key={index} id={`inventory-slot-${index}`} className="relative flex h-16 w-16 items-center justify-center rounded border-2 border-white/50 bg-[#9B8065]">
+  <div id="inventory" className="pointer-events-none absolute bottom-5 left-1/2 z-20 flex w-[calc(100%_-_1rem)] -translate-x-1/2 justify-center gap-1 sm:gap-2">
+    {Array.from({ length: INVENTORY_SIZE }, (_, index) => <div key={index} id={`inventory-slot-${index}`} className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded border-2 border-white/50 bg-[#9B8065] sm:h-14 sm:w-14 lg:h-16 lg:w-16">
       <span className="absolute left-1 top-0.5 text-xs text-white/70">{index + 1}</span>
       <div id={`inventory-item-${index}`} className="flex h-full w-full items-center justify-center" />
     </div>)}

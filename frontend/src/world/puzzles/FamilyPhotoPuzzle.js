@@ -111,6 +111,21 @@ class FamilyPhotoPuzzle extends Entity {
     }
   }
 
+  solve({ notify = true } = {}) {
+    if (this.isSolved) return;
+    const ordered = this.fragments
+      .map((fragment, index) => ({ fragment, piece: this.fragmentOrder[index] }))
+      .sort((first, second) => first.piece - second.piece);
+    ordered.forEach(({ fragment }, index) => {
+      fragment.position.copy(this.slotPositions[index]);
+      fragment.userData.photoFragmentSlot = index;
+    });
+    this.fragments = ordered.map(({ fragment }) => fragment);
+    this.fragmentOrder = ordered.map(({ piece }) => piece);
+    this.isSolved = true;
+    if (notify) this.onSolved?.(this);
+  }
+
   selectFragment(slot) {
     if (!this.isFocused || this.isSolved || !this.fragments[slot]) {
       return;
@@ -131,10 +146,7 @@ class FamilyPhotoPuzzle extends Entity {
     this.clearSelection();
     this.swapFragments(firstSlot, slot);
 
-    if (this.fragmentOrder.every((piece, index) => piece === index)) {
-      this.isSolved = true;
-      this.onSolved?.(this);
-    }
+    if (this.fragmentOrder.every((piece, index) => piece === index)) this.solve();
   }
 
   swapFragments(firstSlot, secondSlot) {

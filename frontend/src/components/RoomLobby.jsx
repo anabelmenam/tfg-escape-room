@@ -3,9 +3,9 @@ import { io } from "socket.io-client";
 import { GAME_API_URL } from "../services/gameApi";
 import { t } from "../translations/index.js";
 
-const timelineInfo = {
-  past: { character: "mama", symbol: "M" },
-  present: { character: "papa", symbol: "P" },
+const characterInfo = {
+  mum: { translationKey: "mama", symbol: "M", stateKey: "past" },
+  dad: { translationKey: "papa", symbol: "D", stateKey: "present" },
 };
 
 const RoomLobby = ({ session, onStart, onBack }) => {
@@ -24,14 +24,18 @@ const RoomLobby = ({ session, onStart, onBack }) => {
     socket.on("lobby:state", (lobby) => setPlayers(lobby.players ?? []));
     socket.on("game:started", (lobby) => {
       const ownPlayer = lobby.players?.find((player) => player.id === session.playerId);
-      if (ownPlayer?.timeline) onStart({ ...session, timeline: ownPlayer.timeline });
+      if (ownPlayer?.timeline) {
+        const character = ownPlayer.timeline === "past" ? "mum" : "dad";
+        onStart({ ...session, character, timeline: ownPlayer.timeline });
+      }
     });
 
     return () => socket.disconnect();
   }, [onStart, session]);
 
-  const chooseTimeline = (timeline) => {
+  const chooseCharacter = (character) => {
     setError("");
+    const timeline = character ? characterInfo[character].stateKey : null;
     socketRef.current?.emit("lobby:select-timeline", { timeline }, (result) => {
       if (!result?.ok) setError(t("roomLobby.chooseError"));
     });
@@ -48,10 +52,10 @@ const RoomLobby = ({ session, onStart, onBack }) => {
     await navigator.clipboard?.writeText(session.joinCode);
   };
 
-  const playerInTimeline = (timeline) => players.find((player) => player.timeline === timeline);
+  const playerForCharacter = (character) => players.find((player) => player.timeline === characterInfo[character].stateKey);
   const ownPlayer = players.find((player) => player.id === session.playerId);
   const bothPlayersReady =
-    players.length === 2 && Boolean(playerInTimeline("past")) && Boolean(playerInTimeline("present"));
+    players.length === 2 && Boolean(playerForCharacter("mum")) && Boolean(playerForCharacter("dad"));
 
   return (
     <main
@@ -92,23 +96,23 @@ const RoomLobby = ({ session, onStart, onBack }) => {
         )}
 
         <div className="grid gap-5 md:grid-cols-2">
-          {Object.entries(timelineInfo).map(([timeline, info]) => {
-            const occupant = playerInTimeline(timeline);
+          {Object.entries(characterInfo).map(([character, info]) => {
+            const occupant = playerForCharacter(character);
             const occupiedByOther = occupant && occupant.id !== session.playerId;
-            const selectedBySelf = ownPlayer?.timeline === timeline;
+            const selectedBySelf = ownPlayer?.timeline === info.stateKey;
             return (
               <button
-                key={timeline}
+                key={character}
                 type="button"
                 className={`relative min-h-64 overflow-hidden rounded-sm border border-[#9a8061]/55 bg-[#1d1917] p-8 text-left transition before:absolute before:inset-0 before:bg-[radial-gradient(circle_at_50%_25%,#817160,transparent_46%)] before:opacity-25 before:transition hover:before:opacity-50 disabled:cursor-not-allowed disabled:opacity-60 ${selectedBySelf ? "ring-2 ring-[#f1ca74] ring-offset-2 ring-offset-[#110f10] before:opacity-50" : ""}`}
                 disabled={Boolean(occupiedByOther)}
-                onClick={() => chooseTimeline(selectedBySelf ? null : timeline)}
+                onClick={() => chooseCharacter(selectedBySelf ? null : character)}
               >
                 <span className="relative z-10 mb-6 flex h-20 w-20 items-center justify-center rounded-full border border-[#d7b77b]/35 bg-black/20 font-serif text-5xl text-[#e7c584]">
                   {info.symbol}
                 </span>
                 <span className="relative z-10 mb-2 block font-serif text-4xl">
-                  {t(`characterSelection.${info.character}`)}
+                  {t(`characterSelection.${info.translationKey}`)}
                 </span>
                 <span className="absolute bottom-7 left-8 z-10 rounded-full border border-white/20 bg-black/25 px-3 py-1 text-xs font-bold">
                   {occupant

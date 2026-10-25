@@ -41,7 +41,7 @@ export class InventoryController {
         const image = document.createElement("img");
         image.src = item.inventoryIcon;
         image.alt = item.id;
-        image.className = "h-12 w-12 object-contain";
+        image.className = "h-full w-full p-1 object-contain";
         itemElement.appendChild(image);
       } else {
         const name = document.createElement("span");

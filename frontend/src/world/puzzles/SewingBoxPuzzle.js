@@ -191,6 +191,21 @@ class SewingBoxPuzzle extends Entity {
     }
   }
 
+  solve({ notify = true } = {}) {
+    if (this.isSolved) return;
+    this.isSolved = true;
+    this.isLocked = false;
+    this.targetOpen = true;
+    this.isOpen = true;
+    this.lidPivot.rotation.x = -Math.PI * 0.62;
+    this.threadTray.visible = true;
+    this.planPaper.object3D.visible = true;
+    this.planPaper.setEnabled(true);
+    this.revealProgress = 1;
+    this.threadTray.position.set(3.45, 0.12, this.threadTray.position.z);
+    if (notify) this.onSolved?.(this);
+  }
+
   swapSpools(firstSlot, secondSlot) {
     const first = this.spools[firstSlot];
     const second = this.spools[secondSlot];

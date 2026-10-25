@@ -34,6 +34,7 @@ const createShelfPaintingPuzzle = ({ timeline, testMode, shelf, table, onAction,
   const fallenPainting = new FallenPainting({
     position: new THREE.Vector3(-12.55, 1.5, 9.75),
     rotationY: Math.PI / 2,
+    onCollect: () => onAction?.("item.pickup", "living-room-fallen-painting"),
   });
   if (testMode && timeline === "past") fallenPainting.reveal();
 
@@ -71,8 +72,10 @@ const createShelfPaintingPuzzle = ({ timeline, testMode, shelf, table, onAction,
   };
   const revealResult = () => {
     booksRevealed = true;
-    moveShelf(true);
-    if (timeline === "past") fallenPainting.reveal();
+    if (timeline === "past") {
+      moveShelf(true);
+      fallenPainting.reveal();
+    }
   };
   const bookPuzzle = timeline === "present"
     ? new BookPuzzle({
@@ -87,13 +90,16 @@ const createShelfPaintingPuzzle = ({ timeline, testMode, shelf, table, onAction,
   rainbowBooks.forEach((book) => book.setOnInteract(bookPuzzle.handleBookInteraction.bind(bookPuzzle)));
 
   if (testMode && timeline === "present") paintingSlot.setPlaced(true);
-  shelf.interact = () => moveShelf(!shelfIsOpen);
+  shelf.interact = () => { if (timeline === "past") moveShelf(!shelfIsOpen); };
   shelf.getInteractionText = () => (
-    booksRevealed ? tInteraction(shelfIsOpen ? "close" : "open", tItem("shelf")) : null
+    timeline === "past" && booksRevealed ? tInteraction(shelfIsOpen ? "close" : "open", tItem("shelf")) : null
   );
 
   const applyState = (state) => {
-    if (state.timelines?.present?.puzzles?.["living-room-rainbow-books"]?.solved) revealResult();
+    if (state.timelines?.present?.puzzles?.["living-room-rainbow-books"]?.solved) {
+      bookPuzzle?.solve({ notify: false, arrange: true });
+      revealResult();
+    }
     const paintingState = state.timelines?.past?.objects?.["living-room-painting-slot"];
     if (paintingState?.placed && timeline === "past") paintingSlot.setPlaced(true);
     for (const index of paintingState?.restoredPieces ?? []) paintingSlot.restorePiece(index);

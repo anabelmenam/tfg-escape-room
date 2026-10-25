@@ -4,11 +4,11 @@ import { ClockHand, Flashlight, Fuse, Key, PaintingFragment, RadioDial } from ".
 const createBedroomItems = ({ timeline, furniture, onAction }) => {
   const { nightstand2, cabinet, desk, wardrobe } = furniture;
   const key = timeline === "past"
-    ? new Key({ id: "bedroom-key", position: new THREE.Vector3(2, 1, -3) })
+    ? new Key({ id: "bedroom-key", position: new THREE.Vector3(2, 1, -3), onCollect: () => onAction?.("item.pickup", "bedroom-key") })
     : null;
-  const clockHand = timeline === "past" ? new ClockHand() : null;
-  const radioDial = timeline === "past" ? new RadioDial({ id: "radio-dial" }) : null;
-  const fuse = timeline === "present" ? new Fuse({ id: "fuse", scale: 0.8 }) : null;
+  const clockHand = timeline === "past" ? new ClockHand({ onCollect: () => onAction?.("item.pickup", "clock-hand") }) : null;
+  const radioDial = timeline === "past" ? new RadioDial({ id: "radio-dial", onCollect: () => onAction?.("item.pickup", "radio-dial") }) : null;
+  const fuse = timeline === "present" ? new Fuse({ id: "fuse", scale: 0.8, onCollect: () => onAction?.("item.pickup", "fuse") }) : null;
   const flashlight = timeline === "present"
     ? new Flashlight({
         id: "flashlight",
@@ -18,8 +18,8 @@ const createBedroomItems = ({ timeline, furniture, onAction }) => {
     : null;
   const paintingFragments = timeline === "past"
     ? [
-        new PaintingFragment({ id: "painting-piece-1", index: 0 }),
-        new PaintingFragment({ id: "painting-piece-2", index: 4 }),
+        new PaintingFragment({ id: "painting-piece-1", index: 0, onCollect: () => onAction?.("item.pickup", "painting-piece-1") }),
+        new PaintingFragment({ id: "painting-piece-2", index: 4, onCollect: () => onAction?.("item.pickup", "painting-piece-2") }),
       ]
     : [];
 

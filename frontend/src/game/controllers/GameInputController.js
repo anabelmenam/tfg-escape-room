@@ -29,7 +29,7 @@ export class GameInputController {
     if (game.paused) { if (event.code === "Escape") game.onPauseRequest?.(); return; }
     if (game.inventoryInspectionOpen) { if (event.code === "Escape") game.closeInventoryInspection(); return; }
     if (game.player.isFocused) {
-      if (/^Digit[1-5]$/.test(event.code)) { game.player.selectInventorySlot(Number(event.code.slice(-1)) - 1); return; }
+      if (/^Digit[1-8]$/.test(event.code)) { game.player.selectInventorySlot(Number(event.code.slice(-1)) - 1); return; }
       if (game.player.focusedObject?.handleKey?.(event.code)) { event.preventDefault(); return; }
       if (event.code === "Escape" || event.code === "KeyE") { event.preventDefault(); game.player.focusedObject?.closePanel?.(); game.player.exitFocus(); }
       return;
@@ -38,9 +38,9 @@ export class GameInputController {
     if ((event.code === "ShiftLeft" || event.code === "ShiftRight") && !event.repeat) { game.player.toggleCrouch(); return; }
     if (event.code === "KeyI" || event.code === "KeyR") game.inspectSelectedInventoryItem(event.code);
     else if (event.code === "KeyQ") game.toggleFlashlight();
-    else if (event.code === "KeyF") game.player.toggleMode();
+    else if (event.code === "KeyF" && game.isAdmin) game.player.toggleMode();
     else if (event.code === "KeyE" && !event.repeat) game.interactionManager.use();
-    else if (/^Digit[1-5]$/.test(event.code)) game.player.selectInventorySlot(Number(event.code.slice(-1)) - 1);
+    else if (/^Digit[1-8]$/.test(event.code)) game.player.selectInventorySlot(Number(event.code.slice(-1)) - 1);
   }
 
   handleWheel(event) {

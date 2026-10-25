@@ -23,10 +23,10 @@ export class Game {
       onDoorUnlocked, onHallwayAction, onBedroomAction, onChildrenRoomAction, onKitchenAction,
       onLivingRoomAction, onBathroomAction, onPlayerMovement = null, onDiaryEntriesChanged = null,
       onEndingChange = null, onReady = null, onPauseRequest = null, audioController = null,
-      testArea = null, testMode = false, endingPreview = false, initialCheckpoint = null,
+      testArea = null, testMode = false, isAdmin = false, endingPreview = false, initialCheckpoint = null,
     } = options;
     Object.assign(this, {
-      container, playerRole, testArea, testMode, endingPreview, onDoorUnlocked, onHallwayAction,
+      container, playerRole, testArea, testMode, isAdmin, endingPreview, onDoorUnlocked, onHallwayAction,
       onBedroomAction, onChildrenRoomAction, onKitchenAction, onLivingRoomAction, onBathroomAction,
       onPlayerMovement, onDiaryEntriesChanged, onEndingChange, onReady, onPauseRequest,
     });
@@ -171,11 +171,23 @@ export class Game {
     this.roomData.kitchen?.applyKitchenState(state);
     this.roomData.livingRoom?.applyLivingRoomState(state);
     this.roomData.bathroom?.applyBathroomState(state);
+    const currentItems = new Map(this.player.inventory.getAll().filter(Boolean).map((item) => [item.id, item]));
+    const worldItems = new Map((this.roomData.entities ?? []).filter((entity) => entity?.id).map((entity) => [entity.id, entity]));
+    const restoredItems = (state.inventories?.[this.timeline] ?? [])
+      .map((id) => currentItems.get(id) ?? worldItems.get(id))
+      .filter(Boolean);
+    restoredItems.forEach((item) => {
+      item.object3D.visible = false;
+      item.setEnabled?.(false);
+    });
+    this.player.inventory.restore(restoredItems);
     this.roomData.storyNotes?.forEach((note) => note.setCollected(state.journalEntries?.includes(note.id) ?? false));
     this.onDiaryEntriesChanged?.([...(state.journalEntries ?? [])].sort());
     this.onEndingChange?.(state.ending ?? null);
     if (state.timelines?.past?.puzzles?.["children-globe"]?.solved) this.player.inventory.remove("children-photo-order-note");
     if (state.timelines?.present?.puzzles?.["kitchen-recipe"]?.solved) this.player.inventory.remove("kitchen-recipe-note");
+    if (state.timelines?.past?.puzzles?.["bedroom-radio"]?.solved) this.player.inventory.remove("bedroom-radio-note");
+    if (state.timelines?.present?.puzzles?.["bedroom-electrical-panel"]?.solved) this.player.inventory.remove("bedroom-electrical-plan");
     const doorState = state.timelines?.[this.timeline]?.objects?.["bedroom-exit-door"];
     if (doorState) {
       const door = this.roomData.door;

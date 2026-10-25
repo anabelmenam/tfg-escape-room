@@ -55,8 +55,9 @@ const createPainting = ({ complete = false, pieces = [] } = {}) => {
 };
 
 class PaintingFragment extends Entity {
-  constructor({ id, index, position = new THREE.Vector3(), rotation = new THREE.Euler(-Math.PI / 2, 0, 0) } = {}) {
+  constructor({ id, index, position = new THREE.Vector3(), rotation = new THREE.Euler(-Math.PI / 2, 0, 0), onCollect = null } = {}) {
     super(id);
+    this.onCollect = onCollect;
     this.index = index;
     this.paintingPieceIndex = index;
     this.inventoryIcon = index === 0
@@ -78,6 +79,7 @@ class PaintingFragment extends Entity {
     if (!player?.inventory.add(this)) return;
     this.object3D.visible = false;
     this.setEnabled(false);
+    this.onCollect?.();
   }
 
   getInteractionText() {
@@ -91,8 +93,10 @@ class FallenPainting extends Entity {
     position = new THREE.Vector3(),
     rotationY = 0,
     visible = false,
+    onCollect = null,
   } = {}) {
     super(id);
+    this.onCollect = onCollect;
     this.inventoryIcon = "/images/icons/living-room/fallen-painting.png";
     this.object3D = createPainting({ pieces: initialPieces });
     this.object3D.name = id;
@@ -113,6 +117,7 @@ class FallenPainting extends Entity {
     this.collected = true;
     this.object3D.visible = false;
     this.setEnabled(false);
+    this.onCollect?.();
   }
 
   getInteractionText() {

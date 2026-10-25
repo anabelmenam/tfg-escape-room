@@ -2,8 +2,9 @@ import * as THREE from "three";
 import { Entity } from "../Entity.js";
 
 class ClockHand extends Entity {
-  constructor() {
+  constructor({ onCollect = null } = {}) {
     super("clock-hand");
+    this.onCollect = onCollect;
     this.inventoryIcon = "/images/icons/bedroom/clock-hand.png";
     this.object3D = new THREE.Group();
     this.object3D.name = this.id;
@@ -23,6 +24,7 @@ class ClockHand extends Entity {
     if (!this.enabled || !player?.inventory.add(this)) return;
     this.object3D.visible = false;
     this.setEnabled(false);
+    this.onCollect?.();
   }
 }
 

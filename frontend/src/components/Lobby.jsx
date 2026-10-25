@@ -44,7 +44,7 @@ const Lobby = ({ account, onLogout, onEnterLobby, audioSettings, onAudioSettingC
         )}
 
         {view === "controls" && (
-          <ControlsPanel />
+          <ControlsPanel isAdmin={account.role === "admin"} />
         )}
 
         {view === "tests" && account.role === "admin" && (
@@ -52,14 +52,14 @@ const Lobby = ({ account, onLogout, onEnterLobby, audioSettings, onAudioSettingC
             <p className="text-xs font-bold uppercase tracking-[.24em] text-[#d8aa64]">{t("menu.tests")}</p>
             <h1 className="mt-2 font-serif text-4xl text-[#f5e8ce]">{t("testAccess")}</h1>
             <div className="mt-7 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {["bedroom", "hallway", "children", "bathroom", "kitchen"].flatMap((area) => ["past", "present"].map((timeline) => (
-                <button key={`${timeline}-${area}`} type="button" onClick={() => onEnterLobby({ testMode: true, timeline, testArea: area })} className="border border-[#806644] bg-[#171210] px-4 py-4 text-left hover:border-[#d7b77b]">
-                  <strong className="block text-[#f2dfbd]">{t(`menu.${timeline === "past" ? "worldA" : "worldB"}`)}</strong>
+              {["bedroom", "hallway", "children", "bathroom", "kitchen"].flatMap((area) => ["mum", "dad"].map((character) => (
+                <button key={`${character}-${area}`} type="button" onClick={() => onEnterLobby({ testMode: true, character, timeline: character === "mum" ? "past" : "present", testArea: area })} className="border border-[#806644] bg-[#171210] px-4 py-4 text-left hover:border-[#d7b77b]">
+                  <strong className="block text-[#f2dfbd]">{t(`characterSelection.${character === "mum" ? "mama" : "papa"}`)}</strong>
                   <span className="text-sm text-[#a99a83]">{t(`menu.areas.${area}`)}</span>
                 </button>
               )))}
               <button type="button" onClick={() => onEnterLobby({ testMode: true, testPlayerRole: "C", testArea: "icons" })} className="border border-[#806644] bg-[#171210] px-4 py-4 text-left hover:border-[#d7b77b]"><strong>{t("menu.iconStudio")}</strong></button>
-              <button type="button" onClick={() => onEnterLobby({ testMode: true, timeline: "present", testArea: "hallway", endingPreview: true })} className="border border-[#806644] bg-[#171210] px-4 py-4 text-left hover:border-[#d7b77b]"><strong>{t("menu.viewEnding")}</strong></button>
+              <button type="button" onClick={() => onEnterLobby({ testMode: true, character: "dad", timeline: "present", testArea: "hallway", endingPreview: true })} className="border border-[#806644] bg-[#171210] px-4 py-4 text-left hover:border-[#d7b77b]"><strong>{t("menu.viewEnding")}</strong></button>
             </div>
           </div>
         )}

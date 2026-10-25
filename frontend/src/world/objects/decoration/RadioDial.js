@@ -63,8 +63,9 @@ const createRadioDialVisual = ({ index = null, brass = null, darkMaterial = null
 };
 
 class RadioDial extends Entity {
-  constructor({ id = "radio-dial", scale = 1 } = {}) {
+  constructor({ id = "radio-dial", scale = 1, onCollect = null } = {}) {
     super(id);
+    this.onCollect = onCollect;
     const visual = createRadioDialVisual();
     this.object3D = visual.object3D;
     this.needlePivot = visual.needlePivot;
@@ -87,6 +88,7 @@ class RadioDial extends Entity {
     if (!player.inventory.add(this)) return;
     this.object3D.visible = false;
     this.setEnabled(false);
+    this.onCollect?.();
   }
 }
 

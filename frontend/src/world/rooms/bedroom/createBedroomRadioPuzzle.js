@@ -100,18 +100,24 @@ const createBedroomRadioPuzzle = ({
   if (sewingBox) nightstand1.addObjectToDrawer(0, sewingBox.object3D, new THREE.Vector3(-0.5, -0.1, -0.5));
 
   const applyState = (state) => {
-    clues.radioNote ||= Boolean(state.inventories?.present?.includes("bedroom-radio-note"));
-    clues.electricalPlan ||= Boolean(state.inventories?.past?.includes("bedroom-electrical-plan"));
-    if (radioNote && clues.radioNote) {
+    const radioSolved = Boolean(state.timelines?.past?.puzzles?.["bedroom-radio"]?.solved);
+    const sewingSolved = Boolean(state.timelines?.past?.puzzles?.["bedroom-sewing-box"]?.solved);
+    if (radioSolved) radio?.restoreSolvedState();
+    if (sewingSolved) sewingBox?.solve({ notify: false });
+    clues.radioNote ||= Boolean(state.inventories?.present?.includes("bedroom-radio-note")
+      || radioSolved);
+    clues.electricalPlan ||= Boolean(state.inventories?.past?.includes("bedroom-electrical-plan")
+      || state.timelines?.present?.puzzles?.["bedroom-electrical-panel"]?.solved);
+    if (radioNote && (clues.radioNote || radioSolved)) {
       radioNote.object3D.visible = false;
       radioNote.setEnabled(false);
     }
-    if (planPaper && clues.electricalPlan) {
+    if (planPaper && (clues.electricalPlan || state.timelines?.present?.puzzles?.["bedroom-electrical-panel"]?.solved)) {
       planPaper.object3D.visible = false;
       planPaper.setEnabled(false);
     }
     if (finalKey) {
-      const earned = Boolean(state.timelines?.past?.puzzles?.["bedroom-radio"]?.solved);
+      const earned = radioSolved;
       const unavailable = state.inventories?.present?.includes("final-key-bedroom")
         || ["past", "present"].some((era) => state.timelines?.[era]?.objects?.["final-bolt-bedroom"]?.unlocked);
       if (earned && !unavailable) finalKey.reveal();

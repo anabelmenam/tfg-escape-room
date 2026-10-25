@@ -18,7 +18,7 @@ const createHallwayDoors = ({ timeline, testMode, passageOpenings, isInteractHel
   });
   livingRoomDoor.object3D.position.y = livingRoomOpening.height / 2;
   const specs = [
-    ["hallway-children-room-door", "hallway-children-room-opening", testMode ? null : timeline === "past" ? "study-key" : null, !testMode],
+    ["hallway-children-room-door", "hallway-children-room-opening", testMode ? null : timeline === "present" ? "study-key" : null, !testMode],
     ["hallway-bathroom-door", "hallway-bathroom-opening", null, false],
     ["hallway-kitchen-door", "hallway-kitchen-opening", testMode ? null : timeline === "past" ? "crowbar" : null, !testMode],
     ["hallway-street-door", "hallway-street-opening", null, true],

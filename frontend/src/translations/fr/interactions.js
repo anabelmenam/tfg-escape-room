@@ -1,0 +1,28 @@
+export default {
+interactions: {
+    pressButton: () => "[E] Appuyer sur le bouton",
+    pressSwitch: () => "[E] Actionner l'interrupteur",
+    turnOnLamp: () => "[E] Allumer la lampe",
+    turnOffLamp: () => "[E] Éteindre la lampe",
+    needItem: (i) => `[E] Il faut ${i}`,
+    needKeepsakes: () => "[E] Il manque des souvenirs familiaux",
+    pickUp: (i) => `[E] Prendre ${i}`,
+    open: (i) => `[E] Ouvrir ${i}`,
+    close: (i) => `[E] Fermer ${i}`,
+    locked: () => "[E] C'est verrouillé",
+    move: (i) => `[E] Déplacer ${i}`,
+    examine: (i) => `[E] Examiner ${i}`,
+    insert: (i) => `[E] Placer ${i}`,
+    light: (i) => `[E] Allumer ${i}`,
+    cut: (i) => `[E] Couper ${i}`,
+    search: (i) => `[E] Fouiller ${i}`,
+    missingFuse: () => "Il manque un fusible · [E] Fermer",
+    noPower: () => "[E] Il n'y a pas de courant",
+    lift: (i) => `[E] Soulever ${i}`,
+    lower: (i) => `[E] Abaisser ${i}`,
+    turnOn: (i) => `[E] Ouvrir ${i}`,
+    turnOff: (i) => `[E] Fermer ${i}`,
+    unscrew: (i) => `[E] Dévisser ${i}`,
+    exit: () => "[E] Sortir",
+  }
+};

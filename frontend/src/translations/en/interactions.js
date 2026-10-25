@@ -1,0 +1,28 @@
+export default {
+interactions: {
+    pressButton: () => "[E] Press button",
+    pressSwitch: () => "[E] Press switch",
+    turnOnLamp: () => "[E] Turn lamp on",
+    turnOffLamp: () => "[E] Turn lamp off",
+    needItem: (i) => `[E] You need ${i}`,
+    needKeepsakes: () => "[E] Family keepsakes are missing",
+    pickUp: (i) => `[E] Pick up ${i}`,
+    open: (i) => `[E] Open ${i}`,
+    close: (i) => `[E] Close ${i}`,
+    locked: () => "[E] It is locked",
+    move: (i) => `[E] Move ${i}`,
+    examine: (i) => `[E] Examine ${i}`,
+    insert: (i) => `[E] Place ${i}`,
+    light: (i) => `[E] Light ${i}`,
+    cut: (i) => `[E] Cut ${i}`,
+    search: (i) => `[E] Search ${i}`,
+    missingFuse: () => "A fuse is missing · [E] Close panel",
+    noPower: () => "[E] There is no power",
+    lift: (i) => `[E] Lift ${i}`,
+    lower: (i) => `[E] Lower ${i}`,
+    turnOn: (i) => `[E] Turn on ${i}`,
+    turnOff: (i) => `[E] Turn off ${i}`,
+    unscrew: (i) => `[E] Unscrew ${i}`,
+    exit: () => "[E] Exit",
+  }
+};

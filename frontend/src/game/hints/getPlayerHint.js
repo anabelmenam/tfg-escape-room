@@ -14,7 +14,7 @@ const getPastHint = (state, inventory) => {
   if (!object(state, "past", "living-room-painting-slot").placed) return solved(state, "present", "living-room-rainbow-books") ? "pastPainting" : "pastWaitBooks";
   if (!solved(state, "past", "living-room-painting")) return "pastPaintingPieces";
   if (!solved(state, "past", "living-room-embers")) return object(state, "present", "living-room-fireplace").open ? "pastEmbers" : "pastWaitFireplace";
-  if (object(state, "past", "living-room-chest").locked !== false) return has(inventory, "living-room-vitrine-letter") ? "pastChest" : "pastDisplayCase";
+  if (object(state, "present", "living-room-chest").locked !== false) return has(inventory, "living-room-vitrine-letter") ? "pastChest" : "pastDisplayCase";
   if (!solved(state, "past", "children-blocks")) return "pastBlocks";
   if (!solved(state, "past", "children-globe-pin")) return has(inventory, "globe-pushpin") ? "pastPin" : "pastBlocksReward";
   if (!solved(state, "past", "children-globe")) return "pastPhotoBoard";
@@ -40,6 +40,9 @@ const getPresentHint = (state, inventory) => {
   if (!object(state, "present", "living-room-sofa-cushion").cut) return has(inventory, "living-room-scissors") ? "presentCushion" : "presentWaitPainting";
   if (!object(state, "present", "living-room-sofa-cushion").searched) return "presentSearchCushion";
   if (!object(state, "present", "living-room-fireplace").open) return "presentFireplace";
+  if (object(state, "present", "living-room-chest").locked !== false) {
+    return state?.inventories?.past?.includes("living-room-vitrine-letter") ? "presentChest" : "presentWaitDisplayCase";
+  }
   if (!solved(state, "present", "children-music")) return solved(state, "past", "children-music-key") ? "presentMusic" : "presentPhotoNote";
   if (!solved(state, "present", "kitchen-recipe")) return "presentRecipe";
   if (!solved(state, "present", "kitchen-family-table")) return "presentTable";

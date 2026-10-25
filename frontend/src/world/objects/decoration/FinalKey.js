@@ -35,7 +35,7 @@ class FinalKey extends Entity {
     const bit = new THREE.Mesh(new THREE.BoxGeometry(.48, .22, .14), metal); bit.position.set(.16, -1.24, 0);
     const tooth = new THREE.Mesh(new THREE.BoxGeometry(.18, .22, .14), metal); tooth.position.set(.32, -1.08, 0);
     this.object3D.add(ring, medallion, emblem, shaft, collar, bit, tooth);
-    this.object3D.rotation.set(Math.PI / 2, 0, Math.PI / 2); this.object3D.scale.setScalar(.72);
+    this.object3D.rotation.set(Math.PI / 2, 0, Math.PI / 2); this.object3D.scale.setScalar(.48);
     this.object3D.traverse((part) => { if (part.isMesh) part.castShadow = true; });
   }
   interact(player) { if (!this.enabled || !player?.inventory.add(this)) return; this.object3D.visible = false; this.setEnabled(false); this.onCollect?.(); }

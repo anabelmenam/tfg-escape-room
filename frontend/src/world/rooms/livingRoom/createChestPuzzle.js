@@ -48,19 +48,19 @@ const addCombinationLockHasp = (chest) => {
 };
 
 const createChestPuzzle = ({ timeline, testMode, shelf, woodStyle, hasLetter, onAction, onFocus }) => {
-  const chest = new Chest({
+  const chest = timeline === "present" ? new Chest({
     id: "living-room-chest",
     position: new THREE.Vector3(17, 2, 12),
     scale: 1,
     width: 1.5,
     height: 1,
     depth: 1,
-    locked: timeline === "past",
+    locked: true,
     ...woodStyle,
-  });
-  addCombinationLockHasp(chest);
+  }) : null;
+  if (chest) addCombinationLockHasp(chest);
 
-  const studyKey = timeline === "past" ? new Key({ id: "study-key", color: 0xb07c32, scalar: 1.45 }) : null;
+  const studyKey = timeline === "present" ? new Key({ id: "study-key", color: 0xb07c32, scalar: 1.45 }) : null;
   const finalKey = timeline === "present"
     ? new FinalKey({
         id: "final-key-living-room",
@@ -76,7 +76,7 @@ const createChestPuzzle = ({ timeline, testMode, shelf, woodStyle, hasLetter, on
   if (finalKey) {
     finalKey.object3D.visible = false;
     finalKey.setEnabled(false);
-    chest.addItem(finalKey, { position: new THREE.Vector3(0, .22, 0), scale: 1.15, visible: false });
+    chest.addItem(finalKey, { position: new THREE.Vector3(-.34, .22, 0), scale: .82, visible: false });
   }
   if (studyKey) {
     studyKey.setEnabled(false);
@@ -88,14 +88,14 @@ const createChestPuzzle = ({ timeline, testMode, shelf, woodStyle, hasLetter, on
       studyKey.setEnabled(false);
       onAction?.("item.pickup", "study-key");
     };
-    chest.addItem(studyKey, { position: new THREE.Vector3(0, .22, 0), scale: 1.4, visible: false });
+    chest.addItem(studyKey, { position: new THREE.Vector3(.34, .22, 0), scale: 1.2, visible: false });
   }
 
-  const lock = timeline === "past"
+  const lock = timeline === "present"
     ? new Lock({
         id: "living-room-chest-lock",
         position: new THREE.Vector3(0, .405, .61),
-        scale: .074,
+        scale: .12,
         password: "3816",
         onFocus,
         canUnlock: () => testMode || hasLetter(),
@@ -107,7 +107,7 @@ const createChestPuzzle = ({ timeline, testMode, shelf, woodStyle, hasLetter, on
     : null;
   if (lock) chest.object3D.add(lock.object3D);
 
-  chest.onOpenChange = ({ isOpen }) => {
+  if (chest) chest.onOpenChange = ({ isOpen }) => {
     if (!isOpen) return;
     if (studyKey && !studyKeyUnavailable && !studyKey.object3D.visible) {
       studyKey.object3D.visible = true;
@@ -115,11 +115,10 @@ const createChestPuzzle = ({ timeline, testMode, shelf, woodStyle, hasLetter, on
     }
     if (finalKey && finalKeyEarned && !finalKeyUnavailable && !finalKey.object3D.visible) finalKey.reveal();
   };
-  shelf.addToShelf(chest.object3D, { shelf: 1, x: 0, z: 2, placeOnSurface: false });
+  if (chest) shelf.addToShelf(chest.object3D, { shelf: 1, x: 0, z: 2, placeOnSurface: false });
 
   const applyState = (state) => {
-    const chestState = state.timelines?.past?.objects?.["living-room-chest"]
-      ?? state.timelines?.present?.objects?.["living-room-chest"];
+    const chestState = state.timelines?.present?.objects?.["living-room-chest"];
     if (chestState?.locked === false) {
       finalKeyEarned = true;
       chest.unlock();
@@ -133,7 +132,7 @@ const createChestPuzzle = ({ timeline, testMode, shelf, woodStyle, hasLetter, on
         finalKey.setEnabled(false);
       }
     }
-    const childrenRoomDoorUnlocked = state.timelines?.past?.objects?.["hallway-children-room-door"]?.locked === false;
+    const childrenRoomDoorUnlocked = state.timelines?.present?.objects?.["hallway-children-room-door"]?.locked === false;
     if (studyKey && (state.inventories?.[timeline]?.includes("study-key") || childrenRoomDoorUnlocked)) {
       studyKeyUnavailable = true;
       studyKey.object3D.visible = false;

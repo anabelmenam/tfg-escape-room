@@ -12,7 +12,7 @@ import { t } from "../translations/index.js";
 
 const testDiaryEntries = Array.from({ length: 10 }, (_, index) => `family-note-${String(index + 1).padStart(2, "0")}`);
 
-const GameCanvas = ({ playerRole, session, audioController, audioSettings, onAudioSettingChange, mouseSensitivity, onMouseSensitivityChange, onExit, onLanguageChange }) => {
+const GameCanvas = ({ playerRole, session, isAdmin, audioController, audioSettings, onAudioSettingChange, mouseSensitivity, onMouseSensitivityChange, onExit, onLanguageChange }) => {
   const containerRef = useRef(null);
   const gameRef = useRef(null);
   const socketRef = useRef(null);
@@ -32,6 +32,7 @@ const GameCanvas = ({ playerRole, session, audioController, audioSettings, onAud
     socketRef,
     playerRole,
     session,
+    isAdmin,
     audioController,
     endingSequence,
     setIsLoading,
@@ -93,6 +94,7 @@ const GameCanvas = ({ playerRole, session, audioController, audioSettings, onAud
         setView={setPauseView}
         diaryEntries={diaryEntries}
         hintHistory={hintHistory}
+        isAdmin={isAdmin}
         onRequestHint={requestHint}
         onResume={resumeGame}
         onExit={onExit}

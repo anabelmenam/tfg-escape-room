@@ -13,11 +13,19 @@ class BookPuzzle {
     });
   }
 
-  solve() {
+  solve({ notify = true, arrange = false } = {}) {
     if (this.solved) return;
 
+    if (arrange) {
+      this.books.forEach((book) => {
+        book.currentSlot = book.correctSlot;
+        book.object3D.position.copy(this.slotPositions.get(book.correctSlot));
+        book.setSelected(false);
+        book.setEnabled(false);
+      });
+    }
     this.solved = true;
-    this.onSolved?.();
+    if (notify) this.onSolved?.();
   }
 
   handleBookInteraction(book) {

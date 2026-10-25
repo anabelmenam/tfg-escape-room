@@ -5,11 +5,9 @@ const createWardrobePuzzle = ({ timeline, wardrobe, onAction }) => {
     ? new Crowbar({ onCollect: () => onAction?.("item.pickup", "crowbar") })
     : null;
   if (crowbar) {
-    crowbar.object3D.position.set(-0.2, 2.49, 0.08);
-    crowbar.object3D.rotation.order = "ZXY";
-    crowbar.object3D.rotation.x = Math.PI / 2;
-    crowbar.object3D.rotation.y = 0.16;
-    crowbar.object3D.scale.setScalar(0.85);
+    crowbar.object3D.position.set(-0.2, 2.48, -0.05);
+    crowbar.object3D.rotation.set(0, 0, Math.PI / 2);
+    crowbar.object3D.scale.setScalar(0.72);
     crowbar.object3D.visible = false;
     crowbar.setEnabled(false);
     wardrobe.object3D.add(crowbar.object3D);
@@ -23,8 +21,8 @@ const createWardrobePuzzle = ({ timeline, wardrobe, onAction }) => {
       })
     : null;
   if (finalKey) {
-    finalKey.object3D.position.set(1.15, 4.25, .45);
-    finalKey.object3D.rotation.z = -.35;
+    finalKey.object3D.position.set(1.15, 2.48, .35);
+    finalKey.object3D.rotation.set(Math.PI / 2, 0, -.35);
     finalKey.object3D.visible = false;
     finalKey.setEnabled(false);
     wardrobe.object3D.add(finalKey.object3D);

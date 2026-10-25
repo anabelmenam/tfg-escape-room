@@ -155,6 +155,13 @@ class BlockConstructionPuzzle extends ChildrenPuzzle {
   handleControl(control, _player, intersection) {
     if (this.timeline !== "past" || !this.available || this.isSolved) return;
     if (control?.kind === "block") {
+      if (this.selectedBlock === null && this.placed.includes(control.value)) {
+        if (!this.hasBlockAbove(control.value)) {
+          this.blocks[control.value].position.copy(this.startPositions[control.value]);
+          this.placed = this.placed.filter((placedIndex) => placedIndex !== control.value);
+        }
+        return;
+      }
       if (this.selectedBlock !== null && control.value !== this.selectedBlock) {
         this.placeSelectedBlock(null, this.getStackPosition(control.value));
         return;

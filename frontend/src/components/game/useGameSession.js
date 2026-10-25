@@ -7,7 +7,7 @@ const emitAction = (socket, type, targetId, payload) => socket?.emit("game:actio
   actionId: crypto.randomUUID(), type, targetId, ...(payload ? { payload } : {}),
 });
 
-const useGameSession = ({ containerRef, gameRef, socketRef, playerRole, session, audioController, endingSequence, setIsLoading, setIsPaused, setPauseView, setDiaryEntries, setHintHistory, setCompanionConnected }) => {
+const useGameSession = ({ containerRef, gameRef, socketRef, playerRole, session, isAdmin, audioController, endingSequence, setIsLoading, setIsPaused, setPauseView, setDiaryEntries, setHintHistory, setCompanionConnected }) => {
   const { handleHallwayAction, handleEndingChange, reset } = endingSequence;
 
   useEffect(() => {
@@ -33,6 +33,7 @@ const useGameSession = ({ containerRef, gameRef, socketRef, playerRole, session,
     const game = new Game(container, playerRole, {
       testArea: session.testMode ? session.testArea : null,
       testMode: session.testMode,
+      isAdmin,
       endingPreview: Boolean(session.endingPreview),
       initialCheckpoint: session.checkpoint ?? null,
       audioController,
@@ -47,11 +48,11 @@ const useGameSession = ({ containerRef, gameRef, socketRef, playerRole, session,
         game.pause(); setPauseView("menu"); setIsPaused(true);
       },
       onHallwayAction: (type, targetId, payload = {}) => handleHallwayAction(game, socket, type, targetId, payload),
-      onBedroomAction: (type, targetId) => emitAction(socket, type, targetId),
-      onChildrenRoomAction: (type, targetId) => emitAction(socket, type, targetId),
+      onBedroomAction: (type, targetId, payload = {}) => emitAction(socket, type, targetId, payload),
+      onChildrenRoomAction: (type, targetId, payload = {}) => emitAction(socket, type, targetId, payload),
       onKitchenAction: (type, targetId, payload = {}) => emitAction(socket, type, targetId, payload),
-      onLivingRoomAction: (type, targetId) => emitAction(socket, type, targetId),
-      onBathroomAction: (type, targetId) => emitAction(socket, type, targetId),
+      onLivingRoomAction: (type, targetId, payload = {}) => emitAction(socket, type, targetId, payload),
+      onBathroomAction: (type, targetId, payload = {}) => emitAction(socket, type, targetId, payload),
       onPlayerMovement: (movement) => socket?.emit("player:movement", movement),
       onDiaryEntriesChanged: setDiaryEntries,
       onEndingChange: (nextEnding) => handleEndingChange(game, socket, nextEnding),
@@ -87,7 +88,7 @@ const useGameSession = ({ containerRef, gameRef, socketRef, playerRole, session,
       socket?.disconnect();
       game.dispose();
     };
-  }, [audioController, containerRef, gameRef, handleEndingChange, handleHallwayAction, playerRole, reset, session, setCompanionConnected, setDiaryEntries, setHintHistory, setIsLoading, setIsPaused, setPauseView, socketRef]);
+  }, [audioController, containerRef, gameRef, handleEndingChange, handleHallwayAction, isAdmin, playerRole, reset, session, setCompanionConnected, setDiaryEntries, setHintHistory, setIsLoading, setIsPaused, setPauseView, socketRef]);
 };
 
 export default useGameSession;

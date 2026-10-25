@@ -4,7 +4,7 @@ import { DeskLamp, Frame, Paper, createCandleCluster, createPerfumeTray } from "
 const createBedroomDecor = ({ timeline, desk, cabinet }) => {
   const deskPaper = new Paper({
     id: `bedroom-${timeline}-desk-paper`,
-    position: new THREE.Vector3(1.5, 3.322, 0.78),
+    position: new THREE.Vector3(-2.15, 3.335, -0.7),
     rotation: new THREE.Euler(-Math.PI / 2, 0, Math.PI / 2 + 0.08),
     width: 1.15,
     height: 0.82,

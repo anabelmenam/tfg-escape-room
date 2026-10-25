@@ -191,7 +191,7 @@ const reduceAction = (state, player, action) => {
         return;
       }
       if (action.targetId === "kitchen-recipe") {
-        if (timeline !== "present") throw new Error("La receta se prepara en el Mundo B.");
+        if (timeline !== "present") throw new Error("La receta se prepara en el Papá.");
         const slotIndex = Number(action.payload.slotIndex);
         if (!Number.isInteger(slotIndex) || slotIndex < 0 || slotIndex >= kitchenIngredientIds.length) {
           throw new Error("Esa posición de la tabla no es válida.");
@@ -267,8 +267,11 @@ const reduceAction = (state, player, action) => {
       }
       if (["living-room-painting-piece-0", "living-room-painting-piece-4"].includes(action.targetId)) {
         const painting = state.timelines.past.objects["living-room-painting-slot"];
-        if (timeline !== "past" || !painting?.placed) throw new Error("Primero hay que colocar el cuadro en el Mundo A.");
+        if (timeline !== "past" || !painting?.placed) throw new Error("Primero hay que colocar el cuadro en el Mamá.");
         const index = Number(action.targetId.slice(-1));
+        const inventoryId = index === 0 ? "painting-piece-1" : "painting-piece-2";
+        const inventoryIndex = state.inventories.past.indexOf(inventoryId);
+        if (inventoryIndex !== -1) state.inventories.past.splice(inventoryIndex, 1);
         const restoredPieces = [...new Set([...(painting.restoredPieces ?? []), index])];
         setObjectState(state, "past", "living-room-painting-slot", { restoredPieces });
         if ([0, 4].every((piece) => restoredPieces.includes(piece))) {
@@ -277,7 +280,7 @@ const reduceAction = (state, player, action) => {
         return;
       }
       if (action.targetId === "living-room-sofa-cushion") {
-        if (timeline !== "present") throw new Error("El cojín solo se puede registrar en el Mundo B.");
+        if (timeline !== "present") throw new Error("El cojín solo se puede registrar en el Papá.");
         const cushion = state.timelines.present.objects[action.targetId] ?? {};
         if (!cushion.cut) {
           const scissorsIndex = state.inventories.present.indexOf("living-room-scissors");
@@ -293,7 +296,7 @@ const reduceAction = (state, player, action) => {
         return;
       }
       if (action.targetId === "living-room-fireplace") {
-        if (timeline !== "present") throw new Error("La chimenea solo se puede encender en el Mundo B.");
+        if (timeline !== "present") throw new Error("La chimenea solo se puede encender en el Papá.");
         const matchIndex = state.inventories.present.indexOf("living-room-match");
         if (matchIndex === -1) throw new Error("Necesitas la cerilla escondida en el cojín.");
         state.inventories.present.splice(matchIndex, 1);
@@ -301,14 +304,16 @@ const reduceAction = (state, player, action) => {
         return;
       }
       if (action.targetId === "hallway-living-room-door") {
-        if (timeline !== "present" || !state.timelines.present.puzzles["hallway-maze"]?.solved) throw new Error("Resuelve el laberinto para obtener la llave del salón.");
+        const keyIndex = state.inventories.present.indexOf("living-room-key");
+        if (timeline !== "present" || keyIndex === -1) throw new Error("Necesitas la llave obtenida al resolver el laberinto.");
+        state.inventories.present.splice(keyIndex, 1);
         for (const era of ["past", "present"]) setObjectState(state, era, action.targetId, { locked: false });
         return;
       }
       if (action.targetId === "hallway-children-room-door") {
-        const keyIndex = state.inventories.past.indexOf("study-key");
-        if (timeline !== "past" || keyIndex === -1) throw new Error("Necesitas la llave que está dentro del cofre del salón.");
-        state.inventories.past.splice(keyIndex, 1);
+        const keyIndex = state.inventories.present.indexOf("study-key");
+        if (timeline !== "present" || keyIndex === -1) throw new Error("Necesitas la llave que está dentro del cofre del salón.");
+        state.inventories.present.splice(keyIndex, 1);
         for (const era of ["past", "present"]) setObjectState(state, era, action.targetId, { locked: false });
         return;
       }
@@ -323,11 +328,11 @@ const reduceAction = (state, player, action) => {
         return;
       }
       if (action.targetId === "hallway-maze-mirror") {
-        if (timeline !== "present") throw new Error("El espejo solo se manipula en el Mundo B.");
+        if (timeline !== "present") throw new Error("El espejo solo se manipula en el Papá.");
         const mirror = state.timelines.present.objects[action.targetId] ?? {};
         if (!mirror.released) {
           if (!state.timelines.present.puzzles["bathroom-sequence"]?.solved) {
-            throw new Error("Primero hay que resolver la secuencia del baño en el Mundo B.");
+            throw new Error("Primero hay que resolver la secuencia del baño en el Papá.");
           }
           const screwdriverIndex = state.inventories.present.indexOf("screwdriver");
           if (screwdriverIndex === -1) throw new Error("Necesitas el destornillador del baño.");
@@ -339,48 +344,70 @@ const reduceAction = (state, player, action) => {
         return;
       }
       if (action.targetId === "bedroom-symbol-safe") {
-        if (timeline !== "past" || !state.timelines.present.puzzles["bedroom-light-reveal-puzzle"]?.solved) throw new Error("Primero hay que revelar los símbolos en el Mundo B.");
+        if (timeline !== "past" || !state.timelines.present.puzzles["bedroom-light-reveal-puzzle"]?.solved) throw new Error("Primero hay que revelar los símbolos en el Papá.");
         setObjectState(state, "past", action.targetId, { open: true, locked: false });
         return;
       }
+      if (action.targetId === "bedroom-electrical-panel" && action.payload?.operation === "insert-fuse") {
+        const fuseIndex = state.inventories.present.indexOf("fuse");
+        if (timeline !== "present" || fuseIndex === -1) throw new Error("Necesitas el fusible del escritorio.");
+        state.inventories.present.splice(fuseIndex, 1);
+        setObjectState(state, "present", action.targetId, { hasFuse: true });
+        return;
+      }
       if (action.targetId === "bedroom-exit-door") {
-        if (timeline !== "past") throw new Error("La puerta solo puede desbloquearse desde el Mundo A.");
+        if (timeline !== "past") throw new Error("La puerta solo puede desbloquearse desde el Mamá.");
+        const keyIndex = state.inventories.past.indexOf("bedroom-key");
+        if (keyIndex !== -1) state.inventories.past.splice(keyIndex, 1);
         setObjectState(state, "past", "bedroom-exit-door", { open: true, locked: false });
         setObjectState(state, "present", "bedroom-exit-door", { locked: false });
         return;
       }
       if (action.targetId === "living-room-painting-slot") {
         if (timeline !== "past" || !state.timelines.present.puzzles["living-room-rainbow-books"]?.solved) throw new Error("Primero hay que ordenar los libros del arcoíris.");
+        const paintingIndex = state.inventories.past.indexOf("living-room-fallen-painting");
+        if (paintingIndex === -1) throw new Error("Necesitas recoger el cuadro caído.");
+        state.inventories.past.splice(paintingIndex, 1);
         setObjectState(state, "past", action.targetId, { placed: true });
         setObjectState(state, "present", action.targetId, { placed: true });
         return;
       }
       if (action.targetId === "living-room-chest") {
-        if (timeline !== "past" || !state.inventories.past.includes("living-room-vitrine-letter")) {
+        if (timeline !== "present" || !state.inventories.past.includes("living-room-vitrine-letter")) {
           throw new Error("Primero hay que encontrar la carta de la vitrina.");
         }
-        for (const era of ["past", "present"]) setObjectState(state, era, action.targetId, { locked: false });
+        setObjectState(state, "present", action.targetId, { locked: false });
         return;
       }
       setObjectState(state, timeline, action.targetId, { open: true });
       return;
     case "puzzle.solved":
-      if (action.targetId === "hallway-clock" && timeline !== "past") throw new Error("El reloj se ajusta en el Mundo A.");
-      if (action.targetId === "hallway-maze" && (timeline !== "present" || !state.timelines.past.puzzles["hallway-clock"]?.solved || !state.timelines.present.objects["hallway-maze-mirror"]?.open)) throw new Error("Primero hay que abrir el espejo y resolver el reloj en el Mundo A.");
-      if (action.targetId === "bathroom-hot-water" && timeline !== "past") throw new Error("El agua caliente debe activarse en el Mundo A.");
-      if (action.targetId === "bathroom-sequence" && (timeline !== "present" || !state.timelines.past.puzzles["bathroom-hot-water"]?.solved)) throw new Error("Primero hay que revelar la secuencia en el baño del Mundo A.");
-      if (action.targetId === "bedroom-radio" && (timeline !== "past" || !state.inventories.present.includes("bedroom-radio-note"))) throw new Error("Primero hay que recoger la nota de la radio en el Mundo B.");
-      if (action.targetId === "bedroom-electrical-panel" && (timeline !== "present" || !state.inventories.past.includes("bedroom-electrical-plan"))) throw new Error("Primero hay que recoger el plano eléctrico en el Mundo A.");
-      if (action.targetId === "living-room-rainbow-books" && timeline !== "present") throw new Error("Los libros se ordenan en el Mundo B.");
-      if (action.targetId === "living-room-embers" && (timeline !== "past" || !state.timelines.present.objects["living-room-fireplace"]?.open)) throw new Error("Primero hay que encender la chimenea en el Mundo B.");
-      if (action.targetId === "bedroom-sewing-box" && (timeline !== "past" || !state.timelines.present.puzzles["bedroom-family-photo"]?.solved)) throw new Error("Primero hay que ordenar la foto familiar en el Mundo B.");
-      if (action.targetId === "children-blocks" && timeline !== "past") throw new Error("Los bloques se reconstruyen en el Mundo A.");
+      if (action.targetId === "hallway-clock") {
+        if (timeline !== "past") throw new Error("El reloj se ajusta en el Mamá.");
+        const clockHandIndex = state.inventories.past.indexOf("clock-hand");
+        if (clockHandIndex !== -1) state.inventories.past.splice(clockHandIndex, 1);
+      }
+      if (action.targetId === "hallway-maze" && (timeline !== "present" || !state.timelines.past.puzzles["hallway-clock"]?.solved || !state.timelines.present.objects["hallway-maze-mirror"]?.open)) throw new Error("Primero hay que abrir el espejo y resolver el reloj en el Mamá.");
+      if (action.targetId === "bathroom-hot-water" && timeline !== "past") throw new Error("El agua caliente debe activarse en el Mamá.");
+      if (action.targetId === "bathroom-sequence" && (timeline !== "present" || !state.timelines.past.puzzles["bathroom-hot-water"]?.solved)) throw new Error("Primero hay que revelar la secuencia en el baño del Mamá.");
+      if (action.targetId === "bedroom-radio" && (timeline !== "past" || !state.inventories.present.includes("bedroom-radio-note"))) throw new Error("Primero hay que recoger la nota de la radio en el Papá.");
+      if (action.targetId === "bedroom-radio") {
+        state.inventories.present.splice(state.inventories.present.indexOf("bedroom-radio-note"), 1);
+        const dialIndex = state.inventories.past.indexOf("radio-dial");
+        if (dialIndex !== -1) state.inventories.past.splice(dialIndex, 1);
+      }
+      if (action.targetId === "bedroom-electrical-panel" && (timeline !== "present" || !state.inventories.past.includes("bedroom-electrical-plan"))) throw new Error("Primero hay que recoger el plano eléctrico en el Mamá.");
+      if (action.targetId === "bedroom-electrical-panel") state.inventories.past.splice(state.inventories.past.indexOf("bedroom-electrical-plan"), 1);
+      if (action.targetId === "living-room-rainbow-books" && timeline !== "present") throw new Error("Los libros se ordenan en el Papá.");
+      if (action.targetId === "living-room-embers" && (timeline !== "past" || !state.timelines.present.objects["living-room-fireplace"]?.open)) throw new Error("Primero hay que encender la chimenea en el Papá.");
+      if (action.targetId === "bedroom-sewing-box" && (timeline !== "past" || !state.timelines.present.puzzles["bedroom-family-photo"]?.solved)) throw new Error("Primero hay que ordenar la foto familiar en el Papá.");
+      if (action.targetId === "children-blocks" && timeline !== "past") throw new Error("Los bloques se reconstruyen en el Mamá.");
       if (action.targetId === "children-music-key") {
         const keyIndex = state.inventories.past.indexOf("music-box-key");
         if (timeline !== "past" || !state.timelines.past.puzzles["children-globe"]?.solved || keyIndex === -1) throw new Error("Necesitas la llave escondida detrás del corcho.");
         state.inventories.past.splice(keyIndex, 1);
       }
-      if (action.targetId === "children-music" && (timeline !== "present" || !state.timelines.past.puzzles["children-music-key"]?.solved)) throw new Error("Primero hay que activar la caja musical del Mundo A con su llave.");
+      if (action.targetId === "children-music" && (timeline !== "present" || !state.timelines.past.puzzles["children-music-key"]?.solved)) throw new Error("Primero hay que activar la caja musical del Mamá con su llave.");
       if (action.targetId === "children-globe-pin") {
         const pinIndex = state.inventories.past.indexOf("globe-pushpin");
         if (timeline !== "past" || !state.timelines.past.puzzles["children-blocks"]?.solved || pinIndex === -1) throw new Error("Necesitas la chincheta obtenida al completar los bloques.");
@@ -432,10 +459,10 @@ const reduceAction = (state, player, action) => {
         return;
       }
       if (action.targetId === "final-key-bedroom" && (timeline !== "present" || !state.timelines.past.puzzles["bedroom-radio"]?.solved)) throw new Error("Primero hay que completar la radio.");
-      if (action.targetId === "final-key-living-room" && (timeline !== "present" || state.timelines.past.objects["living-room-chest"]?.locked !== false)) throw new Error("Primero hay que abrir el cofre del salón.");
+      if (action.targetId === "final-key-living-room" && (timeline !== "present" || state.timelines.present.objects["living-room-chest"]?.locked !== false)) throw new Error("Primero hay que abrir el cofre del salón.");
       if (action.targetId === "final-key-children" && (timeline !== "past" || !state.timelines.past.puzzles["children-wardrobe-chains"]?.solved)) throw new Error("Primero hay que cortar las cadenas del armario.");
       if (action.targetId === "final-key-bathroom" && (timeline !== "past" || !state.timelines.present.puzzles["bathroom-mosaic"]?.solved)) throw new Error("Primero hay que completar el mosaico.");
-      if (action.targetId === "flashlight" && timeline !== "present") throw new Error("La linterna solo existe en el Mundo B.");
+      if (action.targetId === "flashlight" && timeline !== "present") throw new Error("La linterna solo existe en el Papá.");
       if (action.targetId === "crowbar" && (timeline !== "past" || !state.timelines.past.puzzles["children-wardrobe-chains"]?.solved)) {
         throw new Error("Primero hay que cortar las cadenas del armario.");
       }
@@ -446,15 +473,16 @@ const reduceAction = (state, player, action) => {
         throw new Error("Primero hay que completar el corcho de fotos.");
       }
       if (action.targetId === "globe-pushpin" && (timeline !== "past" || !state.timelines.past.puzzles["children-blocks"]?.solved)) {
-        throw new Error("Primero hay que completar los bloques del Mundo A.");
+        throw new Error("Primero hay que completar los bloques del Mamá.");
       }
       if (memoryPhotoIds.includes(action.targetId) && timeline !== "past") {
-        throw new Error("Las fotos escondidas solo existen en el Mundo A.");
+        throw new Error("Las fotos escondidas solo existen en el Mamá.");
       }
-      if (action.targetId === "children-photo-order-note" && timeline !== "present") throw new Error("La nota de las fotos está en el Mundo B.");
-      if (action.targetId === "kitchen-recipe-note" && timeline !== "past") throw new Error("La receta está en el Mundo A.");
-      if (["kitchen-tomatoes", "kitchen-carrots", "kitchen-cheese"].includes(action.targetId) && timeline !== "present") throw new Error("Los ingredientes se recogen en el Mundo B.");
-      if (kitchenNapkinIds.includes(action.targetId) && timeline !== "present") throw new Error("Las servilletas se recogen en el Mundo B.");
+      if (action.targetId === "children-photo-order-note" && timeline !== "present") throw new Error("La nota de las fotos está en el Papá.");
+      if (action.targetId === "hallway-maze-note" && timeline !== "past") throw new Error("El plano del laberinto está en el Mamá.");
+      if (action.targetId === "kitchen-recipe-note" && timeline !== "past") throw new Error("La receta está en el Mamá.");
+      if (["kitchen-tomatoes", "kitchen-carrots", "kitchen-cheese"].includes(action.targetId) && timeline !== "present") throw new Error("Los ingredientes se recogen en el Papá.");
+      if (kitchenNapkinIds.includes(action.targetId) && timeline !== "present") throw new Error("Las servilletas se recogen en el Papá.");
       if (action.targetId === "kitchen-napkin-ochre" && !state.timelines.present.puzzles["kitchen-recipe"]?.solved) throw new Error("Primero hay que completar la receta.");
       if (action.targetId === "bathroom-mosaic-tile" && (timeline !== "present" || !state.timelines.past.puzzles["kitchen-oven"]?.solved)) throw new Error("Primero hay que resolver el horno.");
       if (action.targetId === "screwdriver" && (timeline !== "present" || !state.timelines.present.puzzles["bathroom-sequence"]?.solved)) {

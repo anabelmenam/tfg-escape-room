@@ -1,3 +1,5 @@
+const optional = (value) => (value ? [value] : []);
+
 const assembleLivingRoom = ({
   room,
   placeAgainstWall,
@@ -53,7 +55,7 @@ const assembleLivingRoom = ({
       armchair1,
       armchair2,
       table,
-      chest,
+      ...optional(chest),
       fireplace,
       shelf1,
       shelf2,
@@ -67,7 +69,7 @@ const assembleLivingRoom = ({
       ...(fixtures.blueKey ? [fixtures.blueKey] : []),
       ...(door ? [door] : []),
       ...(kitchenDoor ? [kitchenDoor] : []),
-      chest,
+      ...optional(chest),
       ...(lock ? [lock] : []),
       ...(studyKey ? [studyKey] : []),
       ...(finalKey ? [finalKey] : []),
@@ -92,7 +94,7 @@ const assembleLivingRoom = ({
       ...(kitchenDoor ? [kitchenDoor] : []),
       lamp,
       ...(fixtures.blueKey ? [fixtures.blueKey] : []),
-      chest,
+      ...optional(chest),
       ...(lock ? [lock] : []),
       ...(studyKey ? [studyKey] : []),
       ...(finalKey ? [finalKey] : []),

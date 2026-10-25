@@ -93,7 +93,7 @@ const createBedroom = async ({
     revealedSymbols: testMode,
     familyPhoto: testMode,
   };
-  const reportAction = (type, targetId) => onBedroomAction?.(type, targetId);
+  const reportAction = (type, targetId, payload) => onBedroomAction?.(type, targetId, payload);
 
   const fixtures = createBedroomFixtures({
     timeline,

@@ -34,6 +34,7 @@ const createBedroomPowerPuzzles = ({
         rotationY: Math.PI / 2,
         scale: 0.5,
         onFocus,
+        onFuseInserted: () => onAction?.("object.interact", "bedroom-electrical-panel", { operation: "insert-fuse" }),
         onSolved: () => {
           lightSwitch1.setPowerAvailable(true);
           lightSwitch2.setPowerAvailable(true);
@@ -111,8 +112,24 @@ const createBedroomPowerPuzzles = ({
     : null;
 
   const applyState = (state) => {
-    clues.revealedSymbols ||= Boolean(state.timelines?.present?.puzzles?.["bedroom-light-reveal-puzzle"]?.solved);
+    const lightSolved = Boolean(state.timelines?.present?.puzzles?.["bedroom-light-reveal-puzzle"]?.solved);
+    const electricalSolved = Boolean(state.timelines?.present?.puzzles?.["bedroom-electrical-panel"]?.solved);
+    const electricalState = state.timelines?.present?.objects?.["bedroom-electrical-panel"];
+    clues.revealedSymbols ||= lightSolved;
     clues.familyPhoto ||= Boolean(state.timelines?.present?.puzzles?.["bedroom-family-photo"]?.solved);
+    if (lightSolved) {
+      lightRevealPuzzle?.solve({ notify: false });
+      lightRevealPuzzle?.setRevealed(true);
+    }
+    electricalPanel?.applyState({ hasFuse: electricalState?.hasFuse, solved: electricalSolved });
+    if (electricalSolved) {
+      lightSwitch1.setPowerAvailable(true);
+      lightSwitch2.setPowerAvailable(true);
+      deskLamp.setPowerAvailable(true);
+    }
+    if (state.timelines?.present?.objects?.["bedroom-lock"]?.open) desk.unlockDrawer(0);
+    if (state.timelines?.past?.objects?.["bedroom-symbol-safe"]?.open) safe?.open();
+    if (state.timelines?.present?.puzzles?.["bedroom-family-photo"]?.solved) familyPhoto?.solve({ notify: false });
   };
 
   return { lightRevealPuzzle, electricalPanel, lock, alarmClock, safe, familyPhoto, applyState };

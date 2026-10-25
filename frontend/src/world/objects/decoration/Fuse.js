@@ -3,8 +3,9 @@ import { Entity } from "../Entity.js";
 import { tInteraction, tItem } from "../../../translations/index.js";
 
 class Fuse extends Entity {
-  constructor({ id = "fuse", position = new THREE.Vector3(), scale = 1 } = {}) {
+  constructor({ id = "fuse", position = new THREE.Vector3(), scale = 1, onCollect = null } = {}) {
     super(id);
+    this.onCollect = onCollect;
     this.inventoryIcon = "/images/icons/bedroom/fuse.png";
     this.object3D = this.createObject();
     this.object3D.position.copy(position);
@@ -39,6 +40,7 @@ class Fuse extends Entity {
 
     this.object3D.visible = false;
     this.setEnabled(false);
+    this.onCollect?.();
   }
 
   getInteractionText() {

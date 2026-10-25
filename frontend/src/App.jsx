@@ -9,12 +9,15 @@ import { getCurrentAccount, logoutAccount } from "./services/gameApi.js";
 
 const getTestSession = () => {
   const params = new URLSearchParams(window.location.search);
-  const timeline = params.get("test");
-  if (timeline === "icons") return { testMode: true, testPlayerRole: "C", testArea: "icons" };
-  if (timeline === "ending") return { testMode: true, timeline: "present", testArea: "hallway", endingPreview: true };
-  if (!["past", "present"].includes(timeline)) return null;
+  const requestedCharacter = params.get("character");
+  const legacyTest = params.get("test");
+  if (legacyTest === "icons") return { testMode: true, testPlayerRole: "C", testArea: "icons" };
+  if (legacyTest === "ending") return { testMode: true, character: "dad", timeline: "present", testArea: "hallway", endingPreview: true };
+  const character = requestedCharacter ?? (legacyTest === "past" ? "mum" : legacyTest === "present" ? "dad" : null);
+  if (!["mum", "dad"].includes(character)) return null;
+  const timeline = character === "mum" ? "past" : "present";
   const area = params.get("area");
-  return { testMode: true, timeline, testArea: ["hallway", "children", "bathroom", "kitchen"].includes(area) ? area : "bedroom" };
+  return { testMode: true, character, timeline, testArea: ["hallway", "children", "bathroom", "kitchen"].includes(area) ? area : "bedroom" };
 };
 
 const requestedTestSession = getTestSession();
@@ -108,6 +111,7 @@ const App = () => {
     <GameCanvas
       playerRole={session.testPlayerRole ?? (session.timeline === "past" ? "A" : "B")}
       session={session}
+      isAdmin={account?.role === "admin"}
       language={language}
       onLanguageChange={setLanguageState}
       audioController={audioController}

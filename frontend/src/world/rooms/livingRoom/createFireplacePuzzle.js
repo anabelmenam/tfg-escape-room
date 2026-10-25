@@ -135,7 +135,7 @@ const createFireplacePuzzle = ({ timeline, testMode, sofa, armchairs, onAction, 
 
   const applyState = (state) => {
     const cushionState = state.timelines?.present?.objects?.["living-room-sofa-cushion"];
-    if (cushionState?.cut && cushion) {
+    if (timeline === "present" && cushionState?.cut && cushion) {
       cushion.setCut();
       cushion.searched = Boolean(cushionState.searched);
     }

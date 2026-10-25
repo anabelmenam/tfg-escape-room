@@ -88,7 +88,7 @@ const createLevel1 = async ({ playerRole, onSwitchPress, eventManager, onDoorOpe
     level.name = `Level 1-${timeline}`;
     level.add(bedroom.room, hallway.room, livingRoom.room, childrenRoom.room, bathroom.room, kitchen.room);
     const toyBasket = createToyBasket({ aged: false, scale: .92 });
-    toyBasket.position.set(6.1, .02, 7.1);
+    toyBasket.position.set(9.2, .02, -2.2);
     childrenRoom.room.add(toyBasket);
 
     const ambientInteractables = [];
