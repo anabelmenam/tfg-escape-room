@@ -6,35 +6,10 @@ class OvenControlPuzzle extends FocusPuzzle {
   constructor({ character, onFocus, onSolved, canSolve = null }) {
     super("kitchen-oven", { onFocus }); this.character = character; this.onSolved = onSolved; this.canSolve = canSolve; this.values = [0, 0]; this.solution = [3, 2]; this.dials = [];
     this.clueRevealed = false;
-    if (character === "mum") this.createPresentControls();
-    else {
-      this.createPastClue();
-      this.object3D.visible = false;
-    }
+    this.createControls();
     shadows(this.object3D);
   }
-  createPastClue() {
-    const metal = new THREE.MeshStandardMaterial({ color: 0x514b45, metalness: .68, roughness: .48 });
-    this.object3D.add(new THREE.Mesh(new THREE.BoxGeometry(2.46, .49, .1), metal));
-    const valueCanvas = document.createElement("canvas"); valueCanvas.width = 768; valueCanvas.height = 256;
-    const valueContext = valueCanvas.getContext("2d");
-    valueContext.fillStyle = "#101714"; valueContext.fillRect(0, 0, 768, 256);
-    valueContext.strokeStyle = "#65716b"; valueContext.lineWidth = 10; valueContext.strokeRect(10, 10, 748, 236);
-    valueContext.textAlign = "center"; valueContext.fillStyle = "#e5ffe8";
-    valueContext.font = "bold 78px sans-serif"; valueContext.fillText("180 °C", 205, 153); valueContext.fillText("35 min", 570, 153);
-    this.valueTexture = new THREE.CanvasTexture(valueCanvas); this.valueTexture.colorSpace = THREE.SRGBColorSpace;
-    this.valueMaterial = new THREE.MeshStandardMaterial({
-      map: this.valueTexture,
-      emissive: 0xb8ffc3,
-      emissiveMap: this.valueTexture,
-      emissiveIntensity: 0,
-      roughness: .38,
-    });
-    const illuminatedValues = new THREE.Mesh(new THREE.PlaneGeometry(1.82, .34), this.valueMaterial);
-    illuminatedValues.position.set(0, 0, .061);
-    this.object3D.add(illuminatedValues);
-  }
-  createPresentControls() {
+  createControls() {
     this.object3D.add(new THREE.Mesh(new THREE.BoxGeometry(2.46, .49, .1), new THREE.MeshStandardMaterial({ color: 0x454b4b, metalness: .55, roughness: .4 })));
     [-.88, .88].forEach((x, index) => {
       const dial = new THREE.Group(); dial.position.set(x, 0, .1);
@@ -48,9 +23,19 @@ class OvenControlPuzzle extends FocusPuzzle {
   }
   updateDisplay() {
     if (!this.displayCanvas) return; const context = this.displayCanvas.getContext("2d");
-    context.fillStyle = "#162520"; context.fillRect(0, 0, 768, 256); context.textAlign = "center"; context.fillStyle = "#a5c5ae"; context.font = "36px sans-serif"; context.fillText("TEMPERATURA", 190, 62); context.fillText("TEMPORIZADOR", 570, 62); context.fillStyle = "#e1efdf"; context.font = "bold 68px sans-serif"; context.fillText(`${[120, 140, 160, 180, 200][this.values[0]]} °C`, 190, 164); context.fillText(`${[15, 25, 35, 45, 55][this.values[1]]} min`, 570, 164); this.texture.needsUpdate = true;
+    context.fillStyle = "#162520"; context.fillRect(0, 0, 768, 256); context.textAlign = "center"; context.fillStyle = "#a5c5ae"; context.font = "36px sans-serif"; context.fillText("TEMPERATURA", 190, 62); context.fillText("TEMPORIZADOR", 570, 62);
+    if (this.character === "mum" || this.clueRevealed) {
+      const values = this.character === "dad" ? this.solution : this.values;
+      context.fillStyle = "#e1efdf"; context.font = "bold 68px sans-serif"; context.fillText(`${[120, 140, 160, 180, 200][values[0]]} °C`, 190, 164); context.fillText(`${[15, 25, 35, 45, 55][values[1]]} min`, 570, 164);
+    }
+    this.texture.needsUpdate = true;
   }
-  revealClue() { if (this.character !== "dad" || this.clueRevealed) return; this.clueRevealed = true; this.object3D.visible = true; this.valueMaterial.emissiveIntensity = 1.35; this.setAvailable(true); }
+  revealClue() {
+    if (this.character !== "dad" || this.clueRevealed) return;
+    this.clueRevealed = true;
+    this.dials.forEach((dial, index) => { dial.rotation.z = -this.solution[index] * Math.PI * .4; });
+    this.updateDisplay(); this.setAvailable(true);
+  }
   interact() { if (this.available && !this.isSolved) this.onFocus?.(this); }
   handleControl(control) { if (this.character !== "mum" || !this.available || this.isSolved || control?.kind !== "oven-dial") return; const index = control.value; this.values[index] = (this.values[index] + 1) % 5; this.dials[index].rotation.z = -this.values[index] * Math.PI * .4; this.updateDisplay(); this.trySolve(); }
   trySolve() { if (!this.isSolved && this.values.every((value, position) => value === this.solution[position]) && (this.canSolve?.() ?? true)) this.solve(); }
@@ -58,7 +43,7 @@ class OvenControlPuzzle extends FocusPuzzle {
   getInteractionText() { if (!this.available || this.isSolved) return null; return tInteraction("examine", tItem(this.character === "dad" ? "oven-indicator" : "oven-controls")); }
   getFocusPosition() { this.object3D.updateWorldMatrix(true, false); return this.object3D.localToWorld(this.character === "dad" ? new THREE.Vector3(0, 1.8, 3.5) : new THREE.Vector3(0, .3, 3)); }
   getLookAtPosition() { this.object3D.updateWorldMatrix(true, false); return this.object3D.localToWorld(new THREE.Vector3()); }
-  dispose() { this.texture?.dispose(); this.valueTexture?.dispose(); this.valueMaterial?.dispose(); }
+  dispose() { this.texture?.dispose(); }
 }
 
 export { OvenControlPuzzle };

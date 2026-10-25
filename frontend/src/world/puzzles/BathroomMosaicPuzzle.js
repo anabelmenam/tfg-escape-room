@@ -13,35 +13,22 @@ class BathroomMosaicPuzzle extends Entity {
     super("bathroom-mosaic");
     this.character = character; this.onFocus = onFocus; this.onSolved = onSolved; this.onInsert = onInsert;
     this.available = true; this.isSolved = false; this.tileInserted = character === "mum";
-    this.selectedTile = null; this.animations = [];
+    this.selectedTile = null; this.animations = []; this.flipAnimation = null;
     this.order = character === "mum" ? [...CORRECT_ORDER] : [...SCRAMBLED_ORDER];
     this.tiles = new Map(); this.object3D = new THREE.Group(); this.object3D.name = this.id;
+    this.panel = new THREE.Group(); this.panel.name = "bathroom-mosaic-panel"; this.object3D.add(this.panel);
+    this.rearMount = new THREE.Group(); this.rearMount.name = "bathroom-mosaic-rear"; this.rearMount.position.z = -.18; this.panel.add(this.rearMount);
     this.slotPositions = CORRECT_ORDER.map((index) => new THREE.Vector3((index % 3 - 1) * 1.22, (1 - Math.floor(index / 3)) * 1.22, .1));
 
     CORRECT_ORDER.forEach((tileId) => {
       const tile = new THREE.Group(); tile.name = `bathroom-tile-${tileId}`; tile.userData.tileId = tileId;
       tile.add(createTile({ tileId, size: 1.13, depth: .1 }));
       markBathroomControl(tile, { kind: "mosaic-tile", value: tileId });
-      this.tiles.set(tileId, tile); this.object3D.add(tile);
+      this.tiles.set(tileId, tile); this.panel.add(tile);
     });
     this.applyOrder(this.order);
     if (character === "dad") this.tiles.get(MISSING_TILE_ID).visible = false;
 
-    this.compartment = new THREE.Group();
-    const recessMaterial = new THREE.MeshStandardMaterial({ color: 0x27231e, roughness: .92 });
-    const liningMaterial = new THREE.MeshStandardMaterial({ color: 0x8d744d, roughness: .8 });
-    const back = new THREE.Mesh(new THREE.BoxGeometry(1.12, 1.12, .08), recessMaterial);
-    back.position.z = -.52;
-    const top = new THREE.Mesh(new THREE.BoxGeometry(1.28, .1, .68), liningMaterial);
-    const bottom = top.clone();
-    top.position.set(0, .61, -.2); bottom.position.set(0, -.61, -.2);
-    const left = new THREE.Mesh(new THREE.BoxGeometry(.1, 1.12, .68), liningMaterial);
-    const right = left.clone();
-    left.position.set(-.61, 0, -.2); right.position.set(.61, 0, -.2);
-    this.compartment.add(back, top, bottom, left, right);
-    this.compartment.position.set(0, 0, .02);
-    this.compartment.visible = false;
-    this.object3D.add(this.compartment);
     finishBathroomObject(this.object3D);
   }
 
@@ -71,13 +58,21 @@ class BathroomMosaicPuzzle extends Entity {
   }
   animateTile(tile, target) { this.animations.push({ tile, from: tile.position.clone(), to: target.clone(), elapsed: 0, duration: .42 }); }
   update(deltaTime) {
-    if (!this.animations.length) return;
-    this.animations.forEach((animation) => {
-      animation.elapsed += deltaTime; const progress = Math.min(animation.elapsed / animation.duration, 1); const eased = progress * progress * (3 - 2 * progress);
-      animation.tile.position.lerpVectors(animation.from, animation.to, eased); animation.tile.position.z += Math.sin(progress * Math.PI) * .22;
-    });
-    this.animations = this.animations.filter((animation) => animation.elapsed < animation.duration);
-    if (!this.animations.length && this.order.every((tileId, index) => tileId === CORRECT_ORDER[index])) this.solve();
+    if (this.animations.length) {
+      this.animations.forEach((animation) => {
+        animation.elapsed += deltaTime; const progress = Math.min(animation.elapsed / animation.duration, 1); const eased = progress * progress * (3 - 2 * progress);
+        animation.tile.position.lerpVectors(animation.from, animation.to, eased); animation.tile.position.z += Math.sin(progress * Math.PI) * .22;
+      });
+      this.animations = this.animations.filter((animation) => animation.elapsed < animation.duration);
+      if (!this.animations.length && this.order.every((tileId, index) => tileId === CORRECT_ORDER[index])) this.solve();
+    }
+    if (this.flipAnimation) {
+      this.flipAnimation.elapsed += deltaTime;
+      const progress = Math.min(this.flipAnimation.elapsed / this.flipAnimation.duration, 1);
+      const eased = progress * progress * (3 - 2 * progress);
+      this.panel.rotation.y = THREE.MathUtils.lerp(this.flipAnimation.from, Math.PI, eased);
+      if (progress >= 1) this.flipAnimation = null;
+    }
   }
   applyOrder(order) {
     order.forEach((tileId, slot) => { if (tileId !== null) this.tiles.get(tileId).position.copy(this.slotPositions[slot]); });
@@ -86,19 +81,13 @@ class BathroomMosaicPuzzle extends Entity {
     if (this.isSolved) return;
     this.isSolved = true; this.tileInserted = true; this.order = [...CORRECT_ORDER];
     this.tiles.forEach((tile, tileId) => { tile.visible = true; tile.position.copy(this.slotPositions[tileId]); });
-    if (this.character === "dad") this.revealCompartment({ animate: notify });
+    if (this.character === "dad") this.turnPanel({ animate: notify });
     if (notify) this.onSolved?.();
   }
-  revealCompartment({ animate = false } = {}) {
-    if (this.compartment.visible && !animate) return;
-    const center = this.tiles.get(4);
-    center.position.copy(this.slotPositions[4]);
-    this.compartment.visible = true;
-    const target = this.slotPositions[4].clone();
-    target.x -= 1.42;
-    target.z += .28;
-    if (animate) this.animateTile(center, target);
-    else center.position.copy(target);
+  turnPanel({ animate = false } = {}) {
+    if (this.panel.rotation.y === Math.PI && !animate) return;
+    if (animate) this.flipAnimation = { from: this.panel.rotation.y, elapsed: 0, duration: 1.05 };
+    else { this.flipAnimation = null; this.panel.rotation.y = Math.PI; }
   }
   setFocused() {}
   getInteractionText(player) {

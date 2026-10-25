@@ -29,11 +29,7 @@ const createKitchenAppliancePuzzles = ({ character, testMode, furniture, onFocus
       onAction?.("puzzle.solved", "kitchen-oven");
     },
   });
-  if (character === "mum") ovenControls.object3D.position.set(0, 4.68, 1.49);
-  else {
-    ovenControls.object3D.position.set(0, 4.68, 1.49);
-    ovenControls.object3D.scale.setScalar(.8);
-  }
+  ovenControls.object3D.position.set(0, 4.68, 1.49);
   oven.object3D.add(ovenControls.object3D);
   if (character === "dad") stove.setAvailable(true);
   if (character === "mum") ovenControls.setAvailable(true);
