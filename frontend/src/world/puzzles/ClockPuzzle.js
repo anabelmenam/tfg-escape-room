@@ -4,8 +4,8 @@ import { tInteraction, tItem } from "../../translations/index.js";
 const CLOCK_SOLUTION = Object.freeze({ hour: 8, minute: 20 });
 
 class ClockPuzzle extends WallClock {
-  constructor({ timeline = "present", onFocus = null, onSolved = null, ...options } = {}) {
-    const isPast = timeline === "past";
+  constructor({ character = "dad", onFocus = null, onSolved = null, ...options } = {}) {
+    const isPast = character === "mum";
     const solutionSlot = CLOCK_SOLUTION.hour * 12 + CLOCK_SOLUTION.minute / 5;
     const randomSlot = isPast ? Math.floor(Math.random() * 143) : solutionSlot;
     const initialSlot = isPast && randomSlot >= solutionSlot ? randomSlot + 1 : randomSlot;

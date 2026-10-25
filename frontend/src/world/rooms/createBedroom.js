@@ -8,8 +8,8 @@ import { createBedroomRadioPuzzle } from "./bedroom/createBedroomRadioPuzzle.js"
 import { createBedroomPowerPuzzles } from "./bedroom/createBedroomPowerPuzzles.js";
 import { assembleBedroom } from "./bedroom/assembleBedroom.js";
 
-const bedroomTimelineConfig = {
-  past: {
+const bedroomCharacterConfig = {
+  mum: {
     wallColor: 0xc8b89d,
     floorColor: 0x6a4d3c,
     ceilingColor: 0xb0a18c,
@@ -18,7 +18,7 @@ const bedroomTimelineConfig = {
     carpetColor: 0x762d34,
     ambientLightIntensity: 0.55,
   },
-  present: {
+  dad: {
     wallColor: 0xc8b89d,
     floorColor: 0x6a4d3c,
     ceilingColor: 0xb0a18c,
@@ -30,22 +30,22 @@ const bedroomTimelineConfig = {
 };
 
 const createBedroom = async ({
-  timeline = "present",
+  character = "dad",
   onDoorOpenChange,
   onDoorUnlocked,
   onObjectFocus,
   onBedroomAction = null,
   testMode = false,
 } = {}) => {
-  const timelineConfig = bedroomTimelineConfig[timeline];
+  const characterConfig = bedroomCharacterConfig[character];
 
-  if (!timelineConfig) {
-    throw new Error(`Timeline no válido para Bedroom: ${timeline}`);
+  if (!characterConfig) {
+    throw new Error(`Character no válido para Bedroom: ${character}`);
   }
   const { room, roomColliders, bounds, doorOpening, windowOpenings, placeAgainstWall } = createRoom({
-    wallColor: timelineConfig.wallColor,
-    floorColor: timelineConfig.floorColor,
-    ceilingColor: timelineConfig.ceilingColor,
+    wallColor: characterConfig.wallColor,
+    floorColor: characterConfig.floorColor,
+    ceilingColor: characterConfig.ceilingColor,
     wallTexture: "/textures/rooms/whiteWall.jpg",
     floorTexture: "/textures/rooms/floor2.jpg",
     ceilingTexture: "/textures/rooms/whiteWall.jpg",
@@ -85,8 +85,8 @@ const createBedroom = async ({
     omitWalls: ["front"],
   });
 
-  room.name = `Bedroom-${timeline}`;
-  room.userData.timeline = timeline;
+  room.name = `Bedroom-${character}`;
+  room.userData.character = character;
   const clues = {
     radioNote: testMode,
     electricalPlan: testMode,
@@ -96,9 +96,9 @@ const createBedroom = async ({
   const reportAction = (type, targetId, payload) => onBedroomAction?.(type, targetId, payload);
 
   const fixtures = createBedroomFixtures({
-    timeline,
+    character,
     testMode,
-    timelineConfig,
+    characterConfig,
     doorOpening,
     windowOpenings,
     onDoorOpenChange,
@@ -106,15 +106,15 @@ const createBedroom = async ({
   });
   const { door, lights } = fixtures;
   room.add(...lights);
-  const furniture = createBedroomFurniture({ timeline, timelineConfig });
+  const furniture = createBedroomFurniture({ character, characterConfig });
 
-  const items = createBedroomItems({ timeline, furniture, onAction: reportAction });
+  const items = createBedroomItems({ character, furniture, onAction: reportAction });
   const { flashlight } = items;
 
-  const decor = createBedroomDecor({ timeline, desk: furniture.desk, cabinet: furniture.cabinet });
+  const decor = createBedroomDecor({ character, desk: furniture.desk, cabinet: furniture.cabinet });
 
   const radioPuzzle = createBedroomRadioPuzzle({
-    timeline,
+    character,
     testMode,
     clues,
     furniture,
@@ -123,7 +123,7 @@ const createBedroom = async ({
     onAction: reportAction,
   });
   const powerPuzzles = createBedroomPowerPuzzles({
-    timeline,
+    character,
     testMode,
     clues,
     furniture,
@@ -138,7 +138,7 @@ const createBedroom = async ({
   const assembly = assembleBedroom({
     room,
     placeAgainstWall,
-    timeline,
+    character,
     furniture,
     fixtures,
     decor,
@@ -148,20 +148,26 @@ const createBedroom = async ({
   });
 
   return {
-    timeline,
+    character,
     room,
     roomColliders,
     objectColliders: assembly.objectColliders,
     bounds,
     door,
-    addStoryNote: (object3D) => (timeline === "past" ? furniture.nightstand1 : furniture.nightstand2)
+    addStoryNote: (object3D) => (character === "mum" ? furniture.nightstand1 : furniture.nightstand2)
       .addObjectToDrawer(1, object3D, new THREE.Vector3(0, -.16, -.52)),
     applyBedroomState: (state) => {
       powerPuzzles.applyState(state);
       radioPuzzle.applyState(state);
-      if (flashlight && state.inventories?.present?.includes("flashlight")) {
+      if (flashlight && state.inventories?.dad?.includes("flashlight")) {
         flashlight.object3D.visible = false;
         flashlight.setEnabled(false);
+      }
+      const fuseUsed = Boolean(state.characters?.dad?.objects?.["bedroom-electrical-panel"]?.hasFuse)
+        || Boolean(state.characters?.dad?.puzzles?.["bedroom-electrical-panel"]?.solved);
+      if (items.fuse && (state.inventories?.dad?.includes("fuse") || fuseUsed)) {
+        items.fuse.object3D.visible = false;
+        items.fuse.setEnabled(false);
       }
     },
     doorPassage: {

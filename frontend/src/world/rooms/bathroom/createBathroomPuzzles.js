@@ -6,20 +6,20 @@ import { tInteraction, tItem } from "../../../translations/index.js";
 const createSinkWaterControl = (vanity) => {
   let running = false;
   return {
-    id: "bathroom-present-sink-water", object3D: vanity.faucet, enabled: true,
+    id: "bathroom-dad-sink-water", object3D: vanity.faucet, enabled: true,
     interact: () => { running = !running; vanity.setWaterRunning(running); const lever = vanity.faucet.userData.lever; if (lever) lever.rotation.x = running ? -Math.PI / 5 : 0; },
     getInteractionText: () => running ? tInteraction("turnOff", tItem("tap")) : tInteraction("turnOn", tItem("tap")),
   };
 };
 
-const createBathroomPuzzles = ({ timeline, testMode, vanity, onFocus, onAction }) => {
+const createBathroomPuzzles = ({ character, testMode, vanity, onFocus, onAction }) => {
   let hotWaterClueKnown = testMode;
-  const steam = timeline === "past" ? new BathroomSteamPuzzle({ faucet: vanity.faucet, vanity, onSolved: () => onAction?.("puzzle.solved", "bathroom-hot-water") }) : null;
-  const sinkWaterControl = timeline === "present" ? createSinkWaterControl(vanity) : null;
-  const screwdriver = timeline === "present" ? new Screwdriver({ onCollect: () => onAction?.("item.pickup", "screwdriver") }) : null;
+  const steam = character === "mum" ? new BathroomSteamPuzzle({ faucet: vanity.faucet, vanity, onSolved: () => onAction?.("puzzle.solved", "bathroom-hot-water") }) : null;
+  const sinkWaterControl = character === "dad" ? createSinkWaterControl(vanity) : null;
+  const screwdriver = character === "dad" ? new Screwdriver({ onCollect: () => onAction?.("item.pickup", "screwdriver") }) : null;
   screwdriver?.setEnabled(false);
   if (screwdriver) vanity.addObjectToDrawer(0, screwdriver.object3D, new THREE.Vector3(.45, -.08, -.55));
-  const sequenceLock = timeline === "present" ? new Lock({
+  const sequenceLock = character === "dad" ? new Lock({
     id: "bathroom-sequence-lock", scale: .15, password: STEAM_SEQUENCE, color: 0x263238, metalColor: 0xc4c9c8, wheelColor: 0x111516, onFocus,
     canUnlock: () => hotWaterClueKnown,
     onUnlock: () => { vanity.unlockDrawer(0); screwdriver?.setEnabled(true); onAction?.("puzzle.solved", "bathroom-sequence"); },
@@ -29,25 +29,25 @@ const createBathroomPuzzles = ({ timeline, testMode, vanity, onFocus, onAction }
     sequenceLock.object3D.position.set(0, -.27, 0); sequenceLock.object3D.traverse((child) => { child.userData.ignoreAging = true; });
     vanity.drawerManager.getDrawer(0).add(hanger);
   }
-  const mosaic = new BathroomMosaicPuzzle({ timeline, onFocus, onSolved: () => onAction?.("puzzle.solved", "bathroom-mosaic"), onInsert: () => onAction?.("object.interact", "bathroom-mosaic", { operation: "insert-tile" }) });
+  const mosaic = new BathroomMosaicPuzzle({ character, onFocus, onSolved: () => onAction?.("puzzle.solved", "bathroom-mosaic"), onInsert: () => onAction?.("object.interact", "bathroom-mosaic", { operation: "insert-tile" }) });
   mosaic.object3D.position.set(2.6, 5.4, 4.82); mosaic.object3D.rotation.y = Math.PI; mosaic.object3D.scale.setScalar(.76);
-  const finalKey = timeline === "present" ? new FinalKey({ id: "final-key-bathroom", symbol: "wave", color: 0x4f91ad, onCollect: () => onAction?.("item.pickup", "final-key-bathroom") }) : null;
-  if (finalKey) { finalKey.object3D.position.set(0, 0, .2); finalKey.object3D.scale.setScalar(.3); finalKey.object3D.visible = false; finalKey.setEnabled(false); mosaic.compartment.add(finalKey.object3D); }
+  const finalKey = character === "dad" ? new FinalKey({ id: "final-key-bathroom", symbol: "wave", color: 0x4f91ad, onCollect: () => onAction?.("item.pickup", "final-key-bathroom") }) : null;
+  if (finalKey) { finalKey.object3D.position.set(0, 0, -.3); finalKey.object3D.scale.setScalar(.3); finalKey.object3D.visible = false; finalKey.setEnabled(false); mosaic.compartment.add(finalKey.object3D); }
   if (testMode && screwdriver) { screwdriver.object3D.visible = true; screwdriver.setEnabled(true); }
 
   const applyState = (state) => {
-    hotWaterClueKnown = Boolean(state.timelines?.past?.puzzles?.["bathroom-hot-water"]?.solved) || testMode;
-    if (hotWaterClueKnown && timeline === "past") steam?.activate({ notify: false });
+    hotWaterClueKnown = Boolean(state.characters?.mum?.puzzles?.["bathroom-hot-water"]?.solved) || testMode;
+    if (hotWaterClueKnown && character === "mum") steam?.activate({ notify: false });
     if (hotWaterClueKnown) sequenceLock?.checkCombination();
-    if (state.timelines?.present?.puzzles?.["bathroom-sequence"]?.solved && timeline === "present") { sequenceLock?.setUnlocked(); vanity.unlockDrawer(0); screwdriver?.setEnabled(true); }
-    if (screwdriver && state.inventories?.present?.includes("screwdriver")) { screwdriver.object3D.visible = false; screwdriver.setEnabled(false); }
-    const mosaicState = state.timelines?.present?.puzzles?.["bathroom-mosaic"];
-    if (mosaicState?.tileInserted && timeline === "present") mosaic.insertMissingTile();
+    if (state.characters?.dad?.puzzles?.["bathroom-sequence"]?.solved && character === "dad") { sequenceLock?.setUnlocked(); vanity.unlockDrawer(0); screwdriver?.setEnabled(true); }
+    if (screwdriver && state.inventories?.dad?.includes("screwdriver")) { screwdriver.object3D.visible = false; screwdriver.setEnabled(false); }
+    const mosaicState = state.characters?.dad?.puzzles?.["bathroom-mosaic"];
+    if (mosaicState?.tileInserted && character === "dad") mosaic.insertMissingTile();
     if (mosaicState?.solved) {
-      if (timeline === "present") {
+      if (character === "dad") {
         mosaic.solve({ notify: false });
         mosaic.revealCompartment();
-        const unavailable = state.inventories?.present?.includes("final-key-bathroom") || ["past", "present"].some((era) => state.timelines?.[era]?.objects?.["final-bolt-bathroom"]?.unlocked);
+        const unavailable = state.inventories?.dad?.includes("final-key-bathroom") || ["mum", "dad"].some((era) => state.characters?.[era]?.objects?.["final-bolt-bathroom"]?.unlocked);
         if (!unavailable) finalKey?.reveal();
         else if (finalKey) { finalKey.object3D.visible = false; finalKey.setEnabled(false); }
       }

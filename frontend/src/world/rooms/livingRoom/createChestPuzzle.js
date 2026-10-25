@@ -47,8 +47,8 @@ const addCombinationLockHasp = (chest) => {
   });
 };
 
-const createChestPuzzle = ({ timeline, testMode, shelf, woodStyle, hasLetter, onAction, onFocus }) => {
-  const chest = timeline === "present" ? new Chest({
+const createChestPuzzle = ({ character, testMode, shelf, woodStyle, hasLetter, onAction, onFocus }) => {
+  const chest = character === "dad" ? new Chest({
     id: "living-room-chest",
     position: new THREE.Vector3(17, 2, 12),
     scale: 1,
@@ -60,8 +60,8 @@ const createChestPuzzle = ({ timeline, testMode, shelf, woodStyle, hasLetter, on
   }) : null;
   if (chest) addCombinationLockHasp(chest);
 
-  const studyKey = timeline === "present" ? new Key({ id: "study-key", color: 0xb07c32, scalar: 1.45 }) : null;
-  const finalKey = timeline === "present"
+  const studyKey = character === "dad" ? new Key({ id: "study-key", color: 0xb07c32, scalar: 1.45 }) : null;
+  const finalKey = character === "dad"
     ? new FinalKey({
         id: "final-key-living-room",
         symbol: "flame",
@@ -91,7 +91,7 @@ const createChestPuzzle = ({ timeline, testMode, shelf, woodStyle, hasLetter, on
     chest.addItem(studyKey, { position: new THREE.Vector3(.18, .22, 0), scale: 1.2, visible: false });
   }
 
-  const lock = timeline === "present"
+  const lock = character === "dad"
     ? new Lock({
         id: "living-room-chest-lock",
         position: new THREE.Vector3(0, .405, .61),
@@ -118,22 +118,22 @@ const createChestPuzzle = ({ timeline, testMode, shelf, woodStyle, hasLetter, on
   if (chest) shelf.addToShelf(chest.object3D, { shelf: 1, x: 0, z: 2, placeOnSurface: false });
 
   const applyState = (state) => {
-    const chestState = state.timelines?.present?.objects?.["living-room-chest"];
+    const chestState = state.characters?.dad?.objects?.["living-room-chest"];
     if (chest && chestState?.locked === false) {
       finalKeyEarned = true;
       chest.unlock();
       lock?.setUnlocked();
     }
     if (finalKey) {
-      finalKeyUnavailable = state.inventories?.present?.includes("final-key-living-room")
-        || ["past", "present"].some((era) => state.timelines?.[era]?.objects?.["final-bolt-living-room"]?.unlocked);
+      finalKeyUnavailable = state.inventories?.dad?.includes("final-key-living-room")
+        || ["mum", "dad"].some((era) => state.characters?.[era]?.objects?.["final-bolt-living-room"]?.unlocked);
       if (finalKeyUnavailable) {
         finalKey.object3D.visible = false;
         finalKey.setEnabled(false);
       }
     }
-    const childrenRoomDoorUnlocked = state.timelines?.present?.objects?.["hallway-children-room-door"]?.locked === false;
-    if (studyKey && (state.inventories?.[timeline]?.includes("study-key") || childrenRoomDoorUnlocked)) {
+    const childrenRoomDoorUnlocked = state.characters?.dad?.objects?.["hallway-children-room-door"]?.locked === false;
+    if (studyKey && (state.inventories?.[character]?.includes("study-key") || childrenRoomDoorUnlocked)) {
       studyKeyUnavailable = true;
       studyKey.object3D.visible = false;
       studyKey.setEnabled(false);

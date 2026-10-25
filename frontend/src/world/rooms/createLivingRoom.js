@@ -10,7 +10,7 @@ import { createLivingRoomFixtures } from "./livingRoom/createLivingRoomFixtures.
 import { assembleLivingRoom } from "./livingRoom/assembleLivingRoom.js";
 
 const createLivingRoom = async ({
-  timeline = "past",
+  character = "mum",
   onSwitchPress,
   eventManager,
   onDoorOpenChange,
@@ -43,8 +43,8 @@ const createLivingRoom = async ({
     },
     door: entrance ? null : { wall: "front", position: 0, width: 5, height: 8 },
     windows: [
-      { id: `living-room-${timeline}-window-1`, wall: "front", position: -6.5, width: 5.5, height: 6, bottom: 3.3 },
-      { id: `living-room-${timeline}-window-2`, wall: "front", position: 6.5, width: 5.5, height: 6, bottom: 3.3 },
+      { id: `living-room-${character}-window-1`, wall: "front", position: -6.5, width: 5.5, height: 6, bottom: 3.3 },
+      { id: `living-room-${character}-window-2`, wall: "front", position: 6.5, width: 5.5, height: 6, bottom: 3.3 },
     ],
     passages: [entrance, kitchenEntrance].filter(Boolean),
     omitWalls: entrance ? [entrance.wall] : [],
@@ -52,7 +52,7 @@ const createLivingRoom = async ({
 
   room.name = "Living Room";
   const fixtures = createLivingRoomFixtures({
-    timeline,
+    character,
     testMode,
     entrance,
     kitchenEntrance,
@@ -78,7 +78,7 @@ const createLivingRoom = async ({
   } = furniture;
 
   const fireplacePuzzle = createFireplacePuzzle({
-    timeline,
+    character,
     testMode,
     sofa,
     armchairs: [armchair1, armchair2],
@@ -95,7 +95,7 @@ const createLivingRoom = async ({
   });
 
   const chestPuzzle = createChestPuzzle({
-    timeline,
+    character,
     testMode,
     shelf: shelf2,
     woodStyle,
@@ -104,7 +104,7 @@ const createLivingRoom = async ({
     onFocus: onObjectFocus,
   });
   const paintingPuzzle = createShelfPaintingPuzzle({
-    timeline,
+    character,
     testMode,
     shelf: shelf1,
     table: table1,
@@ -114,7 +114,7 @@ const createLivingRoom = async ({
   const assembly = assembleLivingRoom({
     room,
     placeAgainstWall,
-    timeline,
+    character,
     fixtures,
     furniture,
     decor,
@@ -130,7 +130,7 @@ const createLivingRoom = async ({
     objectColliders: assembly.objectColliders,
     bounds,
     door,
-    addStoryNote: (object3D) => cabinet.addObjectToDrawer(timeline === "past" ? 5 : 4, object3D, new THREE.Vector3(0, -.16, -.52)),
+    addStoryNote: (object3D) => cabinet.addObjectToDrawer(character === "mum" ? 5 : 4, object3D, new THREE.Vector3(0, -.16, -.52)),
     doorPassage: doorOpening
       ? {
           minX: doorOpening.position.x - doorOpening.width / 2,

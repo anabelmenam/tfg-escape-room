@@ -9,13 +9,13 @@ import { createKitchenFoodPuzzles } from "./kitchen/createKitchenFoodPuzzles.js"
 import { assembleKitchen } from "./kitchen/assembleKitchen.js";
 
 const createKitchen = ({
-  timeline = "present",
+  character = "dad",
   onObjectFocus = null,
   onKitchenAction = null,
   testMode = false,
 } = {}) => {
-  const config = kitchenConfig[timeline];
-  if (!config) throw new Error(`Timeline no válido para Kitchen: ${timeline}`);
+  const config = kitchenConfig[character];
+  if (!config) throw new Error(`Character no válido para Kitchen: ${character}`);
   const { width, depth, height } = kitchenDimensions;
   const { room, roomColliders, bounds, windowOpenings, placeAgainstWall } = createRoom({
     width,
@@ -37,26 +37,26 @@ const createKitchen = ({
     ],
     omitWalls: ["back", "left"],
     windows: [
-      { id: `kitchen-${timeline}-window`, wall: "front", position: 0, width: 8, height: 6, bottom: 3.2 },
-      { id: `kitchen-${timeline}-sink-window`, wall: "right", position: -2.1, width: 5.4, height: 6, bottom: 3.2 },
+      { id: `kitchen-${character}-window`, wall: "front", position: 0, width: 8, height: 6, bottom: 3.2 },
+      { id: `kitchen-${character}-sink-window`, wall: "right", position: -2.1, width: 5.4, height: 6, bottom: 3.2 },
     ],
   });
-  room.name = `Kitchen-${timeline}`;
-  room.userData.timeline = timeline;
+  room.name = `Kitchen-${character}`;
+  room.userData.character = character;
 
   const reportAction = (type, targetId, payload) => onKitchenAction?.(type, targetId, payload);
-  const fixtures = createKitchenFixtures({ timeline, config, dimensions: kitchenDimensions, windowOpenings });
-  const furniture = createKitchenFurniture({ timeline, config });
-  const decor = createKitchenDecor({ timeline, depth, furniture });
+  const fixtures = createKitchenFixtures({ character, config, dimensions: kitchenDimensions, windowOpenings });
+  const furniture = createKitchenFurniture({ character, config });
+  const decor = createKitchenDecor({ character, depth, furniture });
   const appliancePuzzles = createKitchenAppliancePuzzles({
-    timeline,
+    character,
     testMode,
     furniture,
     onFocus: onObjectFocus,
     onAction: reportAction,
   });
   const foodPuzzles = createKitchenFoodPuzzles({
-    timeline,
+    character,
     testMode,
     furniture,
     appliancePuzzles,
@@ -86,7 +86,7 @@ const createKitchen = ({
       appliancePuzzles.applyState(state);
     },
     addStoryNote: (object3D) => {
-      if (timeline === "past") return furniture.smallCounter.addObjectToDrawer(0, object3D, new THREE.Vector3(0, -.12, -.58));
+      if (character === "mum") return furniture.smallCounter.addObjectToDrawer(0, object3D, new THREE.Vector3(0, -.12, -.58));
       object3D.position.set(0, 4.86, -.05);
       furniture.secondTallCabinet.object3D.add(object3D);
       return true;

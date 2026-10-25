@@ -1,12 +1,12 @@
 import * as THREE from "three";
 import { MosaicTile, OvenControlPuzzle, StovePuzzle } from "../../puzzles/index.js";
 
-const createKitchenAppliancePuzzles = ({ timeline, testMode, furniture, onFocus, onAction }) => {
+const createKitchenAppliancePuzzles = ({ character, testMode, furniture, onFocus, onAction }) => {
   const { cooktopCounter, oven } = furniture;
   let tableSolved = testMode;
   let stoveSolved = testMode;
   const stove = new StovePuzzle({
-    timeline,
+    character,
     onFocus,
     canSolve: () => tableSolved,
     onSolved: () => {
@@ -21,25 +21,25 @@ const createKitchenAppliancePuzzles = ({ timeline, testMode, furniture, onFocus,
   cooktopCounter.object3D.add(stove.object3D);
 
   const ovenControls = new OvenControlPuzzle({
-    timeline,
+    character,
     onFocus,
     canSolve: () => stoveSolved,
     onSolved: () => {
-      if (timeline === "past" && ovenDoor) ovenDoor.enabled = true;
+      if (character === "mum" && ovenDoor) ovenDoor.enabled = true;
       onAction?.("puzzle.solved", "kitchen-oven");
     },
   });
-  if (timeline === "past") ovenControls.object3D.position.set(0, 4.68, 1.49);
+  if (character === "mum") ovenControls.object3D.position.set(0, 4.68, 1.49);
   else {
     ovenControls.object3D.position.set(0, 4.68, 1.49);
     ovenControls.object3D.scale.setScalar(.8);
   }
   oven.object3D.add(ovenControls.object3D);
-  if (timeline === "present") stove.setAvailable(true);
-  if (timeline === "past") ovenControls.setAvailable(true);
+  if (character === "dad") stove.setAvailable(true);
+  if (character === "mum") ovenControls.setAvailable(true);
 
   let tileTaken = false;
-  const mosaicTile = timeline === "present"
+  const mosaicTile = character === "dad"
     ? new MosaicTile({
         onCollect: () => {
           tileTaken = true;
@@ -58,7 +58,7 @@ const createKitchenAppliancePuzzles = ({ timeline, testMode, furniture, onFocus,
   const ovenDoor = oven.getInteractables().find((item) => item.id.endsWith("-oven-panel-1"));
   if (ovenDoor) ovenDoor.enabled = false;
   const openOvenWithReward = () => {
-    if (timeline !== "present") return;
+    if (character !== "dad") return;
     const doorState = oven.panelManager.states[1];
     if (doorState && !doorState.isOpen) oven.panelManager.toggle(1);
     if (mosaicTile && !tileTaken) mosaicTile.reveal();
@@ -72,25 +72,25 @@ const createKitchenAppliancePuzzles = ({ timeline, testMode, furniture, onFocus,
   }
 
   const applyState = (state) => {
-    tableSolved = Boolean(state.timelines?.present?.puzzles?.["kitchen-family-table"]?.solved) || testMode;
+    tableSolved = Boolean(state.characters?.dad?.puzzles?.["kitchen-family-table"]?.solved) || testMode;
     stove.trySolve();
-    stoveSolved = Boolean(state.timelines?.present?.puzzles?.["kitchen-stove"]?.solved) || testMode;
+    stoveSolved = Boolean(state.characters?.dad?.puzzles?.["kitchen-stove"]?.solved) || testMode;
     if (stoveSolved) {
-      if (timeline === "present") stove.solve({ notify: false });
+      if (character === "dad") stove.solve({ notify: false });
       ovenControls.setAvailable(true);
-      if (timeline === "present") ovenControls.revealClue();
+      if (character === "dad") ovenControls.revealClue();
     }
     ovenControls.trySolve();
-    const ovenSolved = Boolean(state.timelines?.past?.puzzles?.["kitchen-oven"]?.solved);
+    const ovenSolved = Boolean(state.characters?.mum?.puzzles?.["kitchen-oven"]?.solved);
     if (ovenSolved) {
-      if (timeline === "past") {
+      if (character === "mum") {
         ovenControls.solve({ notify: false });
         if (ovenDoor) ovenDoor.enabled = true;
       }
       openOvenWithReward();
     }
-    if (mosaicTile && (state.inventories?.present?.includes("bathroom-mosaic-tile")
-      || state.timelines?.present?.puzzles?.["bathroom-mosaic"]?.tileInserted)) {
+    if (mosaicTile && (state.inventories?.dad?.includes("bathroom-mosaic-tile")
+      || state.characters?.dad?.puzzles?.["bathroom-mosaic"]?.tileInserted)) {
       tileTaken = true;
       mosaicTile.object3D.visible = false;
       mosaicTile.setEnabled(false);

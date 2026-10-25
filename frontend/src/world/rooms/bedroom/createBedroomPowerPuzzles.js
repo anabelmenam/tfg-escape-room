@@ -3,7 +3,7 @@ import { AlarmClock, Lock, Safe } from "../../objects/index.js";
 import { ElectricalPanelPuzzle, FamilyPhotoPuzzle, LightRevealPuzzle } from "../../puzzles/index.js";
 
 const createBedroomPowerPuzzles = ({
-  timeline,
+  character,
   testMode,
   clues,
   furniture,
@@ -16,7 +16,7 @@ const createBedroomPowerPuzzles = ({
   const { desk } = furniture;
   const { lightSwitch1, lightSwitch2 } = fixtures;
   const { deskLamp, deskPaper } = decor;
-  const lightRevealPuzzle = timeline === "present"
+  const lightRevealPuzzle = character === "dad"
     ? new LightRevealPuzzle({
         id: "bedroom-light-reveal-puzzle",
         deskLamp,
@@ -27,7 +27,7 @@ const createBedroomPowerPuzzles = ({
         },
       })
     : null;
-  const electricalPanel = timeline === "present"
+  const electricalPanel = character === "dad"
     ? new ElectricalPanelPuzzle({
         id: "electrical-panel",
         position: new THREE.Vector3(-7.5, 5.5, 10),
@@ -52,7 +52,7 @@ const createBedroomPowerPuzzles = ({
     lightSwitch2.setPowerAvailable(true);
   }
 
-  const lock = timeline === "present"
+  const lock = character === "dad"
     ? new Lock({
         id: "bedroom-lock",
         position: new THREE.Vector3(4.95, 2.3, 6.6),
@@ -75,9 +75,9 @@ const createBedroomPowerPuzzles = ({
     rotationY: -Math.PI / 5,
     scale: 0.55,
     time: "03:28",
-    isBroken: timeline === "present",
+    isBroken: character === "dad",
   });
-  const safe = timeline === "past"
+  const safe = character === "mum"
     ? new Safe({
         id: "bedroom-symbol-safe",
         position: new THREE.Vector3(7, 2.5, -1.5),
@@ -100,7 +100,7 @@ const createBedroomPowerPuzzles = ({
       scale: 1,
     });
   }
-  const familyPhoto = timeline === "present"
+  const familyPhoto = character === "dad"
     ? new FamilyPhotoPuzzle({
         id: "bedroom-family-photo",
         position: new THREE.Vector3(7.92, 6, 2.5),
@@ -112,11 +112,11 @@ const createBedroomPowerPuzzles = ({
     : null;
 
   const applyState = (state) => {
-    const lightSolved = Boolean(state.timelines?.present?.puzzles?.["bedroom-light-reveal-puzzle"]?.solved);
-    const electricalSolved = Boolean(state.timelines?.present?.puzzles?.["bedroom-electrical-panel"]?.solved);
-    const electricalState = state.timelines?.present?.objects?.["bedroom-electrical-panel"];
+    const lightSolved = Boolean(state.characters?.dad?.puzzles?.["bedroom-light-reveal-puzzle"]?.solved);
+    const electricalSolved = Boolean(state.characters?.dad?.puzzles?.["bedroom-electrical-panel"]?.solved);
+    const electricalState = state.characters?.dad?.objects?.["bedroom-electrical-panel"];
     clues.revealedSymbols ||= lightSolved;
-    clues.familyPhoto ||= Boolean(state.timelines?.present?.puzzles?.["bedroom-family-photo"]?.solved);
+    clues.familyPhoto ||= Boolean(state.characters?.dad?.puzzles?.["bedroom-family-photo"]?.solved);
     if (lightSolved) {
       lightRevealPuzzle?.solve({ notify: false });
       lightRevealPuzzle?.setRevealed(true);
@@ -128,10 +128,10 @@ const createBedroomPowerPuzzles = ({
       lightSwitch2.setPowerAvailable(true);
       deskLamp.setPowerAvailable(true);
     }
-    if (state.timelines?.present?.objects?.["bedroom-lock"]?.open) desk.unlockDrawer(0);
-    if (state.timelines?.past?.objects?.["bedroom-symbol-safe"]?.open) safe?.open();
+    if (state.characters?.dad?.objects?.["bedroom-lock"]?.open) desk.unlockDrawer(0);
+    if (state.characters?.mum?.objects?.["bedroom-symbol-safe"]?.open) safe?.open();
     else safe?.checkPassword();
-    if (state.timelines?.present?.puzzles?.["bedroom-family-photo"]?.solved) familyPhoto?.solve({ notify: false });
+    if (state.characters?.dad?.puzzles?.["bedroom-family-photo"]?.solved) familyPhoto?.solve({ notify: false });
   };
 
   return { lightRevealPuzzle, electricalPanel, lock, alarmClock, safe, familyPhoto, applyState };

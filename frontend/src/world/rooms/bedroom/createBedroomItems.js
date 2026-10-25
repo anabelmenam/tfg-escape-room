@@ -1,22 +1,22 @@
 import * as THREE from "three";
 import { ClockHand, Flashlight, Fuse, Key, PaintingFragment, RadioDial } from "../../objects/index.js";
 
-const createBedroomItems = ({ timeline, furniture, onAction }) => {
+const createBedroomItems = ({ character, furniture, onAction }) => {
   const { nightstand2, cabinet, desk, wardrobe } = furniture;
-  const key = timeline === "past"
+  const key = character === "mum"
     ? new Key({ id: "bedroom-key", position: new THREE.Vector3(2, 1, -3), onCollect: () => onAction?.("item.pickup", "bedroom-key") })
     : null;
-  const clockHand = timeline === "past" ? new ClockHand({ onCollect: () => onAction?.("item.pickup", "clock-hand") }) : null;
-  const radioDial = timeline === "past" ? new RadioDial({ id: "radio-dial", onCollect: () => onAction?.("item.pickup", "radio-dial") }) : null;
-  const fuse = timeline === "present" ? new Fuse({ id: "fuse", scale: 0.8, onCollect: () => onAction?.("item.pickup", "fuse") }) : null;
-  const flashlight = timeline === "present"
+  const clockHand = character === "mum" ? new ClockHand({ onCollect: () => onAction?.("item.pickup", "clock-hand") }) : null;
+  const radioDial = character === "mum" ? new RadioDial({ id: "radio-dial", onCollect: () => onAction?.("item.pickup", "radio-dial") }) : null;
+  const fuse = character === "dad" ? new Fuse({ id: "fuse", scale: 0.8, onCollect: () => onAction?.("item.pickup", "fuse") }) : null;
+  const flashlight = character === "dad"
     ? new Flashlight({
         id: "flashlight",
         scale: 0.62,
         onCollect: () => onAction?.("item.pickup", "flashlight"),
       })
     : null;
-  const paintingFragments = timeline === "past"
+  const paintingFragments = character === "mum"
     ? [
         new PaintingFragment({ id: "painting-piece-1", index: 0, onCollect: () => onAction?.("item.pickup", "painting-piece-1") }),
         new PaintingFragment({ id: "painting-piece-2", index: 4, onCollect: () => onAction?.("item.pickup", "painting-piece-2") }),

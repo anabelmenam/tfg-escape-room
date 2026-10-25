@@ -7,20 +7,20 @@ const createDoorAtOpening = (opening, options) => new Door({
   rotationY: opening.rotationY,
 });
 
-const createHallwayDoors = ({ timeline, testMode, passageOpenings, isInteractHeld, onAction }) => {
+const createHallwayDoors = ({ character, testMode, passageOpenings, isInteractHeld, onAction }) => {
   const opening = (id) => passageOpenings.find((entry) => entry.id === id);
   const livingRoomOpening = opening("living-room-hallway-connection");
   const livingRoomDoor = createDoorAtOpening(livingRoomOpening, {
     id: "hallway-living-room-door",
-    requiredKey: testMode ? null : timeline === "present" ? "living-room-key" : null,
+    requiredKey: testMode ? null : character === "dad" ? "living-room-key" : null,
     locked: !testMode,
     onUnlock: () => onAction?.("object.interact", "hallway-living-room-door"),
   });
   livingRoomDoor.object3D.position.y = livingRoomOpening.height / 2;
   const specs = [
-    ["hallway-children-room-door", "hallway-children-room-opening", testMode ? null : timeline === "present" ? "study-key" : null, !testMode],
+    ["hallway-children-room-door", "hallway-children-room-opening", testMode ? null : character === "dad" ? "study-key" : null, !testMode],
     ["hallway-bathroom-door", "hallway-bathroom-opening", null, false],
-    ["hallway-kitchen-door", "hallway-kitchen-opening", testMode ? null : timeline === "past" ? "crowbar" : null, !testMode],
+    ["hallway-kitchen-door", "hallway-kitchen-opening", testMode ? null : character === "mum" ? "crowbar" : null, !testMode],
     ["hallway-street-door", "hallway-street-opening", null, true],
   ];
   const hallwayDoors = specs.map(([id, openingId, requiredKey, locked]) => createDoorAtOpening(opening(openingId), {
@@ -43,7 +43,7 @@ const createHallwayDoors = ({ timeline, testMode, passageOpenings, isInteractHel
     return bolt;
   });
   const threshold = new FinalThreshold({
-    timeline,
+    character,
     isInteractHeld,
     onHoldChange: (holding) => onAction?.("object.interact", "hallway-final-threshold", { operation: holding ? "hold-start" : "hold-end" }),
   });
@@ -51,16 +51,16 @@ const createHallwayDoors = ({ timeline, testMode, passageOpenings, isInteractHel
   streetDoor.doorMesh.add(threshold.object3D);
 
   const applyState = (state, livingRoomKey) => {
-    if (state.timelines?.[timeline]?.objects?.["hallway-living-room-door"]?.locked === false) {
+    if (state.characters?.[character]?.objects?.["hallway-living-room-door"]?.locked === false) {
       livingRoomDoor.unlock({ notify: false });
       livingRoomKey.object3D.visible = false;
       livingRoomKey.setEnabled(false);
     }
-    if (["past", "present"].some((era) => state.timelines?.[era]?.objects?.["hallway-children-room-door"]?.locked === false)) hallwayDoors.find((door) => door.id === "hallway-children-room-door")?.unlock({ notify: false });
-    if (["past", "present"].some((era) => state.timelines?.[era]?.objects?.["hallway-kitchen-door"]?.locked === false || state.timelines?.[era]?.objects?.["living-room-kitchen-door"]?.locked === false)) hallwayDoors.find((door) => door.id === "hallway-kitchen-door")?.unlock({ notify: false });
-    finalBolts.forEach((bolt) => { if (["past", "present"].some((era) => state.timelines?.[era]?.objects?.[bolt.id]?.unlocked)) bolt.unlock(); });
+    if (["mum", "dad"].some((era) => state.characters?.[era]?.objects?.["hallway-children-room-door"]?.locked === false)) hallwayDoors.find((door) => door.id === "hallway-children-room-door")?.unlock({ notify: false });
+    if (["mum", "dad"].some((era) => state.characters?.[era]?.objects?.["hallway-kitchen-door"]?.locked === false || state.characters?.[era]?.objects?.["living-room-kitchen-door"]?.locked === false)) hallwayDoors.find((door) => door.id === "hallway-kitchen-door")?.unlock({ notify: false });
+    finalBolts.forEach((bolt) => { if (["mum", "dad"].some((era) => state.characters?.[era]?.objects?.[bolt.id]?.unlocked)) bolt.unlock(); });
     threshold.applyEndingState(state.ending);
-    const finalState = state.timelines?.past?.objects?.["hallway-street-door"] ?? state.timelines?.present?.objects?.["hallway-street-door"];
+    const finalState = state.characters?.mum?.objects?.["hallway-street-door"] ?? state.characters?.dad?.objects?.["hallway-street-door"];
     if (finalState?.locked === false) streetDoor.unlock({ notify: false });
     if (finalState?.open) streetDoor.open({ notify: false });
   };

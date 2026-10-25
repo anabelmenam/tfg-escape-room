@@ -2,9 +2,9 @@ import * as THREE from "three";
 import { Key, Paper } from "../../objects/index.js";
 import { MEMORIES, MEMORY_PHOTO_IDS, PhotoBoardPuzzle } from "../../puzzles/index.js";
 
-const createPhotoBoardPuzzle = ({ timeline, furniture, onFocus, onAction, onSolved }) => {
+const createPhotoBoardPuzzle = ({ character, furniture, onFocus, onAction, onSolved }) => {
   const { dresser, wardrobes, desks } = furniture;
-  const musicBoxKey = timeline === "past"
+  const musicBoxKey = character === "mum"
     ? new Key({
         id: "music-box-key",
         color: 0xd6a43b,
@@ -17,7 +17,7 @@ const createPhotoBoardPuzzle = ({ timeline, furniture, onFocus, onAction, onSolv
     musicBoxKey.setEnabled(false);
   }
   const puzzle = new PhotoBoardPuzzle({
-    timeline,
+    character,
     onFocus,
     onSolved: () => {
       puzzle.revealHiddenReward();
@@ -28,18 +28,17 @@ const createPhotoBoardPuzzle = ({ timeline, furniture, onFocus, onAction, onSolv
     onCollect: () => onAction?.("item.pickup", "children-photo-order-note"),
   });
   puzzle.setAvailable(true);
-  if (timeline === "past") {
+  if (character === "mum") {
     puzzle.object3D.position.set(-7.1, 5.4, -9.72);
     puzzle.object3D.scale.setScalar(0.7);
   } else {
     puzzle.object3D.scale.setScalar(0.5);
-    puzzle.object3D.position.set(0, 3.34, 0);
     puzzle.object3D.rotation.z = -.08;
-    desks[0].object3D.add(puzzle.object3D);
+    desks[0].addObjectToDrawer(0, puzzle.object3D, new THREE.Vector3(0, -.28, -1.05));
   }
   if (musicBoxKey) puzzle.setHiddenReward(musicBoxKey);
 
-  const photos = timeline === "past"
+  const photos = character === "mum"
     ? MEMORIES.map((memory, index) => new Paper({
         id: MEMORY_PHOTO_IDS[index],
         width: 1.42,
@@ -62,27 +61,27 @@ const createPhotoBoardPuzzle = ({ timeline, furniture, onFocus, onAction, onSolv
   }
 
   const applyState = (state) => {
-    const inserted = Boolean(state.timelines?.past?.puzzles?.["children-globe-pin"]?.solved);
+    const inserted = Boolean(state.characters?.mum?.puzzles?.["children-globe-pin"]?.solved);
     if (inserted) puzzle.setPinInserted({ notify: false });
-    const solved = Boolean(state.timelines?.past?.puzzles?.["children-globe"]?.solved);
-    if (timeline === "present" && (state.inventories?.present?.includes("children-photo-order-note") || solved)) {
+    const solved = Boolean(state.characters?.mum?.puzzles?.["children-globe"]?.solved);
+    if (character === "dad" && (state.inventories?.dad?.includes("children-photo-order-note") || solved)) {
       puzzle.object3D.visible = false;
       puzzle.setEnabled(false);
     }
     photos.forEach((photo) => {
-      if (state.inventories?.past?.includes(photo.id) || solved) {
+      if (state.inventories?.mum?.includes(photo.id) || solved) {
         photo.object3D.visible = false;
         photo.setEnabled(false);
       }
     });
-    const keyCollected = Boolean(state.inventories?.past?.includes("music-box-key"));
-    const keyInserted = Boolean(state.timelines?.past?.puzzles?.["children-music-key"]?.solved);
+    const keyCollected = Boolean(state.inventories?.mum?.includes("music-box-key"));
+    const keyInserted = Boolean(state.characters?.mum?.puzzles?.["children-music-key"]?.solved);
     if (musicBoxKey && (keyCollected || keyInserted)) {
       musicBoxKey.object3D.visible = false;
       musicBoxKey.setEnabled(false);
     }
     if (solved) {
-      if (timeline === "past") puzzle.solve({ notify: false });
+      if (character === "mum") puzzle.solve({ notify: false });
       onSolved?.();
       if (!keyCollected && !keyInserted) puzzle.revealHiddenReward();
     }

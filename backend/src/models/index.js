@@ -44,7 +44,7 @@ export const RoomPlayer = sequelize.define(
     id: id(),
     roomId: { type: DataTypes.UUID, allowNull: false },
     userId: { type: DataTypes.UUID, allowNull: false },
-    timeline: { type: DataTypes.TEXT, allowNull: true, validate: { isIn: [["past", "present"]] } },
+    character: { type: DataTypes.TEXT, allowNull: true, validate: { isIn: [["mum", "dad"]] } },
     reconnectToken: { type: DataTypes.UUID, allowNull: false, unique: true },
     connected: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     slotNumber: { type: DataTypes.INTEGER, allowNull: true, validate: { min: 1, max: 3 } },
@@ -91,6 +91,19 @@ export const UserSession = sequelize.define(
   options("user_sessions"),
 );
 
+export const PasswordResetToken = sequelize.define(
+  "PasswordResetToken",
+  {
+    id: id(),
+    userId: { type: DataTypes.UUID, allowNull: false },
+    tokenHash: { type: DataTypes.TEXT, allowNull: false, unique: true },
+    expiresAt: { type: DataTypes.DATE, allowNull: false },
+    usedAt: { type: DataTypes.DATE, allowNull: true },
+    createdAt: date(),
+  },
+  options("password_reset_tokens"),
+);
+
 export const PlayerCheckpoint = sequelize.define(
   "PlayerCheckpoint",
   {
@@ -113,6 +126,7 @@ GameState.belongsTo(GameRoom, { as: "room", foreignKey: "roomId", onDelete: "CAS
 GameEvent.belongsTo(GameRoom, { as: "room", foreignKey: "roomId", onDelete: "CASCADE" });
 GameEvent.belongsTo(RoomPlayer, { as: "actor", foreignKey: "actorPlayerId", onDelete: "SET NULL" });
 UserSession.belongsTo(User, { as: "user", foreignKey: "userId", onDelete: "CASCADE" });
+PasswordResetToken.belongsTo(User, { as: "user", foreignKey: "userId", onDelete: "CASCADE" });
 PlayerCheckpoint.belongsTo(RoomPlayer, { as: "player", foreignKey: "playerId", onDelete: "CASCADE" });
 PlayerCheckpoint.belongsTo(GameRoom, { as: "room", foreignKey: "roomId", onDelete: "CASCADE" });
 RoomPlayer.hasOne(PlayerCheckpoint, { as: "checkpoint", foreignKey: "playerId", onDelete: "CASCADE" });

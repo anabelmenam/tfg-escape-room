@@ -3,9 +3,9 @@ import { tInteraction, tItem } from "../../translations/index.js";
 import { FocusPuzzle, createNapkinLabelTexture, mark, shadows } from "./KitchenPuzzleBase.js";
 
 class TableSettingPuzzle extends FocusPuzzle {
-  constructor({ timeline, onFocus, onSolved, onPlacementChange = null, napkins = [] }) {
+  constructor({ character, onFocus, onSolved, onPlacementChange = null, napkins = [] }) {
     super("kitchen-family-table", { onFocus });
-    this.timeline = timeline; this.onSolved = onSolved; this.onPlacementChange = onPlacementChange; this.settings = []; this.placements = [null, null, null, null];
+    this.character = character; this.onSolved = onSolved; this.onPlacementChange = onPlacementChange; this.settings = []; this.placements = [null, null, null, null];
     this.napkinsById = new Map(napkins.map((napkin) => [napkin.id, napkin]));
     this.expectedNapkins = ["kitchen-napkin-red", "kitchen-napkin-green", "kitchen-napkin-blue", "kitchen-napkin-ochre"];
     this.napkinColors = { "kitchen-napkin-red": 0xcbbd9f, "kitchen-napkin-blue": 0xcbbd9f, "kitchen-napkin-green": 0xcbbd9f, "kitchen-napkin-ochre": 0xcbbd9f };
@@ -33,7 +33,7 @@ class TableSettingPuzzle extends FocusPuzzle {
       const fold = new THREE.Mesh(new THREE.BoxGeometry(.22, .035, .25), base.material.clone()); fold.position.set(.07, .04, 0); fold.rotation.y = -.16;
       const label = new THREE.Mesh(new THREE.PlaneGeometry(.28, .09), new THREE.MeshStandardMaterial({ transparent: true, roughness: .95 })); label.rotation.x = -Math.PI / 2; label.position.set(-.055, .07, -.095);
       napkin.add(base, fold, label); napkin.userData.label = label; napkin.position.set(0, .15, .02); napkin.visible = false;
-      if (timeline === "past") setting.add(placemat); else setting.add(placemat, plate, innerPlate, tumbler, fork, knife, napkin);
+      if (character === "mum") setting.add(placemat); else setting.add(placemat, plate, innerPlate, tumbler, fork, knife, napkin);
       setting.position.set(x, .09, z); if (index === 0 || index === 2) setting.rotation.y = Math.PI;
       setting.userData.parts = { napkin }; mark(setting, { kind: "place-setting", value: index }); this.settings.push(setting); this.object3D.add(setting);
     });
@@ -45,9 +45,9 @@ class TableSettingPuzzle extends FocusPuzzle {
     if (napkinId) { napkin.children.slice(0, 2).forEach((part) => part.material.color.setHex(this.napkinColors[napkinId])); napkin.userData.label.material.map = this.napkinLabelTextures.get(napkinId); napkin.userData.label.material.needsUpdate = true; }
   }
   applyPlacements(placements = []) { this.settings.forEach((_, index) => this.setPlacement(index, placements[index] ?? null)); }
-  interact(player, control = null) { if (!this.available || this.isSolved) return; this.player = player; if (this.timeline === "past") return; if (control?.kind === "place-setting") this.handleControl(control, player); }
+  interact(player, control = null) { if (!this.available || this.isSolved) return; this.player = player; if (this.character === "mum") return; if (control?.kind === "place-setting") this.handleControl(control, player); }
   handleControl(control, player = this.player) {
-    if (this.timeline !== "present" || !this.available || this.isSolved || control?.kind !== "place-setting") return;
+    if (this.character !== "dad" || !this.available || this.isSolved || control?.kind !== "place-setting") return;
     const index = control.value; const placedNapkinId = this.placements[index];
     if (placedNapkinId) { const item = this.napkinsById.get(placedNapkinId); if (!item || !player?.inventory.add(item)) return; this.setPlacement(index, null); this.onPlacementChange?.({ operation: "remove", seatIndex: index, napkinId: placedNapkinId }); return; }
     const selected = player?.inventory.getSelectedItem(); if (!selected || !this.napkinsById.has(selected.id)) return;
@@ -56,7 +56,7 @@ class TableSettingPuzzle extends FocusPuzzle {
   }
   solve({ notify = true, placements = this.expectedNapkins } = {}) { if (this.isSolved) return; this.isSolved = true; this.applyPlacements(placements); if (notify) this.onSolved?.(); }
   getInteractionText(player = this.player, control = null) {
-    if (!this.available || this.isSolved || this.timeline === "past" || control?.kind !== "place-setting") return null;
+    if (!this.available || this.isSolved || this.character === "mum" || control?.kind !== "place-setting") return null;
     const placed = this.placements[control.value]; if (placed) return tInteraction("pickUp", tItem(placed));
     const selected = player?.inventory.getSelectedItem(); return selected && this.napkinsById.has(selected.id) ? tInteraction("insert", tItem(selected.id)) : tInteraction("needItem", tItem("napkin"));
   }

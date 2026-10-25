@@ -1,15 +1,15 @@
 import * as THREE from "three";
 import { DeskLamp, Frame, Paper, createCandleCluster, createPerfumeTray } from "../../objects/index.js";
 
-const createBedroomDecor = ({ timeline, desk, cabinet }) => {
+const createBedroomDecor = ({ character, desk, cabinet }) => {
   const deskPaper = new Paper({
-    id: `bedroom-${timeline}-desk-paper`,
+    id: `bedroom-${character}-desk-paper`,
     position: new THREE.Vector3(-2.45, 3.335, -0.25),
     rotation: new THREE.Euler(-Math.PI / 2, 0, Math.PI / 2 + 0.08),
     width: 1.15,
     height: 0.82,
   });
-  if (timeline === "present") desk.object3D.add(deskPaper.object3D);
+  if (character === "dad") desk.object3D.add(deskPaper.object3D);
 
   [
     { x: 1.43, z: 0.82, angle: -0.12, width: 1.28, height: 0.9 },
@@ -18,7 +18,7 @@ const createBedroomDecor = ({ timeline, desk, cabinet }) => {
     { x: 1.55, z: 0.77, angle: 0.16, width: 1.12, height: 0.8 },
   ].forEach(({ x, z, angle, width, height }, index) => {
     const paper = new Paper({
-      id: `bedroom-${timeline}-loose-desk-paper-${index + 1}`,
+      id: `bedroom-${character}-loose-desk-paper-${index + 1}`,
       position: new THREE.Vector3(x, 3.33 + index * 0.018, z),
       rotation: new THREE.Euler(-Math.PI / 2, 0, Math.PI / 2 + angle),
       width,
@@ -29,12 +29,12 @@ const createBedroomDecor = ({ timeline, desk, cabinet }) => {
   });
 
   const deskLamp = new DeskLamp({
-    id: `bedroom-${timeline}-desk-lamp`,
+    id: `bedroom-${character}-desk-lamp`,
     position: new THREE.Vector3(-3, 3.32, -0.7),
     rotation: new THREE.Euler(0, -Math.PI / 4, 0),
     targetOffset: new THREE.Vector3(0.84, 0.02, 0),
-    powerAvailable: timeline !== "present",
-    ...(timeline === "past" ? {
+    powerAvailable: character !== "dad",
+    ...(character === "mum" ? {
       lightColor: 0xffd89a,
       bulbColor: 0xffedc2,
       emissiveColor: 0xffb34f,
@@ -52,7 +52,7 @@ const createBedroomDecor = ({ timeline, desk, cabinet }) => {
   cabinet.object3D.add(perfumeTray);
 
   const landscape = new Frame({
-    id: `bedroom-${timeline}-landscape`,
+    id: `bedroom-${character}-landscape`,
     position: new THREE.Vector3(-1.75, 7.45, -12.34),
     width: 5.8,
     height: 3.35,

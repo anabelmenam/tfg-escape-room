@@ -1,7 +1,7 @@
 const assembleBedroom = ({
   room,
   placeAgainstWall,
-  timeline,
+  character,
   furniture,
   fixtures,
   decor,
@@ -14,7 +14,7 @@ const assembleBedroom = ({
   const { alarmClock, safe, familyPhoto, electricalPanel, lock } = powerPuzzles;
 
   room.add(alarmClock.object3D);
-  if (timeline === "past") room.add(safe.object3D);
+  if (character === "mum") room.add(safe.object3D);
   else room.add(familyPhoto.object3D, electricalPanel.object3D, radioPuzzle.radioNote.object3D);
   room.add(
     carpet.object3D,

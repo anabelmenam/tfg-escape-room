@@ -63,7 +63,7 @@ const useGameSession = ({ containerRef, gameRef, socketRef, playerRole, session,
     });
     socket?.on("lobby:state", (lobby) => {
       const remotePlayer = lobby.players?.find((player) => player.id !== session.playerId);
-      if (remotePlayer?.timeline && remotePlayer.timeline !== session.timeline) {
+      if (remotePlayer?.character && remotePlayer.character !== session.character) {
         game.setRemotePlayerIdentity(remotePlayer);
         updateCompanionConnection(Boolean(remotePlayer.connected));
       } else {

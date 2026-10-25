@@ -1,9 +1,9 @@
 import * as THREE from "three";
 import { Lamp, Switch, Window } from "../../objects/index.js";
 
-const createKitchenFixtures = ({ timeline, config, dimensions, windowOpenings }) => {
+const createKitchenFixtures = ({ character, config, dimensions, windowOpenings }) => {
   const lamps = [-6, 6].map((z, index) => new Lamp({
-    id: `kitchen-${timeline}-lamp-${index + 1}`,
+    id: `kitchen-${character}-lamp-${index + 1}`,
     position: new THREE.Vector3(0, dimensions.height, z),
   }));
   lamps.forEach((lamp) => lamp.setActive(false));
@@ -13,13 +13,13 @@ const createKitchenFixtures = ({ timeline, config, dimensions, windowOpenings })
     switches.forEach((item) => item.setActive(active));
   };
   const lightSwitch = new Switch({
-    id: `kitchen-${timeline}-switch`,
+    id: `kitchen-${character}-switch`,
     position: new THREE.Vector3(-3.8, 3.5, -dimensions.depth / 2),
     scale: 0.75,
     onPress: (item) => setLights(item.active),
   });
   const livingRoomDoorSwitch = new Switch({
-    id: `kitchen-${timeline}-living-room-switch`,
+    id: `kitchen-${character}-living-room-switch`,
     position: new THREE.Vector3(-dimensions.width / 2, 3.5, 5),
     scale: 0.75,
     onPress: (item) => setLights(item.active),

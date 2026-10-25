@@ -4,9 +4,9 @@ import { FocusPuzzle, mark, paperTexture, shadows } from "./KitchenPuzzleBase.js
 import { createKitchenFoodModel } from "./createKitchenFoodModel.js";
 
 class RecipePuzzle extends FocusPuzzle {
-  constructor({ timeline, onFocus, onSolved, onPlacementChange = null, onCollect = null, ingredients = [] }) {
-    super("kitchen-recipe", { onFocus }); this.timeline = timeline; this.onSolved = onSolved; this.onPlacementChange = onPlacementChange; this.onCollect = onCollect; this.placements = [null, null, null]; this.expected = ["kitchen-tomatoes", "kitchen-carrots", "kitchen-cheese"]; this.slotPositions = [-1.2, 0, 1.2]; this.ingredientsById = new Map(ingredients.map((ingredient) => [ingredient.id, ingredient])); this.modelsById = new Map(); this.slots = []; this.rewardRevealed = false; this.rewardSliding = false; this.rewardTargetZ = null;
-    if (timeline === "past") {
+  constructor({ character, onFocus, onSolved, onPlacementChange = null, onCollect = null, ingredients = [] }) {
+    super("kitchen-recipe", { onFocus }); this.character = character; this.onSolved = onSolved; this.onPlacementChange = onPlacementChange; this.onCollect = onCollect; this.placements = [null, null, null]; this.expected = ["kitchen-tomatoes", "kitchen-carrots", "kitchen-cheese"]; this.slotPositions = [-1.2, 0, 1.2]; this.ingredientsById = new Map(ingredients.map((ingredient) => [ingredient.id, ingredient])); this.modelsById = new Map(); this.slots = []; this.rewardRevealed = false; this.rewardSliding = false; this.rewardTargetZ = null;
+    if (character === "mum") {
       this.id = "kitchen-recipe-note"; this.object3D.name = this.id; this.itemName = "recipe-note"; this.inventoryInspectionKey = "KeyR";
       this.texture = paperTexture(["GUISO DE LA CASA", "3 tomates maduros", "2 zanahorias", "1 cuña de queso"], { sepia: true });
       const preview = this.texture.image.toDataURL("image/png"); this.inventoryIcon = preview; this.inspectionImage = preview; this.inspectionTitle = "receta del guiso";
@@ -38,14 +38,14 @@ class RecipePuzzle extends FocusPuzzle {
   }
   applyPlacements(placements = []) { this.expected.forEach((id) => { this.modelsById.get(id).visible = false; }); this.placements = [null, null, null]; this.slots.forEach((_, index) => this.setPlacement(index, placements[index] ?? null)); }
   resolveInteractionControl(control, intersection) {
-    if (this.timeline !== "present" || control?.kind !== "recipe-board" || !intersection?.point) return control;
+    if (this.character !== "dad" || control?.kind !== "recipe-board" || !intersection?.point) return control;
     this.object3D.updateWorldMatrix(true, false);
     const localPoint = this.object3D.worldToLocal(intersection.point.clone());
     const slotIndex = localPoint.x < -.6 ? 0 : localPoint.x > .6 ? 2 : 1;
     return { kind: "recipe-slot", value: slotIndex };
   }
   interact(player, control = null) {
-    if (this.timeline === "past") { if (!this.available || !player?.inventory.add(this)) return; this.object3D.visible = false; this.setEnabled(false); this.onCollect?.(); return; }
+    if (this.character === "mum") { if (!this.available || !player?.inventory.add(this)) return; this.object3D.visible = false; this.setEnabled(false); this.onCollect?.(); return; }
     if (!this.available || this.isSolved || control?.kind !== "recipe-slot") return;
     const index = control.value; const placedId = this.placements[index];
     if (placedId) { const item = this.ingredientsById.get(placedId); if (!item || !player?.inventory.add(item)) return; this.setPlacement(index, null); this.onPlacementChange?.({ operation: "remove", slotIndex: index, ingredientId: placedId }); return; }
@@ -53,7 +53,7 @@ class RecipePuzzle extends FocusPuzzle {
     player.removeItemFromInventory(selected.id); this.setPlacement(index, selected.id); this.onPlacementChange?.({ operation: "place", slotIndex: index, ingredientId: selected.id });
     if (this.placements.every((id, position) => id === this.expected[position])) this.solve();
   }
-  revealReward() { if (this.timeline !== "present" || this.rewardRevealed) return; this.rewardRevealed = true; this.rewardSliding = true; this.rewardTargetZ = this.object3D.position.z - 0.7; }
+  revealReward() { if (this.character !== "dad" || this.rewardRevealed) return; this.rewardRevealed = true; this.rewardSliding = true; this.rewardTargetZ = this.object3D.position.z - 0.7; }
   update(deltaTime) {
     if (!this.rewardSliding || this.rewardTargetZ === null) return;
     const remaining = this.rewardTargetZ - this.object3D.position.z;
@@ -62,9 +62,9 @@ class RecipePuzzle extends FocusPuzzle {
     if (Math.abs(this.rewardTargetZ - this.object3D.position.z) < .001) { this.object3D.position.z = this.rewardTargetZ; this.rewardSliding = false; }
   }
   solve({ notify = true, placements = this.expected } = {}) { if (this.isSolved) return; this.isSolved = true; this.applyPlacements(placements); this.revealReward(); if (notify) this.onSolved?.(); }
-  getInteractionText(player, control = null) { if (!this.available) return null; if (this.timeline === "past") return tInteraction("pickUp", tItem(this.itemName)); if (this.isSolved || control?.kind !== "recipe-slot") return null; const placedId = this.placements[control.value]; if (placedId) return tInteraction("pickUp", tItem(placedId)); const selected = player?.inventory.getSelectedItem(); return selected && this.ingredientsById.has(selected.id) ? tInteraction("insert", tItem(selected.id)) : tInteraction("needItem", tItem("ingredient")); }
-  getFocusPosition() { if (this.timeline !== "past") return super.getFocusPosition(); this.object3D.updateWorldMatrix(true, false); return this.object3D.localToWorld(new THREE.Vector3(0, 0, 4.3)); }
-  getLookAtPosition() { if (this.timeline !== "past") return super.getLookAtPosition(); this.object3D.updateWorldMatrix(true, false); return this.object3D.localToWorld(new THREE.Vector3()); }
+  getInteractionText(player, control = null) { if (!this.available) return null; if (this.character === "mum") return tInteraction("pickUp", tItem(this.itemName)); if (this.isSolved || control?.kind !== "recipe-slot") return null; const placedId = this.placements[control.value]; if (placedId) return tInteraction("pickUp", tItem(placedId)); const selected = player?.inventory.getSelectedItem(); return selected && this.ingredientsById.has(selected.id) ? tInteraction("insert", tItem(selected.id)) : tInteraction("needItem", tItem("ingredient")); }
+  getFocusPosition() { if (this.character !== "mum") return super.getFocusPosition(); this.object3D.updateWorldMatrix(true, false); return this.object3D.localToWorld(new THREE.Vector3(0, 0, 4.3)); }
+  getLookAtPosition() { if (this.character !== "mum") return super.getLookAtPosition(); this.object3D.updateWorldMatrix(true, false); return this.object3D.localToWorld(new THREE.Vector3()); }
   getFocusUp() { this.object3D.updateWorldMatrix(true, false); return new THREE.Vector3(0, 1, 0).transformDirection(this.object3D.matrixWorld); }
   dispose() { this.texture?.dispose(); }
 }

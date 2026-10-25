@@ -65,7 +65,7 @@ export function drawMaze(ctx, canvas, { solution = false } = {}) {
         if (!canMove([x, y], [x, y + 1])) line(left, top + cell, left + cell, top + cell);
       }
   } else {
-    // The present only shows the boundary; the past note reveals the walls.
+    // The dad only shows the boundary; the mum note reveals the walls.
     ctx.strokeRect(margin, margin, cell * MAZE_SIZE, cell * MAZE_SIZE);
   }
   const center = ([x, y]) => [margin + (x + 0.5) * cell, margin + (y + 0.5) * cell];

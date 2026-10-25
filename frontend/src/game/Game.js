@@ -32,7 +32,7 @@ export class Game {
       onPlayerMovement, onDiaryEntriesChanged, onEndingChange, onReady, onPauseRequest,
     });
     this.pendingCheckpoint = initialCheckpoint;
-    this.timeline = null;
+    this.character = null;
     this.endingCinematic = null;
     this.endingTour = null;
     this.ready = false;
@@ -166,7 +166,7 @@ export class Game {
   applySharedState(state) {
     if (!state) return;
     this.sharedState = state;
-    if (!this.roomData || !this.timeline) return;
+    if (!this.roomData || !this.character) return;
     this.applyingSharedState = true;
     this.roomData.hallway?.applyHallwayState(state);
     this.roomData.bedroom?.applyBedroomState(state);
@@ -176,7 +176,7 @@ export class Game {
     this.roomData.bathroom?.applyBathroomState(state);
     const currentItems = new Map(this.player.inventory.getAll().filter(Boolean).map((item) => [item.id, item]));
     const worldItems = new Map((this.roomData.entities ?? []).filter((entity) => entity?.id).map((entity) => [entity.id, entity]));
-    const restoredItems = (state.inventories?.[this.timeline] ?? [])
+    const restoredItems = (state.inventories?.[this.character] ?? [])
       .map((id) => currentItems.get(id) ?? worldItems.get(id))
       .filter(Boolean);
     restoredItems.forEach((item) => {
@@ -187,18 +187,18 @@ export class Game {
     this.roomData.storyNotes?.forEach((note) => note.setCollected(state.journalEntries?.includes(note.id) ?? false));
     this.onDiaryEntriesChanged?.([...(state.journalEntries ?? [])].sort());
     this.onEndingChange?.(state.ending ?? null);
-    if (state.timelines?.past?.puzzles?.["children-globe"]?.solved) this.player.inventory.remove("children-photo-order-note");
-    if (state.timelines?.present?.puzzles?.["kitchen-recipe"]?.solved) this.player.inventory.remove("kitchen-recipe-note");
-    if (state.timelines?.past?.puzzles?.["bedroom-radio"]?.solved) this.player.inventory.remove("bedroom-radio-note");
-    if (state.timelines?.present?.puzzles?.["bedroom-electrical-panel"]?.solved) this.player.inventory.remove("bedroom-electrical-plan");
-    const doorState = state.timelines?.[this.timeline]?.objects?.["bedroom-exit-door"];
+    if (state.characters?.mum?.puzzles?.["children-globe"]?.solved) this.player.inventory.remove("children-photo-order-note");
+    if (state.characters?.dad?.puzzles?.["kitchen-recipe"]?.solved) this.player.inventory.remove("kitchen-recipe-note");
+    if (state.characters?.mum?.puzzles?.["bedroom-radio"]?.solved) this.player.inventory.remove("bedroom-radio-note");
+    if (state.characters?.dad?.puzzles?.["bedroom-electrical-panel"]?.solved) this.player.inventory.remove("bedroom-electrical-plan");
+    const doorState = state.characters?.[this.character]?.objects?.["bedroom-exit-door"];
     if (doorState) {
       const door = this.roomData.door;
       if (doorState.locked === false) door.unlock({ notify: false });
       if (doorState.open) door.open();
     }
     for (const entity of this.roomData.entities ?? []) {
-      const objectState = state.timelines?.[this.timeline]?.objects?.[entity?.id];
+      const objectState = state.characters?.[this.character]?.objects?.[entity?.id];
       if (!objectState) continue;
       if (typeof objectState.active === "boolean" && typeof entity.setActive === "function" && entity.active !== objectState.active) {
         entity.setActive(objectState.active);

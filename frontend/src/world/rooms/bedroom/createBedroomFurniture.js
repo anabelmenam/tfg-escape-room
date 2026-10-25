@@ -19,14 +19,14 @@ const bedroomWoodStyle = {
   handleColor: 0x9b773d,
 };
 
-const createBedroomFurniture = ({ timeline, timelineConfig }) => {
+const createBedroomFurniture = ({ character, characterConfig }) => {
   const bed = new Bed({
     id: "bed1",
     position: new THREE.Vector3(-1.75, 0, -8),
     ...bedroomWoodStyle,
-    blanketColor: timelineConfig.blanketColor,
+    blanketColor: characterConfig.blanketColor,
     mattressColor: 0xd8e0e4,
-    pillowColor: timelineConfig.pillowColor,
+    pillowColor: characterConfig.pillowColor,
   });
   const nightstand1 = new Cabinet({
     id: "nightstand1",
@@ -72,7 +72,7 @@ const createBedroomFurniture = ({ timeline, timelineConfig }) => {
   const desk = new Desk({
     id: "desk1",
     position: new THREE.Vector3(6.5, 0, 8),
-    lockedDrawers: timeline === "present" ? [0] : [],
+    lockedDrawers: character === "dad" ? [0] : [],
     ...bedroomWoodStyle,
   });
   desk.object3D.rotation.y = -Math.PI / 2;
@@ -87,7 +87,7 @@ const createBedroomFurniture = ({ timeline, timelineConfig }) => {
     position: new THREE.Vector3(-1.5, 0.01, -5),
     width: 6,
     depth: 10,
-    color: timelineConfig.carpetColor,
+    color: characterConfig.carpetColor,
     texture: "/textures/furniture/carpet.jpg",
     textureRepeat: { x: 2, y: 3 },
   });

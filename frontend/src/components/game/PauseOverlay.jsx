@@ -13,7 +13,7 @@ const DiaryBook = ({ diaryEntries, onBack }) => {
   const entries = Array.from({ length: 10 }, (_, index) => `family-note-${String(index + 1).padStart(2, "0")}`);
   const isIntroduction = selectedEntry === "introduction";
   const title = isIntroduction ? t("diaryBook.introduction") : t(`storyNotes.${selectedEntry}.title`);
-  const body = isIntroduction ? t("story.past") : withoutSignature(t(`storyNotes.${selectedEntry}.body`));
+  const body = isIntroduction ? t("story.mum") : withoutSignature(t(`storyNotes.${selectedEntry}.body`));
   const noteNumber = isIntroduction ? null : Number(selectedEntry.slice(-2));
   const author = noteNumber ? t(`diaryBook.${noteNumber % 2 ? "mother" : "father"}`) : t("diaryBook.familyStory");
 

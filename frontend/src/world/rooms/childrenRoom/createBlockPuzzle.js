@@ -2,8 +2,8 @@ import * as THREE from "three";
 import { GlobePushpin } from "../../objects/index.js";
 import { BlockConstructionPuzzle } from "../../puzzles/index.js";
 
-const createBlockPuzzle = ({ timeline, desk, onFocus, onAction }) => {
-  const pushpin = timeline === "past"
+const createBlockPuzzle = ({ character, desk, onFocus, onAction }) => {
+  const pushpin = character === "mum"
     ? new GlobePushpin({ onCollect: () => onAction?.("item.pickup", "globe-pushpin") })
     : null;
   if (pushpin) {
@@ -20,7 +20,7 @@ const createBlockPuzzle = ({ timeline, desk, onFocus, onAction }) => {
     pushpin.setEnabled(true);
   };
   const puzzle = new BlockConstructionPuzzle({
-    timeline,
+    character,
     onFocus,
     onSolved: () => {
       revealPushpin();
@@ -32,13 +32,13 @@ const createBlockPuzzle = ({ timeline, desk, onFocus, onAction }) => {
   desk.object3D.add(puzzle.object3D);
 
   const applyState = (state) => {
-    const solved = Boolean(state.timelines?.past?.puzzles?.["children-blocks"]?.solved);
-    if (solved && timeline === "past") {
+    const solved = Boolean(state.characters?.mum?.puzzles?.["children-blocks"]?.solved);
+    if (solved && character === "mum") {
       puzzle.solve({ notify: false });
       revealPushpin();
     }
-    const inserted = Boolean(state.timelines?.past?.puzzles?.["children-globe-pin"]?.solved);
-    const collected = Boolean(state.inventories?.past?.includes("globe-pushpin"));
+    const inserted = Boolean(state.characters?.mum?.puzzles?.["children-globe-pin"]?.solved);
+    const collected = Boolean(state.inventories?.mum?.includes("globe-pushpin"));
     if (pushpin && (collected || inserted)) {
       pushpin.object3D.visible = false;
       pushpin.setEnabled(false);

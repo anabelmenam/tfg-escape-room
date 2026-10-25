@@ -1,9 +1,9 @@
 export default {
 story: {
-    pastTitle: "La casa entre recuerdos",
-    presentTitle: "La casa entre recuerdos",
-    past: "Mamá y Papá vivían juntos con sus hijos y compartían la misma casa, pero hacía tiempo que cada uno la sentía de una manera distinta. Donde uno recordaba cariño, el otro encontraba silencio; donde uno veía un hogar, el otro sentía una distancia cada vez mayor. Una noche, la casa dio forma a esas dos maneras de recordarla y los separó en recorridos distintos. Ahora podéis veros como ecos, pero no reuniros. Para volver con vuestra familia tendréis que colaborar, reconstruir los recuerdos que compartís y encontrar las palabras que quedaron sin decir.",
-    present: "Mamá y Papá vivían juntos con sus hijos y compartían la misma casa, pero hacía tiempo que cada uno la sentía de una manera distinta. Donde uno recordaba cariño, el otro encontraba silencio; donde uno veía un hogar, el otro sentía una distancia cada vez mayor. Una noche, la casa dio forma a esas dos maneras de recordarla y los separó en recorridos distintos. Ahora podéis veros como ecos, pero no reuniros. Para volver con vuestra familia tendréis que colaborar, reconstruir los recuerdos que compartís y encontrar las palabras que quedaron sin decir.",
+    mumTitle: "La casa entre recuerdos",
+    dadTitle: "La casa entre recuerdos",
+    mum: "Mamá y Papá vivían juntos con sus hijos y compartían la misma casa, pero hacía tiempo que cada uno la sentía de una manera distinta. Donde uno recordaba cariño, el otro encontraba silencio; donde uno veía un hogar, el otro sentía una distancia cada vez mayor. Una noche, la casa dio forma a esas dos maneras de recordarla y los separó en recorridos distintos. Ahora podéis veros como ecos, pero no reuniros. Para volver con vuestra familia tendréis que colaborar, reconstruir los recuerdos que compartís y encontrar las palabras que quedaron sin decir.",
+    dad: "Mamá y Papá vivían juntos con sus hijos y compartían la misma casa, pero hacía tiempo que cada uno la sentía de una manera distinta. Donde uno recordaba cariño, el otro encontraba silencio; donde uno veía un hogar, el otro sentía una distancia cada vez mayor. Una noche, la casa dio forma a esas dos maneras de recordarla y los separó en recorridos distintos. Ahora podéis veros como ecos, pero no reuniros. Para volver con vuestra familia tendréis que colaborar, reconstruir los recuerdos que compartís y encontrar las palabras que quedaron sin decir.",
   },
 diaryBook: {
     introduction: "Introducción",

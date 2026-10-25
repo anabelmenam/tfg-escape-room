@@ -1,7 +1,7 @@
 import { Crowbar, FinalKey, WardrobeChains } from "../../objects/index.js";
 
-const createWardrobePuzzle = ({ timeline, wardrobe, onAction }) => {
-  const crowbar = timeline === "past"
+const createWardrobePuzzle = ({ character, wardrobe, onAction }) => {
+  const crowbar = character === "mum"
     ? new Crowbar({ onCollect: () => onAction?.("item.pickup", "crowbar") })
     : null;
   if (crowbar) {
@@ -12,7 +12,7 @@ const createWardrobePuzzle = ({ timeline, wardrobe, onAction }) => {
     crowbar.setEnabled(false);
     wardrobe.object3D.add(crowbar.object3D);
   }
-  const finalKey = timeline === "past"
+  const finalKey = character === "mum"
     ? new FinalKey({
         id: "final-key-children",
         symbol: "star",
@@ -29,7 +29,7 @@ const createWardrobePuzzle = ({ timeline, wardrobe, onAction }) => {
   }
 
   const rewardDoors = wardrobe.getInteractables().filter((item) => item.id.includes("-door-"));
-  let unlocked = timeline !== "past";
+  let unlocked = character !== "mum";
   let rewardRevealed = false;
   const revealReward = () => {
     if (!unlocked || rewardRevealed) return;
@@ -45,7 +45,7 @@ const createWardrobePuzzle = ({ timeline, wardrobe, onAction }) => {
     rewardDoors.forEach((door) => { door.enabled = true; });
   };
   rewardDoors.forEach((door) => {
-    door.enabled = timeline !== "past";
+    door.enabled = character !== "mum";
     const openDoor = door.interact;
     door.interact = (...args) => {
       openDoor(...args);
@@ -53,7 +53,7 @@ const createWardrobePuzzle = ({ timeline, wardrobe, onAction }) => {
     };
   });
 
-  const chains = timeline === "past"
+  const chains = character === "mum"
     ? new WardrobeChains({
         onCut: () => {
           unlock();
@@ -67,21 +67,21 @@ const createWardrobePuzzle = ({ timeline, wardrobe, onAction }) => {
   }
 
   const applyState = (state) => {
-    const chainsCut = Boolean(state.timelines?.past?.puzzles?.["children-wardrobe-chains"]?.solved);
+    const chainsCut = Boolean(state.characters?.mum?.puzzles?.["children-wardrobe-chains"]?.solved);
     if (chainsCut) {
       chains?.cut({ immediate: true });
       unlock();
     }
-    const kitchenUnlocked = ["past", "present"].some(
-      (era) => state.timelines?.[era]?.objects?.["hallway-kitchen-door"]?.locked === false,
+    const kitchenUnlocked = ["mum", "dad"].some(
+      (era) => state.characters?.[era]?.objects?.["hallway-kitchen-door"]?.locked === false,
     );
-    if (crowbar && (state.inventories?.past?.includes("crowbar") || kitchenUnlocked)) {
+    if (crowbar && (state.inventories?.mum?.includes("crowbar") || kitchenUnlocked)) {
       crowbar.object3D.visible = false;
       crowbar.setEnabled(false);
     }
     if (finalKey) {
-      const unavailable = state.inventories?.past?.includes("final-key-children")
-        || ["past", "present"].some((era) => state.timelines?.[era]?.objects?.["final-bolt-children"]?.unlocked);
+      const unavailable = state.inventories?.mum?.includes("final-key-children")
+        || ["mum", "dad"].some((era) => state.characters?.[era]?.objects?.["final-bolt-children"]?.unlocked);
       if (unavailable) {
         finalKey.object3D.visible = false;
         finalKey.setEnabled(false);

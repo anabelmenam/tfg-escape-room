@@ -3,20 +3,20 @@ import { ENDING_TOUR } from "./endingConfig.js";
 
 const applySolvedHouseState = (game) => {
   const cleanState = structuredClone(game.sharedState);
-  const solved = (timeline, id, extra = {}) => {
-    cleanState.timelines[timeline].puzzles[id] = {
-      ...cleanState.timelines[timeline].puzzles[id],
+  const solved = (character, id, extra = {}) => {
+    cleanState.characters[character].puzzles[id] = {
+      ...cleanState.characters[character].puzzles[id],
       solved: true,
       ...extra,
     };
   };
-  ["bedroom-radio", "bedroom-sewing-box", "hallway-clock", "bathroom-hot-water", "children-blocks", "children-music-key", "children-globe-pin", "children-globe", "children-wardrobe-chains", "living-room-painting", "living-room-embers", "kitchen-oven"].forEach((id) => solved("past", id));
-  ["bedroom-family-photo", "bedroom-electrical-panel", "bedroom-light-reveal-puzzle", "hallway-maze", "living-room-rainbow-books", "children-music", "kitchen-stove", "bathroom-sequence"].forEach((id) => solved("present", id));
-  solved("present", "kitchen-recipe", { placements: ["kitchen-tomatoes", "kitchen-carrots", "kitchen-cheese"] });
-  solved("present", "kitchen-family-table", { placements: ["kitchen-napkin-red", "kitchen-napkin-green", "kitchen-napkin-blue", "kitchen-napkin-ochre"] });
-  solved("present", "bathroom-mosaic", { tileInserted: true });
-  cleanState.timelines.past.objects["living-room-painting-slot"] = { placed: true, restoredPieces: [0, 1] };
-  cleanState.timelines.present.objects["living-room-sofa-cushion"] = { cut: true, searched: true };
+  ["bedroom-radio", "bedroom-sewing-box", "hallway-clock", "bathroom-hot-water", "children-blocks", "children-music-key", "children-globe-pin", "children-globe", "children-wardrobe-chains", "living-room-painting", "living-room-embers", "kitchen-oven"].forEach((id) => solved("mum", id));
+  ["bedroom-family-photo", "bedroom-electrical-panel", "bedroom-light-reveal-puzzle", "hallway-maze", "living-room-rainbow-books", "children-music", "kitchen-stove", "bathroom-sequence"].forEach((id) => solved("dad", id));
+  solved("dad", "kitchen-recipe", { placements: ["kitchen-tomatoes", "kitchen-carrots", "kitchen-cheese"] });
+  solved("dad", "kitchen-family-table", { placements: ["kitchen-napkin-red", "kitchen-napkin-green", "kitchen-napkin-blue", "kitchen-napkin-ochre"] });
+  solved("dad", "bathroom-mosaic", { tileInserted: true });
+  cleanState.characters.mum.objects["living-room-painting-slot"] = { placed: true, restoredPieces: [0, 1] };
+  cleanState.characters.dad.objects["living-room-sofa-cushion"] = { cut: true, searched: true };
 
   game.roomData.hallway?.applyHallwayState(cleanState);
   game.roomData.bedroom?.applyBedroomState(cleanState);
@@ -82,7 +82,7 @@ const resetFurniture = (entities = []) => {
     if (entity.id === "children-music" && entity.lidGroup) entity.lidGroup.rotation.x = 0;
     if (entity.id === "living-room-painting-slot" && entity.hinge) {
       entity.hinge.rotation.y = 0;
-      if (entity.timeline === "present") entity.restored = false;
+      if (entity.character === "dad") entity.restored = false;
     }
     if (entity.id === "living-room-display-case" && entity.frontLid) {
       entity.opened = false;

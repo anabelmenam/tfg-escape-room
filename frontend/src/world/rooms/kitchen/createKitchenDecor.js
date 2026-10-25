@@ -1,6 +1,6 @@
 import { createFruitBowl, createKitchenCanisterSet, createKitchenPrepSet, createPottedPlant, createUtensilCrock, createWallFrameCluster } from "../../objects/index.js";
 
-const createKitchenDecor = ({ timeline, depth, furniture }) => {
+const createKitchenDecor = ({ character, depth, furniture }) => {
   const fruitBowl = createFruitBowl({ aged: false, scale: 1.05 });
   fruitBowl.position.set(0, 2.61, 0);
   furniture.diningTable.object3D.add(fruitBowl);
@@ -21,7 +21,7 @@ const createKitchenDecor = ({ timeline, depth, furniture }) => {
   });
   frames.position.set(-6.35, 7, depth / 2 - .22);
   frames.rotation.y = Math.PI;
-  frames.visible = timeline !== "past";
+  frames.visible = character !== "mum";
   return { plant, frames };
 };
 

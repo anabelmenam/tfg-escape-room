@@ -14,11 +14,11 @@ export class MultiplayerSync {
   }
   initialize() {
     const game = this.game;
-    if (!game.testMode && game.timeline) {
-      this.remoteEcho = new TemporalEcho({ role: game.timeline === "past" ? "papa" : "mama" });
+    if (!game.testMode && game.character) {
+      this.remoteEcho = new TemporalEcho({ role: game.character === "mum" ? "papa" : "mama" });
       if (this.identity) this.remoteEcho.setName(this.identity.displayName);
       game.scene.add(this.remoteEcho.object3D);
-    } else if (game.testMode && game.timeline) {
+    } else if (game.testMode && game.character) {
       this.previewEchoes = [new TemporalEcho({ role: "mama", name: "Personaje A" }), new TemporalEcho({ role: "papa", name: "Personaje B" })];
       this.previewEchoes.forEach((echo) => game.scene.add(echo.object3D));
     }
@@ -50,8 +50,8 @@ export class MultiplayerSync {
       this.lastPosition.copy(this.game.camera.position); this.lastRotationY = rotationY; this.heartbeatElapsed = 0;
     }
   }
-  updateRemote(movement) { if (this.remoteEcho && movement.timeline !== this.game.timeline) this.remoteEcho.setTarget(movement); }
-  setConnected({ timeline, connected }) { if (this.remoteEcho && timeline !== this.game.timeline) this.remoteEcho.setConnected(connected); }
-  setIdentity({ timeline, displayName }) { if (timeline !== this.game.timeline) { this.identity = { timeline, displayName }; this.remoteEcho?.setName(displayName); } }
+  updateRemote(movement) { if (this.remoteEcho && movement.character !== this.game.character) this.remoteEcho.setTarget(movement); }
+  setConnected({ character, connected }) { if (this.remoteEcho && character !== this.game.character) this.remoteEcho.setConnected(connected); }
+  setIdentity({ character, displayName }) { if (character !== this.game.character) { this.identity = { character, displayName }; this.remoteEcho?.setName(displayName); } }
   dispose() { this.remoteEcho?.dispose(); this.previewEchoes.forEach((echo) => echo.dispose()); }
 }

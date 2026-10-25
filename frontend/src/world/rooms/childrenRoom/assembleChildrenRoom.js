@@ -1,6 +1,6 @@
 const optional = (value) => (value ? [value] : []);
 
-const assembleChildrenRoom = ({ room, placeAgainstWall, timeline, furniture, fixtures, decor, blockPuzzle, photoPuzzle, musicPuzzle, wardrobePuzzle }) => {
+const assembleChildrenRoom = ({ room, placeAgainstWall, character, furniture, fixtures, decor, blockPuzzle, photoPuzzle, musicPuzzle, wardrobePuzzle }) => {
   const { beds, desks, chairs, wardrobes, dresser, carpets } = furniture;
   const { ambientLight, lamps, lightSwitch, windows } = fixtures;
   room.add(
@@ -16,7 +16,7 @@ const assembleChildrenRoom = ({ room, placeAgainstWall, timeline, furniture, fix
     ...carpets.map((carpet) => carpet.object3D),
     decor.wallArt,
   );
-  if (timeline === "past") room.add(photoPuzzle.puzzle.object3D);
+  if (character === "mum") room.add(photoPuzzle.puzzle.object3D);
 
   placeAgainstWall(lightSwitch, "front");
   beds.forEach((bed) => placeAgainstWall(bed, "back"));

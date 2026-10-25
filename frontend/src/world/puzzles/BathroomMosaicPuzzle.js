@@ -9,12 +9,12 @@ const SCRAMBLED_ORDER = [4, 0, 7, 2, null, 8, 1, 6, 3];
 const MISSING_TILE_ID = 5;
 
 class BathroomMosaicPuzzle extends Entity {
-  constructor({ timeline, onFocus, onSolved, onInsert }) {
+  constructor({ character, onFocus, onSolved, onInsert }) {
     super("bathroom-mosaic");
-    this.timeline = timeline; this.onFocus = onFocus; this.onSolved = onSolved; this.onInsert = onInsert;
-    this.available = true; this.isSolved = false; this.tileInserted = timeline === "past";
+    this.character = character; this.onFocus = onFocus; this.onSolved = onSolved; this.onInsert = onInsert;
+    this.available = true; this.isSolved = false; this.tileInserted = character === "mum";
     this.selectedTile = null; this.animations = [];
-    this.order = timeline === "past" ? [...CORRECT_ORDER] : [...SCRAMBLED_ORDER];
+    this.order = character === "mum" ? [...CORRECT_ORDER] : [...SCRAMBLED_ORDER];
     this.tiles = new Map(); this.object3D = new THREE.Group(); this.object3D.name = this.id;
     this.slotPositions = CORRECT_ORDER.map((index) => new THREE.Vector3((index % 3 - 1) * 1.22, (1 - Math.floor(index / 3)) * 1.22, .1));
 
@@ -25,19 +25,30 @@ class BathroomMosaicPuzzle extends Entity {
       this.tiles.set(tileId, tile); this.object3D.add(tile);
     });
     this.applyOrder(this.order);
-    if (timeline === "present") this.tiles.get(MISSING_TILE_ID).visible = false;
+    if (character === "dad") this.tiles.get(MISSING_TILE_ID).visible = false;
 
     this.compartment = new THREE.Group();
-    const recess = new THREE.Mesh(new THREE.BoxGeometry(1.02, 1.02, .52), new THREE.MeshStandardMaterial({ color: 0x27231e, roughness: .92 }));
-    const lining = new THREE.Mesh(new THREE.BoxGeometry(.82, .8, .05), new THREE.MeshStandardMaterial({ color: 0x8d744d, roughness: .8 })); lining.position.z = .15;
-    this.compartment.add(recess, lining); this.compartment.position.set(0, 0, -.08); this.compartment.visible = false; this.object3D.add(this.compartment);
+    const recessMaterial = new THREE.MeshStandardMaterial({ color: 0x27231e, roughness: .92 });
+    const liningMaterial = new THREE.MeshStandardMaterial({ color: 0x8d744d, roughness: .8 });
+    const back = new THREE.Mesh(new THREE.BoxGeometry(1.12, 1.12, .08), recessMaterial);
+    back.position.z = -.52;
+    const top = new THREE.Mesh(new THREE.BoxGeometry(1.28, .1, .68), liningMaterial);
+    const bottom = top.clone();
+    top.position.set(0, .61, -.2); bottom.position.set(0, -.61, -.2);
+    const left = new THREE.Mesh(new THREE.BoxGeometry(.1, 1.12, .68), liningMaterial);
+    const right = left.clone();
+    left.position.set(-.61, 0, -.2); right.position.set(.61, 0, -.2);
+    this.compartment.add(back, top, bottom, left, right);
+    this.compartment.position.set(0, 0, .02);
+    this.compartment.visible = false;
+    this.object3D.add(this.compartment);
     finishBathroomObject(this.object3D);
   }
 
   setAvailable(value = true) { this.available = value; }
   interact(player) {
-    if (this.timeline !== "present" || !this.available || this.isSolved) return;
-    if (this.timeline === "present" && !this.tileInserted) {
+    if (this.character !== "dad" || !this.available || this.isSolved) return;
+    if (this.character === "dad" && !this.tileInserted) {
       if (!player?.hasSelected("bathroom-mosaic-tile")) return;
       player.removeItemFromInventory("bathroom-mosaic-tile"); this.insertMissingTile(); this.onInsert?.(); return;
     }
@@ -49,7 +60,7 @@ class BathroomMosaicPuzzle extends Entity {
     const tile = this.tiles.get(MISSING_TILE_ID); tile.visible = true; tile.position.copy(this.slotPositions[4]);
   }
   handleControl(control) {
-    if (this.timeline !== "present" || !this.tileInserted || this.isSolved || this.animations.length || control?.kind !== "mosaic-tile") return;
+    if (this.character !== "dad" || !this.tileInserted || this.isSolved || this.animations.length || control?.kind !== "mosaic-tile") return;
     const tile = this.tiles.get(control.value); if (!tile?.visible) return;
     if (!this.selectedTile) { this.selectedTile = tile; tile.position.z = .34; return; }
     if (this.selectedTile === tile) { tile.position.z = .1; this.selectedTile = null; return; }
@@ -75,21 +86,24 @@ class BathroomMosaicPuzzle extends Entity {
     if (this.isSolved) return;
     this.isSolved = true; this.tileInserted = true; this.order = [...CORRECT_ORDER];
     this.tiles.forEach((tile, tileId) => { tile.visible = true; tile.position.copy(this.slotPositions[tileId]); });
-    if (this.timeline === "past") this.revealCompartment();
+    if (this.character === "dad") this.revealCompartment({ animate: notify });
     if (notify) this.onSolved?.();
   }
-  revealCompartment() {
-    if (this.compartment.visible) return;
+  revealCompartment({ animate = false } = {}) {
+    if (this.compartment.visible && !animate) return;
     const center = this.tiles.get(4);
     center.position.copy(this.slotPositions[4]);
-    center.position.x -= 1.02;
-    center.position.z += .26;
     this.compartment.visible = true;
+    const target = this.slotPositions[4].clone();
+    target.x -= 1.42;
+    target.z += .28;
+    if (animate) this.animateTile(center, target);
+    else center.position.copy(target);
   }
   setFocused() {}
   getInteractionText(player) {
-    if (this.timeline !== "present" || !this.available || this.isSolved) return null;
-    if (this.timeline === "present" && !this.tileInserted) return player?.hasSelected("bathroom-mosaic-tile")
+    if (this.character !== "dad" || !this.available || this.isSolved) return null;
+    if (this.character === "dad" && !this.tileInserted) return player?.hasSelected("bathroom-mosaic-tile")
       ? tInteraction("insert", tItem("bathroom-mosaic-tile")) : tInteraction("needItem", tItem("bathroom-mosaic-tile"));
     return tInteraction("examine", "el mosaico");
   }

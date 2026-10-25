@@ -1,13 +1,13 @@
 import { createRoom } from "./createRoom.js";
-import { hallwayDimensions, hallwayTimelineConfig } from "./hallway/hallwayConfig.js";
+import { hallwayDimensions, hallwayCharacterConfig } from "./hallway/hallwayConfig.js";
 import { createHallwayDoors } from "./hallway/createHallwayDoors.js";
 import { createHallwayLighting } from "./hallway/createHallwayLighting.js";
 import { createHallwayPuzzle } from "./hallway/createHallwayPuzzle.js";
 import { createHallwayDecor } from "./hallway/createHallwayDecor.js";
 
-const createHallway = ({ timeline = "present", entranceX = -3, entranceZ = 12.5, onObjectFocus = null, onHallwayAction = null, isInteractHeld = () => false, testMode = false } = {}) => {
-  const config = hallwayTimelineConfig[timeline];
-  if (!config) throw new Error(`Timeline no válido para Hallway: ${timeline}`);
+const createHallway = ({ character = "dad", entranceX = -3, entranceZ = 12.5, onObjectFocus = null, onHallwayAction = null, isInteractHeld = () => false, testMode = false } = {}) => {
+  const config = hallwayCharacterConfig[character];
+  if (!config) throw new Error(`Character no válido para Hallway: ${character}`);
   const { width, depth, height } = hallwayDimensions;
   const hallwayCenterX = entranceX + width / 2 - 6;
   const connectionX = entranceX - hallwayCenterX;
@@ -25,13 +25,13 @@ const createHallway = ({ timeline = "present", entranceX = -3, entranceZ = 12.5,
       { id: "hallway-street-opening", wall: "right", position: 0, width: 5, height: 8 },
     ],
   });
-  room.name = `Bedroom Hallway-${timeline}`;
+  room.name = `Bedroom Hallway-${character}`;
   room.position.set(hallwayCenterX, 0, entranceZ + depth / 2);
   const reportAction = (type, targetId, payload) => onHallwayAction?.(type, targetId, payload);
-  const doors = createHallwayDoors({ timeline, testMode, passageOpenings, isInteractHeld, onAction: reportAction });
-  const lighting = createHallwayLighting({ timeline, connectionX, dimensions: hallwayDimensions });
-  const puzzle = createHallwayPuzzle({ timeline, testMode, onFocus: onObjectFocus, onAction: reportAction });
-  const decor = createHallwayDecor({ timeline, config });
+  const doors = createHallwayDoors({ character, testMode, passageOpenings, isInteractHeld, onAction: reportAction });
+  const lighting = createHallwayLighting({ character, connectionX, dimensions: hallwayDimensions });
+  const puzzle = createHallwayPuzzle({ character, testMode, onFocus: onObjectFocus, onAction: reportAction });
+  const decor = createHallwayDecor({ character, config });
 
   room.add(
     doors.livingRoomDoor.object3D, ...doors.hallwayDoors.map((door) => door.object3D), ...doors.finalBolts.map((bolt) => bolt.object3D),
@@ -40,10 +40,13 @@ const createHallway = ({ timeline = "present", entranceX = -3, entranceZ = 12.5,
     puzzle.clock.object3D, puzzle.mirror.object3D,
   );
   if (puzzle.maze) room.add(puzzle.maze.object3D);
-  if (timeline === "past") room.add(puzzle.note.object3D);
+  if (character === "mum") room.add(puzzle.note.object3D);
   placeAgainstWall(lighting.hallwaySwitch, "back"); placeAgainstWall(lighting.exitSwitch, "right");
   placeAgainstWall(decor.consoleTable, "front"); placeAgainstWall(puzzle.clock, "back");
-  if (timeline === "past") placeAgainstWall(puzzle.note, "back");
+  if (character === "mum") {
+    placeAgainstWall(puzzle.note, "back");
+    puzzle.note.object3D.translateZ(.22);
+  }
   if (puzzle.maze) { placeAgainstWall(puzzle.maze, "front"); puzzle.maze.object3D.translateZ(-.13); }
   placeAgainstWall(puzzle.mirror, "front"); placeAgainstWall(decor.daughterFrame, "back"); placeAgainstWall(decor.sonFrame, "back");
 
@@ -51,7 +54,7 @@ const createHallway = ({ timeline = "present", entranceX = -3, entranceZ = 12.5,
   return {
     room, roomColliders, maze: puzzle.maze, mazeMirror: puzzle.mirror, mazeNote: puzzle.note, livingRoomKey: puzzle.livingRoomKey,
     applyHallwayState: (state) => { puzzle.applyState(state); doors.applyState(state, puzzle.livingRoomKey); },
-    interactables: [puzzle.clock, lighting.hallwaySwitch, lighting.exitSwitch, doors.livingRoomDoor, ...doors.hallwayDoors, ...doors.finalBolts, doors.threshold, ...(timeline === "present" ? [puzzle.mirror] : [puzzle.note]), ...(timeline === "present" && puzzle.maze ? [puzzle.maze] : [])],
+    interactables: [puzzle.clock, lighting.hallwaySwitch, lighting.exitSwitch, doors.livingRoomDoor, ...doors.hallwayDoors, ...doors.finalBolts, doors.threshold, ...(character === "dad" ? [puzzle.mirror] : [puzzle.note]), ...(character === "dad" && puzzle.maze ? [puzzle.maze] : [])],
     entities: [puzzle.clock, lighting.hallwaySwitch, lighting.exitSwitch, doors.livingRoomDoor, ...doors.hallwayDoors, ...doors.finalBolts, doors.threshold, ...lighting.lamps, puzzle.mirror, puzzle.livingRoomKey, ...(puzzle.maze ? [puzzle.maze] : [puzzle.note])],
     mirror: puzzle.mirror, clock: puzzle.clock, hallwaySwitch: lighting.hallwaySwitch, hallwayExitSwitch: lighting.exitSwitch, hallwayLamps: lighting.lamps,
     consoleTable: decor.consoleTable, hallwayCarpet: decor.carpet, livingRoomDoor: doors.livingRoomDoor, hallwayDoors: doors.hallwayDoors, finalThreshold: doors.threshold,

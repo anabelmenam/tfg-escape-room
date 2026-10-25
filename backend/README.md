@@ -16,15 +16,15 @@ PostgreSQL del proyecto se publica en `localhost:5434` para no interferir con ot
 
 - Cada persona crea una cuenta con nombre, correo y contraseña, o inicia sesión con su cuenta existente.
 - Cada cuenta dispone de tres huecos. En cada hueco puede crear una partida o unirse mediante un código.
-- Los dos jugadores eligen pasado o presente desde el lobby antes de empezar.
+- Los dos jugadores eligen a mamá o papá desde el lobby antes de empezar.
 - El estado compartido de los puzles y los inventarios se guarda tras cada acción.
 - La posición, orientación, habitación, diario y pistas de cada jugador se guardan como un punto de continuación individual.
-- Al volver a entrar desde un hueco se recuperan la partida, el mundo elegido y el punto exacto en el que se dejó.
+- Al volver a entrar desde un hueco se recuperan la partida, el personaje elegido y el punto exacto en el que se dejó.
 - Socket.IO recibe `auth: { roomId, playerToken }` al conectar y valida la pertenencia del jugador a esa partida.
 
 ## Cuenta de administración
 
-Las cuentas con rol `admin` ven un apartado privado de pruebas con acceso directo a cada habitación y mundo, a la sala de iconos y al final. Para crear o actualizar una cuenta administradora:
+Las cuentas con rol `admin` ven un apartado privado de pruebas con acceso directo a cada habitación y personaje, a la sala de iconos y al final. Para crear o actualizar una cuenta administradora:
 
 ```sh
 ADMIN_EMAIL=correo ADMIN_PASSWORD=contraseña-segura ADMIN_NAME=nombre npm run admin:create
@@ -32,7 +32,7 @@ ADMIN_EMAIL=correo ADMIN_PASSWORD=contraseña-segura ADMIN_NAME=nombre npm run a
 
 Para cambiar el correo de una cuenta existente, se puede indicar además `ADMIN_PREVIOUS_EMAIL`.
 
-La primera regla entre tiempos ya incluida es abrir `bedroom-exit-door` en el pasado: desbloquea esa puerta en el presente.
+La primera regla cooperativa ya incluida es abrir `bedroom-exit-door` con mamá: desbloquea esa puerta para papá.
 
 ## Modelos y migraciones
 
@@ -42,7 +42,13 @@ La primera regla entre tiempos ya incluida es abrir `bedroom-exit-door` en el pa
 
 Ejecuta `npm run migrate` tanto en una instalación nueva como en una base creada con las anteriores migraciones SQL. Se conservan las tablas y los datos existentes; no se utiliza `sync({ force: true })` ni `sync({ alter: true })`. Las migraciones ya registradas no vuelven a ejecutarse.
 
-`npm run migrate:undo` revierte la última migración. Puede eliminar datos al revertir la creación de tablas. La reversión de la selección de época exige que todos los jugadores tengan una época asignada; si no es así, falla sin aplicar cambios.
+`npm run migrate:undo` revierte la última migración. Puede eliminar datos al revertir la creación de tablas. La migración que convierte la nomenclatura antigua a personajes no se revierte para evitar perder progreso.
+
+## Recuperación de contraseña
+
+El envío se realiza con Brevo. Configura `FRONTEND_ORIGIN`, `BREVO_API_KEY`, `EMAIL_FROM_ADDRESS` y `EMAIL_FROM_NAME` según el ejemplo de `.env.example`. El enlace enviado caduca a los 20 minutos, solo puede usarse una vez y al cambiar la contraseña se cierran las sesiones anteriores.
+
+El comando `npm start` aplica automáticamente las migraciones pendientes antes de iniciar el servidor.
 
 ## Comprobación de sintaxis
 

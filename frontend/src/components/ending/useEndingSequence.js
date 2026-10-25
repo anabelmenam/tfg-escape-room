@@ -42,12 +42,12 @@ const useEndingSequence = ({ session, gameRef, setIsPaused }) => {
       const openingState = structuredClone(game.sharedState);
       openingState.ending = {
         phase: "opening",
-        holding: { past: true, present: true },
+        holding: { mum: true, dad: true },
         choice: null,
-        sacrificeTimeline: null,
+        sacrificeCharacter: null,
       };
-      for (const timeline of ["past", "present"]) {
-        openingState.timelines[timeline].objects["hallway-street-door"] = { locked: false, open: true };
+      for (const character of ["mum", "dad"]) {
+        openingState.characters[character].objects["hallway-street-door"] = { locked: false, open: true };
       }
       game.applySharedState(openingState);
       game.startEndingExit(() => {

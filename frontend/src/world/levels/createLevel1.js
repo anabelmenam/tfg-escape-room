@@ -10,16 +10,16 @@ import { createToyBasket } from "../objects/index.js";
 import { t, tInteraction, tItem } from "../../translations/index.js";
 import { createFamilyStoryNotes } from "./createFamilyStoryNotes.js";
 
-const timelineByPlayerRole = {
-  A: "past",
-  B: "present",
+const characterByPlayerRole = {
+  A: "mum",
+  B: "dad",
 };
 
 const createLevel1 = async ({ playerRole, onSwitchPress, eventManager, onDoorOpenChange, onDoorUnlocked, onObjectFocus, isFlashlightOn = null, isInteractHeld = null, testArea = null, onHallwayAction = null, onBedroomAction = null, onChildrenRoomAction = null, onKitchenAction = null, onLivingRoomAction = null, onBathroomAction = null, onStoryNoteCollected = null, testMode = false } = {}) => {
   if (playerRole === "A" || playerRole === "B") {
-    const timeline = timelineByPlayerRole[playerRole];
+    const character = characterByPlayerRole[playerRole];
     const bedroom = await createBedroom({
-      timeline,
+      character,
       onSwitchPress,
       eventManager,
       onDoorOpenChange,
@@ -31,7 +31,7 @@ const createLevel1 = async ({ playerRole, onSwitchPress, eventManager, onDoorOpe
     const hallway = createHallway({
       onHallwayAction,
       onObjectFocus,
-      timeline,
+      character,
       testMode,
       isInteractHeld,
       entranceX: bedroom.doorOpening.position.x,
@@ -39,7 +39,7 @@ const createLevel1 = async ({ playerRole, onSwitchPress, eventManager, onDoorOpe
     });
     const livingRoomEntrancePosition = -3;
     const livingRoom = await createLivingRoom({
-      timeline,
+      character,
       onSwitchPress,
       eventManager,
       onObjectFocus,
@@ -48,9 +48,9 @@ const createLevel1 = async ({ playerRole, onSwitchPress, eventManager, onDoorOpe
       entrance: { id: "hallway-living-room-connection", wall: "back", position: livingRoomEntrancePosition, width: 5, height: 8 },
       kitchenEntrance: { id: "living-room-kitchen-connection", wall: "right", position: 7, width: 5, height: 8 },
     });
-    const childrenRoom = createChildrenRoom({ timeline, onObjectFocus, onChildrenRoomAction, isFlashlightOn, testMode });
-    const bathroom = createBathroom({ timeline, onObjectFocus, onBathroomAction, testMode });
-    const kitchen = createKitchen({ timeline, onObjectFocus, onKitchenAction, testMode });
+    const childrenRoom = createChildrenRoom({ character, onObjectFocus, onChildrenRoomAction, isFlashlightOn, testMode });
+    const bathroom = createBathroom({ character, onObjectFocus, onBathroomAction, testMode });
+    const kitchen = createKitchen({ character, onObjectFocus, onKitchenAction, testMode });
     childrenRoom.room.position.set(
       hallway.room.position.x + hallway.childrenRoomOpening.position.x,
       0,
@@ -72,7 +72,7 @@ const createLevel1 = async ({ playerRole, onSwitchPress, eventManager, onDoorOpe
       hallway.room.position.z + hallway.dimensions.depth / 2 + 15,
     );
     const storyNotes = createFamilyStoryNotes({
-      timeline,
+      character,
       rooms: { bedroom, hallway, livingRoom, childrenRoom, bathroom, kitchen },
       actions: {
         bedroom: onBedroomAction,
@@ -85,7 +85,7 @@ const createLevel1 = async ({ playerRole, onSwitchPress, eventManager, onDoorOpe
       onNoteCollected: onStoryNoteCollected,
     });
     const level = new THREE.Group();
-    level.name = `Level 1-${timeline}`;
+    level.name = `Level 1-${character}`;
     level.add(bedroom.room, hallway.room, livingRoom.room, childrenRoom.room, bathroom.room, kitchen.room);
     const toyBasket = createToyBasket({ aged: false, scale: .92 });
     toyBasket.position.set(9.2, .02, -2.2);

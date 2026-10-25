@@ -8,9 +8,9 @@ const createEndingPreviewState = () => {
     "hallway-street-door": { locked: true, open: false },
   };
   return {
-    timelines: { past: { objects: structuredClone(bolts), puzzles: {} }, present: { objects: structuredClone(bolts), puzzles: {} } },
-    inventories: { past: [], present: [] },
-    ending: { phase: "threshold", holding: { past: false, present: false }, choice: null, sacrificeTimeline: null },
+    characters: { mum: { objects: structuredClone(bolts), puzzles: {} }, dad: { objects: structuredClone(bolts), puzzles: {} } },
+    inventories: { mum: [], dad: [] },
+    ending: { phase: "threshold", holding: { mum: false, dad: false }, choice: null, sacrificeCharacter: null },
   };
 };
 
@@ -43,7 +43,7 @@ export const initializeGameLevel = async (game) => {
     },
     eventManager: game.eventManager,
     onDoorOpenChange: (isOpen) => game.collisionManager.setDoorOpen(isOpen),
-    onDoorUnlocked: () => { if (game.timeline === "past") game.onDoorUnlocked?.(); },
+    onDoorUnlocked: () => { if (game.character === "mum") game.onDoorUnlocked?.(); },
     onHallwayAction: withAudio(game.onHallwayAction), onBedroomAction: withAudio(game.onBedroomAction),
     onChildrenRoomAction: withAudio(game.onChildrenRoomAction), onKitchenAction: withAudio(game.onKitchenAction),
     onLivingRoomAction: withAudio(game.onLivingRoomAction), onBathroomAction: withAudio(game.onBathroomAction),
@@ -58,8 +58,8 @@ export const initializeGameLevel = async (game) => {
   });
   game.roomData = roomData;
   if (game.testArea && roomData.hallway?.maze) roomData.hallway.maze.available = true;
-  game.timeline = roomData.timeline ?? null;
-  game.scene.userData.timeline = game.timeline;
+  game.character = roomData.character ?? null;
+  game.scene.userData.character = game.character;
   if (game.endingPreview) game.sharedState = createEndingPreviewState();
   game.multiplayer.initialize();
   for (const entity of roomData.entities ?? []) {

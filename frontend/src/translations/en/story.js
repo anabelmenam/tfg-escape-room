@@ -1,9 +1,9 @@
 export default {
 story: {
-    pastTitle: "The house between memories",
-    presentTitle: "The house between memories",
-    past: "Mum and Dad lived together with their children and shared the same house, but for a long time each of them had experienced it differently. Where one remembered affection, the other found silence; where one saw a home, the other felt a growing distance. One night, the house gave shape to those two ways of remembering it and separated them along different paths. Now you can see each other as echoes, but cannot reunite. To return to your family, you must work together, rebuild the memories you share and find the words that were left unsaid.",
-    present: "Mum and Dad lived together with their children and shared the same house, but for a long time each of them had experienced it differently. Where one remembered affection, the other found silence; where one saw a home, the other felt a growing distance. One night, the house gave shape to those two ways of remembering it and separated them along different paths. Now you can see each other as echoes, but cannot reunite. To return to your family, you must work together, rebuild the memories you share and find the words that were left unsaid.",
+    mumTitle: "The house between memories",
+    dadTitle: "The house between memories",
+    mum: "Mum and Dad lived together with their children and shared the same house, but for a long time each of them had experienced it differently. Where one remembered affection, the other found silence; where one saw a home, the other felt a growing distance. One night, the house gave shape to those two ways of remembering it and separated them along different paths. Now you can see each other as echoes, but cannot reunite. To return to your family, you must work together, rebuild the memories you share and find the words that were left unsaid.",
+    dad: "Mum and Dad lived together with their children and shared the same house, but for a long time each of them had experienced it differently. Where one remembered affection, the other found silence; where one saw a home, the other felt a growing distance. One night, the house gave shape to those two ways of remembering it and separated them along different paths. Now you can see each other as echoes, but cannot reunite. To return to your family, you must work together, rebuild the memories you share and find the words that were left unsaid.",
   },
 diaryBook: {
     introduction: "Introduction",

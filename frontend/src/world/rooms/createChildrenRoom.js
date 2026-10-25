@@ -11,13 +11,13 @@ import { createWardrobePuzzle } from "./childrenRoom/createWardrobePuzzle.js";
 import { assembleChildrenRoom } from "./childrenRoom/assembleChildrenRoom.js";
 
 const createChildrenRoom = ({
-  timeline = "present",
+  character = "dad",
   onObjectFocus = null,
   onChildrenRoomAction = null,
   testMode = false,
 } = {}) => {
-  const config = childrenRoomConfig[timeline];
-  if (!config) throw new Error(`Timeline no válido para ChildrenRoom: ${timeline}`);
+  const config = childrenRoomConfig[character];
+  if (!config) throw new Error(`Character no válido para ChildrenRoom: ${character}`);
   const { width, depth, height } = childrenRoomDimensions;
   const { room, roomColliders, bounds, windowOpenings, placeAgainstWall } = createRoom({
     width,
@@ -36,49 +36,49 @@ const createChildrenRoom = ({
     omitWalls: ["front"],
     windows: [{ id: "children-room-window-1", wall: "back", position: 0, width: 7, height: 4.5, bottom: 4 }],
   });
-  room.name = `Children Room-${timeline}`;
-  room.userData.timeline = timeline;
+  room.name = `Children Room-${character}`;
+  room.userData.character = character;
 
   const reportAction = (type, targetId) => onChildrenRoomAction?.(type, targetId);
   const furniture = createChildrenRoomFurniture({ config });
   const fixtures = createChildrenRoomFixtures({
-    timeline,
+    character,
     config,
     dimensions: childrenRoomDimensions,
     windowOpenings,
   });
   const decor = createChildrenRoomDecor({ desks: furniture.desks });
   const blockPuzzle = createBlockPuzzle({
-    timeline,
+    character,
     desk: furniture.desks[1],
     onFocus: onObjectFocus,
     onAction: reportAction,
   });
   const musicPuzzle = createMusicPuzzle({
-    timeline,
+    character,
     testMode,
     desk: furniture.desks[0],
     onFocus: onObjectFocus,
     onAction: reportAction,
   });
   const photoPuzzle = createPhotoBoardPuzzle({
-    timeline,
+    character,
     furniture,
     onFocus: onObjectFocus,
     onAction: reportAction,
     onSolved: () => {
-      if (timeline === "past") musicPuzzle.puzzle.setAvailable(true);
+      if (character === "mum") musicPuzzle.puzzle.setAvailable(true);
     },
   });
   const wardrobePuzzle = createWardrobePuzzle({
-    timeline,
+    character,
     wardrobe: furniture.wardrobes[0],
     onAction: reportAction,
   });
 
   if (testMode) {
     musicPuzzle.puzzle.setAvailable(true);
-    if (timeline === "past") {
+    if (character === "mum") {
       photoPuzzle.puzzle.solve({ notify: false });
       photoPuzzle.puzzle.setOpen(true, { immediate: true });
       musicPuzzle.puzzle.setKeyInserted({ notify: false });
@@ -93,7 +93,7 @@ const createChildrenRoom = ({
   const assembly = assembleChildrenRoom({
     room,
     placeAgainstWall,
-    timeline,
+    character,
     furniture,
     fixtures,
     decor,
@@ -109,7 +109,7 @@ const createChildrenRoom = ({
     objectColliders: assembly.objectColliders,
     bounds,
     dimensions: childrenRoomDimensions,
-    addStoryNote: (object3D) => furniture.dresser.addObjectToDrawer(timeline === "past" ? 7 : 6, object3D, new THREE.Vector3(0, -.16, -.54)),
+    addStoryNote: (object3D) => furniture.dresser.addObjectToDrawer(character === "mum" ? 7 : 6, object3D, new THREE.Vector3(0, -.16, -.54)),
     interactables: assembly.interactables,
     entities: assembly.entities,
     applyChildrenRoomState: (state) => {

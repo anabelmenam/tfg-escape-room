@@ -2,9 +2,9 @@ import * as THREE from "three";
 import { Door, Lamp, Switch, Window } from "../../objects/index.js";
 
 const createBedroomFixtures = ({
-  timeline,
+  character,
   testMode,
-  timelineConfig,
+  characterConfig,
   doorOpening,
   windowOpenings,
   onDoorOpenChange,
@@ -16,7 +16,7 @@ const createBedroomFixtures = ({
   const door = new Door({
     id: "bedroom-exit-door",
     position: doorPosition,
-    requiredKey: testMode ? null : timeline === "past" ? "bedroom-key" : null,
+    requiredKey: testMode ? null : character === "mum" ? "bedroom-key" : null,
     locked: !testMode,
     onOpenChange: onDoorOpenChange,
     onUnlock: onDoorUnlocked,
@@ -36,23 +36,23 @@ const createBedroomFixtures = ({
     switches.forEach((item) => { if (item !== pressed) item.setActive(pressed.active); });
   };
   const lightSwitch1 = new Switch({
-    id: `bedroom-${timeline}-switch1`,
+    id: `bedroom-${character}-switch1`,
     position: new THREE.Vector3(0, 4, 12),
     scale: 0.75,
-    powerAvailable: timeline !== "present",
+    powerAvailable: character !== "dad",
     onPress,
   });
   lightSwitch1.object3D.rotation.y = Math.PI;
   const lightSwitch2 = new Switch({
-    id: `bedroom-${timeline}-switch2`,
+    id: `bedroom-${character}-switch2`,
     position: new THREE.Vector3(3, 3.5, -12),
     scale: 0.75,
-    powerAvailable: timeline !== "present",
+    powerAvailable: character !== "dad",
     onPress,
   });
   switches.push(lightSwitch1, lightSwitch2);
 
-  const lights = [new THREE.AmbientLight(0xffffff, timelineConfig.ambientLightIntensity)];
+  const lights = [new THREE.AmbientLight(0xffffff, characterConfig.ambientLightIntensity)];
   if (windowOpenings[0]) {
     const exteriorLight = new THREE.SpotLight(0xa9c6f0, 100, 32, Math.PI / 3.1, 0.9, 1.2);
     const exteriorTarget = new THREE.Object3D();

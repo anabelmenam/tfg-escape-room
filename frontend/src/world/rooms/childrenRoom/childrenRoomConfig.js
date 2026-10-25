@@ -1,5 +1,5 @@
 const childrenRoomConfig = {
-  past: {
+  mum: {
     wallColor: 0xd8c9a9,
     floorColor: 0x76543d,
     ceilingColor: 0xeee1c7,
@@ -7,7 +7,7 @@ const childrenRoomConfig = {
     carpetColor: 0xb68d42,
     ambientIntensity: 0.62,
   },
-  present: {
+  dad: {
     wallColor: 0xd8c9a9,
     floorColor: 0x76543d,
     ceilingColor: 0xeee1c7,

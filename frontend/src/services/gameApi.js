@@ -28,6 +28,8 @@ export const registerAccount = (details) => request("/api/auth/register", { meth
 export const loginAccount = (details) => request("/api/auth/login", { method: "POST", body: JSON.stringify(details) });
 export const logoutAccount = () => request("/api/auth/logout", { method: "POST" });
 export const getCurrentAccount = () => request("/api/auth/me");
+export const requestPasswordReset = (email) => request("/api/auth/forgot-password", { method: "POST", body: JSON.stringify({ email }) });
+export const resetPassword = (token, password) => request("/api/auth/reset-password", { method: "POST", body: JSON.stringify({ token, password }) });
 export const getSaveSlots = () => request("/api/save-slots");
 
 export const createGameRoom = (slotNumber, name) =>

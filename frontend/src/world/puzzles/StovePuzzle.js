@@ -3,9 +3,9 @@ import { tInteraction, tItem } from "../../translations/index.js";
 import { FocusPuzzle, mark, shadows } from "./KitchenPuzzleBase.js";
 
 class StovePuzzle extends FocusPuzzle {
-  constructor({ timeline, onFocus, onSolved, canSolve = null }) {
+  constructor({ character, onFocus, onSolved, canSolve = null }) {
     super("kitchen-stove", { onFocus });
-    this.timeline = timeline;
+    this.character = character;
     this.onSolved = onSolved;
     this.canSolve = canSolve;
     this.values = [0, 0, 0, 0];
@@ -13,7 +13,7 @@ class StovePuzzle extends FocusPuzzle {
     this.dials = [];
     this.flames = [];
     this.clueRevealed = false;
-    if (timeline === "present") this.createControls();
+    if (character === "dad") this.createControls();
     else this.createFlameClue();
     shadows(this.object3D);
   }
@@ -73,17 +73,17 @@ class StovePuzzle extends FocusPuzzle {
   }
 
   revealClue() {
-    if (this.timeline !== "past" || this.clueRevealed) return;
+    if (this.character !== "mum" || this.clueRevealed) return;
     this.clueRevealed = true;
     this.flames.forEach((flame) => { flame.visible = true; });
   }
 
   interact() {
-    if (this.timeline === "present" && this.available && !this.isSolved) this.onFocus?.(this);
+    if (this.character === "dad" && this.available && !this.isSolved) this.onFocus?.(this);
   }
 
   handleControl(control) {
-    if (this.timeline !== "present" || !this.available || this.isSolved || control?.kind !== "stove-dial") return;
+    if (this.character !== "dad" || !this.available || this.isSolved || control?.kind !== "stove-dial") return;
     const index = control.value;
     this.values[index] = (this.values[index] + 1) % 5;
     this.dials[index].rotation.z = -this.values[index] * Math.PI * 2 / 5;
@@ -107,7 +107,7 @@ class StovePuzzle extends FocusPuzzle {
   }
 
   getInteractionText() {
-    if (this.timeline !== "present" || !this.available || this.isSolved) return null;
+    if (this.character !== "dad" || !this.available || this.isSolved) return null;
     return tInteraction("examine", tItem("stove-controls"));
   }
 }

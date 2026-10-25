@@ -139,17 +139,17 @@ class FallenPainting extends Entity {
 class PaintingSlot extends Entity {
   constructor({
     id = "living-room-painting-slot",
-    timeline,
+    character,
     position = new THREE.Vector3(),
     rotationY = 0,
     onPlaced = null,
     onPieceInserted = null,
   } = {}) {
     super(id);
-    this.timeline = timeline;
+    this.character = character;
     this.onPlaced = onPlaced;
     this.onPieceInserted = onPieceInserted;
-    this.isPlaced = timeline === "present";
+    this.isPlaced = character === "dad";
     this.restored = false;
     this.restoredPieces = [];
     this.object3D = new THREE.Group();
@@ -160,7 +160,7 @@ class PaintingSlot extends Entity {
     this.wallMountObject = new THREE.Mesh(new THREE.PlaneGeometry(2.96, 2.08));
     this.wallMountObject.position.z = -0.08;
     this.wallMountObject.visible = false;
-    if (timeline === "present") {
+    if (character === "dad") {
       this.hiddenScissors = new Scissors();
       this.hiddenScissors.object3D.position.set(1.48, -0.25, -0.1);
     }
@@ -180,7 +180,7 @@ class PaintingSlot extends Entity {
       return;
     }
     const painting = createPainting({
-      complete: this.timeline === "present",
+      complete: this.character === "dad",
       pieces: [...initialPieces, ...this.restoredPieces],
     });
     this.hinge = new THREE.Group();
@@ -211,14 +211,14 @@ class PaintingSlot extends Entity {
   }
 
   interact(player) {
-    if (this.timeline === "past" && !this.isPlaced && player?.hasSelected("living-room-fallen-painting")) {
+    if (this.character === "mum" && !this.isPlaced && player?.hasSelected("living-room-fallen-painting")) {
       player.removeItemFromInventory("living-room-fallen-painting");
       this.isPlaced = true;
       this.render();
       this.onPlaced?.();
       return;
     }
-    if (this.timeline !== "past" || !this.isPlaced) return;
+    if (this.character !== "mum" || !this.isPlaced) return;
     const selected = player?.inventory.getSelectedItem();
     const index = selected?.paintingPieceIndex;
     if (!missingPieces.includes(index) || this.restoredPieces.includes(index)) return;
@@ -230,7 +230,7 @@ class PaintingSlot extends Entity {
   restorePiece(index) {
     if (!missingPieces.includes(index) || this.restoredPieces.includes(index)) return;
     this.restoredPieces.push(index);
-    if (this.timeline === "past") this.render();
+    if (this.character === "mum") this.render();
     if (missingPieces.every((piece) => this.restoredPieces.includes(piece))) this.setRestored();
   }
 
@@ -239,13 +239,13 @@ class PaintingSlot extends Entity {
   }
 
   update(deltaTime) {
-    if (this.timeline !== "present" || !this.restored || !this.hinge) return;
+    if (this.character !== "dad" || !this.restored || !this.hinge) return;
     this.hinge.rotation.y = THREE.MathUtils.damp(this.hinge.rotation.y, -2.1, 2, deltaTime);
     if (this.hinge.rotation.y < -1.7 && this.hiddenScissors.object3D.visible) this.hiddenScissors.setEnabled(true);
   }
 
   getInteractionText(player) {
-    if (this.timeline !== "past") return null;
+    if (this.character !== "mum") return null;
     const selected = player?.inventory.getSelectedItem();
     if (!this.isPlaced) {
       if (selected?.id === "living-room-fallen-painting") {

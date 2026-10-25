@@ -4,9 +4,9 @@ import { tInteraction, tItem } from "../../translations/index.js";
 import { CASTLE_PIECES, ChildrenPuzzle, configureChildrenMeshes, markChildrenControl } from "./ChildrenPuzzleBase.js";
 
 class BlockConstructionPuzzle extends ChildrenPuzzle {
-  constructor({ timeline, onFocus, onSolved, onMatLifted } = {}) {
+  constructor({ character, onFocus, onSolved, onMatLifted } = {}) {
     super("children-blocks", { onFocus });
-    this.timeline = timeline;
+    this.character = character;
     this.onSolved = onSolved;
     this.onMatLifted = onMatLifted;
     this.matLifted = false;
@@ -99,13 +99,13 @@ class BlockConstructionPuzzle extends ChildrenPuzzle {
     CASTLE_PIECES.forEach((piece, index) => {
       const block = new THREE.Group(); const material = new THREE.MeshStandardMaterial({ color: piece.color, roughness: .68 });
       let geometry; if (piece.kind === "roof") geometry = new THREE.CylinderGeometry(0, .62, .64, 4); else if (piece.kind === "bridge") geometry = new RoundedBoxGeometry(3.45, .2, .68, 4, .05); else geometry = new RoundedBoxGeometry(.72, .72, .72, 4, .06);
-      const shape = new THREE.Mesh(geometry, material); if (piece.kind === "roof") shape.rotation.y = Math.PI / 4; block.add(shape); block.position.set(...(this.timeline === "present" ? piece.target : piece.start)); markChildrenControl(block, { kind: "block", value: index }); this.blocks[index] = block; this.startPositions[index] = new THREE.Vector3(...piece.start); this.object3D.add(block);
+      const shape = new THREE.Mesh(geometry, material); if (piece.kind === "roof") shape.rotation.y = Math.PI / 4; block.add(shape); block.position.set(...(this.character === "dad" ? piece.target : piece.start)); markChildrenControl(block, { kind: "block", value: index }); this.blocks[index] = block; this.startPositions[index] = new THREE.Vector3(...piece.start); this.object3D.add(block);
     });
     configureChildrenMeshes(this.object3D);
   }
 
   interact() {
-    if (this.timeline === "past" && this.isSolved && !this.matLifted) {
+    if (this.character === "mum" && this.isSolved && !this.matLifted) {
       this.liftMat();
       return;
     }
@@ -153,7 +153,7 @@ class BlockConstructionPuzzle extends ChildrenPuzzle {
   }
 
   handleControl(control, _player, intersection) {
-    if (this.timeline !== "past" || !this.available || this.isSolved) return;
+    if (this.character !== "mum" || !this.available || this.isSolved) return;
     if (control?.kind === "block") {
       if (this.selectedBlock === null && this.placed.includes(control.value)) {
         if (!this.hasBlockAbove(control.value)) {
@@ -302,7 +302,7 @@ class BlockConstructionPuzzle extends ChildrenPuzzle {
     this.blocks.forEach((block, index) => block.position.copy(this.startPositions[index]));
   }
   solve({ notify = true } = {}) { if (this.isSolved) return; this.selectedBlock = null; this.selectedBlockY = null; this.isSolved = true; this.placed = CASTLE_PIECES.map((_, index) => index); CASTLE_PIECES.forEach((piece, index) => this.blocks[index].position.set(...piece.target)); if (notify) this.onSolved?.(); this.liftMat({ notify }); }
-  getInteractionText() { if (this.timeline === "past" && this.isSolved) return this.matLifted ? null : tInteraction("move", tItem("block-construction")); return tInteraction("examine", tItem("blocks")); }
+  getInteractionText() { if (this.character === "mum" && this.isSolved) return this.matLifted ? null : tInteraction("move", tItem("block-construction")); return tInteraction("examine", tItem("blocks")); }
   getFocusPosition() { this.object3D.updateWorldMatrix(true, false); return this.object3D.localToWorld(new THREE.Vector3(0, 5.2, 9)); }
   getLookAtPosition() { this.object3D.updateWorldMatrix(true, false); return this.object3D.localToWorld(new THREE.Vector3(0, 2.6, 0)); }
 }

@@ -3,7 +3,7 @@ import { FinalKey, Paper } from "../../objects/index.js";
 import { RadioPuzzle, SewingBoxPuzzle } from "../../puzzles/index.js";
 
 const createBedroomRadioPuzzle = ({
-  timeline,
+  character,
   testMode,
   clues,
   furniture,
@@ -13,7 +13,7 @@ const createBedroomRadioPuzzle = ({
 }) => {
   const { cabinet, nightstand1 } = furniture;
   const { key, radioDial } = items;
-  const planPaper = timeline === "past"
+  const planPaper = character === "mum"
     ? new Paper({
         id: "bedroom-electrical-plan",
         width: 2.45,
@@ -35,7 +35,7 @@ const createBedroomRadioPuzzle = ({
     planPaper.setEnabled(false);
   }
 
-  const finalKey = timeline === "past"
+  const finalKey = character === "mum"
     ? new FinalKey({
         id: "final-key-bedroom",
         symbol: "moon",
@@ -44,7 +44,7 @@ const createBedroomRadioPuzzle = ({
       })
     : null;
 
-  const radio = timeline === "past"
+  const radio = character === "mum"
     ? new RadioPuzzle({
         id: "bedroom-radio",
         position: new THREE.Vector3(0, 3.52, 0),
@@ -61,7 +61,7 @@ const createBedroomRadioPuzzle = ({
     : null;
   if (radio) cabinet.object3D.add(radio.object3D);
 
-  const radioNote = timeline === "present"
+  const radioNote = character === "dad"
     ? new Paper({
         id: "bedroom-radio-note",
         position: new THREE.Vector3(1.5, 0.08, -3),
@@ -82,7 +82,7 @@ const createBedroomRadioPuzzle = ({
       })
     : null;
 
-  const sewingBox = timeline === "past"
+  const sewingBox = character === "mum"
     ? new SewingBoxPuzzle({
         id: "bedroom-sewing-box",
         position: new THREE.Vector3(-6, 3, -6),
@@ -96,28 +96,28 @@ const createBedroomRadioPuzzle = ({
   if (sewingBox) nightstand1.addObjectToDrawer(0, sewingBox.object3D, new THREE.Vector3(-0.5, -0.1, -0.5));
 
   const applyState = (state) => {
-    const radioSolved = Boolean(state.timelines?.past?.puzzles?.["bedroom-radio"]?.solved);
-    if (state.timelines?.past?.objects?.["bedroom-radio"]?.hasDial) radio?.restoreDialState();
-    const sewingSolved = Boolean(state.timelines?.past?.puzzles?.["bedroom-sewing-box"]?.solved);
+    const radioSolved = Boolean(state.characters?.mum?.puzzles?.["bedroom-radio"]?.solved);
+    if (state.characters?.mum?.objects?.["bedroom-radio"]?.hasDial) radio?.restoreDialState();
+    const sewingSolved = Boolean(state.characters?.mum?.puzzles?.["bedroom-sewing-box"]?.solved);
     if (radioSolved) radio?.restoreSolvedState();
     if (sewingSolved) sewingBox?.solve({ notify: false });
     else sewingBox?.trySolve();
-    clues.radioNote ||= Boolean(state.inventories?.present?.includes("bedroom-radio-note")
+    clues.radioNote ||= Boolean(state.inventories?.dad?.includes("bedroom-radio-note")
       || radioSolved);
-    clues.electricalPlan ||= Boolean(state.inventories?.past?.includes("bedroom-electrical-plan")
-      || state.timelines?.present?.puzzles?.["bedroom-electrical-panel"]?.solved);
+    clues.electricalPlan ||= Boolean(state.inventories?.mum?.includes("bedroom-electrical-plan")
+      || state.characters?.dad?.puzzles?.["bedroom-electrical-panel"]?.solved);
     if (radioNote && (clues.radioNote || radioSolved)) {
       radioNote.object3D.visible = false;
       radioNote.setEnabled(false);
     }
-    if (planPaper && (clues.electricalPlan || state.timelines?.present?.puzzles?.["bedroom-electrical-panel"]?.solved)) {
+    if (planPaper && (clues.electricalPlan || state.characters?.dad?.puzzles?.["bedroom-electrical-panel"]?.solved)) {
       planPaper.object3D.visible = false;
       planPaper.setEnabled(false);
     }
     if (finalKey) {
       const earned = radioSolved;
-      const unavailable = state.inventories?.past?.includes("final-key-bedroom")
-        || ["past", "present"].some((era) => state.timelines?.[era]?.objects?.["final-bolt-bedroom"]?.unlocked);
+      const unavailable = state.inventories?.mum?.includes("final-key-bedroom")
+        || ["mum", "dad"].some((era) => state.characters?.[era]?.objects?.["final-bolt-bedroom"]?.unlocked);
       if (earned && !unavailable) finalKey.reveal();
       else if (unavailable) {
         finalKey.object3D.visible = false;

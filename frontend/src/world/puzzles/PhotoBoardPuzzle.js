@@ -36,13 +36,13 @@ const createPhotoShadowMaterial = () => {
 };
 
 class PhotoBoardPuzzle extends ChildrenPuzzle {
-  constructor({ timeline, onFocus, onSolved, onPinInserted, onCollect = null } = {}) {
+  constructor({ character, onFocus, onSolved, onPinInserted, onCollect = null } = {}) {
     super("children-globe", { onFocus });
-    this.timeline = timeline;
+    this.character = character;
     this.onSolved = onSolved;
     this.onPinInserted = onPinInserted;
     this.onCollect = onCollect;
-    if (timeline === "present") {
+    if (character === "dad") {
       this.id = "children-photo-order-note";
       this.object3D.name = this.id;
       this.itemName = "photo-order-note";
@@ -62,7 +62,7 @@ class PhotoBoardPuzzle extends ChildrenPuzzle {
   }
 
   createBoardOrDiary() {
-    if (this.timeline === "present") {
+    if (this.character === "dad") {
       const imagePath = "/images/puzzles/photo-order-diary.png";
       const diaryTexture = new THREE.TextureLoader().load(imagePath);
       diaryTexture.colorSpace = THREE.SRGBColorSpace;
@@ -150,7 +150,7 @@ class PhotoBoardPuzzle extends ChildrenPuzzle {
   }
 
   setHiddenReward(reward) {
-    if (this.timeline !== "past" || !this.hinge || !reward?.object3D) return;
+    if (this.character !== "mum" || !this.hinge || !reward?.object3D) return;
     this.hiddenReward = reward;
     reward.object3D.position.set(3.6, 1.76, -.19);
     reward.object3D.rotation.set(0, 0, -.18);
@@ -177,18 +177,18 @@ class PhotoBoardPuzzle extends ChildrenPuzzle {
 
   interact(player) {
     if (!this.available) return;
-    if (this.timeline === "past" && this.isSolved) {
+    if (this.character === "mum" && this.isSolved) {
       this.setOpen(this.targetHingeAngle >= -.1);
       return;
     }
-    if (this.timeline === "present") {
+    if (this.character === "dad") {
       if (!player?.inventory.add(this)) return;
       this.object3D.visible = false;
       this.setEnabled(false);
       this.onCollect?.();
       return;
     }
-    if (this.timeline === "past" && !this.pinInserted && player?.inventory.hasSelected("globe-pushpin")) {
+    if (this.character === "mum" && !this.pinInserted && player?.inventory.hasSelected("globe-pushpin")) {
       player.inventory.remove("globe-pushpin");
       this.setPinInserted();
       return;
@@ -197,7 +197,7 @@ class PhotoBoardPuzzle extends ChildrenPuzzle {
   }
 
   setPinInserted({ notify = true } = {}) {
-    if (this.pinInserted || this.timeline !== "past") return;
+    if (this.pinInserted || this.character !== "mum") return;
     this.pinInserted = true;
     this.pins[MISSING_PIN_SLOT].visible = true;
     this.emptySocket.visible = false;
@@ -206,7 +206,7 @@ class PhotoBoardPuzzle extends ChildrenPuzzle {
 
   handleControl(control, player) {
     if (
-      this.timeline !== "past"
+      this.character !== "mum"
       || !this.available
       || this.isSolved
       || control?.kind !== "memory-slot"
@@ -257,7 +257,7 @@ class PhotoBoardPuzzle extends ChildrenPuzzle {
   solve({ notify = true } = {}) {
     if (this.isSolved) return;
     this.isSolved = true;
-    if (this.timeline === "past") {
+    if (this.character === "mum") {
       if (!this.pinInserted) this.setPinInserted({ notify: false });
       this.setOpen(true);
       this.revealHiddenReward();
@@ -281,30 +281,30 @@ class PhotoBoardPuzzle extends ChildrenPuzzle {
 
   getInteractionText(player) {
     if (!this.available) return null;
-    if (this.timeline === "past" && this.isSolved) {
+    if (this.character === "mum" && this.isSolved) {
       return this.targetHingeAngle < -.1 ? tInteraction("close", tItem("noticeboard")) : tInteraction("open", tItem("noticeboard"));
     }
-    if (this.timeline === "present") return tInteraction("pickUp", tItem(this.itemName));
-    if (this.timeline === "past" && !this.pinInserted && player?.inventory.hasSelected("globe-pushpin")) {
+    if (this.character === "dad") return tInteraction("pickUp", tItem(this.itemName));
+    if (this.character === "mum" && !this.pinInserted && player?.inventory.hasSelected("globe-pushpin")) {
       return tInteraction("insert", tItem("globe-pushpin"));
     }
-    return tInteraction("examine", this.timeline === "past" ? "corcho" : "el diario infantil");
+    return tInteraction("examine", tItem(this.character === "mum" ? "noticeboard" : "photo-order-note"));
   }
 
   getFocusPosition() {
-    if (this.timeline !== "present") return super.getFocusPosition();
+    if (this.character !== "dad") return super.getFocusPosition();
     this.object3D.updateWorldMatrix(true, false);
     return this.object3D.localToWorld(new THREE.Vector3(0, 5, 0));
   }
 
   getLookAtPosition() {
-    if (this.timeline !== "present") return super.getLookAtPosition();
+    if (this.character !== "dad") return super.getLookAtPosition();
     this.object3D.updateWorldMatrix(true, false);
     return this.object3D.localToWorld(new THREE.Vector3(0, 0, 0));
   }
 
   getFocusUp() {
-    if (this.timeline !== "present") return new THREE.Vector3(0, 1, 0);
+    if (this.character !== "dad") return new THREE.Vector3(0, 1, 0);
     const worldQuaternion = this.object3D.getWorldQuaternion(new THREE.Quaternion());
     return new THREE.Vector3(0, 0, -1).applyQuaternion(worldQuaternion).normalize();
   }

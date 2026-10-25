@@ -1,7 +1,7 @@
 import { t } from "../../translations/index.js";
 
 const NEXT_AREA = { bedroom: "hallway", hallway: "children", children: "bathroom", bathroom: "kitchen", kitchen: "bedroom" };
-const currentCharacter = (session) => session.character ?? (session.timeline === "past" ? "mum" : "dad");
+const currentCharacter = (session) => session.character ?? (session.character === "mum" ? "mum" : "dad");
 
 const TestModePanel = ({ session }) => (
   <div className="absolute left-4 top-4 z-20 rounded border border-amber-200/40 bg-black/80 p-3 text-sm text-amber-50">

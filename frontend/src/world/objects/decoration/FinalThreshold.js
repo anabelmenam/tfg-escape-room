@@ -3,9 +3,9 @@ import { Entity } from "../Entity.js";
 import { t } from "../../../translations/index.js";
 
 class FinalThreshold extends Entity {
-  constructor({ timeline, isInteractHeld = () => false, onHoldChange = null } = {}) {
+  constructor({ character, isInteractHeld = () => false, onHoldChange = null } = {}) {
     super("hallway-final-threshold");
-    this.timeline = timeline;
+    this.character = character;
     this.isInteractHeld = isInteractHeld;
     this.onHoldChange = onHoldChange;
     this.holding = false;

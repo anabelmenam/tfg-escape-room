@@ -3,7 +3,7 @@ const optional = (value) => (value ? [value] : []);
 const assembleLivingRoom = ({
   room,
   placeAgainstWall,
-  timeline,
+  character,
   fixtures,
   furniture,
   decor,
@@ -20,7 +20,7 @@ const assembleLivingRoom = ({
   const { fireplace, displayCase, vitrineLetter, emberPuzzle, cushion, match, decorativeCushions } = fireplacePuzzle;
   const { chest, lock, studyKey, finalKey } = chestPuzzle;
 
-  if (timeline === "past") room.add(fallenPainting.object3D);
+  if (character === "mum") room.add(fallenPainting.object3D);
   room.add(
     paintingSlot.object3D,
     sofa.object3D,
@@ -78,7 +78,7 @@ const assembleLivingRoom = ({
       shelf1,
       ...rainbowBooks,
       ...(rainbowDrawing ? [rainbowDrawing] : []),
-      ...(timeline === "past" ? [fallenPainting] : []),
+      ...(character === "mum" ? [fallenPainting] : []),
       paintingSlot,
       ...(paintingSlot.hiddenScissors ? [paintingSlot.hiddenScissors] : []),
       ...(cushion ? [cushion, match] : []),
@@ -104,7 +104,7 @@ const assembleLivingRoom = ({
       table,
       cabinet,
       ...rainbowBooks,
-      ...(timeline === "past" ? [fallenPainting] : []),
+      ...(character === "mum" ? [fallenPainting] : []),
       ...(paintingSlot.hiddenScissors ? [paintingSlot.hiddenScissors] : []),
       ...(cushion ? [cushion, match] : []),
       fireplace,

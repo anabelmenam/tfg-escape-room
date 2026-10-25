@@ -5,8 +5,8 @@ import { GAME_SOCKET_URL } from "../services/gameApi";
 import { t } from "../translations/index.js";
 
 const characterInfo = {
-  mum: { translationKey: "mama", symbol: "M", stateKey: "past" },
-  dad: { translationKey: "papa", symbol: "D", stateKey: "present" },
+  mum: { translationKey: "mama", symbol: "M", stateKey: "mum" },
+  dad: { translationKey: "papa", symbol: "D", stateKey: "dad" },
 };
 
 const RoomLobby = ({ session, onStart, onBack }) => {
@@ -21,26 +21,25 @@ const RoomLobby = ({ session, onStart, onBack }) => {
     });
     socketRef.current = socket;
     socket.once("connect", () => {
-      socket.emit("lobby:select-timeline", { timeline: null });
+      socket.emit("lobby:select-character", { character: null });
     });
     socket.on("connect", () => setConnectionState("connected"));
     socket.on("connect_error", () => setConnectionState("connectionFailed"));
     socket.on("lobby:state", (lobby) => setPlayers(lobby.players ?? []));
     socket.on("game:started", (lobby) => {
       const ownPlayer = lobby.players?.find((player) => player.id === session.playerId);
-      if (ownPlayer?.timeline) {
-        const character = ownPlayer.timeline === "past" ? "mum" : "dad";
-        onStart({ ...session, status: "playing", character, timeline: ownPlayer.timeline });
+      if (ownPlayer?.character) {
+        onStart({ ...session, status: "playing", character: ownPlayer.character });
       }
     });
 
     return () => socket.disconnect();
   }, [onStart, session]);
 
-  const chooseCharacter = (character) => {
+  const chooseCharacter = (selection) => {
     setError("");
-    const timeline = character ? characterInfo[character].stateKey : null;
-    socketRef.current?.emit("lobby:select-timeline", { timeline }, (result) => {
+    const character = selection ? characterInfo[selection].stateKey : null;
+    socketRef.current?.emit("lobby:select-character", { character }, (result) => {
       if (!result?.ok) setError(t("roomLobby.chooseError"));
     });
   };
@@ -56,7 +55,7 @@ const RoomLobby = ({ session, onStart, onBack }) => {
     await navigator.clipboard?.writeText(session.joinCode);
   };
 
-  const playerForCharacter = (character) => players.find((player) => player.timeline === characterInfo[character].stateKey);
+  const playerForCharacter = (character) => players.find((player) => player.character === characterInfo[character].stateKey);
   const ownPlayer = players.find((player) => player.id === session.playerId);
   const bothPlayersReady =
     players.length === 2 && Boolean(playerForCharacter("mum")) && Boolean(playerForCharacter("dad"));
@@ -103,7 +102,7 @@ const RoomLobby = ({ session, onStart, onBack }) => {
           {Object.entries(characterInfo).map(([character, info]) => {
             const occupant = playerForCharacter(character);
             const occupiedByOther = occupant && occupant.id !== session.playerId;
-            const selectedBySelf = ownPlayer?.timeline === info.stateKey;
+            const selectedBySelf = ownPlayer?.character === info.stateKey;
             return (
               <button
                 key={character}

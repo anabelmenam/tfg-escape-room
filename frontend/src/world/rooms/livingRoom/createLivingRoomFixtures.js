@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { Door, Key, Lamp, Switch, Window } from "../../objects/index.js";
 
 const createLivingRoomFixtures = ({
-  timeline,
+  character,
   testMode,
   entrance,
   kitchenEntrance,
@@ -27,7 +27,7 @@ const createLivingRoomFixtures = ({
           ),
         ),
         rotationY: kitchenOpening.rotationY,
-        requiredKey: testMode ? null : timeline === "past" ? "crowbar" : null,
+        requiredKey: testMode ? null : character === "mum" ? "crowbar" : null,
         locked: !testMode,
         onUnlock: () => onAction?.("object.interact", "living-room-kitchen-door"),
       })
@@ -80,9 +80,9 @@ const createLivingRoomFixtures = ({
   const ambientLight = new THREE.AmbientLight(0xffffff, 0.15);
 
   const applyState = (state) => {
-    const kitchenDoorUnlocked = ["past", "present"].some((era) =>
-      state.timelines?.[era]?.objects?.["living-room-kitchen-door"]?.locked === false
-      || state.timelines?.[era]?.objects?.["hallway-kitchen-door"]?.locked === false,
+    const kitchenDoorUnlocked = ["mum", "dad"].some((era) =>
+      state.characters?.[era]?.objects?.["living-room-kitchen-door"]?.locked === false
+      || state.characters?.[era]?.objects?.["hallway-kitchen-door"]?.locked === false,
     );
     if (kitchenDoorUnlocked) kitchenDoor?.unlock({ notify: false });
   };

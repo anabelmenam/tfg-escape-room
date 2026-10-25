@@ -12,15 +12,15 @@ const getTestSession = () => {
   const requestedCharacter = params.get("character");
   const legacyTest = params.get("test");
   if (legacyTest === "icons") return { testMode: true, testPlayerRole: "C", testArea: "icons" };
-  if (legacyTest === "ending") return { testMode: true, character: "dad", timeline: "present", testArea: "hallway", endingPreview: true };
-  const character = requestedCharacter ?? (legacyTest === "past" ? "mum" : legacyTest === "present" ? "dad" : null);
+  if (legacyTest === "ending") return { testMode: true, character: "dad", testArea: "hallway", endingPreview: true };
+  const character = requestedCharacter ?? (legacyTest === "mum" ? "mum" : legacyTest === "dad" ? "dad" : null);
   if (!["mum", "dad"].includes(character)) return null;
-  const timeline = character === "mum" ? "past" : "present";
   const area = params.get("area");
-  return { testMode: true, character, timeline, testArea: ["hallway", "children", "bathroom", "kitchen"].includes(area) ? area : "bedroom" };
+  return { testMode: true, character, testArea: ["hallway", "children", "bathroom", "kitchen"].includes(area) ? area : "bedroom" };
 };
 
 const requestedTestSession = getTestSession();
+const passwordResetRequested = new URLSearchParams(window.location.search).has("resetToken");
 
 const readSetting = (key, fallback, { min = 0, max = 1 } = {}) => {
   const storedValue = localStorage.getItem(`escape-room-${key}`);
@@ -33,7 +33,7 @@ const App = () => {
   const testSession = import.meta.env.DEV ? requestedTestSession : null;
   const [session, setSession] = useState(testSession);
   const [account, setAccount] = useState(null);
-  const [accountLoading, setAccountLoading] = useState(!testSession);
+  const [accountLoading, setAccountLoading] = useState(!testSession && !passwordResetRequested);
   const [language, setLanguageState] = useState(getLanguage);
   const [audioController] = useState(() => new GameAudio());
   const [audioSettings, setAudioSettings] = useState(() => ({
@@ -68,7 +68,7 @@ const App = () => {
   }, [language]);
 
   useEffect(() => {
-    if (testSession) return;
+    if (testSession || passwordResetRequested) return;
     getCurrentAccount().then(({ user }) => {
       setAccount(user);
       if (user.role === "admin" && requestedTestSession) setSession(requestedTestSession);
@@ -88,7 +88,7 @@ const App = () => {
   };
 
   if (accountLoading) return <main className="flex min-h-screen items-center justify-center bg-[#110f10] text-[#d8aa64]">{getLanguage() === "es" ? "Cargando…" : "Loading…"}</main>;
-  if (!testSession && !account) return <AccountAccess onAuthenticated={setAccount} />;
+  if (passwordResetRequested || (!testSession && !account)) return <AccountAccess onAuthenticated={setAccount} />;
 
   if (!session) {
     return (
@@ -105,13 +105,13 @@ const App = () => {
       />
     );
   }
-  if ((!session.timeline || session.status === "waiting") && !session.testPlayerRole) {
+  if ((!session.character || session.status === "waiting") && !session.testPlayerRole) {
     return <RoomLobby session={session} onStart={setSession} onBack={() => setSession(null)} />;
   }
 
   return (
     <GameCanvas
-      playerRole={session.testPlayerRole ?? (session.timeline === "past" ? "A" : "B")}
+      playerRole={session.testPlayerRole ?? (session.character === "mum" ? "A" : "B")}
       session={session}
       isAdmin={account?.role === "admin"}
       language={language}

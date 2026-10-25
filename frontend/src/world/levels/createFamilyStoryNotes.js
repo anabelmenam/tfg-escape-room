@@ -3,14 +3,14 @@ import { Paper } from "../objects/index.js";
 import { t } from "../../translations/index.js";
 
 const placements = {
-  past: [
+  mum: [
     { id: "family-note-01", room: "bedroom" },
     { id: "family-note-03", room: "livingRoom" },
     { id: "family-note-05", room: "childrenRoom" },
     { id: "family-note-07", room: "bathroom" },
     { id: "family-note-09", room: "kitchen" },
   ],
-  present: [
+  dad: [
     { id: "family-note-02", room: "bedroom" },
     { id: "family-note-04", room: "livingRoom" },
     { id: "family-note-06", room: "childrenRoom" },
@@ -83,16 +83,16 @@ const showFoundNoteMessage = () => {
   panel.hideTimeout = window.setTimeout(() => panel.classList.add("hidden"), 4500);
 };
 
-const createFamilyStoryNotes = ({ timeline, rooms, actions, onNoteCollected = null }) => placements[timeline].map((config) => {
-  const author = timeline === "past" ? "mother" : "father";
+const createFamilyStoryNotes = ({ character, rooms, actions, onNoteCollected = null }) => placements[character].map((config) => {
+  const author = character === "mum" ? "mother" : "father";
   const note = new Paper({
     id: config.id,
-    rotation: new THREE.Euler(-Math.PI / 2, 0, timeline === "past" ? -.05 : .06),
+    rotation: new THREE.Euler(-Math.PI / 2, 0, character === "mum" ? -.05 : .06),
     scale: .72,
     width: 1.25,
     height: 1.65,
-    paperColor: timeline === "past" ? "#ead9b7" : "#d8ded8",
-    backColor: timeline === "past" ? "#c6ad80" : "#afb9b3",
+    paperColor: character === "mum" ? "#ead9b7" : "#d8ded8",
+    backColor: character === "mum" ? "#c6ad80" : "#afb9b3",
     content: drawStoryNote({ author, title: t(`storyNotes.${config.id}.title`), body: t(`storyNotes.${config.id}.body`) }),
     collectible: true,
     archiveOnly: true,

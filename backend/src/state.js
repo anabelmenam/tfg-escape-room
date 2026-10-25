@@ -1,14 +1,14 @@
 export const createInitialState = () => ({
-  timelines: {
-    past: { objects: {}, puzzles: {} },
-    present: { objects: {}, puzzles: {} },
+  characters: {
+    mum: { objects: {}, puzzles: {} },
+    dad: { objects: {}, puzzles: {} },
   },
-  inventories: { past: [], present: [] },
+  inventories: { mum: [], dad: [] },
   journalEntries: [],
   ending: {
     phase: "locked",
-    holding: { past: false, present: false },
+    holding: { mum: false, dad: false },
     choice: null,
-    sacrificeTimeline: null,
+    sacrificeCharacter: null,
   },
 });

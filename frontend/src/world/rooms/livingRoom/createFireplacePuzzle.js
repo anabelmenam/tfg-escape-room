@@ -40,16 +40,16 @@ const drawAgedRiddle = (context, canvas) => {
   context.fillText("— La familia", width / 2, height - 52);
 };
 
-const createFireplacePuzzle = ({ timeline, testMode, sofa, armchairs, onAction, onFocus }) => {
+const createFireplacePuzzle = ({ character, testMode, sofa, armchairs, onAction, onFocus }) => {
   const fireplace = new Fireplace({
     position: new THREE.Vector3(9, 1.7, -14.2),
     onSolved: () => onAction?.("object.interact", "living-room-fireplace"),
   });
-  const displayCase = timeline === "past" ? new DisplayCase() : null;
+  const displayCase = character === "mum" ? new DisplayCase() : null;
   if (displayCase) displayCase.unlocked = false;
 
   let hasLetter = false;
-  const vitrineLetter = timeline === "past" ? new Paper({
+  const vitrineLetter = character === "mum" ? new Paper({
     id: "living-room-vitrine-letter",
     width: 1.1,
     height: .7,
@@ -77,8 +77,8 @@ const createFireplacePuzzle = ({ timeline, testMode, sofa, armchairs, onAction, 
     };
   }
 
-  const emberClue = timeline === "present" ? new EmberClue() : null;
-  const emberPuzzle = timeline === "past"
+  const emberClue = character === "dad" ? new EmberClue() : null;
+  const emberPuzzle = character === "mum"
     ? new EmberPuzzle({
         onFocus,
         onSolved: () => {
@@ -114,7 +114,7 @@ const createFireplacePuzzle = ({ timeline, testMode, sofa, armchairs, onAction, 
     rotation: new THREE.Euler(-.2, 1, .2),
     color: 0x493027,
   };
-  cushion = timeline === "present"
+  cushion = character === "dad"
     ? new Cushion({
         ...cushionOptions,
         accentColor: 0xdab77d,
@@ -134,29 +134,29 @@ const createFireplacePuzzle = ({ timeline, testMode, sofa, armchairs, onAction, 
   ];
 
   const applyState = (state) => {
-    const cushionState = state.timelines?.present?.objects?.["living-room-sofa-cushion"];
-    if (timeline === "present" && cushionState?.cut && cushion) {
+    const cushionState = state.characters?.dad?.objects?.["living-room-sofa-cushion"];
+    if (character === "dad" && cushionState?.cut && cushion) {
       cushion.setCut();
       cushion.searched = Boolean(cushionState.searched);
     }
-    if (state.timelines?.present?.objects?.["living-room-fireplace"]?.open) {
+    if (state.characters?.dad?.objects?.["living-room-fireplace"]?.open) {
       fireplace.solved = true;
       fireplace.flame.visible = true;
       if (emberClue) emberClue.object3D.visible = true;
       emberPuzzle?.reveal();
     }
-    if (state.timelines?.past?.puzzles?.["living-room-embers"]?.solved) {
+    if (state.characters?.mum?.puzzles?.["living-room-embers"]?.solved) {
       emberPuzzle?.solve({ notify: false });
       displayCase?.unlock();
     }
-    const displayCaseState = state.timelines?.past?.objects?.["living-room-display-case"];
+    const displayCaseState = state.characters?.mum?.objects?.["living-room-display-case"];
     if (displayCaseState?.open && displayCase && vitrineLetter) {
       displayCase.setOpened();
       vitrineLetter.object3D.visible = true;
       vitrineLetter.setEnabled(true);
     }
-    hasLetter = Boolean(state.inventories?.past?.includes("living-room-vitrine-letter"));
-    const chestOpened = state.timelines?.present?.objects?.["living-room-chest"]?.locked === false;
+    hasLetter = Boolean(state.inventories?.mum?.includes("living-room-vitrine-letter"));
+    const chestOpened = state.characters?.dad?.objects?.["living-room-chest"]?.locked === false;
     if ((hasLetter || chestOpened) && vitrineLetter) {
       vitrineLetter.object3D.visible = false;
       vitrineLetter.setEnabled(false);

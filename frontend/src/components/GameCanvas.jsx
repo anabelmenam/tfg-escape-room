@@ -62,7 +62,7 @@ const GameCanvas = ({ playerRole, session, isAdmin, audioController, audioSettin
     const game = gameRef.current;
     const hintId = getPlayerHint({
       state: game?.sharedState,
-      timeline: session.timeline,
+      character: session.character,
       inventoryIds: game?.player.inventory.getAll().filter(Boolean).map((item) => item.id) ?? [],
     });
     const variants = t(`hints.messages.${hintId}`);
@@ -76,8 +76,8 @@ const GameCanvas = ({ playerRole, session, isAdmin, audioController, audioSettin
 
   return (
     <div ref={containerRef} className={`relative ${endingSequence.active ? "ending-cinematic" : ""}`} style={{ width: "100vw", height: "100vh" }}>
-      {showStory && !isLoading && playerRole !== "C" && <StoryOverlay timeline={session.timeline} onContinue={() => setShowStory(false)} />}
-      <EndingOverlay ending={endingSequence.ending} showLight={endingSequence.showLight} tourBeat={endingSequence.tourBeat} tourFade={endingSequence.tourFade} timeline={session.timeline} endingPreview={session.endingPreview} onExit={onExit} />
+      {showStory && !isLoading && playerRole !== "C" && <StoryOverlay character={session.character} onContinue={() => setShowStory(false)} />}
+      <EndingOverlay ending={endingSequence.ending} showLight={endingSequence.showLight} tourBeat={endingSequence.tourBeat} tourFade={endingSequence.tourFade} character={session.character} endingPreview={session.endingPreview} onExit={onExit} />
       {isLoading && <LoadingOverlay />}
       {!session.testMode && !isLoading && !companionConnected && (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/85 px-6 text-center text-[#f2e7d1]">

@@ -5,7 +5,7 @@ const EndingOverlay = ({
   showLight,
   tourBeat,
   tourFade,
-  timeline,
+  character,
   endingPreview = false,
   onExit,
 }) => (
@@ -41,8 +41,8 @@ const EndingOverlay = ({
                 <div
                   className="absolute inset-y-0 bg-gradient-to-r from-white/85 via-white/60 to-transparent blur-[2px]"
                   style={{
-                    left: ending.sacrificeTimeline === "past" ? "26%" : "0%",
-                    width: ending.sacrificeTimeline === "past" ? "31%" : "29%",
+                    left: ending.sacrificeCharacter === "mum" ? "26%" : "0%",
+                    width: ending.sacrificeCharacter === "mum" ? "31%" : "29%",
                   }}
                 />
               )}
@@ -65,7 +65,7 @@ const EndingOverlay = ({
               <p className="mx-auto mt-4 max-w-2xl font-serif text-lg italic leading-relaxed">
                 {ending.choice === "together"
                   ? t("ending.togetherText")
-                  : t(ending.sacrificeTimeline === timeline ? "ending.youStayedText" : "ending.companionStayedText")}
+                  : t(ending.sacrificeCharacter === character ? "ending.youStayedText" : "ending.companionStayedText")}
               </p>
               <div className="mt-7 flex flex-wrap justify-center gap-3">
                 {endingPreview && (

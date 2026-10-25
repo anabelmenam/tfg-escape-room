@@ -1,15 +1,15 @@
 import * as THREE from "three";
 import { Lamp, Switch, Window } from "../../objects/index.js";
 
-const createChildrenRoomFixtures = ({ timeline, config, dimensions, windowOpenings }) => {
+const createChildrenRoomFixtures = ({ character, config, dimensions, windowOpenings }) => {
   const lamps = [-5.5, 5.5].map((x, index) => new Lamp({
-    id: `children-room-${timeline}-lamp-${index + 1}`,
+    id: `children-room-${character}-lamp-${index + 1}`,
     position: new THREE.Vector3(x, dimensions.height, 0),
   }));
   const setRoomLights = (active) => lamps.forEach((lamp) => lamp.setActive(active));
   setRoomLights(false);
   const lightSwitch = new Switch({
-    id: `children-room-${timeline}-switch`,
+    id: `children-room-${character}-switch`,
     position: new THREE.Vector3(3.55, 3.5, dimensions.depth / 2),
     scale: 0.75,
     onPress: (switchObject) => setRoomLights(switchObject.active),
