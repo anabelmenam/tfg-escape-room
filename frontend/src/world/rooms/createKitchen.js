@@ -8,12 +8,7 @@ import { createKitchenAppliancePuzzles } from "./kitchen/createKitchenApplianceP
 import { createKitchenFoodPuzzles } from "./kitchen/createKitchenFoodPuzzles.js";
 import { assembleKitchen } from "./kitchen/assembleKitchen.js";
 
-const createKitchen = ({
-  character = "dad",
-  onObjectFocus = null,
-  onKitchenAction = null,
-  testMode = false,
-} = {}) => {
+const createKitchen = ({ character = "dad", onObjectFocus = null, onKitchenAction = null, testMode = false } = {}) => {
   const config = kitchenConfig[character];
   if (!config) throw new Error(`Character no válido para Kitchen: ${character}`);
   const { width, depth, height } = kitchenDimensions;
@@ -86,8 +81,9 @@ const createKitchen = ({
       appliancePuzzles.applyState(state);
     },
     addStoryNote: (object3D) => {
-      if (character === "mum") return furniture.smallCounter.addObjectToDrawer(0, object3D, new THREE.Vector3(0, -.12, -.58));
-      object3D.position.set(0, 4.86, -.05);
+      if (character === "mum")
+        return furniture.smallCounter.addObjectToDrawer(0, object3D, new THREE.Vector3(0, -0.12, -0.58));
+      object3D.position.set(0, 4.86, -0.05);
       furniture.secondTallCabinet.object3D.add(object3D);
       return true;
     },

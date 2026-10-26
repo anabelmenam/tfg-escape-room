@@ -130,7 +130,8 @@ const createLivingRoom = async ({
     objectColliders: assembly.objectColliders,
     bounds,
     door,
-    addStoryNote: (object3D) => cabinet.addObjectToDrawer(character === "mum" ? 5 : 4, object3D, new THREE.Vector3(0, -.16, -.52)),
+    addStoryNote: (object3D) =>
+      cabinet.addObjectToDrawer(character === "mum" ? 5 : 4, object3D, new THREE.Vector3(0, -0.16, -0.52)),
     doorPassage: doorOpening
       ? {
           minX: doorOpening.position.x - doorOpening.width / 2,
