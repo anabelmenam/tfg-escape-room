@@ -43,7 +43,7 @@ const createShelfPaintingPuzzle = ({ character, testMode, shelf, table, onAction
     position: new THREE.Vector3(13.5, 5.2, -3),
     rotationY: -Math.PI / 2,
     onPlaced: () => onAction?.("object.interact", "living-room-painting-slot"),
-    onPieceInserted: (index) => onAction?.("object.interact", `living-room-painting-piece-${index}`),
+    onPieceInserted: (index) => onAction?.("object.interact", `living-room-painting-piece-${index}`, { completed: paintingSlot.restored }),
   });
   if (paintingSlot.hiddenScissors) {
     paintingSlot.hiddenScissors.onCollect = () => onAction?.("item.pickup", "living-room-scissors");

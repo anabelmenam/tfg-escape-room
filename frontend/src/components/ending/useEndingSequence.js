@@ -21,7 +21,6 @@ const useEndingSequence = ({ session, gameRef, setIsPaused }) => {
         onFade: setTourFade,
         onComplete: () => {
           setTourBeat(null);
-          setTourFade(false);
           onComplete?.();
         },
       });

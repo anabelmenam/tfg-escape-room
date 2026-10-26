@@ -19,7 +19,8 @@ class OvenControlPuzzle extends FocusPuzzle {
     });
     this.displayCanvas = document.createElement("canvas"); this.displayCanvas.width = 768; this.displayCanvas.height = 256;
     this.texture = new THREE.CanvasTexture(this.displayCanvas); this.texture.colorSpace = THREE.SRGBColorSpace;
-    const display = new THREE.Mesh(new THREE.PlaneGeometry(1.02, .34), new THREE.MeshStandardMaterial({ map: this.texture, roughness: .55 })); display.position.z = .06; this.object3D.add(display); this.updateDisplay();
+    this.displayMaterial = new THREE.MeshStandardMaterial({ map: this.texture, roughness: .55, emissive: 0x000000, emissiveIntensity: 0 });
+    const display = new THREE.Mesh(new THREE.PlaneGeometry(1.02, .34), this.displayMaterial); display.position.z = .06; this.object3D.add(display); this.updateDisplay();
   }
   updateDisplay() {
     if (!this.displayCanvas) return; const context = this.displayCanvas.getContext("2d");
@@ -33,6 +34,8 @@ class OvenControlPuzzle extends FocusPuzzle {
   revealClue() {
     if (this.character !== "dad" || this.clueRevealed) return;
     this.clueRevealed = true;
+    this.displayMaterial.emissive.setHex(0x78b98d);
+    this.displayMaterial.emissiveIntensity = .7;
     this.dials.forEach((dial, index) => { dial.rotation.z = -this.solution[index] * Math.PI * .4; });
     this.updateDisplay(); this.setAvailable(true);
   }

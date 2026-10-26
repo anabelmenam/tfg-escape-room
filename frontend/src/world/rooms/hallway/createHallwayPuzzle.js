@@ -10,7 +10,7 @@ const createHallwayPuzzle = ({ character, testMode, onFocus, onAction }) => {
     id: "hallway-maze-note",
     width: .83,
     height: .83,
-    position: new THREE.Vector3(-10.25, 5.7, -4.42),
+    position: new THREE.Vector3(-10.25, 5.7, -4.28),
     content: (ctx, canvas) => drawMaze(ctx, canvas, { solution: true }),
     onFocus,
     collectible: character === "mum",

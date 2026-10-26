@@ -38,6 +38,10 @@ export class MultiplayerSync {
   }
   update(delta) {
     this.remoteEcho?.update(delta); this.previewEchoes.forEach((echo) => echo.update(delta));
+    if (this.charactersHidden) {
+      if (this.remoteEcho) this.remoteEcho.object3D.visible = false;
+      this.previewEchoes.forEach((echo) => { echo.object3D.visible = false; });
+    }
     this.broadcastElapsed += delta; this.heartbeatElapsed += delta;
     if (this.broadcastElapsed < .125 || this.game.player.isFocused) return;
     this.broadcastElapsed = 0;
@@ -64,8 +68,8 @@ export class MultiplayerSync {
   }
   setCharactersHidden(hidden = true) {
     this.charactersHidden = hidden;
-    if (hidden && this.remoteEcho) this.remoteEcho.object3D.visible = false;
-    if (hidden) this.previewEchoes.forEach((echo) => { echo.object3D.visible = false; });
+    if (this.remoteEcho) this.remoteEcho.object3D.visible = !hidden && this.remoteEcho.connected;
+    this.previewEchoes.forEach((echo) => { echo.object3D.visible = !hidden; });
   }
   setIdentity({ character, displayName }) { if (character !== this.game.character) { this.identity = { character, displayName }; this.remoteEcho?.setName(displayName); } }
   dispose() { this.remoteEcho?.dispose(); this.previewEchoes.forEach((echo) => echo.dispose()); }

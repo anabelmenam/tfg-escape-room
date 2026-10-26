@@ -43,11 +43,6 @@ export class InventoryController {
         image.alt = item.id;
         image.className = "h-full w-full p-1 object-contain";
         itemElement.appendChild(image);
-      } else {
-        const name = document.createElement("span");
-        name.textContent = tItem(item.id);
-        name.className = "px-1 text-center text-xs text-white";
-        itemElement.appendChild(name);
       }
     }
   }
@@ -64,7 +59,8 @@ export class InventoryController {
     if (!panel || !image || !title || !hint || !translation) return;
     image.src = item.inspectionImage;
     image.alt = tItem(item.itemName ?? item.id);
-    title.textContent = tItem(item.itemName ?? item.id);
+    title.textContent = item.hideInspectionCaption ? "" : tItem(item.itemName ?? item.id);
+    title.classList.toggle("hidden", Boolean(item.hideInspectionCaption));
     hint.textContent = t("ui.closeInspection");
     translation.textContent = "";
     this.game.inventoryInspectionOpen = true;

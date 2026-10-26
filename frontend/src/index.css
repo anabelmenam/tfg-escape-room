@@ -3,9 +3,8 @@
 @tailwind utilities;
 
 @keyframes ending-light-bloom {
-  0% { transform: scale(0); opacity: 0; }
-  18% { opacity: 1; }
-  100% { transform: scale(18); opacity: 1; }
+  0% { clip-path: circle(0% at 50% 50%); }
+  100% { clip-path: circle(150vmax at 50% 50%); }
 }
 
 .ending-light-bloom {

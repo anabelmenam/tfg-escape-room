@@ -30,9 +30,15 @@ const positionEndingPreview = (game, roomData) => {
 };
 
 export const initializeGameLevel = async (game) => {
-  const completionObjects = new Set(["bedroom-symbol-safe", "living-room-fireplace", "living-room-chest"]);
+  const completionObjects = new Set([
+    "bedroom-lock",
+    "bedroom-symbol-safe",
+    "living-room-fireplace",
+    "living-room-chest",
+  ]);
   const withAudio = (handler) => (type, targetId, ...args) => {
-    game.gameAudio.playAction(type === "object.interact" && completionObjects.has(targetId) ? "puzzle.solved" : type);
+    const completedInteraction = type === "object.interact" && (completionObjects.has(targetId) || args[0]?.completed);
+    game.gameAudio.playAction(completedInteraction ? "puzzle.solved" : type);
     handler?.(type, targetId, ...args);
   };
   const roomData = await createLevel1({

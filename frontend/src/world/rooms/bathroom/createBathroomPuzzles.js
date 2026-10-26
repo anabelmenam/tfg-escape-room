@@ -39,6 +39,10 @@ const createBathroomPuzzles = ({ character, testMode, vanity, onFocus, onAction 
     finalKey.object3D.visible = false; finalKey.setEnabled(false); mosaic.rearMount.add(finalKey.object3D);
   }
   if (testMode && screwdriver) { screwdriver.object3D.visible = true; screwdriver.setEnabled(true); }
+  if (testMode && character === "dad") {
+    mosaic.solve({ notify: false });
+    finalKey?.reveal();
+  }
 
   const applyState = (state) => {
     hotWaterClueKnown = Boolean(state.characters?.mum?.puzzles?.["bathroom-hot-water"]?.solved) || testMode;

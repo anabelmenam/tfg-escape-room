@@ -5,13 +5,13 @@ const CLOCK_SOLUTION = Object.freeze({ hour: 8, minute: 20 });
 
 class ClockPuzzle extends WallClock {
   constructor({ character = "dad", onFocus = null, onSolved = null, ...options } = {}) {
-    const isPast = character === "mum";
+    const isMum = character === "mum";
     const solutionSlot = CLOCK_SOLUTION.hour * 12 + CLOCK_SOLUTION.minute / 5;
-    const randomSlot = isPast ? Math.floor(Math.random() * 143) : solutionSlot;
-    const initialSlot = isPast && randomSlot >= solutionSlot ? randomSlot + 1 : randomSlot;
+    const randomSlot = isMum ? Math.floor(Math.random() * 143) : solutionSlot;
+    const initialSlot = isMum && randomSlot >= solutionSlot ? randomSlot + 1 : randomSlot;
     super({ ...options, hour: Math.floor(initialSlot / 12), minute: (initialSlot % 12) * 5 });
-    this.isPast = isPast;
-    this.hasMinuteHand = !isPast;
+    this.isMum = isMum;
+    this.hasMinuteHand = !isMum;
     this.minutePivot.visible = this.hasMinuteHand;
     this.onFocus = onFocus;
     this.onSolved = onSolved;
@@ -32,7 +32,7 @@ class ClockPuzzle extends WallClock {
   }
 
   advanceHand(hand) {
-    if (!this.isPast || !this.hasMinuteHand || this.isSolved || !["hour", "minute"].includes(hand)) return;
+    if (!this.isMum || !this.hasMinuteHand || this.isSolved || !["hour", "minute"].includes(hand)) return;
     this.setTime(this.hour + (hand === "hour" ? 1 : 0), this.minute + (hand === "minute" ? 5 : 0));
     if (this.hour === CLOCK_SOLUTION.hour && this.minute === CLOCK_SOLUTION.minute) {
       this.solve();
@@ -40,7 +40,7 @@ class ClockPuzzle extends WallClock {
   }
 
   solve({ notify = true } = {}) {
-    if (this.isSolved || !this.isPast) return;
+    if (this.isSolved || !this.isMum) return;
     this.hasMinuteHand = true;
     this.minutePivot.visible = true;
     this.isSolved = true;

@@ -11,9 +11,7 @@ const EndingOverlay = ({
 }) => (
   <>
     {showLight && (
-      <div className="pointer-events-none absolute inset-0 z-[65] flex items-center justify-center overflow-hidden">
-        <div className="ending-light-bloom h-[10vmin] w-[10vmin] rounded-full bg-white shadow-[0_0_45px_30px_rgba(255,246,218,.98)]" />
-      </div>
+      <div className="ending-light-bloom pointer-events-none absolute inset-0 z-[65] bg-black" />
     )}
 
     {tourBeat !== null && (
@@ -24,7 +22,7 @@ const EndingOverlay = ({
       </div>
     )}
 
-    <div className={`pointer-events-none absolute inset-0 z-[63] bg-[#f4efe5] transition-opacity duration-500 ${tourFade ? "opacity-100" : "opacity-0"}`} />
+    <div className={`pointer-events-none absolute inset-0 z-[63] bg-black transition-opacity duration-500 ${tourFade ? "opacity-100" : "opacity-0"}`} />
 
     {["choice", "complete"].includes(ending?.phase) && (
       <div className="ending-screen-in absolute inset-0 z-[70] flex items-center justify-center overflow-hidden bg-white p-6 text-stone-900">
