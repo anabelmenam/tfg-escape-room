@@ -34,6 +34,8 @@ export const GameRoom = sequelize.define(
     createdAt: date(),
     finishedAt: { type: DataTypes.DATE, allowNull: true },
     lastActivityAt: date(),
+    playTimeSeconds: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0, validate: { min: 0 } },
+    playStartedAt: { type: DataTypes.DATE, allowNull: true },
   },
   options("game_rooms"),
 );

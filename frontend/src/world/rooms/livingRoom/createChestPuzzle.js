@@ -76,7 +76,7 @@ const createChestPuzzle = ({ character, testMode, shelf, woodStyle, hasLetter, o
   if (finalKey) {
     finalKey.object3D.visible = false;
     finalKey.setEnabled(false);
-    chest.addItem(finalKey, { position: new THREE.Vector3(-.34, .22, 0), scale: .48, visible: false });
+    chest.addItem(finalKey, { position: new THREE.Vector3(-.34, .22, 0), scale: .38, visible: false });
   }
   if (studyKey) {
     studyKey.setEnabled(false);
@@ -88,7 +88,7 @@ const createChestPuzzle = ({ character, testMode, shelf, woodStyle, hasLetter, o
       studyKey.setEnabled(false);
       onAction?.("item.pickup", "study-key");
     };
-    chest.addItem(studyKey, { position: new THREE.Vector3(.18, .22, 0), scale: 1.2, visible: false });
+    chest.addItem(studyKey, { position: new THREE.Vector3(.02, .22, 0), scale: 1.2, visible: false });
   }
 
   const lock = character === "dad"

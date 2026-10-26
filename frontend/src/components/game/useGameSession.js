@@ -7,7 +7,7 @@ const emitAction = (socket, type, targetId, payload) => socket?.emit("game:actio
   actionId: crypto.randomUUID(), type, targetId, ...(payload ? { payload } : {}),
 });
 
-const useGameSession = ({ containerRef, gameRef, socketRef, playerRole, session, isAdmin, audioController, endingSequence, setIsLoading, setIsPaused, setPauseView, setDiaryEntries, setHintHistory, setCompanionConnected }) => {
+const useGameSession = ({ containerRef, gameRef, socketRef, playerRole, session, isAdmin, audioController, endingSequence, setIsLoading, setIsPaused, setPauseView, setDiaryEntries, setHintHistory, setCompanionConnected, setPlayTimer }) => {
   const { handleHallwayAction, handleEndingChange, startEndingReplay, reset } = endingSequence;
 
   useEffect(() => {
@@ -58,6 +58,7 @@ const useGameSession = ({ containerRef, gameRef, socketRef, playerRole, session,
     };
     socket?.on("game:state", applyState);
     socket?.on("game:state-updated", applyState);
+    socket?.on("game:timer", (timer) => setPlayTimer({ elapsedSeconds: timer.elapsedSeconds, running: timer.running }));
     socket?.on("player:moved", (movement) => game.updateRemotePlayer(movement));
     socket?.on("room:presence", (presence) => {
       game.setRemotePlayerConnected(presence);
@@ -80,7 +81,7 @@ const useGameSession = ({ containerRef, gameRef, socketRef, playerRole, session,
       socket?.disconnect();
       game.dispose();
     };
-  }, [audioController, containerRef, gameRef, handleEndingChange, handleHallwayAction, isAdmin, playerRole, reset, session, setCompanionConnected, setDiaryEntries, setHintHistory, setIsLoading, setIsPaused, setPauseView, socketRef, startEndingReplay]);
+  }, [audioController, containerRef, gameRef, handleEndingChange, handleHallwayAction, isAdmin, playerRole, reset, session, setCompanionConnected, setDiaryEntries, setHintHistory, setIsLoading, setIsPaused, setPauseView, setPlayTimer, socketRef, startEndingReplay]);
 };
 
 export default useGameSession;

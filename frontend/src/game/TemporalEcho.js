@@ -25,6 +25,28 @@ const mergeStaticMeshes = (group) => {
   });
 };
 
+const addDepthShell = (group) => {
+  const material = new THREE.MeshBasicMaterial({
+    colorWrite: false,
+    depthWrite: true,
+    depthTest: true,
+    side: THREE.FrontSide,
+  });
+  const visibleMeshes = [];
+  group.traverse((object) => {
+    if (object.isMesh && !object.userData.temporalEchoDepthShell) visibleMeshes.push(object);
+  });
+  visibleMeshes.forEach((mesh) => {
+    const shell = new THREE.Mesh(mesh.geometry, material);
+    shell.name = `${mesh.name || "eco-parte"}-profundidad`;
+    shell.renderOrder = 2;
+    shell.raycast = () => {};
+    shell.userData.temporalEchoDepthShell = true;
+    mesh.renderOrder = 3;
+    mesh.add(shell);
+  });
+};
+
 const drawName = (canvas, label, color) => {
   const context = canvas.getContext("2d");
   context.clearRect(0, 0, canvas.width, canvas.height);
@@ -223,6 +245,7 @@ class TemporalEcho {
     this.object3D.add(this.leftLeg, this.rightLeg);
 
     mergeStaticMeshes(this.object3D);
+    addDepthShell(this.object3D);
 
     this.nameSprite = makeNameSprite(name || "Compañero", role === "mama" ? "#6ed8ff" : "#ad8cff");
     this.object3D.add(this.nameSprite);

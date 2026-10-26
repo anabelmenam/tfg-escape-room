@@ -45,7 +45,7 @@ const createHallway = ({ character = "dad", entranceX = -3, entranceZ = 12.5, on
   placeAgainstWall(decor.consoleTable, "front"); placeAgainstWall(puzzle.clock, "back");
   if (character === "mum") {
     placeAgainstWall(puzzle.note, "back");
-    puzzle.note.object3D.translateZ(.22);
+    puzzle.note.object3D.translateZ(.025);
   }
   if (puzzle.maze) { placeAgainstWall(puzzle.maze, "front"); puzzle.maze.object3D.translateZ(-.13); }
   placeAgainstWall(puzzle.mirror, "front"); placeAgainstWall(decor.daughterFrame, "back"); placeAgainstWall(decor.sonFrame, "back");
@@ -54,7 +54,7 @@ const createHallway = ({ character = "dad", entranceX = -3, entranceZ = 12.5, on
   return {
     room, roomColliders, maze: puzzle.maze, mazeMirror: puzzle.mirror, mazeNote: puzzle.note, livingRoomKey: puzzle.livingRoomKey,
     applyHallwayState: (state) => { puzzle.applyState(state); doors.applyState(state, puzzle.livingRoomKey); },
-    interactables: [puzzle.clock, lighting.hallwaySwitch, lighting.exitSwitch, doors.livingRoomDoor, ...doors.hallwayDoors, ...doors.finalBolts, doors.threshold, ...(character === "dad" ? [puzzle.mirror] : [puzzle.note]), ...(character === "dad" && puzzle.maze ? [puzzle.maze] : [])],
+    interactables: [puzzle.clock, lighting.hallwaySwitch, lighting.exitSwitch, doors.livingRoomDoor, ...doors.hallwayDoors, ...doors.finalBolts, doors.threshold, ...(character === "dad" ? [puzzle.mirror] : []), ...(character === "dad" && puzzle.maze ? [puzzle.maze] : [])],
     entities: [puzzle.clock, lighting.hallwaySwitch, lighting.exitSwitch, doors.livingRoomDoor, ...doors.hallwayDoors, ...doors.finalBolts, doors.threshold, ...lighting.lamps, puzzle.mirror, puzzle.livingRoomKey, ...(puzzle.maze ? [puzzle.maze] : [puzzle.note])],
     mirror: puzzle.mirror, clock: puzzle.clock, hallwaySwitch: lighting.hallwaySwitch, hallwayExitSwitch: lighting.exitSwitch, hallwayLamps: lighting.lamps,
     consoleTable: decor.consoleTable, hallwayCarpet: decor.carpet, livingRoomDoor: doors.livingRoomDoor, hallwayDoors: doors.hallwayDoors, finalThreshold: doors.threshold,

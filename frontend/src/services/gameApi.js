@@ -42,3 +42,5 @@ export const joinGameRoom = (joinCode, slotNumber) =>
   });
 
 export const deleteGameRoom = (roomId) => request(`/api/rooms/${roomId}`, { method: "DELETE" });
+export const getAdminUsers = () => request("/api/admin/users");
+export const deleteAdminUser = (userId) => request(`/api/admin/users/${userId}`, { method: "DELETE" });

@@ -1,8 +1,16 @@
 import { t } from "../../translations/index.js";
 import { INVENTORY_SIZE } from "../../game/inventoryConfig.js";
 
-const GameHud = ({ showCrosshair }) => <>
+const formatTime = (totalSeconds) => {
+  const seconds = Math.max(0, Math.floor(totalSeconds));
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  return [hours, minutes, seconds % 60].map((value) => String(value).padStart(2, "0")).join(":");
+};
+
+const GameHud = ({ showCrosshair, playTimeSeconds = null }) => <>
   {showCrosshair && <div id="crosshair" className="pointer-events-none absolute left-1/2 top-1/2 z-10 hidden h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white" />}
+  {playTimeSeconds !== null && <div className="pointer-events-none absolute right-5 top-5 z-20 rounded border border-[#d7b77b]/35 bg-black/65 px-3 py-2 font-mono text-sm tracking-wider text-[#f2dfbd]" aria-label={t("ui.playTime")}>{formatTime(playTimeSeconds)}</div>}
   <div id="story-note-notification" className="story-note-notification pointer-events-none absolute left-1/2 top-16 z-30 hidden w-[min(90vw,32rem)] -translate-x-1/2 rounded-sm border border-[#d7b77b]/45 bg-[#211916]/95 px-6 py-4 text-center font-serif text-amber-50 shadow-xl shadow-black/50" />
   <div id="ambient-inspection" className="pointer-events-none absolute bottom-40 left-1/2 z-20 hidden max-w-xl -translate-x-1/2 rounded border border-amber-100/20 bg-black/80 px-5 py-3 text-center font-serif italic text-amber-50" />
   <div id="interaction-text" className="pointer-events-none absolute bottom-32 left-1/2 z-10 hidden -translate-x-1/2 rounded bg-black/70 px-4 py-2 text-lg font-semibold text-white" />

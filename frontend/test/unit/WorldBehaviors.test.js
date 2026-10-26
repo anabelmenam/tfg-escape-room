@@ -80,6 +80,10 @@ for (const role of ["mama", "papa"]) {
   test(`TemporalEcho representa y anima a ${role}`, () => {
     const echo = new TemporalEcho({ role, name: "Jugador" });
     assert.equal(echo.object3D.visible, false);
+    const depthShells = [];
+    echo.object3D.traverse((object) => { if (object.userData.temporalEchoDepthShell) depthShells.push(object); });
+    assert.ok(depthShells.length > 0);
+    assert.ok(depthShells.every((shell) => shell.material.colorWrite === false && shell.material.depthWrite === true));
     echo.setConnected(true);
     assert.equal(echo.object3D.visible, false);
     echo.setName("");

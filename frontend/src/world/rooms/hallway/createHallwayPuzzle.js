@@ -10,22 +10,15 @@ const createHallwayPuzzle = ({ character, testMode, onFocus, onAction }) => {
     id: "hallway-maze-note",
     width: .83,
     height: .83,
-    position: new THREE.Vector3(-10.25, 5.7, -4.28),
+    position: new THREE.Vector3(-10.25, 5.7, 0),
     content: (ctx, canvas) => drawMaze(ctx, canvas, { solution: true }),
-    onFocus,
-    collectible: character === "mum",
-    itemName: "maze-puzzle",
-    inspectionTitle: "recorrido del laberinto",
-    onCollect: () => onAction?.("item.pickup", "hallway-maze-note"),
   });
   const noteMesh = note.object3D.children[0];
   noteMesh.material.dispose();
   noteMesh.material = new THREE.MeshStandardMaterial({ map: note.texture, roughness: .95, side: THREE.DoubleSide });
   note.object3D.visible = false;
-  note.setEnabled(false);
-  note.getFocusPosition = () => { note.object3D.updateWorldMatrix(true, false); return note.object3D.localToWorld(new THREE.Vector3(0, 0, 1.2)); };
   note.dispose = () => { note.texture.dispose(); noteMesh.geometry.dispose(); noteMesh.material.dispose(); };
-  const revealNote = () => { note.object3D.visible = true; note.setEnabled(true); };
+  const revealNote = () => { note.object3D.visible = true; };
   const clock = new ClockPuzzle({ id: `hallway-${character}-clock`, character, position: new THREE.Vector3(-10.25, 5.7, -4.42), onFocus, onSolved: () => { revealNote(); onAction?.("puzzle.solved", "hallway-clock"); } });
   const livingRoomKey = new Key({
     id: "living-room-key",
@@ -39,7 +32,6 @@ const createHallwayPuzzle = ({ character, testMode, onFocus, onAction }) => {
     clockSolved = Boolean(state.characters?.mum?.puzzles?.["hallway-clock"]?.solved) || testMode;
     maze?.trySolve();
     if (clockSolved && character === "mum") { clock.solve({ notify: false }); revealNote(); }
-    if (character === "mum" && state.inventories?.mum?.includes("hallway-maze-note")) note.setCollected(true);
     if (state.characters?.dad?.puzzles?.["hallway-maze"]?.solved) maze?.solve({ notify: false });
     if (state.inventories?.dad?.includes("living-room-key")) {
       livingRoomKey.object3D.visible = false;

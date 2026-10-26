@@ -4,12 +4,13 @@ import { pathToFileURL } from "node:url";
 import express from "express";
 import cors from "cors";
 import { Server } from "socket.io";
+import { Op } from "sequelize";
 import { z } from "zod";
 import { sequelize, withTransaction } from "./db.js";
 import { User, GameRoom, RoomPlayer, GameState, GameEvent, PlayerCheckpoint, PasswordResetToken, UserSession } from "./models/index.js";
 import { createInitialState } from "./state.js";
 import { clearSession, createSession, hashPassword, publicUser, requireUser, verifyPassword } from "./auth.js";
-import { sendPasswordResetEmail } from "./email.js";
+import { sendAccountDeletedEmail, sendGameDeletedEmail, sendPasswordResetEmail, sendWelcomeEmail } from "./email.js";
 
 const port = Number(process.env.PORT ?? 3010);
 const frontendOrigin = process.env.FRONTEND_ORIGIN ?? "http://localhost:5173";
@@ -59,6 +60,39 @@ const playerSockets = new Map();
 const pendingDisconnects = new Map();
 const passwordResetTokenHash = (token) => createHash("sha256").update(token).digest("hex");
 const passwordResetLifetime = 1000 * 60 * 20;
+
+const requireAdmin = (request, response, next) => {
+  if (request.user?.role !== "admin") return response.status(403).json({ error: "ADMIN_REQUIRED" });
+  return next();
+};
+
+const playTimerSnapshot = (room, now = Date.now()) => {
+  const startedAt = room.playStartedAt ? new Date(room.playStartedAt).getTime() : null;
+  const activeSeconds = startedAt === null ? 0 : Math.max(0, Math.floor((now - startedAt) / 1000));
+  return {
+    elapsedSeconds: Math.max(0, Number(room.playTimeSeconds ?? 0) + activeSeconds),
+    running: startedAt !== null && room.status === "playing",
+    serverNow: now,
+  };
+};
+
+const syncRoomPlayTimer = async (roomId, transaction = null) => {
+  const room = await GameRoom.findByPk(roomId, {
+    transaction,
+    ...(transaction ? { lock: transaction.LOCK.UPDATE } : {}),
+  });
+  if (!room) return { elapsedSeconds: 0, running: false, serverNow: Date.now() };
+  const connectedPlayers = await RoomPlayer.count({ where: { roomId, connected: true }, transaction });
+  const now = Date.now();
+  const shouldRun = room.status === "playing" && connectedPlayers === 2;
+  if (shouldRun && !room.playStartedAt) {
+    await room.update({ playStartedAt: new Date(now) }, { transaction });
+  } else if (!shouldRun && room.playStartedAt) {
+    const accumulated = Number(room.playTimeSeconds ?? 0) + Math.max(0, Math.floor((now - new Date(room.playStartedAt).getTime()) / 1000));
+    await room.update({ playTimeSeconds: accumulated, playStartedAt: null }, { transaction });
+  }
+  return playTimerSnapshot(room, now);
+};
 
 const updateCheckpoint = async (playerId, roomId, patch) => {
   const [updated] = await PlayerCheckpoint.update({ ...patch, updatedAt: new Date() }, { where: { playerId } });
@@ -512,7 +546,7 @@ const reduceAction = (state, player, action) => {
         throw new Error("Las fotos escondidas solo existen en el Mamá.");
       }
       if (action.targetId === "children-photo-order-note" && character !== "dad") throw new Error("La nota de las fotos está en el Papá.");
-      if (action.targetId === "hallway-maze-note" && character !== "mum") throw new Error("El plano del laberinto está en el Mamá.");
+      if (action.targetId === "hallway-maze-note") throw new Error("El plano del laberinto es una pista fija de la pared.");
       if (action.targetId === "kitchen-recipe-note" && character !== "mum") throw new Error("La receta está en el Mamá.");
       if (["kitchen-tomatoes", "kitchen-carrots", "kitchen-cheese"].includes(action.targetId) && character !== "dad") throw new Error("Los ingredientes se recogen en el Papá.");
       if (kitchenNapkinIds.includes(action.targetId) && character !== "dad") throw new Error("Las servilletas se recogen en el Papá.");
@@ -555,6 +589,7 @@ const applyAction = async (roomId, player, action) =>
       lastActivityAt: new Date(),
       ...(nextState.ending?.phase === "complete" ? { status: "finished", finishedAt: new Date() } : {}),
     }, { where: { id: roomId }, transaction });
+    if (nextState.ending?.phase === "complete") await syncRoomPlayTimer(roomId, transaction);
     return { revision: nextRevision, state: nextState };
   });
 
@@ -652,6 +687,7 @@ const startGame = async (roomId, playerId) =>
       throw new Error("Los dos jugadores deben estar conectados para empezar.");
     }
     await room.update({ status: "playing" }, { transaction });
+    await syncRoomPlayTimer(roomId, transaction);
     return lobby;
   });
 
@@ -663,6 +699,8 @@ app.post("/api/auth/register", async (request, response) => {
   if (existing) return response.status(409).json({ error: "EMAIL_IN_USE" });
   const user = await User.create({ id: randomUUID(), displayName: input.displayName, email: input.email, passwordHash: await hashPassword(input.password) });
   await createSession(user.id, response);
+  void sendWelcomeEmail({ email: user.email, displayName: user.displayName })
+    .catch((error) => console.error("No se pudo enviar el correo de bienvenida:", error.message));
   return response.status(201).json({ user: publicUser(user) });
 });
 
@@ -723,12 +761,47 @@ app.post("/api/auth/reset-password", async (request, response) => {
 app.post("/api/auth/logout", async (request, response) => { await clearSession(request, response); return response.status(204).end(); });
 app.get("/api/auth/me", requireUser, (request, response) => response.json({ user: publicUser(request.user) }));
 
+app.get("/api/admin/users", requireUser, requireAdmin, async (request, response) => {
+  const users = await User.findAll({ attributes: ["id", "displayName", "email", "role", "createdAt"], order: [["createdAt", "DESC"]] });
+  return response.json({ users });
+});
+
+app.delete("/api/admin/users/:userId", requireUser, requireAdmin, async (request, response) => {
+  const { userId } = z.object({ userId: z.string().uuid() }).parse(request.params);
+  if (userId === request.user.id) return response.status(400).json({ error: "CANNOT_DELETE_SELF" });
+  const deletedUser = await withTransaction(async (transaction) => {
+    const user = await User.findByPk(userId, { transaction, lock: transaction.LOCK.UPDATE });
+    if (!user) return null;
+    const deletedAccount = { email: user.email, displayName: user.displayName };
+    const memberships = await RoomPlayer.findAll({ where: { userId }, attributes: ["roomId"], transaction });
+    const roomIds = [...new Set(memberships.map(({ roomId }) => roomId))];
+    await user.destroy({ transaction });
+    if (roomIds.length) {
+      const remaining = await RoomPlayer.findAll({ where: { roomId: { [Op.in]: roomIds } }, attributes: ["roomId"], transaction, raw: true });
+      const occupied = new Set(remaining.map(({ roomId }) => roomId));
+      const emptyRooms = roomIds.filter((roomId) => !occupied.has(roomId));
+      if (emptyRooms.length) await GameRoom.destroy({ where: { id: { [Op.in]: emptyRooms } }, transaction });
+    }
+    return deletedAccount;
+  });
+  if (!deletedUser) return response.status(404).json({ error: "USER_NOT_FOUND" });
+  if (deletedUser.email) {
+    try {
+      await sendAccountDeletedEmail(deletedUser);
+    } catch (error) {
+      console.error("No se pudo enviar el correo de cuenta eliminada:", error.message);
+    }
+  }
+  return response.status(204).end();
+});
+
 app.get("/api/save-slots", requireUser, async (request, response) => {
   const players = await RoomPlayer.findAll({
     where: { userId: request.user.id },
     include: [{ model: GameRoom, as: "room", required: true }, { model: PlayerCheckpoint, as: "checkpoint", required: false }],
     order: [["slotNumber", "ASC"]],
   });
+  const now = Date.now();
   return response.json({ slots: players.map((player) => ({
     slotNumber: player.slotNumber,
     roomId: player.roomId,
@@ -739,6 +812,7 @@ app.get("/api/save-slots", requireUser, async (request, response) => {
     joinCode: player.room.joinCode,
     name: player.room.name,
     status: player.room.status,
+    playTimeSeconds: playTimerSnapshot(player.room, now).elapsedSeconds,
     updatedAt: player.room.lastActivityAt,
     checkpoint: player.checkpoint ? { position: player.checkpoint.position, rotationY: player.checkpoint.rotationY, roomKey: player.checkpoint.roomKey, diaryEntries: player.checkpoint.diaryEntries, hintHistory: player.checkpoint.hintHistory } : null,
   })) });
@@ -757,9 +831,25 @@ app.post("/api/rooms/:joinCode/join", requireUser, async (request, reply) => {
 
 app.delete("/api/rooms/:roomId", requireUser, async (request, response) => {
   const { roomId } = z.object({ roomId: z.string().uuid() }).parse(request.params);
-  const membership = await RoomPlayer.findOne({ where: { roomId, userId: request.user.id } });
+  const membership = await RoomPlayer.findOne({ where: { roomId, userId: request.user.id }, include: [{ model: GameRoom, as: "room", required: true }] });
   if (!membership) return response.status(404).json({ error: "ROOM_NOT_FOUND" });
+  const otherPlayers = await RoomPlayer.findAll({
+    where: { roomId, userId: { [Op.ne]: request.user.id } },
+    include: [{ model: User, as: "user", attributes: ["email", "displayName"], required: true }],
+  });
+  const gameName = membership.room.name;
   await GameRoom.destroy({ where: { id: roomId } });
+  void Promise.allSettled(otherPlayers
+    .filter(({ user }) => user.email)
+    .map(({ user }) => sendGameDeletedEmail({
+      email: user.email,
+      displayName: user.displayName,
+      gameName,
+      deletedBy: request.user.displayName,
+    })))
+    .then((results) => results.forEach((result) => {
+      if (result.status === "rejected") console.error("No se pudo avisar de la partida eliminada:", result.reason?.message ?? result.reason);
+    }));
   return response.status(204).end();
 });
 
@@ -810,6 +900,8 @@ io.on("connection", async (socket) => {
   playerSockets.set(player.id, sockets);
   await RoomPlayer.update({ connected: true }, { where: { id: player.id } });
   await socket.join(socketRoom(roomId));
+  const connectedTimer = await syncRoomPlayTimer(roomId);
+  io.to(socketRoom(roomId)).emit("game:timer", connectedTimer);
 
   socket.on("lobby:select-character", async (rawSelection, acknowledge) => {
     try {
@@ -839,6 +931,7 @@ io.on("connection", async (socket) => {
       const action = actionSchema.parse(rawAction);
       const snapshot = await applyAction(roomId, player, action);
       io.to(socketRoom(roomId)).emit("game:state-updated", { ...snapshot, action, actorPlayerId: player.id });
+      if (snapshot.state.ending?.phase === "complete") io.to(socketRoom(roomId)).emit("game:timer", await syncRoomPlayTimer(roomId));
       acknowledge?.({ ok: true, ...snapshot });
     } catch (error) {
       acknowledge?.({ ok: false, error: error instanceof Error ? error.message : "Acción no válida." });
@@ -885,6 +978,8 @@ io.on("connection", async (socket) => {
         await RoomPlayer.update({ connected: true }, { where: { id: player.id } });
         return;
       }
+      const timer = await syncRoomPlayTimer(roomId);
+      io.to(socketRoom(roomId)).emit("game:timer", timer);
       io.to(socketRoom(roomId)).emit("room:presence", { playerId: player.id, character: player.character, connected: false });
       const lobby = await getLobbyState(roomId);
       io.to(socketRoom(roomId)).emit("lobby:state", lobby);
@@ -895,6 +990,7 @@ io.on("connection", async (socket) => {
   const checkpoint = await PlayerCheckpoint.findByPk(player.id, { raw: true });
   const lobby = await getLobbyState(roomId);
   socket.emit("game:state", { ...snapshot, player, checkpoint });
+  socket.emit("game:timer", await syncRoomPlayTimer(roomId));
   socket
     .to(socketRoom(roomId))
     .emit("room:presence", { playerId: player.id, character: player.character, connected: true });
@@ -902,7 +998,11 @@ io.on("connection", async (socket) => {
 });
 
 const startServer = async ({ listenPort = port, resetPresence = true } = {}) => {
-  if (resetPresence) await RoomPlayer.update({ connected: false }, { where: { connected: true } });
+  if (resetPresence) {
+    await RoomPlayer.update({ connected: false }, { where: { connected: true } });
+    const activeTimers = await GameRoom.findAll({ where: { playStartedAt: { [Op.ne]: null } }, attributes: ["id"] });
+    for (const room of activeTimers) await syncRoomPlayTimer(room.id);
+  }
   await new Promise((resolve, reject) => {
     httpServer.once("error", reject);
     httpServer.listen(listenPort, "0.0.0.0", resolve);

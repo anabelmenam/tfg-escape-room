@@ -3,6 +3,7 @@ import { ArrowLeft } from "lucide-react";
 import ControlsPanel from "./menu/ControlsPanel.jsx";
 import SettingsPanel from "./menu/SettingsPanel.jsx";
 import SaveSlots from "./SaveSlots.jsx";
+import AdminUsers from "./AdminUsers.jsx";
 import { t } from "../translations/index.js";
 
 const MenuButton = ({ children, secondary = false, onClick }) => (
@@ -20,7 +21,7 @@ const Lobby = ({ account, onLogout, onEnterLobby, audioSettings, onAudioSettingC
 
   return (
     <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#110f10] px-4 py-4 text-[#f2e7d1] before:pointer-events-none before:absolute before:inset-6 before:border before:border-[#d5b67c]/20 after:pointer-events-none after:absolute after:inset-8 after:border after:border-[#d5b67c]/[.08] sm:px-5" style={{ backgroundImage: "radial-gradient(circle at 14% 10%, rgb(126 69 33 / 35%), transparent 31%), radial-gradient(circle at 86% 85%, rgb(68 91 95 / 25%), transparent 34%)" }}>
-      <section className={`relative z-10 w-full rounded-sm border border-[#d7b77b]/40 bg-[#211916]/95 p-5 shadow-2xl shadow-black/60 sm:p-7 ${view === "play" || view === "settings" || view === "controls" || view === "tests" ? "max-w-4xl" : "max-w-lg"}`}>
+      <section className={`relative z-10 w-full rounded-sm border border-[#d7b77b]/40 bg-[#211916]/95 p-5 shadow-2xl shadow-black/60 sm:p-7 ${view === "play" || view === "settings" || view === "controls" || view === "tests" || view === "users" ? "max-w-4xl" : "max-w-lg"}`}>
         {view !== "menu" && view !== "play" && <button type="button" className="mb-3 flex items-center gap-2 text-sm text-[#c9ba9e] transition hover:text-[#f5e8ce]" onClick={() => setView("menu")}><ArrowLeft size={17} aria-hidden="true" />{t("menu.back")}</button>}
 
         {view === "menu" && (
@@ -33,6 +34,7 @@ const Lobby = ({ account, onLogout, onEnterLobby, audioSettings, onAudioSettingC
               <MenuButton secondary onClick={() => setView("settings")}>{t("menu.settings")}</MenuButton>
               <MenuButton secondary onClick={() => setView("controls")}>{t("menu.controls")}</MenuButton>
               {account.role === "admin" && <MenuButton secondary onClick={() => setView("tests")}>{t("menu.tests")}</MenuButton>}
+              {account.role === "admin" && <MenuButton secondary onClick={() => setView("users")}>{t("adminUsers.menu")}</MenuButton>}
             </div>
             <div className="mt-8 flex items-center justify-between border-t border-[#675641]/50 pt-5 text-sm text-[#958772]"><span>{account.displayName}</span><button type="button" onClick={onLogout} className="hover:text-[#f2dfbd]">{t("account.logout")}</button></div>
           </>
@@ -64,6 +66,8 @@ const Lobby = ({ account, onLogout, onEnterLobby, audioSettings, onAudioSettingC
             </div>
           </div>
         )}
+
+        {view === "users" && account.role === "admin" && <AdminUsers currentUserId={account.id} />}
       </section>
     </main>
   );

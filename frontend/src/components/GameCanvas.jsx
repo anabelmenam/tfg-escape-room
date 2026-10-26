@@ -23,6 +23,7 @@ const GameCanvas = ({ playerRole, session, isAdmin, audioController, audioSettin
   const [diaryEntries, setDiaryEntries] = useState(() => session.testMode ? testDiaryEntries : []);
   const [hintHistory, setHintHistory] = useState(() => (session.checkpoint?.hintHistory ?? []).slice(-1));
   const [companionConnected, setCompanionConnected] = useState(Boolean(session.testMode || session.endingReplay));
+  const [playTimer, setPlayTimer] = useState({ elapsedSeconds: session.playTimeSeconds ?? 0, running: false });
   const hintCountsRef = useRef({});
   const endingSequence = useEndingSequence({ session, gameRef, setIsPaused });
 
@@ -41,7 +42,16 @@ const GameCanvas = ({ playerRole, session, isAdmin, audioController, audioSettin
     setDiaryEntries,
     setHintHistory,
     setCompanionConnected,
+    setPlayTimer,
   });
+
+  useEffect(() => {
+    if (!playTimer.running) return undefined;
+    const interval = window.setInterval(() => setPlayTimer((current) => current.running
+      ? { ...current, elapsedSeconds: current.elapsedSeconds + 1 }
+      : current), 1000);
+    return () => window.clearInterval(interval);
+  }, [playTimer.running]);
 
   useEffect(() => {
     if (session.testMode || session.endingReplay) return;
@@ -105,7 +115,10 @@ const GameCanvas = ({ playerRole, session, isAdmin, audioController, audioSettin
         onLanguageChange={onLanguageChange}
       />}
       {session.testMode && <TestModePanel session={session} />}
-      <GameHud showCrosshair={playerRole !== "C"} />
+      <GameHud
+        showCrosshair={playerRole !== "C"}
+        playTimeSeconds={session.testMode ? null : playTimer.elapsedSeconds}
+      />
     </div>
   );
 };

@@ -63,6 +63,11 @@ for (const [playerRole, character] of [["A", "mum"], ["B", "dad"]]) {
 test("crea la sala auxiliar y rechaza roles desconocidos", async () => {
   const livingRoom = await createLevel1({ playerRole: "D", ...createCallbacks() });
   assert.ok(livingRoom.room);
+
+  const iconsRoom = await createLevel1({ playerRole: "C", ...createCallbacks() });
+  assert.equal(iconsRoom.room.name, "Icon Studio");
+  assert.ok(iconsRoom.room.getObjectByName("icon-studio-clock-hand"));
+
   await assert.rejects(() => createLevel1({ playerRole: "X" }), /Rol de jugador no válido/);
 });
 
