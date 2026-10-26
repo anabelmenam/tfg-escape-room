@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { tInteraction, tItem } from "../../../translations";
+import { tInteraction, tItem } from "../../../translations/index.js";
 import { MechanicalAudio } from "./MechanicalAudio.js";
 
 class DrawerManager {

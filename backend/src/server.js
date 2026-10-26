@@ -1,5 +1,6 @@
 import { createHash, randomBytes, randomUUID } from "node:crypto";
 import { createServer } from "node:http";
+import { pathToFileURL } from "node:url";
 import express from "express";
 import cors from "cors";
 import { Server } from "socket.io";
@@ -900,9 +901,17 @@ io.on("connection", async (socket) => {
   io.to(socketRoom(roomId)).emit("lobby:state", lobby);
 });
 
-await RoomPlayer.update({ connected: false }, { where: { connected: true } });
-await new Promise((resolve, reject) => {
-  httpServer.once("error", reject);
-  httpServer.listen(port, "0.0.0.0", resolve);
-});
-console.info(`Servidor Express escuchando en el puerto ${httpServer.address().port}`);
+const startServer = async ({ listenPort = port, resetPresence = true } = {}) => {
+  if (resetPresence) await RoomPlayer.update({ connected: false }, { where: { connected: true } });
+  await new Promise((resolve, reject) => {
+    httpServer.once("error", reject);
+    httpServer.listen(listenPort, "0.0.0.0", resolve);
+  });
+  console.info(`Servidor Express escuchando en el puerto ${httpServer.address().port}`);
+  return httpServer;
+};
+
+const isMainModule = process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;
+if (isMainModule) await startServer();
+
+export { app, httpServer, startServer };

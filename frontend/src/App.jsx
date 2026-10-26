@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import GameCanvas from "./components/GameCanvas";
-import Lobby from "./components/Lobby";
-import RoomLobby from "./components/RoomLobby";
+import GameCanvas from "./components/GameCanvas.jsx";
+import Lobby from "./components/Lobby.jsx";
+import RoomLobby from "./components/RoomLobby.jsx";
 import AccountAccess from "./components/AccountAccess.jsx";
 import { GameAudio } from "./game/GameAudio.js";
 import { getLanguage } from "./translations/index.js";
@@ -30,7 +30,7 @@ const readSetting = (key, fallback, { min = 0, max = 1 } = {}) => {
 };
 
 const App = () => {
-  const testSession = import.meta.env.DEV ? requestedTestSession : null;
+  const testSession = import.meta.env?.DEV ? requestedTestSession : null;
   const [session, setSession] = useState(testSession);
   const [account, setAccount] = useState(null);
   const [accountLoading, setAccountLoading] = useState(!testSession && !passwordResetRequested);

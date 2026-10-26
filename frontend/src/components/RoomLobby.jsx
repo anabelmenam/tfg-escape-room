@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import { io } from "socket.io-client";
-import { GAME_SOCKET_URL } from "../services/gameApi";
+import { GAME_SOCKET_URL } from "../services/gameApi.js";
 import { t } from "../translations/index.js";
 
 const characterInfo = {

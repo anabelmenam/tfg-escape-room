@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import { Entity } from "../Entity";
-import { tInteraction, tItem } from "../../../translations";
+import { Entity } from "../Entity.js";
+import { tInteraction, tItem } from "../../../translations/index.js";
 
 class Key extends Entity {
   constructor({

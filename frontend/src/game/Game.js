@@ -5,7 +5,7 @@ import { Player } from "./Player.js";
 import { InteractionManager } from "./InteractionManager.js";
 import { CollisionManager } from "./CollisionManager.js";
 import { InteractableManager } from "./InteractableManager.js";
-import { GameState } from "./GameState";
+import { GameState } from "./GameState.js";
 import { EventManager } from "./EventManager.js";
 import { EntityManager } from "./EntityManager.js";
 import { GameAudio } from "./GameAudio.js";
