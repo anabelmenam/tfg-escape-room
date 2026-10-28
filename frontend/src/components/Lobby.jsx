@@ -54,15 +54,15 @@ const Lobby = ({ account, onLogout, onEnterLobby, audioSettings, onAudioSettingC
           <div>
             <p className="text-xs font-bold uppercase tracking-[.24em] text-[#d8aa64]">{t("menu.tests")}</p>
             <h1 className="mt-2 font-serif text-4xl text-[#f5e8ce]">{t("testAccess")}</h1>
-            <div className="mt-7 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {["bedroom", "hallway", "children", "bathroom", "kitchen"].flatMap((area) => ["mum", "dad"].map((character) => (
-                <button key={`${character}-${area}`} type="button" onClick={() => onEnterLobby({ testMode: true, character, testArea: area })} className="border border-[#806644] bg-[#171210] px-4 py-4 text-left hover:border-[#d7b77b]">
+            <div className="mt-7 grid gap-3 sm:grid-cols-2">
+              {["mum", "dad"].map((character) => (
+                <button key={character} type="button" onClick={() => onEnterLobby({ testMode: true, adminTour: true, character, testArea: "bedroom" })} className="border border-[#806644] bg-[#171210] px-4 py-4 text-left hover:border-[#d7b77b]">
                   <strong className="block text-[#f2dfbd]">{t(`characterSelection.${character === "mum" ? "mama" : "papa"}`)}</strong>
-                  <span className="text-sm text-[#a99a83]">{t(`menu.areas.${area}`)}</span>
+                  <span className="text-sm text-[#a99a83]">{t("menu.fullTour")}</span>
                 </button>
-              )))}
+              ))}
               <button type="button" onClick={() => onEnterLobby({ testMode: true, testPlayerRole: "C", testArea: "icons" })} className="border border-[#806644] bg-[#171210] px-4 py-4 text-left hover:border-[#d7b77b]"><strong>{t("menu.iconStudio")}</strong></button>
-              <button type="button" onClick={() => onEnterLobby({ testMode: true, character: "dad", testArea: "hallway", endingPreview: true })} className="border border-[#806644] bg-[#171210] px-4 py-4 text-left hover:border-[#d7b77b]"><strong>{t("menu.viewEnding")}</strong></button>
+              <button type="button" onClick={() => onEnterLobby({ testMode: true, character: "dad", testArea: "hallway", endingPreview: true, endingReplay: true })} className="border border-[#806644] bg-[#171210] px-4 py-4 text-left hover:border-[#d7b77b]"><strong>{t("menu.viewEnding")}</strong></button>
             </div>
           </div>
         )}

@@ -110,6 +110,16 @@ class StovePuzzle extends FocusPuzzle {
     if (this.character !== "dad" || !this.available || this.isSolved) return null;
     return tInteraction("examine", tItem("stove-controls"));
   }
+
+  getFocusPosition() {
+    this.object3D.updateWorldMatrix(true, false);
+    return this.object3D.localToWorld(new THREE.Vector3(0, 3.9, 4.1));
+  }
+
+  getLookAtPosition() {
+    this.object3D.updateWorldMatrix(true, false);
+    return this.object3D.localToWorld(new THREE.Vector3(0, 2.35, 0));
+  }
 }
 
 export { StovePuzzle };

@@ -24,6 +24,7 @@ const createBedroomRadioPuzzle = ({
         collectible: true,
         itemName: "electrical-plan",
         inspectionTitle: "plano eléctrico",
+        inspectionTranslationKey: "papers.bedroom-electrical-plan",
         onCollect: () => {
           clues.electricalPlan = true;
           onAction?.("item.pickup", "bedroom-electrical-plan");
@@ -75,6 +76,7 @@ const createBedroomRadioPuzzle = ({
         collectible: true,
         itemName: "radio-program-note",
         inspectionTitle: "programación nocturna",
+        inspectionTranslationKey: "papers.bedroom-radio-note",
         onCollect: () => {
           clues.radioNote = true;
           onAction?.("item.pickup", "bedroom-radio-note");

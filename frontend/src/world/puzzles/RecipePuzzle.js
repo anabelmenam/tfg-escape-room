@@ -7,7 +7,7 @@ class RecipePuzzle extends FocusPuzzle {
   constructor({ character, onFocus, onSolved, onPlacementChange = null, onCollect = null, ingredients = [] }) {
     super("kitchen-recipe", { onFocus }); this.character = character; this.onSolved = onSolved; this.onPlacementChange = onPlacementChange; this.onCollect = onCollect; this.placements = [null, null, null]; this.expected = ["kitchen-tomatoes", "kitchen-carrots", "kitchen-cheese"]; this.slotPositions = [-1.2, 0, 1.2]; this.ingredientsById = new Map(ingredients.map((ingredient) => [ingredient.id, ingredient])); this.modelsById = new Map(); this.slots = []; this.rewardRevealed = false; this.rewardSliding = false; this.rewardTargetZ = null;
     if (character === "mum") {
-      this.id = "kitchen-recipe-note"; this.object3D.name = this.id; this.itemName = "recipe-note"; this.inventoryInspectionKey = "KeyR";
+      this.id = "kitchen-recipe-note"; this.object3D.name = this.id; this.itemName = "recipe-note"; this.inventoryInspectionKey = "KeyR"; this.inspectionTranslationKey = "papers.kitchen-recipe-note";
       this.texture = paperTexture(["GUISO DE LA CASA", "3 tomates maduros", "2 zanahorias", "1 cuña de queso"], { sepia: true });
       const preview = this.texture.image.toDataURL("image/png"); this.inventoryIcon = preview; this.inspectionImage = preview; this.inspectionTitle = "receta del guiso";
       const page = new THREE.Mesh(new THREE.PlaneGeometry(3.35, 2), new THREE.MeshStandardMaterial({ map: this.texture, roughness: .95, side: THREE.DoubleSide })); this.object3D.add(page); this.object3D.rotation.x = -Math.PI / 2;
@@ -24,7 +24,13 @@ class RecipePuzzle extends FocusPuzzle {
         );
         interactionVolume.position.y = .53;
         slot.add(marker, interactionVolume); mark(slot, { kind: "recipe-slot", value: index }); this.slots.push(slot); this.object3D.add(slot);
-        const model = createKitchenFoodModel(id); model.visible = false; shadows(model); this.modelsById.set(id, model); this.object3D.add(model);
+      });
+      ingredients.forEach((ingredient) => {
+        const model = createKitchenFoodModel(ingredient.kind, ingredient.quantity);
+        model.visible = false;
+        shadows(model);
+        this.modelsById.set(ingredient.id, model);
+        this.object3D.add(model);
       });
     }
     shadows(this.object3D);
@@ -36,7 +42,7 @@ class RecipePuzzle extends FocusPuzzle {
     const model = this.modelsById.get(ingredientId); if (!model) return;
     model.position.set(this.slotPositions[index], .2, 0); model.visible = true; mark(model, { kind: "recipe-slot", value: index });
   }
-  applyPlacements(placements = []) { this.expected.forEach((id) => { this.modelsById.get(id).visible = false; }); this.placements = [null, null, null]; this.slots.forEach((_, index) => this.setPlacement(index, placements[index] ?? null)); }
+  applyPlacements(placements = []) { this.modelsById.forEach((model) => { model.visible = false; }); this.placements = [null, null, null]; this.slots.forEach((_, index) => this.setPlacement(index, placements[index] ?? null)); }
   resolveInteractionControl(control, intersection) {
     if (this.character !== "dad" || control?.kind !== "recipe-board" || !intersection?.point) return control;
     this.object3D.updateWorldMatrix(true, false);

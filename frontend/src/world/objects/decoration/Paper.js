@@ -23,6 +23,7 @@ class Paper extends Entity {
     collectible = false,
     inventoryIcon = null,
     inspectionTitle = null,
+    inspectionTranslationKey = null,
     hideInspectionCaption = collectible,
     itemName = "paper",
     onCollect = null,
@@ -43,6 +44,7 @@ class Paper extends Entity {
     this.inventoryIcon = inventoryIcon ?? (collectible ? imagePath : null);
     this.inspectionImage = collectible ? imagePath : null;
     this.inspectionTitle = inspectionTitle;
+    this.inspectionTranslationKey = inspectionTranslationKey;
     this.hideInspectionCaption = hideInspectionCaption;
     this.inventoryInspectionKey = collectible ? "KeyR" : null;
     this.onCollect = onCollect;

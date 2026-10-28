@@ -1,4 +1,4 @@
-import { t, tItem } from "../../translations/index.js";
+import { getLanguage, t, tItem } from "../../translations/index.js";
 
 export class InventoryController {
   constructor(game) {
@@ -62,7 +62,10 @@ export class InventoryController {
     title.textContent = item.hideInspectionCaption ? "" : tItem(item.itemName ?? item.id);
     title.classList.toggle("hidden", Boolean(item.hideInspectionCaption));
     hint.textContent = t("ui.closeInspection");
-    translation.textContent = "";
+    const translationKey = item.inspectionTranslationKey;
+    const translatedText = getLanguage() !== "es" && translationKey ? t(translationKey) : "";
+    translation.textContent = translatedText;
+    translation.classList.toggle("hidden", !translatedText);
     this.game.inventoryInspectionOpen = true;
     this.game.inventoryInspectionKey = inspectionKey;
     panel.classList.remove("hidden");

@@ -1,8 +1,8 @@
 import * as THREE from "three";
 import { BathroomVanity, Bathtub, Carpet, Mirror, Toilet, TowelRail, applyAgedFurnitureAppearance } from "../../objects/index.js";
 
-const createBathroomFurniture = ({ character, config }) => {
-  const vanity = new BathroomVanity({ id: `bathroom-${character}-vanity`, position: new THREE.Vector3(2.55, 0, -3.95), cabinetColor: config.cabinetColor, fixtureColor: config.fixtureColor, metalColor: config.metalColor, lockedDrawers: character === "dad" ? [0] : [] });
+const createBathroomFurniture = ({ character, config, testMode = false }) => {
+  const vanity = new BathroomVanity({ id: `bathroom-${character}-vanity`, position: new THREE.Vector3(2.55, 0, -3.95), cabinetColor: config.cabinetColor, fixtureColor: config.fixtureColor, metalColor: config.metalColor, lockedDrawers: character === "dad" && !testMode ? [0] : [] });
   const toilet = new Toilet({ id: `bathroom-${character}-toilet`, position: new THREE.Vector3(4.8, 0, 3), scale: 1.18, heightScale: 1.12, fixtureColor: config.fixtureColor, metalColor: config.metalColor });
   const bathtub = new Bathtub({ id: `bathroom-${character}-bathtub`, position: new THREE.Vector3(-5.55, 0, .45), scale: 1.12, heightScale: 1.22, lengthScale: 1.14, fixtureColor: config.fixtureColor, metalColor: config.metalColor });
   const towelRail = new TowelRail({ id: `bathroom-${character}-towel-rail`, position: new THREE.Vector3(-1.2, 4.8, 4.77), metalColor: config.metalColor, towelColor: config.textileColor });

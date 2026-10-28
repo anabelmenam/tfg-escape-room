@@ -47,13 +47,13 @@ const createNapkinFabricTexture = () => {
 };
 
 class KitchenIngredient extends Entity {
-  constructor({ id, kind, onCollect }) {
-    super(id); this.itemName = id; this.onCollect = onCollect; this.object3D = createKitchenFoodModel(kind);
+  constructor({ id, kind, quantity, onCollect }) {
+    super(id); this.itemName = id; this.kind = kind; this.quantity = quantity; this.onCollect = onCollect; this.object3D = createKitchenFoodModel(kind, quantity);
     this.inventoryIcon = {
-      "kitchen-tomatoes": "/images/icons/kitchen/tomatoes.png",
-      "kitchen-carrots": "/images/icons/kitchen/carrots.png",
-      "kitchen-cheese": "/images/icons/kitchen/cheese.png",
-    }[id];
+      tomato: "/images/icons/kitchen/tomatoes.png",
+      carrot: "/images/icons/kitchen/carrots.png",
+      cheese: "/images/icons/kitchen/cheese.png",
+    }[kind];
     this.object3D.name = id; shadows(this.object3D);
   }
   interact(player) { if (!player?.inventory.add(this)) return; this.object3D.visible = false; this.setEnabled(false); this.onCollect?.(); }

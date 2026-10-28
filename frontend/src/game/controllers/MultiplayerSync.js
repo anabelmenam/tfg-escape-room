@@ -19,9 +19,6 @@ export class MultiplayerSync {
       this.remoteEcho = new TemporalEcho({ role: game.character === "mum" ? "papa" : "mama" });
       if (this.identity) this.remoteEcho.setName(this.identity.displayName);
       game.scene.add(this.remoteEcho.object3D);
-    } else if (game.testMode && game.character) {
-      this.previewEchoes = [new TemporalEcho({ role: "mama", name: "Personaje A" }), new TemporalEcho({ role: "papa", name: "Personaje B" })];
-      this.previewEchoes.forEach((echo) => game.scene.add(echo.object3D));
     }
   }
   placePreviewEchoes() {

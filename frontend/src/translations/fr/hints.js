@@ -107,7 +107,7 @@ hints: {
       ],
       mumCollectFinalKeys: [
         "Vos dernières récompenses restent dans les pièces que vous avez déjà aidé à terminer.",
-        "Cherchez l'étoile dans l'armoire et la vague derrière la mosaïque.",
+        "Cherchez les clés manquantes : la lune près de la radio et l'étoile dans l'armoire.",
       ],
       dadBedroomSearch: [
         "Votre chambre contient plusieurs pièces qui ne semblent pas encore liées.",
@@ -189,11 +189,11 @@ hints: {
       ],
       dadFinalKeys: [
         "Les symboles des clés se répètent sur les verrous de l'entrée.",
-        "Utilisez la lune et la flamme sur les verrous correspondants.",
+        "Utilisez la flamme et la vague sur les verrous correspondants.",
       ],
       dadCollectFinalKeys: [
         "Vos dernières récompenses restent dans les pièces que vous avez déjà aidé à terminer.",
-        "Cherchez la lune près de la radio et la flamme dans le coffre.",
+        "Cherchez les clés manquantes : la flamme dans le coffre et la vague derrière la mosaïque.",
       ],
       mumElectricalPlan: ["Une dernière couche reste à découvrir sous les bobines.", "Prenez le plan électrique révélé et communiquez-le à votre partenaire."],
       mumRadioReward: ["La radio terminée a déplacé quelque chose à l'intérieur.", "Prenez la clé dans la radio pour quitter la chambre."],

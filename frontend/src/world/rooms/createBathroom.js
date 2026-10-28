@@ -23,7 +23,7 @@ const createBathroom = ({ character = "dad", onObjectFocus = null, onBathroomAct
   room.userData.character = character;
   const reportAction = (type, targetId, payload) => onBathroomAction?.(type, targetId, payload);
   const fixtures = createBathroomFixtures({ character, config, dimensions: bathroomDimensions, windowOpenings });
-  const furniture = createBathroomFurniture({ character, config });
+  const furniture = createBathroomFurniture({ character, config, testMode });
   const decor = createBathroomDecor({ vanity: furniture.vanity });
   const puzzles = createBathroomPuzzles({ character, testMode, vanity: furniture.vanity, onFocus: onObjectFocus, onAction: reportAction });
   const assembly = assembleBathroom({ room, placeAgainstWall, furniture, fixtures, decor, puzzles });

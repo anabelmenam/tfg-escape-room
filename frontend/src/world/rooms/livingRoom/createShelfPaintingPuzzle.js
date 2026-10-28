@@ -71,6 +71,7 @@ const createShelfPaintingPuzzle = ({ character, testMode, shelf, table, onAction
     shelf.openMechanism({ angle: open ? -Math.PI / 2 : Math.PI / 2, duration: 2, side: "left" });
   };
   const revealResult = () => {
+    if (booksRevealed) return;
     booksRevealed = true;
     if (character === "mum") {
       moveShelf(true);

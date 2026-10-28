@@ -2,15 +2,18 @@ import * as THREE from "three";
 import { KitchenIngredient, KitchenNapkin, RecipePuzzle, TableSettingPuzzle } from "../../puzzles/index.js";
 
 const createKitchenFoodPuzzles = ({ character, testMode, furniture, appliancePuzzles, onFocus, onAction }) => {
-  const { refrigerator, counter, firstTallCabinet, diningTable } = furniture;
+  const { refrigerator, counter, firstTallCabinet, secondTallCabinet, diningTable } = furniture;
   const ingredientSpecs = [
-    ["kitchen-tomatoes", "tomato", new THREE.Vector3(-.8, 4.52, .2)],
-    ["kitchen-carrots", "carrot", new THREE.Vector3(.75, 3.25, .15)],
-    ["kitchen-cheese", "cheese", new THREE.Vector3(0, 5.68, .2)],
+    ["kitchen-tomatoes", "tomato", 3, new THREE.Vector3(-.82, 4.52, .2)],
+    ["kitchen-tomatoes-2", "tomato", 2, new THREE.Vector3(.72, 4.52, .2)],
+    ["kitchen-carrots", "carrot", 2, new THREE.Vector3(-.72, 3.28, .15)],
+    ["kitchen-carrots-3", "carrot", 3, new THREE.Vector3(.72, 3.28, .15)],
+    ["kitchen-cheese", "cheese", 1, new THREE.Vector3(-.62, 5.7, .2)],
+    ["kitchen-cheese-2", "cheese", 2, new THREE.Vector3(.62, 5.7, .2)],
   ];
   const ingredients = character === "dad"
-    ? ingredientSpecs.map(([id, kind, position]) => {
-        const ingredient = new KitchenIngredient({ id, kind, onCollect: () => onAction?.("item.pickup", id) });
+    ? ingredientSpecs.map(([id, kind, quantity, position]) => {
+        const ingredient = new KitchenIngredient({ id, kind, quantity, onCollect: () => onAction?.("item.pickup", id) });
         ingredient.object3D.position.copy(position);
         refrigerator.object3D.add(ingredient.object3D);
         return ingredient;
@@ -26,8 +29,8 @@ const createKitchenFoodPuzzles = ({ character, testMode, furniture, appliancePuz
     : [];
   if (napkins.length) {
     counter.addObjectToDrawer(0, napkins[0].object3D, new THREE.Vector3(0, -.12, -.82));
-    refrigerator.object3D.add(napkins[1].object3D);
-    napkins[1].object3D.position.set(-.82, 3.36, .42);
+    secondTallCabinet.object3D.add(napkins[1].object3D);
+    napkins[1].object3D.position.set(-.48, 2.65, .42);
     firstTallCabinet.object3D.add(napkins[2].object3D);
     napkins[2].object3D.position.set(-.48, 2.65, .42);
     counter.object3D.add(napkins[3].object3D);

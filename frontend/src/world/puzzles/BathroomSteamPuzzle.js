@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { Entity } from "../objects/index.js";
 import { tInteraction, tItem } from "../../translations/index.js";
 
-const STEAM_SEQUENCE = "3816";
+const STEAM_SEQUENCE = "5274";
 
 class BathroomSteamPuzzle extends Entity {
   constructor({ faucet, vanity, onSolved = null } = {}) {

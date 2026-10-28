@@ -81,8 +81,11 @@ const createKitchen = ({ character = "dad", onObjectFocus = null, onKitchenActio
       appliancePuzzles.applyState(state);
     },
     addStoryNote: (object3D) => {
-      if (character === "mum")
-        return furniture.smallCounter.addObjectToDrawer(0, object3D, new THREE.Vector3(0, -0.12, -0.58));
+      if (character === "mum") {
+        object3D.position.set(0, 2.65, 0.42);
+        furniture.firstTallCabinet.object3D.add(object3D);
+        return true;
+      }
       object3D.position.set(0, 4.86, -0.05);
       furniture.secondTallCabinet.object3D.add(object3D);
       return true;

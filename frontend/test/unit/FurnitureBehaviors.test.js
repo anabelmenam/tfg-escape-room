@@ -10,6 +10,24 @@ const { Safe } = await import("../../src/world/objects/furniture/Safe.js");
 const { Lock } = await import("../../src/world/objects/decoration/Lock.js");
 const { Cobweb } = await import("../../src/world/objects/decoration/Cobweb.js");
 const { Book } = await import("../../src/world/objects/decoration/Book.js");
+const { KitchenCounter } = await import("../../src/world/objects/furniture/KitchenCounter.js");
+
+test("el fregadero de cocina abre el grifo y llena la cubeta", () => {
+  const counter = new KitchenCounter({ id: "sink", width: 6, hasSink: true });
+  const faucet = counter.getInteractables().find(({ id }) => id === "sink-faucet");
+  assert.ok(faucet);
+  assert.equal(counter.waterSurface.visible, false);
+  faucet.interact();
+  counter.update(10);
+  assert.equal(counter.waterStream.visible, true);
+  assert.equal(counter.waterSurface.visible, true);
+  assert.ok(counter.waterFill > 0.9);
+  faucet.interact();
+  counter.update(10);
+  assert.equal(counter.waterStream.visible, false);
+  assert.ok(counter.waterFill < 0.01);
+  counter.dispose();
+});
 
 test("Shelf gestiona objetos, baldas, transformaciones y mecanismo secreto", () => {
   assert.throws(() => new Shelf({ width: 0 }));

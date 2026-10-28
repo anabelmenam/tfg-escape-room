@@ -6,6 +6,7 @@ import { DrawerManager } from "../helpers/DrawerManager.js";
 import { loadTexture } from "../helpers/loadTexture.js";
 import { createRoundedPullHandle } from "../helpers/createRoundedPullHandle.js";
 import { createCurvedFaucet } from "../helpers/createCurvedFaucet.js";
+import { tInteraction, tItem } from "../../../translations/index.js";
 
 const createRoundedRectanglePath = (width, depth, radius, reverse = false) => {
   const path = reverse ? new THREE.Path() : new THREE.Shape();
@@ -56,6 +57,10 @@ class KitchenCounter extends Entity {
     this.object3D.rotation.y = rotationY;
     this.panelManager = new HingedPanelManager({ ownerId: id });
     this.drawerManager = new DrawerManager({ ownerId: id, drawerSpeed: 7 });
+    this.waterFill = 0;
+    this.waterFillTarget = 0;
+    this.waterRunning = false;
+    this.faucetInteractable = null;
 
     const woodMap = loadTexture({
       path: "/textures/furniture/kitchen-cabinet-sage-enamel.png",
@@ -208,7 +213,46 @@ class KitchenCounter extends Entity {
       rim.rotation.x = Math.PI / 2;
       rim.position.set(0, rimY, 0.08);
 
-      const faucet = createCurvedFaucet({ material: metal, surfaceY: 2.82 });
+      this.faucet = createCurvedFaucet({ material: metal, surfaceY: 2.82 });
+
+      const waterMaterial = new THREE.MeshPhysicalMaterial({
+        color: 0x74c6d8,
+        transparent: true,
+        opacity: 0.68,
+        roughness: 0.12,
+        metalness: 0,
+        transmission: 0.18,
+        depthWrite: false,
+      });
+      this.waterSurface = new THREE.Mesh(
+        new THREE.ShapeGeometry(createRoundedRectanglePath(1.38, 0.86, 0.14), 32),
+        waterMaterial,
+      );
+      this.waterSurface.rotation.x = -Math.PI / 2;
+      this.waterSurface.position.set(0, 2.18, 0.08);
+      this.waterSurface.scale.setScalar(0.35);
+      this.waterSurface.visible = false;
+      this.waterSurface.renderOrder = 2;
+      this.waterSurface.userData.ignoreAging = true;
+
+      const outlet = this.faucet.userData.outletPosition;
+      this.waterStream = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.025, 0.035, 0.42, 12),
+        waterMaterial.clone(),
+      );
+      this.waterStream.position.set(outlet.x, outlet.y - 0.21, outlet.z);
+      this.waterStream.visible = false;
+      this.waterStream.userData.ignoreAging = true;
+
+      this.faucetInteractable = {
+        id: `${id}-faucet`,
+        object3D: this.faucet,
+        enabled: true,
+        interact: () => this.setWaterRunning(!this.waterRunning),
+        getInteractionText: () => this.waterRunning
+          ? tInteraction("turnOff", tItem("tap"))
+          : tInteraction("turnOn", tItem("tap")),
+      };
 
       [basin, drain, rim].forEach((object) => {
         object.traverse((mesh) => {
@@ -218,14 +262,24 @@ class KitchenCounter extends Entity {
           mesh.userData.ignoreAging = true;
         });
       });
-      faucet.object3D?.traverse?.((mesh) => { mesh.userData.ignoreAging = true; });
-      faucet.traverse?.((mesh) => { mesh.userData.ignoreAging = true; });
-      this.object3D.add(basin, drain, rim, faucet);
+      this.faucet.object3D?.traverse?.((mesh) => { mesh.userData.ignoreAging = true; });
+      this.faucet.traverse?.((mesh) => { mesh.userData.ignoreAging = true; });
+      this.object3D.add(basin, drain, rim, this.waterSurface, this.waterStream, this.faucet);
     }
   }
 
   getInteractables() {
-    return [...this.panelManager.getInteractables(), ...this.drawerManager.getInteractables()];
+    return [...this.panelManager.getInteractables(), ...this.drawerManager.getInteractables(), ...(this.faucetInteractable ? [this.faucetInteractable] : [])];
+  }
+
+  setWaterRunning(active) {
+    if (!this.faucet) return;
+    this.waterRunning = Boolean(active);
+    this.waterFillTarget = this.waterRunning ? 1 : 0;
+    this.waterSurface.visible = this.waterRunning || this.waterFill > 0.01;
+    this.waterStream.visible = this.waterRunning;
+    const lever = this.faucet.userData.lever;
+    if (lever) lever.rotation.x = this.waterRunning ? -Math.PI / 5 : 0;
   }
 
   addObjectToDrawer(index, object3D, position = new THREE.Vector3()) {
@@ -235,6 +289,14 @@ class KitchenCounter extends Entity {
   update(deltaTime) {
     this.panelManager.update(deltaTime);
     this.drawerManager.update(deltaTime);
+    this.waterFill = THREE.MathUtils.damp(this.waterFill, this.waterFillTarget, 1.25, deltaTime);
+    if (this.waterSurface) {
+      const fill = THREE.MathUtils.smoothstep(this.waterFill, 0, 1);
+      this.waterSurface.position.y = THREE.MathUtils.lerp(2.18, 2.62, fill);
+      const spread = THREE.MathUtils.lerp(0.35, 1, fill);
+      this.waterSurface.scale.setScalar(spread);
+      this.waterSurface.visible = this.waterFillTarget > 0 || this.waterFill > 0.01;
+    }
   }
 
   setAudioListener(listener) {

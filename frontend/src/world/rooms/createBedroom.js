@@ -106,7 +106,7 @@ const createBedroom = async ({
   });
   const { door, lights } = fixtures;
   room.add(...lights);
-  const furniture = createBedroomFurniture({ character, characterConfig });
+  const furniture = createBedroomFurniture({ character, characterConfig, testMode });
 
   const items = createBedroomItems({ character, furniture, onAction: reportAction });
   const { flashlight } = items;

@@ -26,7 +26,7 @@ const GameHud = ({ showCrosshair, playTimeSeconds = null }) => <>
       <button id="inventory-inspection-close" type="button" aria-label={t("ui.close")} className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-black/65 text-xl font-semibold leading-none text-white hover:bg-black">×</button>
       <img id="inventory-inspection-image" className="max-h-[76vh] max-w-full object-contain" alt="" />
       <p id="inventory-inspection-title" className="mt-3 text-center text-lg font-semibold text-amber-50" />
-      <p id="inventory-inspection-translation" className="mt-3 max-w-3xl text-center font-serif italic leading-relaxed text-amber-100/85" />
+      <p id="inventory-inspection-translation" className="mt-3 hidden max-w-3xl whitespace-pre-line rounded border border-amber-300/25 bg-black/55 px-5 py-3 text-center font-serif italic leading-relaxed text-amber-100/90" />
       <p id="inventory-inspection-hint" className="mt-1 text-center text-sm text-amber-100/70" />
     </div>
   </div>

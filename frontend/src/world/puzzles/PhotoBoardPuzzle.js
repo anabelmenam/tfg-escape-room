@@ -47,6 +47,7 @@ class PhotoBoardPuzzle extends ChildrenPuzzle {
       this.object3D.name = this.id;
       this.itemName = "photo-order-note";
       this.inventoryInspectionKey = "KeyR";
+      this.inspectionTranslationKey = "papers.children-photo-order-note";
     }
     this.pinInserted = false;
     this.placements = new Array(MEMORIES.length).fill(null);

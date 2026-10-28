@@ -13,6 +13,7 @@ import { t } from "../translations/index.js";
 const testDiaryEntries = Array.from({ length: 10 }, (_, index) => `family-note-${String(index + 1).padStart(2, "0")}`);
 
 const GameCanvas = ({ playerRole, session, isAdmin, audioController, audioSettings, onAudioSettingChange, mouseSensitivity, onMouseSensitivityChange, onExit, onLanguageChange }) => {
+  const captureMode = session.testMode && new URLSearchParams(window.location.search).has("capture");
   const containerRef = useRef(null);
   const gameRef = useRef(null);
   const socketRef = useRef(null);
@@ -85,12 +86,12 @@ const GameCanvas = ({ playerRole, session, isAdmin, audioController, audioSettin
   };
 
   return (
-    <div ref={containerRef} className={`relative ${endingSequence.active ? "ending-cinematic" : ""}`} style={{ width: "100vw", height: "100vh" }}>
+    <div ref={containerRef} className={`relative ${endingSequence.active ? "ending-cinematic" : ""}`} style={{ width: captureMode ? 960 : "100vw", height: captureMode ? 720 : "100vh" }}>
       {showStory && !isLoading && playerRole !== "C" && <StoryOverlay character={session.character} onContinue={() => setShowStory(false)} />}
       <EndingOverlay ending={endingSequence.ending} showLight={endingSequence.showLight} tourBeat={endingSequence.tourBeat} tourFade={endingSequence.tourFade} character={session.character} endingPreview={session.endingPreview && !session.endingReplay} onExit={onExit} />
       {isLoading && <LoadingOverlay />}
       {!session.testMode && !session.endingReplay && !isLoading && !companionConnected && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/85 px-6 text-center text-[#f2e7d1]">
+        <div className="absolute inset-0 z-[100] flex items-center justify-center bg-black/85 px-6 text-center text-[#f2e7d1]">
           <div className="max-w-md border border-[#d7b77b]/40 bg-[#211916] p-9 shadow-2xl">
             <p className="text-xs font-bold uppercase tracking-[.24em] text-[#d8aa64]">{t("multiplayer.paused")}</p>
             <h1 className="mt-3 font-serif text-4xl text-[#f5e8ce]">{t("multiplayer.waiting")}</h1>
@@ -114,11 +115,11 @@ const GameCanvas = ({ playerRole, session, isAdmin, audioController, audioSettin
         onMouseSensitivityChange={onMouseSensitivityChange}
         onLanguageChange={onLanguageChange}
       />}
-      {session.testMode && <TestModePanel session={session} />}
-      <GameHud
+      {session.testMode && !captureMode && <TestModePanel session={session} />}
+      {!captureMode && <GameHud
         showCrosshair={playerRole !== "C"}
         playTimeSeconds={session.testMode ? null : playTimer.elapsedSeconds}
-      />
+      />}
     </div>
   );
 };

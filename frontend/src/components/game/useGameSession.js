@@ -17,8 +17,22 @@ const useGameSession = ({ containerRef, gameRef, socketRef, playerRole, session,
     const localSession = session.testMode || session.endingReplay;
     const socket = localSession ? null : io(GAME_SOCKET_URL, { auth: { roomId: session.roomId, playerToken: session.playerToken } });
     socketRef.current = socket;
+    let companionIsConnected = localSession;
+    let pausedForCompanion = false;
     const updateCompanionConnection = (connected) => {
+      companionIsConnected = connected;
       setCompanionConnected(connected);
+      if (!connected) {
+        if (game.ready && !game.paused) {
+          game.pause();
+          pausedForCompanion = true;
+        }
+        return;
+      }
+      if (pausedForCompanion) {
+        pausedForCompanion = false;
+        game.resume();
+      }
     };
     const game = new Game(container, playerRole, {
       testArea: localSession ? session.testArea : null,
@@ -30,10 +44,15 @@ const useGameSession = ({ containerRef, gameRef, socketRef, playerRole, session,
       onReady: () => {
         if (!active) return;
         setIsLoading(false);
+        if (!localSession && !companionIsConnected) {
+          game.pause();
+          pausedForCompanion = true;
+        }
         if (session.endingReplay) window.setTimeout(() => { if (active) startEndingReplay(game); }, 250);
       },
       onPauseRequest: () => {
         if (!active) return;
+        if (!localSession && !companionIsConnected) return;
         if (game.paused) { game.resume(); setIsPaused(false); return; }
         game.pause(); setPauseView("menu"); setIsPaused(true);
       },

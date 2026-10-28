@@ -19,7 +19,7 @@ const bedroomWoodStyle = {
   handleColor: 0x9b773d,
 };
 
-const createBedroomFurniture = ({ character, characterConfig }) => {
+const createBedroomFurniture = ({ character, characterConfig, testMode = false }) => {
   const bed = new Bed({
     id: "bed1",
     position: new THREE.Vector3(-1.75, 0, -8),
@@ -72,7 +72,7 @@ const createBedroomFurniture = ({ character, characterConfig }) => {
   const desk = new Desk({
     id: "desk1",
     position: new THREE.Vector3(6.5, 0, 8),
-    lockedDrawers: character === "dad" ? [0] : [],
+    lockedDrawers: character === "dad" && !testMode ? [0] : [],
     ...bedroomWoodStyle,
   });
   desk.object3D.rotation.y = -Math.PI / 2;

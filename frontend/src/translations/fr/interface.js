@@ -51,6 +51,7 @@ menu: {
     worldB: "Papa",
     iconStudio: "Atelier d'icônes",
     viewEnding: "Voir la fin",
+    fullTour: "Parcours complet",
     roleHint: "Dans la salle, vous choisirez qui incarne Maman et qui incarne Papa.",
     sound: "Son",
     settingsDescription:

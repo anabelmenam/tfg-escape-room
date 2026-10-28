@@ -119,7 +119,7 @@ hints: {
       ],
       mumCollectFinalKeys: [
         "Tus últimas recompensas permanecen en las habitaciones que ya has ayudado a completar.",
-        "Busca la llave de la estrella en el armario infantil y la de la ola en el compartimento del mosaico.",
+        "Busca las llaves que aún falten: la luna está junto a la radio y la estrella en el armario infantil.",
       ],
       dadBedroomSearch: [
         "Tu dormitorio contiene varias piezas que todavía no parecen tener relación entre sí.",
@@ -219,11 +219,11 @@ hints: {
       ],
       dadFinalKeys: [
         "Los símbolos de las llaves se repiten en los cerrojos de la entrada.",
-        "Usa la llave de la luna y la de la llama en los cerrojos con los mismos símbolos.",
+        "Usa las llaves de la llama y de la ola en los cerrojos con los mismos símbolos.",
       ],
       dadCollectFinalKeys: [
         "Tus últimas recompensas permanecen en las habitaciones que ya has ayudado a completar.",
-        "Busca la llave de la luna junto a la radio y la de la llama dentro del cofre del salón.",
+        "Busca las llaves que aún falten: la llama está dentro del cofre del salón y la ola tras el mosaico.",
       ],
       mumElectricalPlan: ["Bajo los carretes queda una última capa por descubrir.", "Recoge el plano eléctrico revelado y comunícaselo a tu compañero."],
       mumRadioReward: ["Al completarse, la radio ha movido algo en su interior.", "Recoge la llave que hay dentro de la radio para salir del dormitorio."],

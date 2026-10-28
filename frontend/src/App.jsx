@@ -12,11 +12,10 @@ const getTestSession = () => {
   const requestedCharacter = params.get("character");
   const legacyTest = params.get("test");
   if (legacyTest === "icons") return { testMode: true, testPlayerRole: "C", testArea: "icons" };
-  if (legacyTest === "ending") return { testMode: true, character: "dad", testArea: "hallway", endingPreview: true };
+  if (legacyTest === "ending") return { testMode: true, character: "dad", testArea: "hallway", endingPreview: true, endingReplay: true };
   const character = requestedCharacter ?? (legacyTest === "mum" ? "mum" : legacyTest === "dad" ? "dad" : null);
   if (!["mum", "dad"].includes(character)) return null;
-  const area = params.get("area");
-  return { testMode: true, character, testArea: ["hallway", "children", "bathroom", "kitchen"].includes(area) ? area : "bedroom" };
+  return { testMode: true, adminTour: true, character, testArea: "bedroom" };
 };
 
 const requestedTestSession = getTestSession();

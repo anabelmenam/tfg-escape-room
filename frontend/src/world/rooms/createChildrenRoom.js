@@ -72,11 +72,13 @@ const createChildrenRoom = ({
   });
   const wardrobePuzzle = createWardrobePuzzle({
     character,
+    testMode,
     wardrobe: furniture.wardrobes[0],
     onAction: reportAction,
   });
 
   if (testMode) {
+    wardrobePuzzle.unlock();
     musicPuzzle.puzzle.setAvailable(true);
     if (character === "mum") {
       photoPuzzle.puzzle.solve({ notify: false });

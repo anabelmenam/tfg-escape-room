@@ -8,8 +8,9 @@ const EndingOverlay = ({
   character,
   endingPreview = false,
   onExit,
-}) => (
-  <>
+}) => {
+  return (
+    <>
     {showLight && (
       <div className="ending-light-bloom pointer-events-none absolute inset-0 z-[65] bg-black" />
     )}
@@ -80,7 +81,8 @@ const EndingOverlay = ({
         </div>
       </div>
     )}
-  </>
-);
+    </>
+  );
+};
 
 export default EndingOverlay;

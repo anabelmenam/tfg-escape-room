@@ -47,7 +47,7 @@ const DiaryBook = ({ diaryEntries, onBack }) => {
 };
 
 const PauseOverlay = ({ view, setView, diaryEntries, hintHistory, isAdmin, onRequestHint, onResume, onExit, audioSettings, onAudioSettingChange, mouseSensitivity, onMouseSensitivityChange, onLanguageChange }) => (
-  <div className="absolute inset-0 z-40 flex items-center justify-center overflow-hidden bg-black/75 p-3 text-amber-50 backdrop-blur-sm sm:p-4">
+  <div className="absolute inset-0 z-[90] flex items-center justify-center overflow-hidden bg-black/75 p-3 text-amber-50 backdrop-blur-sm sm:p-4">
     <div className={`w-full rounded-sm border border-[#d7b77b]/40 bg-[#211916]/95 shadow-2xl shadow-black/60 ${view === "settings" || view === "diary" || view === "controls" ? "max-w-5xl" : "max-w-lg"} ${view === "diary" ? "p-2" : "p-4 sm:p-5"}`}>
       {view === "menu" ? <>
         <h1 className="text-center font-serif text-3xl font-semibold">{t("ui.pause")}</h1>

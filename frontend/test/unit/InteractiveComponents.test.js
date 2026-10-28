@@ -86,9 +86,13 @@ test("menú principal permite abrir ajustes, controles, pruebas y partidas", asy
   await click(screen.root.findAllByType("button")[0]);
   await click(screen.root.findAllByType("button")[3]);
   const testButtons = screen.root.findAllByType("button");
+  assert.equal(testButtons.length, 5);
   await click(testButtons[1]);
   await click(testButtons.at(-1));
-  assert.equal(entries.length, 2);
+  assert.deepEqual(entries, [
+    { testMode: true, adminTour: true, character: "mum", testArea: "bedroom" },
+    { testMode: true, character: "dad", testArea: "hallway", endingPreview: true, endingReplay: true },
+  ]);
   await click(testButtons[0]);
   await click(screen.root.findAllByType("button")[0]);
   await act(async () => Promise.resolve());

@@ -51,6 +51,7 @@ menu: {
     worldB: "Papá",
     iconStudio: "Estudio de iconos",
     viewEnding: "Ver final",
+    fullTour: "Recorrido completo",
     roleHint: "Dentro de la sala elegiréis quién juega como Mamá y quién como Papá.",
     sound: "Sonido",
     settingsDescription: "Los cambios se aplican inmediatamente y se conservarán la próxima vez que abras el juego.",

@@ -51,6 +51,7 @@ menu: {
     worldB: "Dad",
     iconStudio: "Icon studio",
     viewEnding: "View ending",
+    fullTour: "Full tour",
     roleHint: "In the room, you will choose who plays as Mum and who plays as Dad.",
     sound: "Sound",
     settingsDescription: "Changes take effect immediately and will be saved for the next time you open the game.",

@@ -110,7 +110,7 @@ hints: {
       ],
       mumCollectFinalKeys: [
         "Your last rewards remain in rooms you have already helped complete.",
-        "Find the star key in the wardrobe and the wave key behind the mosaic.",
+        "Find any missing keys: the moon is by the radio and the star is in the wardrobe.",
       ],
       dadBedroomSearch: [
         "Your bedroom contains several pieces that do not seem related yet.",
@@ -201,11 +201,11 @@ hints: {
       ],
       dadFinalKeys: [
         "The symbols on the keys are repeated on the front-door bolts.",
-        "Use the moon and flame keys on matching bolts.",
+        "Use the flame and wave keys on their matching bolts.",
       ],
       dadCollectFinalKeys: [
         "Your last rewards remain in rooms you have already helped complete.",
-        "Find the moon key by the radio and the flame key inside the living-room chest.",
+        "Find any missing keys: the flame is in the living-room chest and the wave is behind the mosaic.",
       ],
       mumElectricalPlan: ["One final layer remains beneath the spools.", "Pick up the revealed electrical plan and share it with your companion."],
       mumRadioReward: ["Completing the radio moved something inside it.", "Take the key inside the radio so you can leave the bedroom."],

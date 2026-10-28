@@ -53,6 +53,42 @@ for (const [playerRole, character] of [["A", "mum"], ["B", "dad"]]) {
     level.bathroom.applyBathroomState(emptyState);
     level.kitchen.applyKitchenState(emptyState);
 
+    if (character === "dad") {
+      const bathroomLock = level.entities.find(({ id }) => id === "bathroom-sequence-lock");
+      const chestLock = level.entities.find(({ id }) => id === "living-room-chest-lock");
+      const stove = level.entities.find(({ id }) => id === "kitchen-stove");
+      const dadNapkin = level.entities.find(({ id }) => id === "kitchen-napkin-blue");
+      const ingredientIds = level.entities.map(({ id }) => id);
+      assert.equal(bathroomLock?.password, "5274");
+      assert.equal(chestLock?.password, "3816");
+      assert.notEqual(bathroomLock.password, chestLock.password);
+      const stoveFocus = stove.object3D.worldToLocal(stove.getFocusPosition());
+      const stoveLookAt = stove.object3D.worldToLocal(stove.getLookAtPosition());
+      assert.ok(stoveFocus.y > 3.5);
+      assert.ok(stoveLookAt.y > 2);
+      assert.ok(ingredientIds.includes("kitchen-tomatoes-2"));
+      assert.ok(ingredientIds.includes("kitchen-carrots-3"));
+      assert.ok(ingredientIds.includes("kitchen-cheese-2"));
+      assert.equal(dadNapkin?.object3D.parent?.name, "kitchen-dad-tall-cabinet-2");
+    }
+
+    if (character === "mum") {
+      const kitchenNote = level.storyNotes.find(({ id }) => id === "family-note-09");
+      assert.equal(kitchenNote?.object3D.parent?.name, "kitchen-mum-tall-cabinet-1");
+      assert.equal(kitchenNote.object3D.visible, true);
+
+      const shelf = level.entities.find(({ id }) => id === "living-room-shelf-1");
+      emptyState.characters.dad.puzzles["living-room-rainbow-books"] = { solved: true };
+      level.livingRoom.applyLivingRoomState(emptyState);
+      shelf.update(3);
+      shelf.interact();
+      shelf.update(3);
+      const closedRotation = shelf.object3D.rotation.y;
+      level.livingRoom.applyLivingRoomState(emptyState);
+      assert.equal(shelf.isMechanismMoving, false);
+      assert.equal(shelf.object3D.rotation.y, closedRotation);
+    }
+
     for (const interactable of level.interactables) {
       assert.ok(interactable.object3D);
       interactable.getInteractionText?.();

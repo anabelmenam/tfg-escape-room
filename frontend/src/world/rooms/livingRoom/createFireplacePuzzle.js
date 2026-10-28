@@ -59,6 +59,7 @@ const createFireplacePuzzle = ({ character, testMode, sofa, armchairs, onAction,
     backColor: "#c5a66d",
     content: drawAgedRiddle,
     inspectionTitle: "Carta familiar envejecida",
+    inspectionTranslationKey: "papers.living-room-vitrine-letter",
     onCollect: () => {
       hasLetter = true;
       onAction?.("item.pickup", "living-room-vitrine-letter");

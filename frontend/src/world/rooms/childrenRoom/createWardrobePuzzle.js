@@ -1,6 +1,6 @@
 import { Crowbar, FinalKey, WardrobeChains } from "../../objects/index.js";
 
-const createWardrobePuzzle = ({ character, wardrobe, onAction }) => {
+const createWardrobePuzzle = ({ character, testMode = false, wardrobe, onAction }) => {
   const crowbar = character === "mum"
     ? new Crowbar({ onCollect: () => onAction?.("item.pickup", "crowbar") })
     : null;
@@ -29,7 +29,7 @@ const createWardrobePuzzle = ({ character, wardrobe, onAction }) => {
   }
 
   const rewardDoors = wardrobe.getInteractables().filter((item) => item.id.includes("-door-"));
-  let unlocked = character !== "mum";
+  let unlocked = testMode || character !== "mum";
   let rewardRevealed = false;
   const revealReward = () => {
     if (!unlocked || rewardRevealed) return;
@@ -45,7 +45,7 @@ const createWardrobePuzzle = ({ character, wardrobe, onAction }) => {
     rewardDoors.forEach((door) => { door.enabled = true; });
   };
   rewardDoors.forEach((door) => {
-    door.enabled = character !== "mum";
+    door.enabled = testMode || character !== "mum";
     const openDoor = door.interact;
     door.interact = (...args) => {
       openDoor(...args);

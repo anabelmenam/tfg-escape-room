@@ -162,7 +162,8 @@ const setObjectState = (state, character, objectId, patch) => {
 };
 
 const kitchenNapkinIds = ["kitchen-napkin-red", "kitchen-napkin-green", "kitchen-napkin-blue", "kitchen-napkin-ochre"];
-const kitchenIngredientIds = ["kitchen-tomatoes", "kitchen-carrots", "kitchen-cheese"];
+const kitchenRecipeIds = ["kitchen-tomatoes", "kitchen-carrots", "kitchen-cheese"];
+const kitchenIngredientIds = [...kitchenRecipeIds, "kitchen-tomatoes-2", "kitchen-carrots-3", "kitchen-cheese-2"];
 const memoryPhotoIds = [
   "children-memory-photo-home",
   "children-memory-photo-school",
@@ -253,14 +254,14 @@ const reduceAction = (state, player, action) => {
       if (action.targetId === "kitchen-recipe") {
         if (character !== "dad") throw new Error("La receta se prepara en el Papá.");
         const slotIndex = Number(action.payload.slotIndex);
-        if (!Number.isInteger(slotIndex) || slotIndex < 0 || slotIndex >= kitchenIngredientIds.length) {
+        if (!Number.isInteger(slotIndex) || slotIndex < 0 || slotIndex >= kitchenRecipeIds.length) {
           throw new Error("Esa posición de la tabla no es válida.");
         }
         const currentPuzzle = state.characters.dad.puzzles[action.targetId] ?? {};
         if (currentPuzzle.solved) return;
         const placements = Array.isArray(currentPuzzle.placements)
           ? [...currentPuzzle.placements]
-          : new Array(kitchenIngredientIds.length).fill(null);
+          : new Array(kitchenRecipeIds.length).fill(null);
         if (action.payload.operation === "place") {
           const ingredientId = action.payload.ingredientId;
           const ingredientIndex = state.inventories.dad.indexOf(ingredientId);
@@ -277,7 +278,7 @@ const reduceAction = (state, player, action) => {
         } else {
           throw new Error("La acción del ingrediente no es válida.");
         }
-        const solved = placements.every((ingredientId, index) => ingredientId === kitchenIngredientIds[index]);
+        const solved = placements.every((ingredientId, index) => ingredientId === kitchenRecipeIds[index]);
         state.characters.dad.puzzles[action.targetId] = {
           ...currentPuzzle,
           placements,
@@ -502,7 +503,7 @@ const reduceAction = (state, player, action) => {
       }
       if (action.targetId === "kitchen-recipe") {
         const placements = state.characters.dad.puzzles[action.targetId]?.placements;
-        if (character !== "dad" || !kitchenIngredientIds.every((ingredientId, index) => placements?.[index] === ingredientId)) {
+        if (character !== "dad" || !kitchenRecipeIds.every((ingredientId, index) => placements?.[index] === ingredientId)) {
           throw new Error("Coloca correctamente los ingredientes de la receta.");
         }
         const recipeNoteIndex = state.inventories.mum.indexOf("kitchen-recipe-note");
@@ -548,7 +549,7 @@ const reduceAction = (state, player, action) => {
       if (action.targetId === "children-photo-order-note" && character !== "dad") throw new Error("La nota de las fotos está en el Papá.");
       if (action.targetId === "hallway-maze-note") throw new Error("El plano del laberinto es una pista fija de la pared.");
       if (action.targetId === "kitchen-recipe-note" && character !== "mum") throw new Error("La receta está en el Mamá.");
-      if (["kitchen-tomatoes", "kitchen-carrots", "kitchen-cheese"].includes(action.targetId) && character !== "dad") throw new Error("Los ingredientes se recogen en el Papá.");
+      if (kitchenIngredientIds.includes(action.targetId) && character !== "dad") throw new Error("Los ingredientes se recogen en el Papá.");
       if (kitchenNapkinIds.includes(action.targetId) && character !== "dad") throw new Error("Las servilletas se recogen en el Papá.");
       if (action.targetId === "kitchen-napkin-ochre" && !state.characters.dad.puzzles["kitchen-recipe"]?.solved) throw new Error("Primero hay que completar la receta.");
       if (action.targetId === "bathroom-mosaic-tile" && (character !== "dad" || !state.characters.mum.puzzles["kitchen-oven"]?.solved)) throw new Error("Primero hay que resolver el horno.");

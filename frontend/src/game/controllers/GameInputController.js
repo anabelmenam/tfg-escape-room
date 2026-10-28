@@ -25,8 +25,12 @@ export class GameInputController {
   handleKeyDown(event) {
     const game = this.game;
     game.gameAudio.unlock();
-    if (!game.ready || game.endingCinematic || game.endingTour) return;
+    if (!game.ready) return;
     if (game.paused) { if (event.code === "Escape") game.onPauseRequest?.(); return; }
+    if (game.endingCinematic || game.endingTour) {
+      if (event.code === "Escape") { event.preventDefault(); game.onPauseRequest?.(); }
+      return;
+    }
     if (game.inventoryInspectionOpen) { if (event.code === "Escape") game.closeInventoryInspection(); return; }
     if (game.player.isFocused) {
       if (/^Digit[1-8]$/.test(event.code)) { game.player.selectInventorySlot(Number(event.code.slice(-1)) - 1); return; }

@@ -10,6 +10,7 @@ const { Player } = await import("../../src/game/Player.js");
 const { InteractionManager } = await import("../../src/game/InteractionManager.js");
 const { InventoryController } = await import("../../src/game/controllers/InventoryController.js");
 const { GameInputController } = await import("../../src/game/controllers/GameInputController.js");
+const { setLanguage } = await import("../../src/translations/index.js");
 
 const registerElement = (id, element = new FakeElement()) => {
   element.id = id;
@@ -127,13 +128,19 @@ test("InventoryController actualiza iconos e inspección sin mostrar pistas narr
     gameAudio: { playPickup: () => calls.push("pickup") },
   };
   const controller = new InventoryController(game);
-  inventory.add({ id: "paper", itemName: "mazeNote", inventoryIcon: "/icon.png", inspectionImage: "/paper.png", hideInspectionCaption: true });
+  inventory.add({ id: "paper", itemName: "mazeNote", inventoryIcon: "/icon.png", inspectionImage: "/paper.png", hideInspectionCaption: true, inspectionTranslationKey: "papers.kitchen-recipe-note" });
   assert.ok(calls.includes("pickup"));
   controller.inspectSelected("KeyR");
   assert.equal(game.inventoryInspectionOpen, false);
+  setLanguage("en");
   controller.inspectSelected("KeyI");
   assert.equal(game.inventoryInspectionOpen, true);
   assert.equal(document.getElementById("inventory-inspection-title").textContent, "");
+  assert.match(document.getElementById("inventory-inspection-translation").textContent, /HOUSE STEW/);
+  controller.closeInspection();
+  setLanguage("es");
+  controller.inspectSelected("KeyI");
+  assert.equal(document.getElementById("inventory-inspection-translation").textContent, "");
   controller.closeInspection();
   controller.closeInspection();
   controller.dispose();
@@ -169,6 +176,13 @@ test("GameInputController cubre teclado, rueda, foco y clic", () => {
   game.paused = true; controller.handleKeyDown(event("Escape")); game.paused = false;
   game.inventoryInspectionOpen = true; controller.handleKeyDown(event("Escape")); game.inventoryInspectionOpen = false;
   game.player.isFocused = true; controller.handleKeyDown(event("Digit1")); controller.handleKeyDown(event("Escape")); controller.handleClick({ clientX: 1, clientY: 1 });
+  game.player.isFocused = false;
+  const pausesBeforeEnding = calls.filter((call) => call === "pause").length;
+  game.endingCinematic = {};
+  controller.handleKeyDown(event("KeyE"));
+  controller.handleKeyDown(event("Escape"));
+  assert.equal(calls.filter((call) => call === "pause").length, pausesBeforeEnding + 1);
+  game.endingCinematic = null;
   game.ready = false; controller.handleKeyDown(event("KeyQ")); controller.handleWheel({ deltaY: 1 }); controller.handleClick({ clientX: 1, clientY: 1 });
   assert.ok(calls.includes("flashlight"));
   assert.ok(calls.includes("use"));

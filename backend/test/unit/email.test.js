@@ -29,6 +29,8 @@ test("el correo escapa HTML y conserva el contenido de texto", async () => {
   assert.equal(request.options.headers["api-key"], "test-key");
   assert.match(body.htmlContent, /&lt;Admin&gt;/);
   assert.match(body.htmlContent, /a=1&amp;b=2/);
+  assert.match(body.htmlContent, /Una puerta espera/);
+  assert.match(body.htmlContent, /background:#100d0c/);
   assert.match(body.textContent, /<Admin>/);
 });
 

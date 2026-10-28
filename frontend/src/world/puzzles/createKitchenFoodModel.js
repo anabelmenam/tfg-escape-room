@@ -1,8 +1,9 @@
 import * as THREE from "three";
 
-const createTomatoes = () => {
+const createTomatoes = (quantity = 3) => {
   const group = new THREE.Group();
-  [[-.2, 0], [.2, 0], [0, -.22]].forEach(([x, z], index) => {
+  const positions = [[-.2, 0], [.2, 0], [0, -.22], [0, .22]];
+  positions.slice(0, quantity).forEach(([x, z], index) => {
     const tomato = new THREE.Mesh(
       new THREE.SphereGeometry(.2, 18, 14),
       new THREE.MeshStandardMaterial({ color: 0xb9362f, roughness: .78 }),
@@ -43,9 +44,9 @@ const createCarrotGeometry = (bendDirection = 1) => {
   return geometry;
 };
 
-const createCarrots = () => {
+const createCarrots = (quantity = 2) => {
   const group = new THREE.Group();
-  [-.14, .14].forEach((z, index) => {
+  [-.2, 0, .2].slice(0, quantity).forEach((z, index) => {
     const carrot = new THREE.Mesh(
       createCarrotGeometry(index === 0 ? -1 : 1),
       new THREE.MeshStandardMaterial({ color: index === 0 ? 0xe17a2d : 0xd96f27, roughness: .84 }),
@@ -90,30 +91,35 @@ const createCarrots = () => {
   return group;
 };
 
-const createCheese = () => {
+const createCheese = (quantity = 1) => {
   const group = new THREE.Group();
-  const cheese = new THREE.Mesh(
-    new THREE.CylinderGeometry(.42, .42, .22, 3),
-    new THREE.MeshStandardMaterial({ color: 0xd8b64a, roughness: .72 }),
-  );
-  cheese.rotation.y = -.18;
-  cheese.position.y = .12;
-  group.add(cheese);
-  [[-.12, .12], [.07, .04], [.15, -.12]].forEach(([x, z], index) => {
-    const hole = new THREE.Mesh(
-      new THREE.CylinderGeometry(.032 + index * .006, .032 + index * .006, .008, 14),
-      new THREE.MeshStandardMaterial({ color: 0x9f7b2f, roughness: .88 }),
+  Array.from({ length: quantity }, (_, cheeseIndex) => {
+    const cheeseGroup = new THREE.Group();
+    cheeseGroup.position.x = (cheeseIndex - (quantity - 1) / 2) * .48;
+    const cheese = new THREE.Mesh(
+      new THREE.CylinderGeometry(.36, .36, .22, 3),
+      new THREE.MeshStandardMaterial({ color: 0xd8b64a, roughness: .72 }),
     );
-    hole.position.set(x, .235, z);
-    group.add(hole);
+    cheese.rotation.y = -.18;
+    cheese.position.y = .12;
+    cheeseGroup.add(cheese);
+    [[-.12, .12], [.07, .04], [.15, -.12]].forEach(([x, z], index) => {
+      const hole = new THREE.Mesh(
+        new THREE.CylinderGeometry(.032 + index * .006, .032 + index * .006, .008, 14),
+        new THREE.MeshStandardMaterial({ color: 0x9f7b2f, roughness: .88 }),
+      );
+      hole.position.set(x, .235, z);
+      cheeseGroup.add(hole);
+    });
+    group.add(cheeseGroup);
   });
   return group;
 };
 
-const createKitchenFoodModel = (kind) => {
-  if (kind === "tomato" || kind === "kitchen-tomatoes") return createTomatoes();
-  if (kind === "carrot" || kind === "kitchen-carrots") return createCarrots();
-  return createCheese();
+const createKitchenFoodModel = (kind, quantity = null) => {
+  if (kind === "tomato" || kind === "kitchen-tomatoes") return createTomatoes(quantity ?? 3);
+  if (kind === "carrot" || kind === "kitchen-carrots") return createCarrots(quantity ?? 2);
+  return createCheese(quantity ?? 1);
 };
 
 export { createKitchenFoodModel };
