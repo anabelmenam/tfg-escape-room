@@ -55,7 +55,8 @@ const RoomLobby = ({ session, onStart, onBack }) => {
     await navigator.clipboard?.writeText(session.joinCode);
   };
 
-  const playerForCharacter = (character) => players.find((player) => player.character === characterInfo[character].stateKey);
+  const playerForCharacter = (character) =>
+    players.find((player) => player.character === characterInfo[character].stateKey);
   const ownPlayer = players.find((player) => player.id === session.playerId);
   const bothPlayersReady =
     players.length === 2 && Boolean(playerForCharacter("mum")) && Boolean(playerForCharacter("dad"));
@@ -63,13 +64,13 @@ const RoomLobby = ({ session, onStart, onBack }) => {
   return (
     <main
       className="min-h-screen bg-[#110f10] px-5 py-7 text-[#f2e7d1]"
-      style={{
-        backgroundImage:
-          "radial-gradient(circle at 20% 45%, rgb(111 60 31 / 30%), transparent 27%), radial-gradient(circle at 80% 45%, rgb(48 87 99 / 28%), transparent 27%)",
-      }}
     >
       <header className="mx-auto flex max-w-6xl items-start justify-between gap-4 border-b border-[#d7b77b]/25 pb-4">
-        <button type="button" className="flex items-center gap-2 text-sm text-[#c9ba9e] transition hover:text-[#f5e8ce]" onClick={onBack}>
+        <button
+          type="button"
+          className="flex items-center gap-2 text-sm text-[#c9ba9e] transition hover:text-[#f5e8ce]"
+          onClick={onBack}
+        >
           <ArrowLeft size={17} aria-hidden="true" /> {t("roomLobby.leave")}
         </button>
         <div>

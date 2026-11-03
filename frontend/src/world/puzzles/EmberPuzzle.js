@@ -8,7 +8,11 @@ const SEASON_COLORS = [0x6f9b54, 0xe1b342, 0xb86a32, 0xc7d4df];
 const createSeasonIcon = (season, { ash = false } = {}) => {
   const group = new THREE.Group();
   const color = ash ? 0x8c8378 : SEASON_COLORS[season];
-  const material = new THREE.MeshStandardMaterial({ color, emissive: ash ? 0x000000 : color, emissiveIntensity: ash ? 0 : 0.28 });
+  const material = new THREE.MeshStandardMaterial({
+    color,
+    emissive: ash ? 0x000000 : color,
+    emissiveIntensity: ash ? 0 : 0.28,
+  });
   const addBar = (rotation, length = 0.24, distance = 0) => {
     const bar = new THREE.Mesh(new THREE.BoxGeometry(0.026, length, 0.02), material);
     bar.rotation.z = rotation;
@@ -22,7 +26,12 @@ const createSeasonIcon = (season, { ash = false } = {}) => {
       petal.position.set(Math.cos(angle) * 0.09, Math.sin(angle) * 0.09, 0);
       group.add(petal);
     }
-    group.add(new THREE.Mesh(new THREE.CircleGeometry(0.05, 12), new THREE.MeshStandardMaterial({ color: ash ? 0x71685e : 0xf1d36b })));
+    group.add(
+      new THREE.Mesh(
+        new THREE.CircleGeometry(0.05, 12),
+        new THREE.MeshStandardMaterial({ color: ash ? 0x71685e : 0xf1d36b }),
+      ),
+    );
   } else if (season === 1) {
     group.add(new THREE.Mesh(new THREE.CircleGeometry(0.1, 24), material));
     for (let index = 0; index < 8; index += 1) {
@@ -95,7 +104,7 @@ class EmberPuzzle extends Entity {
     this.isSolved = false;
     this.object3D = new THREE.Group();
     this.dials = this.values.map((value, index) => {
-      const dial = createDial({ index, rotation: value * Math.PI / 2, active: true });
+      const dial = createDial({ index, rotation: (value * Math.PI) / 2, active: true });
       dial.group.position.set((index - 1.5) * 0.55, 0, 0);
       this.object3D.add(dial.group);
       return dial;
@@ -126,7 +135,14 @@ class EmberPuzzle extends Entity {
   solve({ notify = true } = {}) {
     if (this.isSolved) return;
     this.values = [...SOLUTION];
-    this.values.forEach((value, index) => { this.dials[index].group.remove(this.dials[index].pointer); this.dials[index].pointer = createSeasonIcon(value); if ([1, 2].includes(value)) this.dials[index].pointer.scale.setScalar(0.66); this.dials[index].pointer.position.z = 0.05; this.dials[index].pointer.traverse((child) => (child.userData.emberIndex = index)); this.dials[index].group.add(this.dials[index].pointer); });
+    this.values.forEach((value, index) => {
+      this.dials[index].group.remove(this.dials[index].pointer);
+      this.dials[index].pointer = createSeasonIcon(value);
+      if ([1, 2].includes(value)) this.dials[index].pointer.scale.setScalar(0.66);
+      this.dials[index].pointer.position.z = 0.05;
+      this.dials[index].pointer.traverse((child) => (child.userData.emberIndex = index));
+      this.dials[index].group.add(this.dials[index].pointer);
+    });
     this.isSolved = true;
     if (notify) {
       this.exitFocusRequested = true;
@@ -134,11 +150,23 @@ class EmberPuzzle extends Entity {
     }
   }
 
-  interact() { if (!this.isSolved) this.onFocus?.(this); }
-  getInteractionText() { return this.isSolved ? null : tInteraction("examine", tItem("seasons")); }
-  setFocused(focused) { this.focused = focused; }
-  getFocusPosition() { this.object3D.updateWorldMatrix(true, false); return this.object3D.localToWorld(new THREE.Vector3(0, 0, 2.5)); }
-  getLookAtPosition() { this.object3D.updateWorldMatrix(true, false); return this.object3D.localToWorld(new THREE.Vector3()); }
+  interact() {
+    if (!this.isSolved) this.onFocus?.(this);
+  }
+  getInteractionText() {
+    return this.isSolved ? null : tInteraction("examine", tItem("seasons"));
+  }
+  setFocused(focused) {
+    this.focused = focused;
+  }
+  getFocusPosition() {
+    this.object3D.updateWorldMatrix(true, false);
+    return this.object3D.localToWorld(new THREE.Vector3(0, 0, 2.5));
+  }
+  getLookAtPosition() {
+    this.object3D.updateWorldMatrix(true, false);
+    return this.object3D.localToWorld(new THREE.Vector3());
+  }
 }
 
 export { EmberClue, EmberPuzzle };

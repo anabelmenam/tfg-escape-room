@@ -31,6 +31,7 @@ const readSetting = (key, fallback, { min = 0, max = 1 } = {}) => {
 const App = () => {
   const testSession = import.meta.env?.DEV ? requestedTestSession : null;
   const [session, setSession] = useState(testSession);
+  const [lobbyView, setLobbyView] = useState("menu");
   const [account, setAccount] = useState(null);
   const [accountLoading, setAccountLoading] = useState(!testSession && !passwordResetRequested);
   const [language, setLanguageState] = useState(getLanguage);
@@ -86,6 +87,16 @@ const App = () => {
     setMouseSensitivity(sensitivity);
   };
 
+  const enterRoom = (nextSession) => {
+    setLobbyView("play");
+    setSession(nextSession);
+  };
+
+  const returnToRooms = () => {
+    setLobbyView("play");
+    setSession(null);
+  };
+
   if (accountLoading) return <main className="flex min-h-screen items-center justify-center bg-[#110f10] text-[#d8aa64]">{getLanguage() === "es" ? "Cargando…" : "Loading…"}</main>;
   if (passwordResetRequested || (!testSession && !account)) return <AccountAccess onAuthenticated={setAccount} />;
 
@@ -93,10 +104,11 @@ const App = () => {
     return (
       <Lobby
         account={account}
-        onLogout={async () => { await logoutAccount(); setAccount(null); setSession(null); }}
+        initialView={lobbyView}
+        onLogout={async () => { await logoutAccount(); setAccount(null); setSession(null); setLobbyView("menu"); }}
         language={language}
         onLanguageChange={setLanguageState}
-        onEnterLobby={setSession}
+        onEnterLobby={enterRoom}
         audioSettings={audioSettings}
         onAudioSettingChange={changeAudioSetting}
         mouseSensitivity={mouseSensitivity}
@@ -105,7 +117,7 @@ const App = () => {
     );
   }
   if ((!session.character || session.status === "waiting") && !session.testPlayerRole) {
-    return <RoomLobby session={session} onStart={setSession} onBack={() => setSession(null)} />;
+    return <RoomLobby session={session} onStart={setSession} onBack={returnToRooms} />;
   }
 
   return (
@@ -120,7 +132,7 @@ const App = () => {
       onAudioSettingChange={changeAudioSetting}
       mouseSensitivity={mouseSensitivity}
       onMouseSensitivityChange={changeMouseSensitivity}
-      onExit={() => setSession(null)}
+      onExit={returnToRooms}
     />
   );
 };

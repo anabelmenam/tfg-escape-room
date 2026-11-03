@@ -33,10 +33,34 @@ class KitchenWallCabinet extends Entity {
 
     this.object3D.add(
       createBox({ width, height: 2.8, depth: 1.25, position: new THREE.Vector3(0, 0, 0), material: dark }),
-      createBox({ width: doorWidth, height: 2.5, depth: 0.12, position: new THREE.Vector3(-doorWidth / 2 - 0.03, 0, 0.68), material: wood }),
-      createBox({ width: doorWidth, height: 2.5, depth: 0.12, position: new THREE.Vector3(doorWidth / 2 + 0.03, 0, 0.68), material: wood }),
-      createBox({ width: 0.1, height: 0.72, depth: 0.1, position: new THREE.Vector3(-0.27, -0.35, 0.8), material: metal }),
-      createBox({ width: 0.1, height: 0.72, depth: 0.1, position: new THREE.Vector3(0.27, -0.35, 0.8), material: metal }),
+      createBox({
+        width: doorWidth,
+        height: 2.5,
+        depth: 0.12,
+        position: new THREE.Vector3(-doorWidth / 2 - 0.03, 0, 0.68),
+        material: wood,
+      }),
+      createBox({
+        width: doorWidth,
+        height: 2.5,
+        depth: 0.12,
+        position: new THREE.Vector3(doorWidth / 2 + 0.03, 0, 0.68),
+        material: wood,
+      }),
+      createBox({
+        width: 0.1,
+        height: 0.72,
+        depth: 0.1,
+        position: new THREE.Vector3(-0.27, -0.35, 0.8),
+        material: metal,
+      }),
+      createBox({
+        width: 0.1,
+        height: 0.72,
+        depth: 0.1,
+        position: new THREE.Vector3(0.27, -0.35, 0.8),
+        material: metal,
+      }),
     );
   }
 }

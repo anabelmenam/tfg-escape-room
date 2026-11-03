@@ -150,7 +150,9 @@ class ElectricalPanelPuzzle extends Entity {
   }
 
   trySolve() {
-    const isCorrect = this.switchStates.every((isEnabled, switchIndex) => isEnabled === this.correctSwitches.includes(switchIndex + 1));
+    const isCorrect = this.switchStates.every(
+      (isEnabled, switchIndex) => isEnabled === this.correctSwitches.includes(switchIndex + 1),
+    );
     if (!this.isSolved && isCorrect && (this.canSolve?.() ?? true)) {
       this.isSolved = true;
       this.exitFocusRequested = true;
@@ -228,9 +230,7 @@ class ElectricalPanelPuzzle extends Entity {
     }
 
     if (!this.hasFuse) {
-      return player?.hasSelected("fuse")
-        ? tInteraction("insert", tItem("fuse"))
-        : tInteraction("missingFuse");
+      return player?.hasSelected("fuse") ? tInteraction("insert", tItem("fuse")) : tInteraction("missingFuse");
     }
 
     return tInteraction("examine", tItem(this.id));

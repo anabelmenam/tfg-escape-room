@@ -22,7 +22,12 @@ class Stove extends Entity {
       createBox({ width: 3.2, height: 0.18, depth: 2.55, position: new THREE.Vector3(0, 3.08, 0), material: dark }),
     );
 
-    [[-0.85, -0.62], [0.85, -0.62], [-0.85, 0.62], [0.85, 0.62]].forEach(([x, z]) => {
+    [
+      [-0.85, -0.62],
+      [0.85, -0.62],
+      [-0.85, 0.62],
+      [0.85, 0.62],
+    ].forEach(([x, z]) => {
       const burner = new THREE.Mesh(new THREE.TorusGeometry(0.42, 0.07, 10, 24), metal);
       burner.position.set(x, 3.2, z);
       burner.rotation.x = Math.PI / 2;

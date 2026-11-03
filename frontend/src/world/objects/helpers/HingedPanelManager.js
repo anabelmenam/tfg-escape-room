@@ -28,9 +28,7 @@ class HingedPanelManager {
       enabled: true,
       interact: () => this.toggle(index),
       getInteractionText: () =>
-        this.states[index].isOpen
-          ? tInteraction("close", tItem(item))
-          : tInteraction("open", tItem(item)),
+        this.states[index].isOpen ? tInteraction("close", tItem(item)) : tInteraction("open", tItem(item)),
     };
     return panel;
   }

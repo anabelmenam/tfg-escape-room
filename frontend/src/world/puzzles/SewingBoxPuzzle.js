@@ -184,7 +184,11 @@ class SewingBoxPuzzle extends Entity {
   }
 
   trySolve() {
-    if (!this.isSolved && this.spoolOrder.every((color, index) => color === this.correctOrder[index]) && (this.canSolve?.() ?? true)) {
+    if (
+      !this.isSolved &&
+      this.spoolOrder.every((color, index) => color === this.correctOrder[index]) &&
+      (this.canSolve?.() ?? true)
+    ) {
       this.isSolved = true;
       this.planPaper.object3D.visible = true;
       this.planPaper.setEnabled(true);

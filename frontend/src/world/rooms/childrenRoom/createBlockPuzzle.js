@@ -3,13 +3,12 @@ import { GlobePushpin } from "../../objects/index.js";
 import { BlockConstructionPuzzle } from "../../puzzles/index.js";
 
 const createBlockPuzzle = ({ character, desk, onFocus, onAction }) => {
-  const pushpin = character === "mum"
-    ? new GlobePushpin({ onCollect: () => onAction?.("item.pickup", "globe-pushpin") })
-    : null;
+  const pushpin =
+    character === "mum" ? new GlobePushpin({ onCollect: () => onAction?.("item.pickup", "globe-pushpin") }) : null;
   if (pushpin) {
     pushpin.object3D.position.set(1.9, 3.34, 1.02);
     pushpin.object3D.rotation.z = Math.PI / 2;
-    pushpin.object3D.scale.setScalar(.78);
+    pushpin.object3D.scale.setScalar(0.78);
     pushpin.object3D.visible = false;
     pushpin.setEnabled(false);
     desk.object3D.add(pushpin.object3D);
@@ -28,7 +27,7 @@ const createBlockPuzzle = ({ character, desk, onFocus, onAction }) => {
     },
   });
   puzzle.object3D.scale.setScalar(0.78);
-  puzzle.object3D.position.set(0, 3.3 - 1.59 * 0.78 + .34, 0);
+  puzzle.object3D.position.set(0, 3.3 - 1.59 * 0.78 + 0.34, 0);
   desk.object3D.add(puzzle.object3D);
 
   const applyState = (state) => {

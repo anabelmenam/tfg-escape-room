@@ -21,15 +21,44 @@ import { preloadGameImages } from "./preloadGameImages.js";
 export class Game {
   constructor(container, playerRole = "A", options = {}) {
     const {
-      onDoorUnlocked, onHallwayAction, onBedroomAction, onChildrenRoomAction, onKitchenAction,
-      onLivingRoomAction, onBathroomAction, onPlayerMovement = null, onDiaryEntriesChanged = null,
-      onEndingChange = null, onReady = null, onPauseRequest = null, audioController = null,
-      testArea = null, testMode = false, isAdmin = false, endingPreview = false, initialCheckpoint = null,
+      onDoorUnlocked,
+      onHallwayAction,
+      onBedroomAction,
+      onChildrenRoomAction,
+      onKitchenAction,
+      onLivingRoomAction,
+      onBathroomAction,
+      onPlayerMovement = null,
+      onDiaryEntriesChanged = null,
+      onEndingChange = null,
+      onReady = null,
+      onPauseRequest = null,
+      audioController = null,
+      testArea = null,
+      testMode = false,
+      isAdmin = false,
+      endingPreview = false,
+      initialCheckpoint = null,
     } = options;
     Object.assign(this, {
-      container, playerRole, testArea, testMode, isAdmin, endingPreview, onDoorUnlocked, onHallwayAction,
-      onBedroomAction, onChildrenRoomAction, onKitchenAction, onLivingRoomAction, onBathroomAction,
-      onPlayerMovement, onDiaryEntriesChanged, onEndingChange, onReady, onPauseRequest,
+      container,
+      playerRole,
+      testArea,
+      testMode,
+      isAdmin,
+      endingPreview,
+      onDoorUnlocked,
+      onHallwayAction,
+      onBedroomAction,
+      onChildrenRoomAction,
+      onKitchenAction,
+      onLivingRoomAction,
+      onBathroomAction,
+      onPlayerMovement,
+      onDiaryEntriesChanged,
+      onEndingChange,
+      onReady,
+      onPauseRequest,
     });
     this.pendingCheckpoint = initialCheckpoint;
     this.character = null;
@@ -45,7 +74,7 @@ export class Game {
     this.roomData = null;
 
     this.scene = new THREE.Scene();
-    this.camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, .1, 1000);
+    this.camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
     this.camera.position.set(200, 100, 0);
     this.gameAudio = audioController ?? new GameAudio();
     this.ownsGameAudio = !audioController;
@@ -58,9 +87,9 @@ export class Game {
     this.renderer.shadowMap.type = THREE.PCFShadowMap;
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = .3;
+    this.renderer.toneMappingExposure = 0.3;
     this.normalPixelRatio = Math.min(window.devicePixelRatio, 2);
-    this.backgroundPixelRatio = Math.min(window.devicePixelRatio, .8);
+    this.backgroundPixelRatio = Math.min(window.devicePixelRatio, 0.8);
     this.backgroundPerformanceMode = false;
     this.lastRenderedAt = 0;
     this.renderer.setPixelRatio(this.normalPixelRatio);
@@ -77,7 +106,11 @@ export class Game {
     this.eventManager = new EventManager();
     this.entityManager = new EntityManager();
     this.interactableManager = new InteractableManager();
-    this.interactionManager = new InteractionManager({ camera: this.camera, interactableManager: this.interactableManager, player: this.player });
+    this.interactionManager = new InteractionManager({
+      camera: this.camera,
+      interactableManager: this.interactableManager,
+      player: this.player,
+    });
 
     this.flashlightController = new FlashlightController(this);
     this.multiplayer = new MultiplayerSync(this);
@@ -91,17 +124,36 @@ export class Game {
     this.loop();
   }
 
-  get flashlightOn() { return this.flashlightController.active; }
-  get flashlight() { return this.flashlightController.light; }
-  get flashlightTarget() { return this.flashlightController.target; }
-  get remoteEcho() { return this.multiplayer.remoteEcho; }
-  get previewEchoes() { return this.multiplayer.previewEchoes; }
+  get flashlightOn() {
+    return this.flashlightController.active;
+  }
+  get flashlight() {
+    return this.flashlightController.light;
+  }
+  get flashlightTarget() {
+    return this.flashlightController.target;
+  }
+  get remoteEcho() {
+    return this.multiplayer.remoteEcho;
+  }
+  get previewEchoes() {
+    return this.multiplayer.previewEchoes;
+  }
 
   setupLoadingManager() {
     this.loadingProgress = { loaded: 0, total: 0 };
-    this.loadingManagerHandlers = { onStart: THREE.DefaultLoadingManager.onStart, onProgress: THREE.DefaultLoadingManager.onProgress };
-    THREE.DefaultLoadingManager.onStart = (url, loaded, total) => { this.loadingProgress = { loaded, total }; this.loadingManagerHandlers.onStart?.(url, loaded, total); };
-    THREE.DefaultLoadingManager.onProgress = (url, loaded, total) => { this.loadingProgress = { loaded, total }; this.loadingManagerHandlers.onProgress?.(url, loaded, total); };
+    this.loadingManagerHandlers = {
+      onStart: THREE.DefaultLoadingManager.onStart,
+      onProgress: THREE.DefaultLoadingManager.onProgress,
+    };
+    THREE.DefaultLoadingManager.onStart = (url, loaded, total) => {
+      this.loadingProgress = { loaded, total };
+      this.loadingManagerHandlers.onStart?.(url, loaded, total);
+    };
+    THREE.DefaultLoadingManager.onProgress = (url, loaded, total) => {
+      this.loadingProgress = { loaded, total };
+      this.loadingManagerHandlers.onProgress?.(url, loaded, total);
+    };
   }
 
   setupWindowEvents() {
@@ -144,7 +196,8 @@ export class Game {
       const check = () => {
         const { loaded, total } = this.loadingProgress;
         stableFrames = total === 0 || loaded >= total ? stableFrames + 1 : 0;
-        if (stableFrames >= 3) resolve(); else requestAnimationFrame(check);
+        if (stableFrames >= 3) resolve();
+        else requestAnimationFrame(check);
       };
       requestAnimationFrame(check);
     });
@@ -174,8 +227,15 @@ export class Game {
     this.roomData.kitchen?.applyKitchenState(state);
     this.roomData.livingRoom?.applyLivingRoomState(state);
     this.roomData.bathroom?.applyBathroomState(state);
-    const currentItems = new Map(this.player.inventory.getAll().filter(Boolean).map((item) => [item.id, item]));
-    const worldItems = new Map((this.roomData.entities ?? []).filter((entity) => entity?.id).map((entity) => [entity.id, entity]));
+    const currentItems = new Map(
+      this.player.inventory
+        .getAll()
+        .filter(Boolean)
+        .map((item) => [item.id, item]),
+    );
+    const worldItems = new Map(
+      (this.roomData.entities ?? []).filter((entity) => entity?.id).map((entity) => [entity.id, entity]),
+    );
     const restoredItems = (state.inventories?.[this.character] ?? [])
       .map((id) => currentItems.get(id) ?? worldItems.get(id))
       .filter(Boolean);
@@ -187,10 +247,12 @@ export class Game {
     this.roomData.storyNotes?.forEach((note) => note.setCollected(state.journalEntries?.includes(note.id) ?? false));
     this.onDiaryEntriesChanged?.([...(state.journalEntries ?? [])].sort());
     this.onEndingChange?.(state.ending ?? null);
-    if (state.characters?.mum?.puzzles?.["children-globe"]?.solved) this.player.inventory.remove("children-photo-order-note");
+    if (state.characters?.mum?.puzzles?.["children-globe"]?.solved)
+      this.player.inventory.remove("children-photo-order-note");
     if (state.characters?.dad?.puzzles?.["kitchen-recipe"]?.solved) this.player.inventory.remove("kitchen-recipe-note");
     if (state.characters?.mum?.puzzles?.["bedroom-radio"]?.solved) this.player.inventory.remove("bedroom-radio-note");
-    if (state.characters?.dad?.puzzles?.["bedroom-electrical-panel"]?.solved) this.player.inventory.remove("bedroom-electrical-plan");
+    if (state.characters?.dad?.puzzles?.["bedroom-electrical-panel"]?.solved)
+      this.player.inventory.remove("bedroom-electrical-plan");
     const doorState = state.characters?.[this.character]?.objects?.["bedroom-exit-door"];
     if (doorState) {
       const door = this.roomData.door;
@@ -200,11 +262,19 @@ export class Game {
     for (const entity of this.roomData.entities ?? []) {
       const objectState = state.characters?.[this.character]?.objects?.[entity?.id];
       if (!objectState) continue;
-      if (typeof objectState.active === "boolean" && typeof entity.setActive === "function" && entity.active !== objectState.active) {
+      if (
+        typeof objectState.active === "boolean" &&
+        typeof entity.setActive === "function" &&
+        entity.active !== objectState.active
+      ) {
         entity.setActive(objectState.active);
         entity.onPress?.(entity);
       }
-      if (typeof objectState.open === "boolean" && typeof entity.open === "function" && typeof entity.close === "function") {
+      if (
+        typeof objectState.open === "boolean" &&
+        typeof entity.open === "function" &&
+        typeof entity.close === "function"
+      ) {
         if (objectState.open && !entity.isOpen) entity.open();
         else if (!objectState.open && entity.isOpen) entity.close();
       }
@@ -227,18 +297,42 @@ export class Game {
     this.pendingCheckpoint = null;
   }
 
-  startEndingExit(onComplete, onMoveStart = null) { startEndingExit(this, onComplete, onMoveStart); }
-  updateEndingCinematic(delta) { updateEndingExit(this, delta); }
-  startEndingHouseTour(callbacks = {}) { startEndingHouseTour(this, callbacks); }
-  updateEndingTour(delta) { updateEndingTour(this, delta); }
-  updateRemotePlayer(movement) { this.multiplayer.updateRemote(movement); }
-  setRemotePlayerConnected(status) { this.multiplayer.setConnected(status); }
-  setRemotePlayerIdentity(identity) { this.multiplayer.setIdentity(identity); }
-  updateInventoryUI() { this.inventoryController.updateUI(); }
-  inspectSelectedInventoryItem(keyCode) { this.inventoryController.inspectSelected(keyCode); }
-  closeInventoryInspection() { this.inventoryController.closeInspection(); }
-  toggleFlashlight() { this.flashlightController.toggle(); }
-  updateFlashlight() { this.flashlightController.update(); }
+  startEndingExit(onComplete, onMoveStart = null) {
+    startEndingExit(this, onComplete, onMoveStart);
+  }
+  updateEndingCinematic(delta) {
+    updateEndingExit(this, delta);
+  }
+  startEndingHouseTour(callbacks = {}) {
+    startEndingHouseTour(this, callbacks);
+  }
+  updateEndingTour(delta) {
+    updateEndingTour(this, delta);
+  }
+  updateRemotePlayer(movement) {
+    this.multiplayer.updateRemote(movement);
+  }
+  setRemotePlayerConnected(status) {
+    this.multiplayer.setConnected(status);
+  }
+  setRemotePlayerIdentity(identity) {
+    this.multiplayer.setIdentity(identity);
+  }
+  updateInventoryUI() {
+    this.inventoryController.updateUI();
+  }
+  inspectSelectedInventoryItem(keyCode) {
+    this.inventoryController.inspectSelected(keyCode);
+  }
+  closeInventoryInspection() {
+    this.inventoryController.closeInspection();
+  }
+  toggleFlashlight() {
+    this.flashlightController.toggle();
+  }
+  updateFlashlight() {
+    this.flashlightController.update();
+  }
 
   resize() {
     const width = this.container.clientWidth;
@@ -274,9 +368,17 @@ export class Game {
       this.updateFlashlight();
       const moving = !endingActive && ["KeyW", "KeyA", "KeyS", "KeyD"].some((code) => this.input.isPressed(code));
       const running = this.input.isPressed("ControlLeft") || this.input.isPressed("ControlRight");
-      this.gameAudio.updateFootsteps(delta, { moving: moving && this.player.isFirstPerson && !this.player.isFocused, running, crouching: this.player.isCrouching, grounded: this.player.isGrounded });
+      this.gameAudio.updateFootsteps(delta, {
+        moving: moving && this.player.isFirstPerson && !this.player.isFocused,
+        running,
+        crouching: this.player.isCrouching,
+        grounded: this.player.isGrounded,
+      });
     }
-    if (this.player.focusedObject?.exitFocusRequested) { this.player.focusedObject.exitFocusRequested = false; this.player.exitFocus(); }
+    if (this.player.focusedObject?.exitFocusRequested) {
+      this.player.focusedObject.exitFocusRequested = false;
+      this.player.exitFocus();
+    }
     this.renderer.render(this.scene, this.camera);
   }
 

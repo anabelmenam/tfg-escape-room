@@ -9,12 +9,14 @@ const getExitPath = (game, streetDoor) => {
   const doorParent = streetDoor.object3D.parent;
   const parentQuaternion = new THREE.Quaternion();
   doorParent.getWorldQuaternion(parentQuaternion);
-  const closedDoorQuaternion = new THREE.Quaternion()
-    .setFromAxisAngle(new THREE.Vector3(0, 1, 0), streetDoor.closedRotation);
-  const doorwayQuaternion = parentQuaternion.clone().multiply(closedDoorQuaternion);
-  const doorwayCenter = streetDoor.object3D.position.clone().add(
-    new THREE.Vector3(2.5, 0, 0).applyQuaternion(closedDoorQuaternion),
+  const closedDoorQuaternion = new THREE.Quaternion().setFromAxisAngle(
+    new THREE.Vector3(0, 1, 0),
+    streetDoor.closedRotation,
   );
+  const doorwayQuaternion = parentQuaternion.clone().multiply(closedDoorQuaternion);
+  const doorwayCenter = streetDoor.object3D.position
+    .clone()
+    .add(new THREE.Vector3(2.5, 0, 0).applyQuaternion(closedDoorQuaternion));
   doorParent.localToWorld(doorwayCenter);
 
   const normal = new THREE.Vector3(0, 0, 1).applyQuaternion(doorwayQuaternion).setY(0).normalize();
@@ -27,7 +29,12 @@ const getExitPath = (game, streetDoor) => {
   const end = pointAt(ENDING_EXIT.endDistance);
   const orientationGuide = game.camera.clone();
   orientationGuide.position.copy(start);
-  orientationGuide.lookAt(end.clone().addScaledVector(exitDirection, 5).setY(start.y - .35));
+  orientationGuide.lookAt(
+    end
+      .clone()
+      .addScaledVector(exitDirection, 5)
+      .setY(start.y - 0.35),
+  );
 
   return {
     start,
@@ -67,18 +74,18 @@ const updateEndingExit = (game, delta) => {
 
   const rawProgress = THREE.MathUtils.clamp((cinematic.elapsed - cinematic.delay) / cinematic.duration, 0, 1);
   const progress = rawProgress * rawProgress * (3 - 2 * rawProgress);
-  if (progress < .44) {
-    const approachProgress = THREE.MathUtils.smoothstep(progress / .44, 0, 1);
+  if (progress < 0.44) {
+    const approachProgress = THREE.MathUtils.smoothstep(progress / 0.44, 0, 1);
     game.camera.position.lerpVectors(cinematic.start, cinematic.approach, approachProgress);
-  } else if (progress < .66) {
-    const crossingProgress = THREE.MathUtils.smoothstep((progress - .44) / .22, 0, 1);
+  } else if (progress < 0.66) {
+    const crossingProgress = THREE.MathUtils.smoothstep((progress - 0.44) / 0.22, 0, 1);
     game.camera.position.lerpVectors(cinematic.approach, cinematic.threshold, crossingProgress);
   } else {
-    const exitProgress = THREE.MathUtils.smoothstep((progress - .66) / .34, 0, 1);
+    const exitProgress = THREE.MathUtils.smoothstep((progress - 0.66) / 0.34, 0, 1);
     game.camera.position.lerpVectors(cinematic.threshold, cinematic.end, exitProgress);
   }
 
-  const rotationProgress = THREE.MathUtils.smoothstep(Math.min(progress / .5, 1), 0, 1);
+  const rotationProgress = THREE.MathUtils.smoothstep(Math.min(progress / 0.5, 1), 0, 1);
   game.camera.quaternion.slerpQuaternions(cinematic.startQuaternion, cinematic.endQuaternion, rotationProgress);
   game.collisionManager.previousPosition.copy(game.camera.position);
 

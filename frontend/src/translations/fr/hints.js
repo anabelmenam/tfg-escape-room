@@ -1,11 +1,14 @@
 export default {
-hints: {
+  hints: {
     title: "Indices",
     request: "Demander un indice",
     another: "Demander un autre indice",
     private: "Cet indice est personnel et ne concerne que votre personnage.",
     messages: {
-      explore: ["L'essentiel n'est pas toujours visible; il se cache parfois derrière les choses ordinaires.", "Approchez-vous des objets et cherchez l'interaction E."],
+      explore: [
+        "L'essentiel n'est pas toujours visible; il se cache parfois derrière les choses ordinaires.",
+        "Approchez-vous des objets et cherchez l'interaction E.",
+      ],
       mumBedroomSearch: [
         "La chambre conserve encore de petits objets qui deviendront utiles plus tard.",
         "Fouillez les tables de nuit, le bureau et l'armoire pour trouver l'aiguille et les fragments.",
@@ -58,13 +61,22 @@ hints: {
         "Quelque chose dans votre salon n'est plus protégé après avoir ordonné les braises.",
         "Ouvrez-la et prenez la lettre contenant le code du coffre.",
       ],
-      mumChest: ["La lettre associe chaque saison à un chiffre; ensemble, ils forment ce dont votre partenaire a besoin.", "Donnez 3816 à votre partenaire pour le coffre de son salon."],
+      mumChest: [
+        "La lettre associe chaque saison à un chiffre; ensemble, ils forment ce dont votre partenaire a besoin.",
+        "Donnez 3816 à votre partenaire pour le coffre de son salon.",
+      ],
       mumBlocks: [
         "Les jouets semblent se souvenir de la forme d'une construction disparue.",
         "Reconstruisez le château pour faire apparaître une punaise.",
       ],
-      mumBlocksReward: ["La construction terminée a révélé une minuscule récompense.", "Prenez la punaise près des blocs."],
-      mumPin: ["Le tableau semble complet, sauf en un minuscule point vide.", "Sélectionnez la punaise et placez-la avant d'examiner le tableau."],
+      mumBlocksReward: [
+        "La construction terminée a révélé une minuscule récompense.",
+        "Prenez la punaise près des blocs.",
+      ],
+      mumPin: [
+        "Le tableau semble complet, sauf en un minuscule point vide.",
+        "Sélectionnez la punaise et placez-la avant d'examiner le tableau.",
+      ],
       mumPhotoBoard: [
         "Quatre souvenirs dispersés forment un trajet que votre partenaire peut interpréter.",
         "Placez maison, école, parc et gare selon le journal de votre partenaire.",
@@ -137,13 +149,22 @@ hints: {
         "Le meuble de la salle de bains contient un outil destiné à un autre endroit.",
         "Ouvrez-le et prenez le tournevis.",
       ],
-      dadMirror: ["Un miroir du couloir est fixé d'une manière inhabituelle.", "Dévissez le miroir qui cache le labyrinthe."],
+      dadMirror: [
+        "Un miroir du couloir est fixé d'une manière inhabituelle.",
+        "Dévissez le miroir qui cache le labyrinthe.",
+      ],
       dadWaitClock: [
         "Derrière le miroir se trouve un trajet dont la solution dépend de l'horloge de votre partenaire.",
         "Votre partenaire doit réparer et régler l'horloge.",
       ],
-      dadMaze: ["Le trajet découvert par votre partenaire correspond au labyrinthe derrière le miroir.", "Suivez le trajet montré par l'horloge de votre partenaire."],
-      dadBooks: ["Les couleurs des livres ne suivent pas l'ordre qu'elles auraient après la pluie.", "Rangez-les dans l'ordre de l'arc-en-ciel."],
+      dadMaze: [
+        "Le trajet découvert par votre partenaire correspond au labyrinthe derrière le miroir.",
+        "Suivez le trajet montré par l'horloge de votre partenaire.",
+      ],
+      dadBooks: [
+        "Les couleurs des livres ne suivent pas l'ordre qu'elles auraient après la pluie.",
+        "Rangez-les dans l'ordre de l'arc-en-ciel.",
+      ],
       dadWaitPainting: [
         "L'espace derrière le tableau cache encore quelque chose que seul votre partenaire peut libérer.",
         "Votre partenaire doit placer le tableau et ses deux fragments.",
@@ -156,12 +177,18 @@ hints: {
         "La couture est ouverte, mais son secret reste à l'intérieur.",
         "Interagissez de nouveau avec lui pour le fouiller.",
       ],
-      dadFireplace: ["La petite flamme manquante appartient tout près de l'endroit où elle devrait brûler.", "Sélectionnez l'allumette et allumez la cheminée."],
+      dadFireplace: [
+        "La petite flamme manquante appartient tout près de l'endroit où elle devrait brûler.",
+        "Sélectionnez l'allumette et allumez la cheminée.",
+      ],
       dadWaitDisplayCase: [
         "Votre coffre dépend d'une lettre que seul votre partenaire peut atteindre.",
         "Votre partenaire doit résoudre les braises, ouvrir la vitrine et lire la lettre.",
       ],
-      dadChest: ["Les saisons de la lettre de votre partenaire forment la combinaison du coffre.", "Entrez 3816 sur le cadenas du coffre de votre salon."],
+      dadChest: [
+        "Les saisons de la lettre de votre partenaire forment la combinaison du coffre.",
+        "Entrez 3816 sur le cadenas du coffre de votre salon.",
+      ],
       dadPhotoNote: [
         "Une feuille de la chambre d'enfant raconte un trajet à travers quatre lieux.",
         "Prenez « Ma journée » dans le tiroir et communiquez l'ordre des photos.",
@@ -178,7 +205,10 @@ hints: {
         "La recette terminée, la table attend encore que chaque membre trouve sa place.",
         "Trouvez les quatre serviettes et associez-les aux bonnes personnes.",
       ],
-      dadStove: ["La table terminée a provoqué un changement dans les flammes.", "Réglez les flammes comme chez votre partenaire."],
+      dadStove: [
+        "La table terminée a provoqué un changement dans les flammes.",
+        "Réglez les flammes comme chez votre partenaire.",
+      ],
       dadOvenTile: [
         "Les commandes du four de votre partenaire agissent sur plus que son propre four.",
         "Demandez les valeurs à votre partenaire puis prenez le carreau dans votre four.",
@@ -195,18 +225,54 @@ hints: {
         "Vos dernières récompenses restent dans les pièces que vous avez déjà aidé à terminer.",
         "Cherchez les clés manquantes : la flamme dans le coffre et la vague derrière la mosaïque.",
       ],
-      mumElectricalPlan: ["Une dernière couche reste à découvrir sous les bobines.", "Prenez le plan électrique révélé et communiquez-le à votre partenaire."],
-      mumRadioReward: ["La radio terminée a déplacé quelque chose à l'intérieur.", "Prenez la clé dans la radio pour quitter la chambre."],
-      mumBedroomExit: ["La sortie ne semble plus demander une énigme, seulement le bon objet.", "Sélectionnez la clé et ouvrez la porte vers le couloir."],
-      mumWaitLivingRoomDoor: ["Vous avez atteint une porte dont seul votre partenaire peut obtenir la clé.", "Votre partenaire doit finir le labyrinthe, prendre sa clé et ouvrir le salon."],
-      mumWaitChildrenDoor: ["La pièce suivante dépend de ce que contient le coffre de votre partenaire.", "Votre partenaire doit ouvrir le coffre du salon, prendre la clé et ouvrir cette chambre."],
-      mumRecipeNote: ["Votre cuisine contient les instructions pour les ingrédients de votre partenaire.", "Trouvez et prenez la recette dans la cuisine pour lui indiquer le bon ordre."],
-      dadWaitBedroomExit: ["Vous avez terminé votre part, mais la sortie dépend d'un objet que seul votre partenaire peut trouver.", "Votre partenaire doit terminer la radio, prendre la clé et ouvrir la porte."],
-      dadMazeReward: ["Le trajet terminé a laissé quelque chose près du plateau.", "Prenez la clé apparue près du labyrinthe."],
-      dadLivingRoomDoor: ["La récompense du labyrinthe appartient à une porte voisine.", "Sélectionnez la clé et utilisez-la sur la porte du salon."],
-      dadChestReward: ["Le coffre ouvert contenait plus qu'une clé finale.", "Ouvrez le coffre, prenez la clé et apportez-la à la porte de la chambre d'enfant."],
-      dadChildrenDoor: ["La clé récemment trouvée semble mener à la chambre d'enfant.", "Sélectionnez-la et ouvrez la porte depuis le couloir."],
-      dadWaitKitchenDoor: ["L'entrée suivante exige la force d'un outil que seul votre partenaire peut trouver.", "Votre partenaire doit ouvrir l'armoire de l'enfant, prendre le pied-de-biche et forcer une porte de la cuisine."],
+      mumElectricalPlan: [
+        "Une dernière couche reste à découvrir sous les bobines.",
+        "Prenez le plan électrique révélé et communiquez-le à votre partenaire.",
+      ],
+      mumRadioReward: [
+        "La radio terminée a déplacé quelque chose à l'intérieur.",
+        "Prenez la clé dans la radio pour quitter la chambre.",
+      ],
+      mumBedroomExit: [
+        "La sortie ne semble plus demander une énigme, seulement le bon objet.",
+        "Sélectionnez la clé et ouvrez la porte vers le couloir.",
+      ],
+      mumWaitLivingRoomDoor: [
+        "Vous avez atteint une porte dont seul votre partenaire peut obtenir la clé.",
+        "Votre partenaire doit finir le labyrinthe, prendre sa clé et ouvrir le salon.",
+      ],
+      mumWaitChildrenDoor: [
+        "La pièce suivante dépend de ce que contient le coffre de votre partenaire.",
+        "Votre partenaire doit ouvrir le coffre du salon, prendre la clé et ouvrir cette chambre.",
+      ],
+      mumRecipeNote: [
+        "Votre cuisine contient les instructions pour les ingrédients de votre partenaire.",
+        "Trouvez et prenez la recette dans la cuisine pour lui indiquer le bon ordre.",
+      ],
+      dadWaitBedroomExit: [
+        "Vous avez terminé votre part, mais la sortie dépend d'un objet que seul votre partenaire peut trouver.",
+        "Votre partenaire doit terminer la radio, prendre la clé et ouvrir la porte.",
+      ],
+      dadMazeReward: [
+        "Le trajet terminé a laissé quelque chose près du plateau.",
+        "Prenez la clé apparue près du labyrinthe.",
+      ],
+      dadLivingRoomDoor: [
+        "La récompense du labyrinthe appartient à une porte voisine.",
+        "Sélectionnez la clé et utilisez-la sur la porte du salon.",
+      ],
+      dadChestReward: [
+        "Le coffre ouvert contenait plus qu'une clé finale.",
+        "Ouvrez le coffre, prenez la clé et apportez-la à la porte de la chambre d'enfant.",
+      ],
+      dadChildrenDoor: [
+        "La clé récemment trouvée semble mener à la chambre d'enfant.",
+        "Sélectionnez-la et ouvrez la porte depuis le couloir.",
+      ],
+      dadWaitKitchenDoor: [
+        "L'entrée suivante exige la force d'un outil que seul votre partenaire peut trouver.",
+        "Votre partenaire doit ouvrir l'armoire de l'enfant, prendre le pied-de-biche et forcer une porte de la cuisine.",
+      ],
       finalDoor: [
         "Les quatre verrous sont ouverts; la sortie exige les deux joueurs.",
         "Placez-vous devant la porte et maintenez E en même temps.",
@@ -216,5 +282,5 @@ hints: {
         "Votre partenaire doit encore trouver ses clés finales et ouvrir les autres verrous.",
       ],
     },
-  }
+  },
 };

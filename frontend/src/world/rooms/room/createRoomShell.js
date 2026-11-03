@@ -46,47 +46,70 @@ const createRoomShell = ({ room, colliders, dimensions, openings, omitWalls, mat
     room.add(mesh);
     colliders.push(mesh);
   };
-  addBox({ name: "floor", size: new THREE.Vector3(width, 1, depth), position: new THREE.Vector3(0, -0.5, 0), material: materials.floor });
-  addBox({ name: "ceiling", size: new THREE.Vector3(width, 1, depth), position: new THREE.Vector3(0, height + 0.5, 0), material: materials.ceiling });
-
-  walls.filter((wall) => !omitWalls.includes(wall)).forEach((wall) => {
-    const horizontalWall = wall === "front" || wall === "back";
-    const wallLength = horizontalWall ? width : depth;
-    const wallOpenings = openings.filter((opening) => opening.wall === wall);
-    const horizontalCuts = [-wallLength / 2, wallLength / 2];
-    const verticalCuts = [0, height];
-    wallOpenings.forEach((opening) => {
-      horizontalCuts.push(opening.position - opening.width / 2, opening.position + opening.width / 2);
-      verticalCuts.push(opening.bottom, opening.bottom + opening.height);
-    });
-    const xCuts = [...new Set(horizontalCuts)].sort((a, b) => a - b);
-    const yCuts = [...new Set(verticalCuts)].sort((a, b) => a - b);
-    for (let xIndex = 0; xIndex < xCuts.length - 1; xIndex += 1) {
-      const sectionLength = xCuts[xIndex + 1] - xCuts[xIndex];
-      const sectionCenter = (xCuts[xIndex] + xCuts[xIndex + 1]) / 2;
-      for (let yIndex = 0; yIndex < yCuts.length - 1; yIndex += 1) {
-        const sectionHeight = yCuts[yIndex + 1] - yCuts[yIndex];
-        const sectionCenterY = (yCuts[yIndex] + yCuts[yIndex + 1]) / 2;
-        if (sectionLength <= 0 || sectionHeight <= 0) continue;
-        const blocked = wallOpenings.some((opening) => sectionCenter > opening.position - opening.width / 2
-          && sectionCenter < opening.position + opening.width / 2
-          && sectionCenterY > opening.bottom && sectionCenterY < opening.bottom + opening.height);
-        if (blocked) continue;
-        const size = horizontalWall ? new THREE.Vector3(sectionLength, sectionHeight, wallThickness) : new THREE.Vector3(wallThickness, sectionHeight, sectionLength);
-        const position = wall === "front" ? new THREE.Vector3(sectionCenter, sectionCenterY, depth / 2)
-          : wall === "back" ? new THREE.Vector3(sectionCenter, sectionCenterY, -depth / 2)
-            : wall === "left" ? new THREE.Vector3(-width / 2, sectionCenterY, sectionCenter)
-              : new THREE.Vector3(width / 2, sectionCenterY, sectionCenter);
-        addBox({
-          name: `${wall}-wall-section-${xIndex}-${yIndex}`,
-          size,
-          position,
-          material: materials.wall,
-          mapUvs: (geometry) => mapWallUvs(geometry, { wall, sectionCenter, sectionCenterY, wallLength, height, wallThickness }),
-        });
-      }
-    }
+  addBox({
+    name: "floor",
+    size: new THREE.Vector3(width, 1, depth),
+    position: new THREE.Vector3(0, -0.5, 0),
+    material: materials.floor,
   });
+  addBox({
+    name: "ceiling",
+    size: new THREE.Vector3(width, 1, depth),
+    position: new THREE.Vector3(0, height + 0.5, 0),
+    material: materials.ceiling,
+  });
+
+  walls
+    .filter((wall) => !omitWalls.includes(wall))
+    .forEach((wall) => {
+      const horizontalWall = wall === "front" || wall === "back";
+      const wallLength = horizontalWall ? width : depth;
+      const wallOpenings = openings.filter((opening) => opening.wall === wall);
+      const horizontalCuts = [-wallLength / 2, wallLength / 2];
+      const verticalCuts = [0, height];
+      wallOpenings.forEach((opening) => {
+        horizontalCuts.push(opening.position - opening.width / 2, opening.position + opening.width / 2);
+        verticalCuts.push(opening.bottom, opening.bottom + opening.height);
+      });
+      const xCuts = [...new Set(horizontalCuts)].sort((a, b) => a - b);
+      const yCuts = [...new Set(verticalCuts)].sort((a, b) => a - b);
+      for (let xIndex = 0; xIndex < xCuts.length - 1; xIndex += 1) {
+        const sectionLength = xCuts[xIndex + 1] - xCuts[xIndex];
+        const sectionCenter = (xCuts[xIndex] + xCuts[xIndex + 1]) / 2;
+        for (let yIndex = 0; yIndex < yCuts.length - 1; yIndex += 1) {
+          const sectionHeight = yCuts[yIndex + 1] - yCuts[yIndex];
+          const sectionCenterY = (yCuts[yIndex] + yCuts[yIndex + 1]) / 2;
+          if (sectionLength <= 0 || sectionHeight <= 0) continue;
+          const blocked = wallOpenings.some(
+            (opening) =>
+              sectionCenter > opening.position - opening.width / 2 &&
+              sectionCenter < opening.position + opening.width / 2 &&
+              sectionCenterY > opening.bottom &&
+              sectionCenterY < opening.bottom + opening.height,
+          );
+          if (blocked) continue;
+          const size = horizontalWall
+            ? new THREE.Vector3(sectionLength, sectionHeight, wallThickness)
+            : new THREE.Vector3(wallThickness, sectionHeight, sectionLength);
+          const position =
+            wall === "front"
+              ? new THREE.Vector3(sectionCenter, sectionCenterY, depth / 2)
+              : wall === "back"
+                ? new THREE.Vector3(sectionCenter, sectionCenterY, -depth / 2)
+                : wall === "left"
+                  ? new THREE.Vector3(-width / 2, sectionCenterY, sectionCenter)
+                  : new THREE.Vector3(width / 2, sectionCenterY, sectionCenter);
+          addBox({
+            name: `${wall}-wall-section-${xIndex}-${yIndex}`,
+            size,
+            position,
+            material: materials.wall,
+            mapUvs: (geometry) =>
+              mapWallUvs(geometry, { wall, sectionCenter, sectionCenterY, wallLength, height, wallThickness }),
+          });
+        }
+      }
+    });
 };
 
 export { createRoomShell };

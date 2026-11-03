@@ -50,17 +50,58 @@ class CooktopCounter extends Entity {
     });
 
     this.object3D.add(
-      createBox({ width: 0.15, height: 2.55, depth: 2.15, position: new THREE.Vector3(-width / 2 + 0.075, 1.275, 0), material: interior }),
-      createBox({ width: 0.15, height: 2.55, depth: 2.15, position: new THREE.Vector3(width / 2 - 0.075, 1.275, 0), material: interior }),
-      createBox({ width: width - 0.3, height: 0.15, depth: 2.15, position: new THREE.Vector3(0, 0.075, 0), material: interior }),
-      createBox({ width: width - 0.3, height: 2.4, depth: 0.15, position: new THREE.Vector3(0, 1.275, -1), material: interior }),
-      createBox({ width: width + 0.18, height: 0.18, depth: 2.32, position: new THREE.Vector3(0, 2.65, 0.04), material: marble }),
-      createBox({ width: width - 0.22, height: 0.43, depth: 0.15, position: new THREE.Vector3(0, 2.32, 1.12), material: metal }),
+      createBox({
+        width: 0.15,
+        height: 2.55,
+        depth: 2.15,
+        position: new THREE.Vector3(-width / 2 + 0.075, 1.275, 0),
+        material: interior,
+      }),
+      createBox({
+        width: 0.15,
+        height: 2.55,
+        depth: 2.15,
+        position: new THREE.Vector3(width / 2 - 0.075, 1.275, 0),
+        material: interior,
+      }),
+      createBox({
+        width: width - 0.3,
+        height: 0.15,
+        depth: 2.15,
+        position: new THREE.Vector3(0, 0.075, 0),
+        material: interior,
+      }),
+      createBox({
+        width: width - 0.3,
+        height: 2.4,
+        depth: 0.15,
+        position: new THREE.Vector3(0, 1.275, -1),
+        material: interior,
+      }),
+      createBox({
+        width: width + 0.18,
+        height: 0.18,
+        depth: 2.32,
+        position: new THREE.Vector3(0, 2.65, 0.04),
+        material: marble,
+      }),
+      createBox({
+        width: width - 0.22,
+        height: 0.43,
+        depth: 0.15,
+        position: new THREE.Vector3(0, 2.32, 1.12),
+        material: metal,
+      }),
     );
 
     const cookingCenterX = 0;
     const burnerOffsetX = Math.min(0.68, width / 2 - 0.55);
-    [[-burnerOffsetX, -0.58], [burnerOffsetX, -0.58], [-burnerOffsetX, 0.58], [burnerOffsetX, 0.58]].forEach(([offsetX, z]) => {
+    [
+      [-burnerOffsetX, -0.58],
+      [burnerOffsetX, -0.58],
+      [-burnerOffsetX, 0.58],
+      [burnerOffsetX, 0.58],
+    ].forEach(([offsetX, z]) => {
       const x = cookingCenterX + offsetX;
       const burnerBase = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.38, 0.075, 24), brass);
       burnerBase.position.set(x, 2.79, z);
@@ -71,7 +112,13 @@ class CooktopCounter extends Entity {
       ring.rotation.x = Math.PI / 2;
       this.object3D.add(burnerBase, burnerCap, ring);
       [0, Math.PI / 2, Math.PI / 4, -Math.PI / 4].forEach((angle) => {
-        const support = createBox({ width: 0.78, height: 0.07, depth: 0.07, position: new THREE.Vector3(x, 2.84, z), material: dark });
+        const support = createBox({
+          width: 0.78,
+          height: 0.07,
+          depth: 0.07,
+          position: new THREE.Vector3(x, 2.84, z),
+          material: dark,
+        });
         support.rotation.y = angle;
         this.object3D.add(support);
       });
@@ -83,7 +130,13 @@ class CooktopCounter extends Entity {
     const handle = createRoundedPullHandle({ material: metal });
     handle.position.set(doorWidth - 0.32, 0.48, 0.13);
     door.add(
-      createBox({ width: doorWidth, height: 1.98, depth: 0.12, position: new THREE.Vector3(doorWidth / 2, 0, 0), material: cabinet }),
+      createBox({
+        width: doorWidth,
+        height: 1.98,
+        depth: 0.12,
+        position: new THREE.Vector3(doorWidth / 2, 0, 0),
+        material: cabinet,
+      }),
       handle,
     );
     this.object3D.add(door);

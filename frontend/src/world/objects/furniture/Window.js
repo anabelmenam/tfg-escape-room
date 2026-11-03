@@ -233,7 +233,7 @@ class Window extends Entity {
       const positions = geometry.attributes.position;
       for (let index = 0; index < positions.count; index += 1) {
         const localX = positions.getX(index);
-        const wave = Math.cos(((localX / panelWidth) + 0.5) * Math.PI * 7) * 0.075;
+        const wave = Math.cos((localX / panelWidth + 0.5) * Math.PI * 7) * 0.075;
         positions.setZ(index, wave);
       }
       positions.needsUpdate = true;

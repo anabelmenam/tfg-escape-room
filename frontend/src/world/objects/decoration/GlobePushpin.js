@@ -8,12 +8,12 @@ class GlobePushpin extends Entity {
     this.inventoryIcon = "/images/icons/children-room/push-pin.png";
     this.onCollect = onCollect;
     this.object3D = new THREE.Group();
-    const headMaterial = new THREE.MeshStandardMaterial({ color: 0xc62828, roughness: .35 });
-    const metalMaterial = new THREE.MeshStandardMaterial({ color: 0xb8b8b8, metalness: .85, roughness: .22 });
-    const head = new THREE.Mesh(new THREE.SphereGeometry(.14, 20, 14), headMaterial);
-    head.position.y = .12;
-    const needle = new THREE.Mesh(new THREE.CylinderGeometry(.018, .018, .38, 10), metalMaterial);
-    needle.position.y = -.12;
+    const headMaterial = new THREE.MeshStandardMaterial({ color: 0xc62828, roughness: 0.35 });
+    const metalMaterial = new THREE.MeshStandardMaterial({ color: 0xb8b8b8, metalness: 0.85, roughness: 0.22 });
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.14, 20, 14), headMaterial);
+    head.position.y = 0.12;
+    const needle = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, 0.38, 10), metalMaterial);
+    needle.position.y = -0.12;
     this.object3D.add(head, needle);
   }
 
@@ -24,7 +24,9 @@ class GlobePushpin extends Entity {
     this.onCollect?.();
   }
 
-  getInteractionText() { return this.enabled && this.object3D.visible ? tInteraction("pickUp", tItem(this.id)) : null; }
+  getInteractionText() {
+    return this.enabled && this.object3D.visible ? tInteraction("pickUp", tItem(this.id)) : null;
+  }
 }
 
 export { GlobePushpin };

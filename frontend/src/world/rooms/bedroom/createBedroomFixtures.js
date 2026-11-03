@@ -21,19 +21,24 @@ const createBedroomFixtures = ({
     onOpenChange: onDoorOpenChange,
     onUnlock: onDoorUnlocked,
   });
-  const windows = windowOpenings.map((opening) => new Window({
-    id: opening.id,
-    position: opening.position.clone(),
-    rotationY: opening.rotationY,
-    width: opening.width,
-    height: opening.height,
-  }));
+  const windows = windowOpenings.map(
+    (opening) =>
+      new Window({
+        id: opening.id,
+        position: opening.position.clone(),
+        rotationY: opening.rotationY,
+        width: opening.width,
+        height: opening.height,
+      }),
+  );
 
   const lamp = new Lamp({ id: "bedroom-lamp", position: new THREE.Vector3(0, 12, 0) });
   const switches = [];
   const onPress = (pressed) => {
     lamp.setActive(pressed.active);
-    switches.forEach((item) => { if (item !== pressed) item.setActive(pressed.active); });
+    switches.forEach((item) => {
+      if (item !== pressed) item.setActive(pressed.active);
+    });
   };
   const lightSwitch1 = new Switch({
     id: `bedroom-${character}-switch1`,

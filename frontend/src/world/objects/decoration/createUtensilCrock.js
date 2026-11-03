@@ -36,7 +36,9 @@ const createUtensilCrock = ({ aged = false, scale = 1 } = {}) => {
   group.add(spoon);
 
   addHandle(0.03, -0.03, 0.87, 0.035, steel);
-  const ladle = finishMesh(new THREE.Mesh(new THREE.SphereGeometry(0.115, 20, 12, 0, Math.PI * 2, 0, Math.PI / 2), steel));
+  const ladle = finishMesh(
+    new THREE.Mesh(new THREE.SphereGeometry(0.115, 20, 12, 0, Math.PI * 2, 0, Math.PI / 2), steel),
+  );
   ladle.scale.set(0.9, 0.42, 0.9);
   ladle.rotation.x = Math.PI;
   ladle.position.set(0.015, 1.46, -0.03);

@@ -5,17 +5,34 @@ import { createHallwayLighting } from "./hallway/createHallwayLighting.js";
 import { createHallwayPuzzle } from "./hallway/createHallwayPuzzle.js";
 import { createHallwayDecor } from "./hallway/createHallwayDecor.js";
 
-const createHallway = ({ character = "dad", entranceX = -3, entranceZ = 12.5, onObjectFocus = null, onHallwayAction = null, isInteractHeld = () => false, testMode = false } = {}) => {
+const createHallway = ({
+  character = "dad",
+  entranceX = -3,
+  entranceZ = 12.5,
+  onObjectFocus = null,
+  onHallwayAction = null,
+  isInteractHeld = () => false,
+  testMode = false,
+} = {}) => {
   const config = hallwayCharacterConfig[character];
   if (!config) throw new Error(`Character no válido para Hallway: ${character}`);
   const { width, depth, height } = hallwayDimensions;
   const hallwayCenterX = entranceX + width / 2 - 6;
   const connectionX = entranceX - hallwayCenterX;
   const { room, roomColliders, passageOpenings, placeAgainstWall } = createRoom({
-    width, depth, height,
-    wallColor: config.wallColor, floorColor: config.floorColor, ceilingColor: config.ceilingColor,
-    wallTexture: "/textures/rooms/whiteWall.jpg", floorTexture: "/textures/rooms/floor2.jpg", ceilingTexture: "/textures/rooms/whiteWall.jpg",
-    wallTextureRepeat: { x: 20, y: 7 }, floorTextureRepeat: { x: 29, y: 5.5 }, ceilingTextureRepeat: { x: 3, y: 4 }, door: null,
+    width,
+    depth,
+    height,
+    wallColor: config.wallColor,
+    floorColor: config.floorColor,
+    ceilingColor: config.ceilingColor,
+    wallTexture: "/textures/rooms/whiteWall.jpg",
+    floorTexture: "/textures/rooms/floor2.jpg",
+    ceilingTexture: "/textures/rooms/whiteWall.jpg",
+    wallTextureRepeat: { x: 20, y: 7 },
+    floorTextureRepeat: { x: 29, y: 5.5 },
+    ceilingTextureRepeat: { x: 3, y: 4 },
+    door: null,
     passages: [
       { id: "bedroom-hallway-connection", wall: "back", position: connectionX, width: 5, height: 8 },
       { id: "living-room-hallway-connection", wall: "front", position: -14, width: 5, height: 8 },
@@ -34,33 +51,96 @@ const createHallway = ({ character = "dad", entranceX = -3, entranceZ = 12.5, on
   const decor = createHallwayDecor({ character, config });
 
   room.add(
-    doors.livingRoomDoor.object3D, ...doors.hallwayDoors.map((door) => door.object3D), ...doors.finalBolts.map((bolt) => bolt.object3D),
-    lighting.ambientLight, ...lighting.lamps.map((lamp) => lamp.object3D), lighting.hallwaySwitch.object3D, lighting.exitSwitch.object3D,
-    decor.consoleTable.object3D, decor.carpet.object3D, decor.umbrellaStand, decor.daughterFrame.object3D, decor.sonFrame.object3D,
-    puzzle.clock.object3D, puzzle.mirror.object3D,
+    doors.livingRoomDoor.object3D,
+    ...doors.hallwayDoors.map((door) => door.object3D),
+    ...doors.finalBolts.map((bolt) => bolt.object3D),
+    lighting.ambientLight,
+    ...lighting.lamps.map((lamp) => lamp.object3D),
+    lighting.hallwaySwitch.object3D,
+    lighting.exitSwitch.object3D,
+    decor.consoleTable.object3D,
+    decor.carpet.object3D,
+    decor.umbrellaStand,
+    decor.daughterFrame.object3D,
+    decor.sonFrame.object3D,
+    puzzle.clock.object3D,
+    puzzle.mirror.object3D,
   );
   if (puzzle.maze) room.add(puzzle.maze.object3D);
   if (character === "mum") room.add(puzzle.note.object3D);
-  placeAgainstWall(lighting.hallwaySwitch, "back"); placeAgainstWall(lighting.exitSwitch, "right");
-  placeAgainstWall(decor.consoleTable, "front"); placeAgainstWall(puzzle.clock, "back");
+  placeAgainstWall(lighting.hallwaySwitch, "back");
+  placeAgainstWall(lighting.exitSwitch, "right");
+  placeAgainstWall(decor.consoleTable, "front");
+  placeAgainstWall(puzzle.clock, "back");
   if (character === "mum") {
     placeAgainstWall(puzzle.note, "back");
-    puzzle.note.object3D.translateZ(.025);
+    puzzle.note.object3D.translateZ(0.025);
   }
-  if (puzzle.maze) { placeAgainstWall(puzzle.maze, "front"); puzzle.maze.object3D.translateZ(-.13); }
-  placeAgainstWall(puzzle.mirror, "front"); placeAgainstWall(decor.daughterFrame, "back"); placeAgainstWall(decor.sonFrame, "back");
+  if (puzzle.maze) {
+    placeAgainstWall(puzzle.maze, "front");
+    puzzle.maze.object3D.translateZ(-0.13);
+  }
+  placeAgainstWall(puzzle.mirror, "front");
+  placeAgainstWall(decor.daughterFrame, "back");
+  placeAgainstWall(decor.sonFrame, "back");
 
   const openings = Object.fromEntries(passageOpenings.map((opening) => [opening.id, opening]));
   return {
-    room, roomColliders, maze: puzzle.maze, mazeMirror: puzzle.mirror, mazeNote: puzzle.note, livingRoomKey: puzzle.livingRoomKey,
-    applyHallwayState: (state) => { puzzle.applyState(state); doors.applyState(state, puzzle.livingRoomKey); },
-    interactables: [puzzle.clock, lighting.hallwaySwitch, lighting.exitSwitch, doors.livingRoomDoor, ...doors.hallwayDoors, ...doors.finalBolts, doors.threshold, ...(character === "dad" ? [puzzle.mirror] : []), ...(character === "dad" && puzzle.maze ? [puzzle.maze] : [])],
-    entities: [puzzle.clock, lighting.hallwaySwitch, lighting.exitSwitch, doors.livingRoomDoor, ...doors.hallwayDoors, ...doors.finalBolts, doors.threshold, ...lighting.lamps, puzzle.mirror, puzzle.livingRoomKey, ...(puzzle.maze ? [puzzle.maze] : [puzzle.note])],
-    mirror: puzzle.mirror, clock: puzzle.clock, hallwaySwitch: lighting.hallwaySwitch, hallwayExitSwitch: lighting.exitSwitch, hallwayLamps: lighting.lamps,
-    consoleTable: decor.consoleTable, hallwayCarpet: decor.carpet, livingRoomDoor: doors.livingRoomDoor, hallwayDoors: doors.hallwayDoors, finalThreshold: doors.threshold,
-    livingRoomOpening: openings["living-room-hallway-connection"], childrenRoomOpening: openings["hallway-children-room-opening"], bathroomOpening: openings["hallway-bathroom-opening"], kitchenOpening: openings["hallway-kitchen-opening"],
+    room,
+    roomColliders,
+    maze: puzzle.maze,
+    mazeMirror: puzzle.mirror,
+    mazeNote: puzzle.note,
+    livingRoomKey: puzzle.livingRoomKey,
+    applyHallwayState: (state) => {
+      puzzle.applyState(state);
+      doors.applyState(state, puzzle.livingRoomKey);
+    },
+    interactables: [
+      puzzle.clock,
+      lighting.hallwaySwitch,
+      lighting.exitSwitch,
+      doors.livingRoomDoor,
+      ...doors.hallwayDoors,
+      ...doors.finalBolts,
+      doors.threshold,
+      ...(character === "dad" ? [puzzle.mirror] : []),
+      ...(character === "dad" && puzzle.maze ? [puzzle.maze] : []),
+    ],
+    entities: [
+      puzzle.clock,
+      lighting.hallwaySwitch,
+      lighting.exitSwitch,
+      doors.livingRoomDoor,
+      ...doors.hallwayDoors,
+      ...doors.finalBolts,
+      doors.threshold,
+      ...lighting.lamps,
+      puzzle.mirror,
+      puzzle.livingRoomKey,
+      ...(puzzle.maze ? [puzzle.maze] : [puzzle.note]),
+    ],
+    mirror: puzzle.mirror,
+    clock: puzzle.clock,
+    hallwaySwitch: lighting.hallwaySwitch,
+    hallwayExitSwitch: lighting.exitSwitch,
+    hallwayLamps: lighting.lamps,
+    consoleTable: decor.consoleTable,
+    hallwayCarpet: decor.carpet,
+    livingRoomDoor: doors.livingRoomDoor,
+    hallwayDoors: doors.hallwayDoors,
+    finalThreshold: doors.threshold,
+    livingRoomOpening: openings["living-room-hallway-connection"],
+    childrenRoomOpening: openings["hallway-children-room-opening"],
+    bathroomOpening: openings["hallway-bathroom-opening"],
+    kitchenOpening: openings["hallway-kitchen-opening"],
     dimensions: { width, depth },
-    bounds: { minX: hallwayCenterX - width / 2, maxX: hallwayCenterX + width / 2, minZ: entranceZ, maxZ: entranceZ + depth },
+    bounds: {
+      minX: hallwayCenterX - width / 2,
+      maxX: hallwayCenterX + width / 2,
+      minZ: entranceZ,
+      maxZ: entranceZ + depth,
+    },
   };
 };
 export { createHallway };

@@ -112,7 +112,9 @@ class Cushion extends Entity {
     if (this.searched) return null;
     if (this.cut) return tInteraction("search", tItem("cushion"));
     if (!this.sewn) return null;
-    return player?.hasSelected("living-room-scissors") ? tInteraction("cut", tItem("stitched-cushion")) : tInteraction("examine", tItem("stitched-cushion"));
+    return player?.hasSelected("living-room-scissors")
+      ? tInteraction("cut", tItem("stitched-cushion"))
+      : tInteraction("examine", tItem("stitched-cushion"));
   }
 }
 

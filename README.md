@@ -1,4 +1,4 @@
-# La casa entre recuerdos
+# La casa entre dos mundos
 
 Escape room cooperativo en primera persona desarrollado como Trabajo Fin de Grado. Dos jugadores recorren versiones distintas de una misma casa —Mamá y Papá— y deben comunicarse para resolver puzles conectados, reconstruir la historia familiar y alcanzar juntos la salida.
 

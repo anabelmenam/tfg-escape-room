@@ -71,11 +71,7 @@ class Toilet extends Entity {
       new THREE.Vector3(0, 1.43, -0.05),
     );
     seat.rotation.x = -Math.PI / 2;
-    const waterSurface = createMesh(
-      new THREE.CircleGeometry(0.44, 32),
-      water,
-      new THREE.Vector3(0, 1.18, -0.08),
-    );
+    const waterSurface = createMesh(new THREE.CircleGeometry(0.44, 32), water, new THREE.Vector3(0, 1.18, -0.08));
     waterSurface.rotation.x = -Math.PI / 2;
     waterSurface.scale.y = 1.15;
     waterSurface.castShadow = false;
@@ -98,18 +94,10 @@ class Toilet extends Entity {
     this.lidPivot = new THREE.Group();
     this.lidPivot.position.set(0, 1.48, 0.82);
 
-    this.lid = createMesh(
-      new THREE.CylinderGeometry(0.82, 0.82, 0.1, 32),
-      porcelain,
-      new THREE.Vector3(0, 0, -0.87),
-    );
+    this.lid = createMesh(new THREE.CylinderGeometry(0.82, 0.82, 0.1, 32), porcelain, new THREE.Vector3(0, 0, -0.87));
     this.lid.scale.z = 1.25;
 
-    const hinge = createMesh(
-      new THREE.CylinderGeometry(0.11, 0.11, 1.28, 18),
-      metal,
-      new THREE.Vector3(0, 0, 0),
-    );
+    const hinge = createMesh(new THREE.CylinderGeometry(0.11, 0.11, 1.28, 18), metal, new THREE.Vector3(0, 0, 0));
     hinge.rotation.z = Math.PI / 2;
 
     this.lidPivot.add(this.lid, hinge);
@@ -129,9 +117,7 @@ class Toilet extends Entity {
         enabled: true,
         interact: () => this.toggleLid(),
         getInteractionText: () =>
-          this.isLidOpen
-            ? tInteraction("close", tItem("toilet-lid"))
-            : tInteraction("open", tItem("toilet-lid")),
+          this.isLidOpen ? tInteraction("close", tItem("toilet-lid")) : tInteraction("open", tItem("toilet-lid")),
       },
     ];
   }

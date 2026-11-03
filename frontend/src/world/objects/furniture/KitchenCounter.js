@@ -89,10 +89,34 @@ class KitchenCounter extends Entity {
 
     const frameThickness = 0.15;
     this.object3D.add(
-      createBox({ width, height: frameThickness, depth: 2.15, position: new THREE.Vector3(0, frameThickness / 2, 0), material: dark }),
-      createBox({ width: frameThickness, height: 2.55, depth: 2.15, position: new THREE.Vector3(-width / 2 + frameThickness / 2, 1.275, 0), material: dark }),
-      createBox({ width: frameThickness, height: 2.55, depth: 2.15, position: new THREE.Vector3(width / 2 - frameThickness / 2, 1.275, 0), material: dark }),
-      createBox({ width: width - frameThickness * 2, height: 2.4, depth: frameThickness, position: new THREE.Vector3(0, 1.275, -1), material: dark }),
+      createBox({
+        width,
+        height: frameThickness,
+        depth: 2.15,
+        position: new THREE.Vector3(0, frameThickness / 2, 0),
+        material: dark,
+      }),
+      createBox({
+        width: frameThickness,
+        height: 2.55,
+        depth: 2.15,
+        position: new THREE.Vector3(-width / 2 + frameThickness / 2, 1.275, 0),
+        material: dark,
+      }),
+      createBox({
+        width: frameThickness,
+        height: 2.55,
+        depth: 2.15,
+        position: new THREE.Vector3(width / 2 - frameThickness / 2, 1.275, 0),
+        material: dark,
+      }),
+      createBox({
+        width: width - frameThickness * 2,
+        height: 2.4,
+        depth: frameThickness,
+        position: new THREE.Vector3(0, 1.275, -1),
+        material: dark,
+      }),
     );
 
     if (hasSink) {
@@ -103,14 +127,44 @@ class KitchenCounter extends Entity {
       const sideWidth = (topWidth - openingWidth) / 2;
       const edgeDepth = (topDepth - openingDepth) / 2;
       this.object3D.add(
-        createBox({ width: sideWidth, height: 0.24, depth: topDepth, position: new THREE.Vector3(-(openingWidth + sideWidth) / 2, 2.67, 0.05), material: counter }),
-        createBox({ width: sideWidth, height: 0.24, depth: topDepth, position: new THREE.Vector3((openingWidth + sideWidth) / 2, 2.67, 0.05), material: counter }),
-        createBox({ width: openingWidth, height: 0.24, depth: edgeDepth, position: new THREE.Vector3(0, 2.67, 0.05 - (openingDepth + edgeDepth) / 2), material: counter }),
-        createBox({ width: openingWidth, height: 0.24, depth: edgeDepth, position: new THREE.Vector3(0, 2.67, 0.05 + (openingDepth + edgeDepth) / 2), material: counter }),
+        createBox({
+          width: sideWidth,
+          height: 0.24,
+          depth: topDepth,
+          position: new THREE.Vector3(-(openingWidth + sideWidth) / 2, 2.67, 0.05),
+          material: counter,
+        }),
+        createBox({
+          width: sideWidth,
+          height: 0.24,
+          depth: topDepth,
+          position: new THREE.Vector3((openingWidth + sideWidth) / 2, 2.67, 0.05),
+          material: counter,
+        }),
+        createBox({
+          width: openingWidth,
+          height: 0.24,
+          depth: edgeDepth,
+          position: new THREE.Vector3(0, 2.67, 0.05 - (openingDepth + edgeDepth) / 2),
+          material: counter,
+        }),
+        createBox({
+          width: openingWidth,
+          height: 0.24,
+          depth: edgeDepth,
+          position: new THREE.Vector3(0, 2.67, 0.05 + (openingDepth + edgeDepth) / 2),
+          material: counter,
+        }),
       );
     } else {
       this.object3D.add(
-        createBox({ width: width + 0.22, height: 0.24, depth: 2.35, position: new THREE.Vector3(0, 2.67, 0.05), material: counter }),
+        createBox({
+          width: width + 0.22,
+          height: 0.24,
+          depth: 2.35,
+          position: new THREE.Vector3(0, 2.67, 0.05),
+          material: counter,
+        }),
       );
     }
 
@@ -120,7 +174,13 @@ class KitchenCounter extends Entity {
       const x = -width / 2 + 0.15 + bayWidth / 2 + index * bayWidth;
       if (index < doorCount - 1) {
         this.object3D.add(
-          createBox({ width: frameThickness, height: 2.4, depth: 2, position: new THREE.Vector3(x + bayWidth / 2, 1.275, 0), material: dark }),
+          createBox({
+            width: frameThickness,
+            height: 2.4,
+            depth: 2,
+            position: new THREE.Vector3(x + bayWidth / 2, 1.275, 0),
+            material: dark,
+          }),
         );
       }
       const hingeSign = index === doorCount - 1 && doorCount > 1 ? 1 : -1;
@@ -128,14 +188,20 @@ class KitchenCounter extends Entity {
       const hasDrawer = hasSink && doorCount > 1 && index === 0;
       const leafHeight = hasDrawer ? 1.7 : 2.28;
       const door = new THREE.Group();
-      door.position.set(x + hingeSign * leafWidth / 2, hasDrawer ? 1.03 : 1.32, 1.12);
+      door.position.set(x + (hingeSign * leafWidth) / 2, hasDrawer ? 1.03 : 1.32, 1.12);
       const handle = createRoundedPullHandle({
         material: metal,
         height: 0.72,
       });
       handle.position.set(-hingeSign * (leafWidth - 0.25), hasDrawer ? 0.3 : 0.55, 0.13);
       door.add(
-        createBox({ width: leafWidth, height: leafHeight, depth: 0.12, position: new THREE.Vector3(-hingeSign * leafWidth / 2, 0, 0), material: cabinet }),
+        createBox({
+          width: leafWidth,
+          height: leafHeight,
+          depth: 0.12,
+          position: new THREE.Vector3((-hingeSign * leafWidth) / 2, 0, 0),
+          material: cabinet,
+        }),
         handle,
       );
       this.object3D.add(door);
@@ -144,11 +210,41 @@ class KitchenCounter extends Entity {
         const drawer = new THREE.Group();
         drawer.position.set(x, 2.18, 1.12);
         drawer.add(
-          createBox({ width: leafWidth, height: 0.6, depth: 0.12, position: new THREE.Vector3(0, 0.06, 0), material: cabinet }),
-          createBox({ width: leafWidth - 0.12, height: 0.09, depth: 1.68, position: new THREE.Vector3(0, -0.2, -0.85), material: dark }),
-          createBox({ width: 0.09, height: 0.37, depth: 1.68, position: new THREE.Vector3(-leafWidth / 2 + 0.08, 0, -0.85), material: dark }),
-          createBox({ width: 0.09, height: 0.37, depth: 1.68, position: new THREE.Vector3(leafWidth / 2 - 0.08, 0, -0.85), material: dark }),
-          createBox({ width: leafWidth - 0.12, height: 0.37, depth: 0.09, position: new THREE.Vector3(0, 0, -1.64), material: dark }),
+          createBox({
+            width: leafWidth,
+            height: 0.6,
+            depth: 0.12,
+            position: new THREE.Vector3(0, 0.06, 0),
+            material: cabinet,
+          }),
+          createBox({
+            width: leafWidth - 0.12,
+            height: 0.09,
+            depth: 1.68,
+            position: new THREE.Vector3(0, -0.2, -0.85),
+            material: dark,
+          }),
+          createBox({
+            width: 0.09,
+            height: 0.37,
+            depth: 1.68,
+            position: new THREE.Vector3(-leafWidth / 2 + 0.08, 0, -0.85),
+            material: dark,
+          }),
+          createBox({
+            width: 0.09,
+            height: 0.37,
+            depth: 1.68,
+            position: new THREE.Vector3(leafWidth / 2 - 0.08, 0, -0.85),
+            material: dark,
+          }),
+          createBox({
+            width: leafWidth - 0.12,
+            height: 0.37,
+            depth: 0.09,
+            position: new THREE.Vector3(0, 0, -1.64),
+            material: dark,
+          }),
         );
         const drawerHandle = createRoundedPullHandle({ material: metal, height: 0.52 });
         drawerHandle.rotation.z = Math.PI / 2;
@@ -160,7 +256,12 @@ class KitchenCounter extends Entity {
     });
 
     if (hasSink) {
-      const basinMaterial = new THREE.MeshStandardMaterial({ color: 0xa8aaa6, roughness: 0.24, metalness: 0.82, side: THREE.DoubleSide });
+      const basinMaterial = new THREE.MeshStandardMaterial({
+        color: 0xa8aaa6,
+        roughness: 0.24,
+        metalness: 0.82,
+        side: THREE.DoubleSide,
+      });
       const basin = new THREE.Group();
       basin.name = `${id}-rectangular-sink`;
       basin.userData.fillable = true;
@@ -207,7 +308,13 @@ class KitchenCounter extends Entity {
       const rimShape = createRoundedRectanglePath(1.82, 1.32, 0.14);
       rimShape.holes.push(createRoundedRectanglePath(1.6, 1.1, 0.09, true));
       const rim = new THREE.Mesh(
-        new THREE.ExtrudeGeometry(rimShape, { depth: 0.045, bevelEnabled: true, bevelSize: 0.025, bevelThickness: 0.018, bevelSegments: 2 }),
+        new THREE.ExtrudeGeometry(rimShape, {
+          depth: 0.045,
+          bevelEnabled: true,
+          bevelSize: 0.025,
+          bevelThickness: 0.018,
+          bevelSegments: 2,
+        }),
         metal,
       );
       rim.rotation.x = Math.PI / 2;
@@ -236,10 +343,7 @@ class KitchenCounter extends Entity {
       this.waterSurface.userData.ignoreAging = true;
 
       const outlet = this.faucet.userData.outletPosition;
-      this.waterStream = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.025, 0.035, 0.42, 12),
-        waterMaterial.clone(),
-      );
+      this.waterStream = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.035, 0.42, 12), waterMaterial.clone());
       this.waterStream.position.set(outlet.x, outlet.y - 0.21, outlet.z);
       this.waterStream.visible = false;
       this.waterStream.userData.ignoreAging = true;
@@ -249,9 +353,8 @@ class KitchenCounter extends Entity {
         object3D: this.faucet,
         enabled: true,
         interact: () => this.setWaterRunning(!this.waterRunning),
-        getInteractionText: () => this.waterRunning
-          ? tInteraction("turnOff", tItem("tap"))
-          : tInteraction("turnOn", tItem("tap")),
+        getInteractionText: () =>
+          this.waterRunning ? tInteraction("turnOff", tItem("tap")) : tInteraction("turnOn", tItem("tap")),
       };
 
       [basin, drain, rim].forEach((object) => {
@@ -262,14 +365,22 @@ class KitchenCounter extends Entity {
           mesh.userData.ignoreAging = true;
         });
       });
-      this.faucet.object3D?.traverse?.((mesh) => { mesh.userData.ignoreAging = true; });
-      this.faucet.traverse?.((mesh) => { mesh.userData.ignoreAging = true; });
+      this.faucet.object3D?.traverse?.((mesh) => {
+        mesh.userData.ignoreAging = true;
+      });
+      this.faucet.traverse?.((mesh) => {
+        mesh.userData.ignoreAging = true;
+      });
       this.object3D.add(basin, drain, rim, this.waterSurface, this.waterStream, this.faucet);
     }
   }
 
   getInteractables() {
-    return [...this.panelManager.getInteractables(), ...this.drawerManager.getInteractables(), ...(this.faucetInteractable ? [this.faucetInteractable] : [])];
+    return [
+      ...this.panelManager.getInteractables(),
+      ...this.drawerManager.getInteractables(),
+      ...(this.faucetInteractable ? [this.faucetInteractable] : []),
+    ];
   }
 
   setWaterRunning(active) {

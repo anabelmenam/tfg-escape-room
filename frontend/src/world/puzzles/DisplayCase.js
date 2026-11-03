@@ -3,7 +3,13 @@ import { Entity } from "../objects/index.js";
 import { tInteraction, tItem } from "../../translations/index.js";
 
 class DisplayCase extends Entity {
-  constructor({ id = "living-room-display-case", position = new THREE.Vector3(), keepsakeIds = [], onInsert = null, onOpen = null } = {}) {
+  constructor({
+    id = "living-room-display-case",
+    position = new THREE.Vector3(),
+    keepsakeIds = [],
+    onInsert = null,
+    onOpen = null,
+  } = {}) {
     super(id);
     this.onOpen = onOpen;
     this.onInsert = onInsert;
@@ -21,7 +27,15 @@ class DisplayCase extends Entity {
     const width = 3.15;
     const height = 1.16;
     const depth = 1.12;
-    const glassMaterial = new THREE.MeshPhysicalMaterial({ color: 0xbfe8ee, transparent: true, opacity: 0.22, roughness: 0.08, metalness: 0.05, transmission: 0.35, side: THREE.DoubleSide });
+    const glassMaterial = new THREE.MeshPhysicalMaterial({
+      color: 0xbfe8ee,
+      transparent: true,
+      opacity: 0.22,
+      roughness: 0.08,
+      metalness: 0.05,
+      transmission: 0.35,
+      side: THREE.DoubleSide,
+    });
     const woodMaterial = new THREE.MeshStandardMaterial({ color: 0x3e2419, roughness: 0.7 });
     const trimMaterial = new THREE.MeshStandardMaterial({ color: 0xa67a3b, metalness: 0.45, roughness: 0.35 });
     const base = new THREE.Mesh(new THREE.BoxGeometry(width + 0.22, 0.16, depth + 0.22), woodMaterial);

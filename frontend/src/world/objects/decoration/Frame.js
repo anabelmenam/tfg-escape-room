@@ -38,7 +38,12 @@ class Frame extends Entity {
     if (texture) texture.colorSpace = THREE.SRGBColorSpace;
     const image = new THREE.Mesh(
       new THREE.PlaneGeometry(this.width - border * 2.6, this.height - border * 2.6),
-      new THREE.MeshStandardMaterial({ map: texture, color: texture ? 0xffffff : 0x3a2c24, roughness: 0.9, side: THREE.DoubleSide }),
+      new THREE.MeshStandardMaterial({
+        map: texture,
+        color: texture ? 0xffffff : 0x3a2c24,
+        roughness: 0.9,
+        side: THREE.DoubleSide,
+      }),
     );
     const mount = new THREE.Mesh(
       new THREE.BoxGeometry(this.width - border * 1.5, this.height - border * 1.5, 0.035),

@@ -4,37 +4,47 @@ import { KitchenIngredient, KitchenNapkin, RecipePuzzle, TableSettingPuzzle } fr
 const createKitchenFoodPuzzles = ({ character, testMode, furniture, appliancePuzzles, onFocus, onAction }) => {
   const { refrigerator, counter, firstTallCabinet, secondTallCabinet, diningTable } = furniture;
   const ingredientSpecs = [
-    ["kitchen-tomatoes", "tomato", 3, new THREE.Vector3(-.82, 4.52, .2)],
-    ["kitchen-tomatoes-2", "tomato", 2, new THREE.Vector3(.72, 4.52, .2)],
-    ["kitchen-carrots", "carrot", 2, new THREE.Vector3(-.72, 3.28, .15)],
-    ["kitchen-carrots-3", "carrot", 3, new THREE.Vector3(.72, 3.28, .15)],
-    ["kitchen-cheese", "cheese", 1, new THREE.Vector3(-.62, 5.7, .2)],
-    ["kitchen-cheese-2", "cheese", 2, new THREE.Vector3(.62, 5.7, .2)],
+    ["kitchen-tomatoes", "tomato", 3, new THREE.Vector3(-0.82, 4.52, 0.2)],
+    ["kitchen-tomatoes-2", "tomato", 2, new THREE.Vector3(0.72, 4.52, 0.2)],
+    ["kitchen-carrots", "carrot", 2, new THREE.Vector3(-0.72, 3.28, 0.15)],
+    ["kitchen-carrots-3", "carrot", 3, new THREE.Vector3(0.72, 3.28, 0.15)],
+    ["kitchen-cheese", "cheese", 1, new THREE.Vector3(-0.62, 5.7, 0.2)],
+    ["kitchen-cheese-2", "cheese", 2, new THREE.Vector3(0.62, 5.7, 0.2)],
   ];
-  const ingredients = character === "dad"
-    ? ingredientSpecs.map(([id, kind, quantity, position]) => {
-        const ingredient = new KitchenIngredient({ id, kind, quantity, onCollect: () => onAction?.("item.pickup", id) });
-        ingredient.object3D.position.copy(position);
-        refrigerator.object3D.add(ingredient.object3D);
-        return ingredient;
-      })
-    : [];
-  const napkins = character === "dad"
-    ? ["red", "blue", "green", "ochre"].map((color, index) => new KitchenNapkin({
-        id: `kitchen-napkin-${color}`,
-        color: 0xcbbd9f,
-        name: ["MAMÁ", "PAPÁ", "ALBA", "JAIME"][index],
-        onCollect: () => onAction?.("item.pickup", `kitchen-napkin-${color}`),
-      }))
-    : [];
+  const ingredients =
+    character === "dad"
+      ? ingredientSpecs.map(([id, kind, quantity, position]) => {
+          const ingredient = new KitchenIngredient({
+            id,
+            kind,
+            quantity,
+            onCollect: () => onAction?.("item.pickup", id),
+          });
+          ingredient.object3D.position.copy(position);
+          refrigerator.object3D.add(ingredient.object3D);
+          return ingredient;
+        })
+      : [];
+  const napkins =
+    character === "dad"
+      ? ["red", "blue", "green", "ochre"].map(
+          (color, index) =>
+            new KitchenNapkin({
+              id: `kitchen-napkin-${color}`,
+              color: 0xcbbd9f,
+              name: ["MAMÁ", "PAPÁ", "ALBA", "JAIME"][index],
+              onCollect: () => onAction?.("item.pickup", `kitchen-napkin-${color}`),
+            }),
+        )
+      : [];
   if (napkins.length) {
-    counter.addObjectToDrawer(0, napkins[0].object3D, new THREE.Vector3(0, -.12, -.82));
+    counter.addObjectToDrawer(0, napkins[0].object3D, new THREE.Vector3(0, -0.12, -0.82));
     secondTallCabinet.object3D.add(napkins[1].object3D);
-    napkins[1].object3D.position.set(-.48, 2.65, .42);
+    napkins[1].object3D.position.set(-0.48, 2.65, 0.42);
     firstTallCabinet.object3D.add(napkins[2].object3D);
-    napkins[2].object3D.position.set(-.48, 2.65, .42);
+    napkins[2].object3D.position.set(-0.48, 2.65, 0.42);
     counter.object3D.add(napkins[3].object3D);
-    napkins[3].object3D.position.set(-2.2, 2.79, .72);
+    napkins[3].object3D.position.set(-2.2, 2.79, 0.72);
     napkins[3].object3D.visible = false;
     napkins[3].setEnabled(false);
   }
@@ -55,11 +65,11 @@ const createKitchenFoodPuzzles = ({ character, testMode, furniture, appliancePuz
     ingredients,
   });
   if (character === "mum") {
-    recipe.object3D.scale.setScalar(.5);
-    counter.addObjectToDrawer(0, recipe.object3D, new THREE.Vector3(0, -.145, -.85));
+    recipe.object3D.scale.setScalar(0.5);
+    counter.addObjectToDrawer(0, recipe.object3D, new THREE.Vector3(0, -0.145, -0.85));
   } else {
-    recipe.object3D.position.set(-2.2, 2.86, .45);
-    recipe.object3D.scale.setScalar(.54);
+    recipe.object3D.position.set(-2.2, 2.86, 0.45);
+    recipe.object3D.scale.setScalar(0.54);
     counter.object3D.add(recipe.object3D);
   }
 
@@ -76,7 +86,7 @@ const createKitchenFoodPuzzles = ({ character, testMode, furniture, appliancePuz
     napkins,
   });
   table.object3D.position.set(0, 2.72, 0);
-  table.object3D.scale.setScalar(.9);
+  table.object3D.scale.setScalar(0.9);
   diningTable.object3D.add(table.object3D);
   if (character === "dad") table.setAvailable(true);
 
@@ -90,9 +100,11 @@ const createKitchenFoodPuzzles = ({ character, testMode, furniture, appliancePuz
   }
 
   const applyState = (state) => {
-    const kitchenOpen = ["mum", "dad"].some((era) =>
-      state.characters?.[era]?.objects?.["hallway-kitchen-door"]?.locked === false
-      || state.characters?.[era]?.objects?.["living-room-kitchen-door"]?.locked === false);
+    const kitchenOpen = ["mum", "dad"].some(
+      (era) =>
+        state.characters?.[era]?.objects?.["hallway-kitchen-door"]?.locked === false ||
+        state.characters?.[era]?.objects?.["living-room-kitchen-door"]?.locked === false,
+    );
     if (kitchenOpen || testMode) recipe.setAvailable(true);
     const recipeState = state.characters?.dad?.puzzles?.["kitchen-recipe"];
     const recipeSolved = Boolean(recipeState?.solved);
@@ -115,7 +127,11 @@ const createKitchenFoodPuzzles = ({ character, testMode, furniture, appliancePuz
     }
     const placedIngredients = recipeState?.placements ?? [];
     ingredients.forEach((ingredient) => {
-      if (state.inventories?.dad?.includes(ingredient.id) || placedIngredients.includes(ingredient.id) || recipeSolved) {
+      if (
+        state.inventories?.dad?.includes(ingredient.id) ||
+        placedIngredients.includes(ingredient.id) ||
+        recipeSolved
+      ) {
         ingredient.object3D.visible = false;
         ingredient.setEnabled(false);
       }

@@ -17,7 +17,10 @@ if (!email || !password || password.length < 12) {
     const existing = previousEmail ? await User.findOne({ where: { email: previousEmail } }) : null;
     const [user, created] = existing
       ? [existing, false]
-      : await User.findOrCreate({ where: { email }, defaults: { id: randomUUID(), displayName, email, passwordHash, role: "admin" } });
+      : await User.findOrCreate({
+          where: { email },
+          defaults: { id: randomUUID(), displayName, email, passwordHash, role: "admin" },
+        });
     if (!created) await user.update({ displayName, email, passwordHash, role: "admin" });
     console.log(`Cuenta administradora ${created ? "creada" : "actualizada"}: ${email}`);
   } finally {

@@ -1,5 +1,5 @@
 export default {
-hints: {
+  hints: {
     title: "Pistas",
     request: "Pedir pista",
     another: "Pedir otra pista",
@@ -225,18 +225,54 @@ hints: {
         "Tus últimas recompensas permanecen en las habitaciones que ya has ayudado a completar.",
         "Busca las llaves que aún falten: la llama está dentro del cofre del salón y la ola tras el mosaico.",
       ],
-      mumElectricalPlan: ["Bajo los carretes queda una última capa por descubrir.", "Recoge el plano eléctrico revelado y comunícaselo a tu compañero."],
-      mumRadioReward: ["Al completarse, la radio ha movido algo en su interior.", "Recoge la llave que hay dentro de la radio para salir del dormitorio."],
-      mumBedroomExit: ["La salida ya no parece exigir más puzles, sino el objeto adecuado.", "Selecciona la llave y abre la puerta para acceder al pasillo."],
-      mumWaitLivingRoomDoor: ["Has llegado hasta una puerta cuya llave solo puede obtener tu compañero.", "Tu compañero debe terminar el laberinto, recoger su llave y abrir la puerta del salón."],
-      mumWaitChildrenDoor: ["La siguiente habitación depende de lo que guarda el cofre de tu compañero.", "Tu compañero debe abrir el cofre del salón, recoger la llave y abrir la puerta infantil."],
-      mumRecipeNote: ["En tu cocina hay instrucciones para los ingredientes de tu compañero.", "Busca y recoge la receta de la cocina para indicarle el orden correcto."],
-      dadWaitBedroomExit: ["Has terminado tu parte, pero la salida depende de algo que solo puede encontrar tu compañero.", "Tu compañero debe completar la radio, recoger la llave y abrir la puerta."],
-      dadMazeReward: ["El recorrido completado ha dejado algo nuevo junto al tablero.", "Recoge la llave que ha aparecido junto al laberinto."],
-      dadLivingRoomDoor: ["La recompensa del laberinto pertenece a una puerta cercana.", "Selecciona la llave y úsala en la puerta del salón."],
-      dadChestReward: ["El cofre abierto no solo contenía una de las llaves finales.", "Abre el cofre, recoge la llave y llévala a la puerta de la habitación infantil."],
-      dadChildrenDoor: ["La llave recién encontrada parece conducir a la habitación infantil.", "Selecciona la llave y abre la puerta infantil desde el pasillo."],
-      dadWaitKitchenDoor: ["La siguiente entrada necesita la fuerza de una herramienta que solo puede encontrar tu compañero.", "Tu compañero debe abrir el armario infantil, recoger la palanca y forzar una puerta de la cocina."],
+      mumElectricalPlan: [
+        "Bajo los carretes queda una última capa por descubrir.",
+        "Recoge el plano eléctrico revelado y comunícaselo a tu compañero.",
+      ],
+      mumRadioReward: [
+        "Al completarse, la radio ha movido algo en su interior.",
+        "Recoge la llave que hay dentro de la radio para salir del dormitorio.",
+      ],
+      mumBedroomExit: [
+        "La salida ya no parece exigir más puzles, sino el objeto adecuado.",
+        "Selecciona la llave y abre la puerta para acceder al pasillo.",
+      ],
+      mumWaitLivingRoomDoor: [
+        "Has llegado hasta una puerta cuya llave solo puede obtener tu compañero.",
+        "Tu compañero debe terminar el laberinto, recoger su llave y abrir la puerta del salón.",
+      ],
+      mumWaitChildrenDoor: [
+        "La siguiente habitación depende de lo que guarda el cofre de tu compañero.",
+        "Tu compañero debe abrir el cofre del salón, recoger la llave y abrir la puerta infantil.",
+      ],
+      mumRecipeNote: [
+        "En tu cocina hay instrucciones para los ingredientes de tu compañero.",
+        "Busca y recoge la receta de la cocina para indicarle el orden correcto.",
+      ],
+      dadWaitBedroomExit: [
+        "Has terminado tu parte, pero la salida depende de algo que solo puede encontrar tu compañero.",
+        "Tu compañero debe completar la radio, recoger la llave y abrir la puerta.",
+      ],
+      dadMazeReward: [
+        "El recorrido completado ha dejado algo nuevo junto al tablero.",
+        "Recoge la llave que ha aparecido junto al laberinto.",
+      ],
+      dadLivingRoomDoor: [
+        "La recompensa del laberinto pertenece a una puerta cercana.",
+        "Selecciona la llave y úsala en la puerta del salón.",
+      ],
+      dadChestReward: [
+        "El cofre abierto no solo contenía una de las llaves finales.",
+        "Abre el cofre, recoge la llave y llévala a la puerta de la habitación infantil.",
+      ],
+      dadChildrenDoor: [
+        "La llave recién encontrada parece conducir a la habitación infantil.",
+        "Selecciona la llave y abre la puerta infantil desde el pasillo.",
+      ],
+      dadWaitKitchenDoor: [
+        "La siguiente entrada necesita la fuerza de una herramienta que solo puede encontrar tu compañero.",
+        "Tu compañero debe abrir el armario infantil, recoger la palanca y forzar una puerta de la cocina.",
+      ],
       finalDoor: [
         "Los cuatro cerrojos están abiertos. La salida necesita a los dos jugadores.",
         "Colocaos ante la puerta principal y mantened E al mismo tiempo.",
@@ -246,5 +282,5 @@ hints: {
         "Tu compañero todavía debe encontrar sus llaves finales y abrir los otros cerrojos.",
       ],
     },
-  }
+  },
 };

@@ -14,18 +14,19 @@ const rainbowBookData = [
 ];
 
 const createShelfPaintingPuzzle = ({ character, testMode, shelf, table, onAction, onFocus }) => {
-  const rainbowDrawing = character === "mum"
-    ? new Paper({
-        id: "living-room-rainbow-drawing",
-        width: 1.8,
-        height: 1.2,
-        rotation: new THREE.Euler(-Math.PI / 2, 0, 0),
-        onFocus,
-        focusOffset: new THREE.Vector3(0, -1.5, 2.1),
-        imagePath: "/images/puzzles/rainbow-drawing.png",
-        imagePadding: 0,
-      })
-    : null;
+  const rainbowDrawing =
+    character === "mum"
+      ? new Paper({
+          id: "living-room-rainbow-drawing",
+          width: 1.8,
+          height: 1.2,
+          rotation: new THREE.Euler(-Math.PI / 2, 0, 0),
+          onFocus,
+          focusOffset: new THREE.Vector3(0, -1.5, 2.1),
+          imagePath: "/images/puzzles/rainbow-drawing.png",
+          imagePadding: 0,
+        })
+      : null;
   if (rainbowDrawing) {
     rainbowDrawing.object3D.position.set(0, 2.1, 0);
     table.object3D.add(rainbowDrawing.object3D);
@@ -43,25 +44,27 @@ const createShelfPaintingPuzzle = ({ character, testMode, shelf, table, onAction
     position: new THREE.Vector3(13.5, 5.2, -3),
     rotationY: -Math.PI / 2,
     onPlaced: () => onAction?.("object.interact", "living-room-painting-slot"),
-    onPieceInserted: (index) => onAction?.("object.interact", `living-room-painting-piece-${index}`, { completed: paintingSlot.restored }),
+    onPieceInserted: (index) =>
+      onAction?.("object.interact", `living-room-painting-piece-${index}`, { completed: paintingSlot.restored }),
   });
   if (paintingSlot.hiddenScissors) {
     paintingSlot.hiddenScissors.onCollect = () => onAction?.("item.pickup", "living-room-scissors");
   }
 
-  const rainbowBooks = character === "dad"
-    ? rainbowBookData.map(([name, color, correctSlot], currentSlot) => {
-        const book = new Book({
-          id: `rainbow-book-${name}`,
-          color,
-          currentSlot,
-          correctSlot,
-          rotationY: Math.PI / 2,
-        });
-        shelf.addToShelf(book.object3D, { shelf: 1, x: 1.1 + currentSlot * .52, z: 0 });
-        return book;
-      })
-    : [];
+  const rainbowBooks =
+    character === "dad"
+      ? rainbowBookData.map(([name, color, correctSlot], currentSlot) => {
+          const book = new Book({
+            id: `rainbow-book-${name}`,
+            color,
+            currentSlot,
+            correctSlot,
+            rotationY: Math.PI / 2,
+          });
+          shelf.addToShelf(book.object3D, { shelf: 1, x: 1.1 + currentSlot * 0.52, z: 0 });
+          return book;
+        })
+      : [];
 
   let booksRevealed = false;
   let shelfIsOpen = false;
@@ -78,23 +81,25 @@ const createShelfPaintingPuzzle = ({ character, testMode, shelf, table, onAction
       fallenPainting.reveal();
     }
   };
-  const bookPuzzle = character === "dad"
-    ? new BookPuzzle({
-        id: "living-room-rainbow-books",
-        books: rainbowBooks,
-        onSolved: () => {
-          revealResult();
-          onAction?.("puzzle.solved", "living-room-rainbow-books");
-        },
-      })
-    : null;
+  const bookPuzzle =
+    character === "dad"
+      ? new BookPuzzle({
+          id: "living-room-rainbow-books",
+          books: rainbowBooks,
+          onSolved: () => {
+            revealResult();
+            onAction?.("puzzle.solved", "living-room-rainbow-books");
+          },
+        })
+      : null;
   rainbowBooks.forEach((book) => book.setOnInteract(bookPuzzle.handleBookInteraction.bind(bookPuzzle)));
 
   if (testMode && character === "dad") paintingSlot.setPlaced(true);
-  shelf.interact = () => { if (character === "mum") moveShelf(!shelfIsOpen); };
-  shelf.getInteractionText = () => (
-    character === "mum" && booksRevealed ? tInteraction(shelfIsOpen ? "close" : "open", tItem("shelf")) : null
-  );
+  shelf.interact = () => {
+    if (character === "mum") moveShelf(!shelfIsOpen);
+  };
+  shelf.getInteractionText = () =>
+    character === "mum" && booksRevealed ? tInteraction(shelfIsOpen ? "close" : "open", tItem("shelf")) : null;
 
   const applyState = (state) => {
     if (state.characters?.dad?.puzzles?.["living-room-rainbow-books"]?.solved) {

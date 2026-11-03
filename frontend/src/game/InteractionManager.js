@@ -90,9 +90,7 @@ export class InteractionManager {
       return;
     }
 
-    const text = entity?.enabled
-      ? entity.getInteractionText?.(this.player, control)
-      : null;
+    const text = entity?.enabled ? entity.getInteractionText?.(this.player, control) : null;
     if (!entity || !text) {
       this.interactable = null;
       this.interactableControl = null;
@@ -116,10 +114,7 @@ export class InteractionManager {
     const currentInteractable = this.interactable;
     const currentControl = this.interactableControl;
     currentInteractable.interact(this.player, currentControl);
-    if (
-      !currentInteractable.enabled ||
-      !currentInteractable.getInteractionText?.(this.player, currentControl)
-    ) {
+    if (!currentInteractable.enabled || !currentInteractable.getInteractionText?.(this.player, currentControl)) {
       this.setInteractable(null);
     }
   }

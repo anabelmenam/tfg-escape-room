@@ -35,18 +35,19 @@ const createKitchenAppliancePuzzles = ({ character, testMode, furniture, onFocus
   if (character === "mum") ovenControls.setAvailable(true);
 
   let tileTaken = false;
-  const mosaicTile = character === "dad"
-    ? new MosaicTile({
-        onCollect: () => {
-          tileTaken = true;
-          onAction?.("item.pickup", "bathroom-mosaic-tile");
-        },
-      })
-    : null;
+  const mosaicTile =
+    character === "dad"
+      ? new MosaicTile({
+          onCollect: () => {
+            tileTaken = true;
+            onAction?.("item.pickup", "bathroom-mosaic-tile");
+          },
+        })
+      : null;
   if (mosaicTile) {
-    mosaicTile.object3D.position.set(0, 3.34, .72);
-    mosaicTile.object3D.scale.setScalar(.72);
-    mosaicTile.object3D.rotation.set(-Math.PI / 2, 0, .12);
+    mosaicTile.object3D.position.set(0, 3.34, 0.72);
+    mosaicTile.object3D.scale.setScalar(0.72);
+    mosaicTile.object3D.rotation.set(-Math.PI / 2, 0, 0.12);
     oven.object3D.add(mosaicTile.object3D);
     mosaicTile.object3D.visible = true;
     mosaicTile.setEnabled(false);
@@ -85,8 +86,11 @@ const createKitchenAppliancePuzzles = ({ character, testMode, furniture, onFocus
       }
       openOvenWithReward();
     }
-    if (mosaicTile && (state.inventories?.dad?.includes("bathroom-mosaic-tile")
-      || state.characters?.dad?.puzzles?.["bathroom-mosaic"]?.tileInserted)) {
+    if (
+      mosaicTile &&
+      (state.inventories?.dad?.includes("bathroom-mosaic-tile") ||
+        state.characters?.dad?.puzzles?.["bathroom-mosaic"]?.tileInserted)
+    ) {
       tileTaken = true;
       mosaicTile.object3D.visible = false;
       mosaicTile.setEnabled(false);

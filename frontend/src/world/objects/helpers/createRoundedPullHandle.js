@@ -10,7 +10,7 @@ const createRoundedPullHandle = ({ material, height = 0.78 } = {}) => {
   handle.add(bar);
 
   [-1, 1].forEach((side) => {
-    const y = side * barHeight / 2;
+    const y = (side * barHeight) / 2;
     const support = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.16, 16), material);
     support.rotation.x = Math.PI / 2;
     support.position.set(0, y, 0.07);

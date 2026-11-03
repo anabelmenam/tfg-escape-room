@@ -16,34 +16,36 @@ const createBedroomPowerPuzzles = ({
   const { desk } = furniture;
   const { lightSwitch1, lightSwitch2 } = fixtures;
   const { deskLamp, deskPaper } = decor;
-  const lightRevealPuzzle = character === "dad"
-    ? new LightRevealPuzzle({
-        id: "bedroom-light-reveal-puzzle",
-        deskLamp,
-        paper: deskPaper,
-        onSolved: () => {
-          clues.revealedSymbols = true;
-          onAction?.("puzzle.solved", "bedroom-light-reveal-puzzle");
-        },
-      })
-    : null;
-  const electricalPanel = character === "dad"
-    ? new ElectricalPanelPuzzle({
-        id: "electrical-panel",
-        position: new THREE.Vector3(-7.5, 5.5, 10),
-        rotationY: Math.PI / 2,
-        scale: 0.5,
-        onFocus,
-        onFuseInserted: () => onAction?.("object.interact", "bedroom-electrical-panel", { operation: "insert-fuse" }),
-        onSolved: () => {
-          lightSwitch1.setPowerAvailable(true);
-          lightSwitch2.setPowerAvailable(true);
-          deskLamp.setPowerAvailable(true);
-          onAction?.("puzzle.solved", "bedroom-electrical-panel");
-        },
-        canSolve: () => clues.electricalPlan,
-      })
-    : null;
+  const lightRevealPuzzle =
+    character === "dad"
+      ? new LightRevealPuzzle({
+          id: "bedroom-light-reveal-puzzle",
+          deskLamp,
+          paper: deskPaper,
+          onSolved: () => {
+            clues.revealedSymbols = true;
+            onAction?.("puzzle.solved", "bedroom-light-reveal-puzzle");
+          },
+        })
+      : null;
+  const electricalPanel =
+    character === "dad"
+      ? new ElectricalPanelPuzzle({
+          id: "electrical-panel",
+          position: new THREE.Vector3(-7.5, 5.5, 10),
+          rotationY: Math.PI / 2,
+          scale: 0.5,
+          onFocus,
+          onFuseInserted: () => onAction?.("object.interact", "bedroom-electrical-panel", { operation: "insert-fuse" }),
+          onSolved: () => {
+            lightSwitch1.setPowerAvailable(true);
+            lightSwitch2.setPowerAvailable(true);
+            deskLamp.setPowerAvailable(true);
+            onAction?.("puzzle.solved", "bedroom-electrical-panel");
+          },
+          canSolve: () => clues.electricalPlan,
+        })
+      : null;
   if (testMode && electricalPanel) {
     electricalPanel.hasFuse = true;
     electricalPanel.fuse.visible = true;
@@ -52,21 +54,22 @@ const createBedroomPowerPuzzles = ({
     lightSwitch2.setPowerAvailable(true);
   }
 
-  const lock = character === "dad"
-    ? new Lock({
-        id: "bedroom-lock",
-        position: new THREE.Vector3(4.95, 2.3, 6.6),
-        rotationY: Math.PI / 4,
-        scale: 0.15,
-        digits: 4,
-        password: "0328",
-        onUnlock: () => {
-          desk.unlockDrawer(0);
-          onAction?.("object.interact", "bedroom-lock");
-        },
-        onFocus,
-      })
-    : null;
+  const lock =
+    character === "dad"
+      ? new Lock({
+          id: "bedroom-lock",
+          position: new THREE.Vector3(4.95, 2.3, 6.6),
+          rotationY: Math.PI / 4,
+          scale: 0.15,
+          digits: 4,
+          password: "0328",
+          onUnlock: () => {
+            desk.unlockDrawer(0);
+            onAction?.("object.interact", "bedroom-lock");
+          },
+          onFocus,
+        })
+      : null;
   if (lock) desk.addObjectToDrawer(0, lock.object3D, new THREE.Vector3(0, -0.25, 0.25));
 
   const alarmClock = new AlarmClock({
@@ -77,22 +80,23 @@ const createBedroomPowerPuzzles = ({
     time: "03:28",
     isBroken: character === "dad",
   });
-  const safe = character === "mum"
-    ? new Safe({
-        id: "bedroom-symbol-safe",
-        position: new THREE.Vector3(7, 2.5, -1.5),
-        rotationY: -Math.PI / 2,
-        scale: 0.55,
-        symbols: ["□", "△", "✕", "☆", "○", "◇"],
-        password: ["△", "○", "□", "✕"],
-        onFocus,
-        onUnlock: (targetSafe) => {
-          targetSafe.open();
-          onAction?.("object.interact", "bedroom-symbol-safe");
-        },
-        canUnlock: () => clues.revealedSymbols,
-      })
-    : null;
+  const safe =
+    character === "mum"
+      ? new Safe({
+          id: "bedroom-symbol-safe",
+          position: new THREE.Vector3(7, 2.5, -1.5),
+          rotationY: -Math.PI / 2,
+          scale: 0.55,
+          symbols: ["□", "△", "✕", "☆", "○", "◇"],
+          password: ["△", "○", "□", "✕"],
+          onFocus,
+          onUnlock: (targetSafe) => {
+            targetSafe.open();
+            onAction?.("object.interact", "bedroom-symbol-safe");
+          },
+          canUnlock: () => clues.revealedSymbols,
+        })
+      : null;
   if (safe && items.radioDial) {
     safe.addItem(items.radioDial, {
       position: new THREE.Vector3(0, 0.35, 0.72),
@@ -100,16 +104,17 @@ const createBedroomPowerPuzzles = ({
       scale: 1,
     });
   }
-  const familyPhoto = character === "dad"
-    ? new FamilyPhotoPuzzle({
-        id: "bedroom-family-photo",
-        position: new THREE.Vector3(7.92, 6, 2.5),
-        rotationY: -Math.PI / 2,
-        scale: 0.7,
-        onFocus,
-        onSolved: () => onAction?.("puzzle.solved", "bedroom-family-photo"),
-      })
-    : null;
+  const familyPhoto =
+    character === "dad"
+      ? new FamilyPhotoPuzzle({
+          id: "bedroom-family-photo",
+          position: new THREE.Vector3(7.92, 6, 2.5),
+          rotationY: -Math.PI / 2,
+          scale: 0.7,
+          onFocus,
+          onSolved: () => onAction?.("puzzle.solved", "bedroom-family-photo"),
+        })
+      : null;
 
   const applyState = (state) => {
     const lightSolved = Boolean(state.characters?.dad?.puzzles?.["bedroom-light-reveal-puzzle"]?.solved);

@@ -7,10 +7,7 @@ const createSoapDish = ({ aged = false, scale = 1 } = {}) => {
   group.userData.ambientDescriptionKey = "soapDish";
   const dishMaterial = material(aged ? 0x77746d : 0xc8c2b3, 0.34);
   const dish = finishMesh(
-    new THREE.Mesh(
-      new THREE.SphereGeometry(0.38, 28, 10, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2),
-      dishMaterial,
-    ),
+    new THREE.Mesh(new THREE.SphereGeometry(0.38, 28, 10, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2), dishMaterial),
   );
   dish.scale.set(1, 0.3, 0.7);
   dish.position.y = 0.12;

@@ -99,7 +99,6 @@ class DeskLamp extends Entity {
   }
 
   createLight(targetOffset) {
-
     this.light = new THREE.SpotLight(this.lightColor, this.lightIntensity, 1.9, Math.PI / 6, 0.72, 1.7);
     this.light.position.set(0.48, 0.98, 0);
     this.light.castShadow = true;

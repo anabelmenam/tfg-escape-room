@@ -111,7 +111,8 @@ const createChildrenRoom = ({
     objectColliders: assembly.objectColliders,
     bounds,
     dimensions: childrenRoomDimensions,
-    addStoryNote: (object3D) => furniture.dresser.addObjectToDrawer(character === "mum" ? 7 : 6, object3D, new THREE.Vector3(0, -.16, -.54)),
+    addStoryNote: (object3D) =>
+      furniture.dresser.addObjectToDrawer(character === "mum" ? 7 : 6, object3D, new THREE.Vector3(0, -0.16, -0.54)),
     interactables: assembly.interactables,
     entities: assembly.entities,
     applyChildrenRoomState: (state) => {

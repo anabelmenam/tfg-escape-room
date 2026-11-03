@@ -5,7 +5,7 @@ import { installBrowserMocks } from "../helpers/browserMocks.js";
 
 installBrowserMocks();
 
-const { createLevel1 } = await import("../../src/world/levels/createLevel1.js");
+const { createGameWorld } = await import("../../src/world/createGameWorld.js");
 const { EventManager } = await import("../../src/game/EventManager.js");
 const { startEndingHouseTour, updateEndingTour } = await import("../../src/game/ending/EndingTour.js");
 const { startEndingExit, updateEndingExit } = await import("../../src/game/ending/EndingExit.js");
@@ -30,10 +30,10 @@ const createCallbacks = () => ({
 
 for (const [playerRole, character] of [["A", "mum"], ["B", "dad"]]) {
   test(`construye la casa completa para ${character}`, async () => {
-    const level = await createLevel1({ playerRole, ...createCallbacks() });
+    const level = await createGameWorld({ playerRole, ...createCallbacks() });
 
     assert.equal(level.character, character);
-    assert.equal(level.room.name, `Level 1-${character}`);
+    assert.equal(level.room.name, `GameWorld-${character}`);
     assert.ok(level.room.children.length >= 6);
     assert.ok(level.entities.length > 30);
     assert.ok(level.interactables.length > 20);
@@ -97,18 +97,18 @@ for (const [playerRole, character] of [["A", "mum"], ["B", "dad"]]) {
 }
 
 test("crea la sala auxiliar y rechaza roles desconocidos", async () => {
-  const livingRoom = await createLevel1({ playerRole: "D", ...createCallbacks() });
+  const livingRoom = await createGameWorld({ playerRole: "D", ...createCallbacks() });
   assert.ok(livingRoom.room);
 
-  const iconsRoom = await createLevel1({ playerRole: "C", ...createCallbacks() });
+  const iconsRoom = await createGameWorld({ playerRole: "C", ...createCallbacks() });
   assert.equal(iconsRoom.room.name, "Icon Studio");
   assert.ok(iconsRoom.room.getObjectByName("icon-studio-clock-hand"));
 
-  await assert.rejects(() => createLevel1({ playerRole: "X" }), /Rol de jugador no válido/);
+  await assert.rejects(() => createGameWorld({ playerRole: "X" }), /Rol de jugador no válido/);
 });
 
 test("recorre la casa resuelta y ejecuta la salida final", async () => {
-  const level = await createLevel1({ playerRole: "A", ...createCallbacks() });
+  const level = await createGameWorld({ playerRole: "A", ...createCallbacks() });
   const hiddenStates = [];
   const beats = [];
   const fades = [];

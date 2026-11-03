@@ -6,7 +6,9 @@ const createDecorativeGlobe = ({ aged = false, scale = 1 } = {}) => {
   group.name = "ambient-decorative-globe";
   group.userData.ambientDescriptionKey = "decorativeGlobe";
   const metalMaterial = material(aged ? 0x655b4d : 0x9b7441, 0.38, 0.35);
-  const globe = finishMesh(new THREE.Mesh(new THREE.SphereGeometry(0.48, 28, 18), material(aged ? 0x586663 : 0x5d8d96, 0.72)));
+  const globe = finishMesh(
+    new THREE.Mesh(new THREE.SphereGeometry(0.48, 28, 18), material(aged ? 0x586663 : 0x5d8d96, 0.72)),
+  );
   globe.position.y = 0.78;
   globe.rotation.z = -0.22;
   const meridian = finishMesh(new THREE.Mesh(new THREE.TorusGeometry(0.53, 0.025, 8, 32), metalMaterial));

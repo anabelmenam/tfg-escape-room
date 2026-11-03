@@ -34,6 +34,17 @@ Para cambiar el correo de una cuenta existente, se puede indicar además `ADMIN_
 
 La primera regla cooperativa ya incluida es abrir `bedroom-exit-door` con mamá: desbloquea esa puerta para papá.
 
+## Organización del código
+
+- `src/server.js`: compone Express y Socket.IO, monta los módulos y arranca el servidor.
+- `src/routes/`: agrupa las rutas HTTP de autenticación, administración y partidas.
+- `src/services/roomService.js`: contiene las operaciones de salas, jugadores, lobby y comienzo de partida.
+- `src/services/gameSessionService.js`: aplica acciones, sincroniza el temporizador y persiste puntos de continuación.
+- `src/sockets/gameSocket.js`: autentica las conexiones y registra los eventos de tiempo real.
+- `src/serverUtils.js`: reúne las utilidades compartidas por los módulos del servidor.
+
+Esta separación mantiene el punto de entrada reducido y permite probar las reglas de dominio sin tener que iniciar el servidor completo.
+
 ## Modelos y migraciones
 
 - `src/db.js`: conexión Sequelize configurada con `DATABASE_URL` y transacciones administradas.

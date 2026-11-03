@@ -256,7 +256,6 @@ class Box extends Entity {
   }
 
   createLid() {
-
     this.lidPivot.position.set(0, this.height - this.lidThickness, -this.depth / 2);
 
     const geometry = this.createRoundedGeometry({

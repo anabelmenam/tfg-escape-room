@@ -1,9 +1,7 @@
 import { Crowbar, FinalKey, WardrobeChains } from "../../objects/index.js";
 
 const createWardrobePuzzle = ({ character, testMode = false, wardrobe, onAction }) => {
-  const crowbar = character === "mum"
-    ? new Crowbar({ onCollect: () => onAction?.("item.pickup", "crowbar") })
-    : null;
+  const crowbar = character === "mum" ? new Crowbar({ onCollect: () => onAction?.("item.pickup", "crowbar") }) : null;
   if (crowbar) {
     crowbar.object3D.position.set(-0.2, 2.48, -0.05);
     crowbar.object3D.rotation.set(0, 0, Math.PI / 2);
@@ -12,17 +10,18 @@ const createWardrobePuzzle = ({ character, testMode = false, wardrobe, onAction 
     crowbar.setEnabled(false);
     wardrobe.object3D.add(crowbar.object3D);
   }
-  const finalKey = character === "mum"
-    ? new FinalKey({
-        id: "final-key-children",
-        symbol: "star",
-        color: 0xc6a044,
-        onCollect: () => onAction?.("item.pickup", "final-key-children"),
-      })
-    : null;
+  const finalKey =
+    character === "mum"
+      ? new FinalKey({
+          id: "final-key-children",
+          symbol: "star",
+          color: 0xc6a044,
+          onCollect: () => onAction?.("item.pickup", "final-key-children"),
+        })
+      : null;
   if (finalKey) {
-    finalKey.object3D.position.set(1.15, 2.48, .35);
-    finalKey.object3D.rotation.set(Math.PI / 2, 0, -.35);
+    finalKey.object3D.position.set(1.15, 2.48, 0.35);
+    finalKey.object3D.rotation.set(Math.PI / 2, 0, -0.35);
     finalKey.object3D.visible = false;
     finalKey.setEnabled(false);
     wardrobe.object3D.add(finalKey.object3D);
@@ -42,7 +41,9 @@ const createWardrobePuzzle = ({ character, testMode = false, wardrobe, onAction 
   };
   const unlock = () => {
     unlocked = true;
-    rewardDoors.forEach((door) => { door.enabled = true; });
+    rewardDoors.forEach((door) => {
+      door.enabled = true;
+    });
   };
   rewardDoors.forEach((door) => {
     door.enabled = testMode || character !== "mum";
@@ -53,14 +54,15 @@ const createWardrobePuzzle = ({ character, testMode = false, wardrobe, onAction 
     };
   });
 
-  const chains = character === "mum"
-    ? new WardrobeChains({
-        onCut: () => {
-          unlock();
-          onAction?.("puzzle.solved", "children-wardrobe-chains");
-        },
-      })
-    : null;
+  const chains =
+    character === "mum"
+      ? new WardrobeChains({
+          onCut: () => {
+            unlock();
+            onAction?.("puzzle.solved", "children-wardrobe-chains");
+          },
+        })
+      : null;
   if (chains) {
     chains.object3D.position.z = 1.68;
     wardrobe.object3D.add(chains.object3D);
@@ -80,8 +82,9 @@ const createWardrobePuzzle = ({ character, testMode = false, wardrobe, onAction 
       crowbar.setEnabled(false);
     }
     if (finalKey) {
-      const unavailable = state.inventories?.mum?.includes("final-key-children")
-        || ["mum", "dad"].some((era) => state.characters?.[era]?.objects?.["final-bolt-children"]?.unlocked);
+      const unavailable =
+        state.inventories?.mum?.includes("final-key-children") ||
+        ["mum", "dad"].some((era) => state.characters?.[era]?.objects?.["final-bolt-children"]?.unlocked);
       if (unavailable) {
         finalKey.object3D.visible = false;
         finalKey.setEnabled(false);

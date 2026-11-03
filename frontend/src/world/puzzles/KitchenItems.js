@@ -48,21 +48,38 @@ const createNapkinFabricTexture = () => {
 
 class KitchenIngredient extends Entity {
   constructor({ id, kind, quantity, onCollect }) {
-    super(id); this.itemName = id; this.kind = kind; this.quantity = quantity; this.onCollect = onCollect; this.object3D = createKitchenFoodModel(kind, quantity);
+    super(id);
+    this.itemName = id;
+    this.kind = kind;
+    this.quantity = quantity;
+    this.onCollect = onCollect;
+    this.object3D = createKitchenFoodModel(kind, quantity);
     this.inventoryIcon = {
       tomato: "/images/icons/kitchen/tomatoes.png",
       carrot: "/images/icons/kitchen/carrots.png",
       cheese: "/images/icons/kitchen/cheese.png",
     }[kind];
-    this.object3D.name = id; shadows(this.object3D);
+    this.object3D.name = id;
+    shadows(this.object3D);
   }
-  interact(player) { if (!player?.inventory.add(this)) return; this.object3D.visible = false; this.setEnabled(false); this.onCollect?.(); }
-  getInteractionText() { return this.enabled ? tInteraction("pickUp", tItem(this.id)) : null; }
+  interact(player) {
+    if (!player?.inventory.add(this)) return;
+    this.object3D.visible = false;
+    this.setEnabled(false);
+    this.onCollect?.();
+  }
+  getInteractionText() {
+    return this.enabled ? tInteraction("pickUp", tItem(this.id)) : null;
+  }
 }
 
 class KitchenNapkin extends Entity {
   constructor({ id, color, name, onCollect }) {
-    super(id); this.itemName = id; this.onCollect = onCollect; this.object3D = new THREE.Group(); this.object3D.name = id;
+    super(id);
+    this.itemName = id;
+    this.onCollect = onCollect;
+    this.object3D = new THREE.Group();
+    this.object3D.name = id;
     this.inventoryIcon = {
       "kitchen-napkin-red": "/images/icons/kitchen/mum-napkin.png",
       "kitchen-napkin-blue": "/images/icons/kitchen/dad-napkin.png",
@@ -74,33 +91,70 @@ class KitchenNapkin extends Entity {
       color,
       map: this.fabricTexture,
       bumpMap: this.fabricTexture,
-      bumpScale: .018,
-      roughness: .98,
+      bumpScale: 0.018,
+      roughness: 0.98,
     });
-    const folded = new THREE.Mesh(new THREE.BoxGeometry(.58, .075, .42), cloth);
-    const flap = new THREE.Mesh(new THREE.BoxGeometry(.31, .045, .34), cloth.clone()); flap.position.set(.11, .06, -.015); flap.rotation.y = -.16;
+    const folded = new THREE.Mesh(new THREE.BoxGeometry(0.58, 0.075, 0.42), cloth);
+    const flap = new THREE.Mesh(new THREE.BoxGeometry(0.31, 0.045, 0.34), cloth.clone());
+    flap.position.set(0.11, 0.06, -0.015);
+    flap.rotation.y = -0.16;
     this.labelTexture = createNapkinLabelTexture(name);
-    const label = new THREE.Mesh(new THREE.PlaneGeometry(.28, .09), new THREE.MeshStandardMaterial({ map: this.labelTexture, transparent: true, roughness: .9 })); label.rotation.x = -Math.PI / 2; label.position.set(-.055, .09, -.095);
-    this.object3D.add(folded, flap, label); shadows(this.object3D);
+    const label = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.28, 0.09),
+      new THREE.MeshStandardMaterial({ map: this.labelTexture, transparent: true, roughness: 0.9 }),
+    );
+    label.rotation.x = -Math.PI / 2;
+    label.position.set(-0.055, 0.09, -0.095);
+    this.object3D.add(folded, flap, label);
+    shadows(this.object3D);
   }
-  interact(player) { if (!player?.inventory.add(this)) return; this.object3D.visible = false; this.setEnabled(false); this.onCollect?.(); }
-  getInteractionText() { return this.enabled ? tInteraction("pickUp", tItem(this.id)) : null; }
-  dispose() { this.labelTexture.dispose(); this.fabricTexture.dispose(); }
+  interact(player) {
+    if (!player?.inventory.add(this)) return;
+    this.object3D.visible = false;
+    this.setEnabled(false);
+    this.onCollect?.();
+  }
+  getInteractionText() {
+    return this.enabled ? tInteraction("pickUp", tItem(this.id)) : null;
+  }
+  dispose() {
+    this.labelTexture.dispose();
+    this.fabricTexture.dispose();
+  }
 }
 
 class MosaicTile extends Entity {
   constructor({ onCollect }) {
-    super("bathroom-mosaic-tile"); this.onCollect = onCollect; this.itemName = this.id; this.object3D = new THREE.Group(); this.object3D.name = this.id;
+    super("bathroom-mosaic-tile");
+    this.onCollect = onCollect;
+    this.itemName = this.id;
+    this.object3D = new THREE.Group();
+    this.object3D.name = this.id;
     this.inventoryIcon = "/images/icons/kitchen/tile.png";
-    const tile = createTile({ tileId: 5, size: 1.16, depth: .12 });
-    const backing = new THREE.Mesh(new THREE.BoxGeometry(1.22, 1.22, .08), new THREE.MeshStandardMaterial({ color: 0xb8aa91, roughness: .9 }));
-    backing.position.z = -.09;
-    this.object3D.add(backing, tile); shadows(this.object3D);
-    this.object3D.visible = false; this.setEnabled(false);
+    const tile = createTile({ tileId: 5, size: 1.16, depth: 0.12 });
+    const backing = new THREE.Mesh(
+      new THREE.BoxGeometry(1.22, 1.22, 0.08),
+      new THREE.MeshStandardMaterial({ color: 0xb8aa91, roughness: 0.9 }),
+    );
+    backing.position.z = -0.09;
+    this.object3D.add(backing, tile);
+    shadows(this.object3D);
+    this.object3D.visible = false;
+    this.setEnabled(false);
   }
-  reveal() { this.object3D.visible = true; this.setEnabled(true); }
-  interact(player) { if (!player?.inventory.add(this)) return; this.object3D.visible = false; this.setEnabled(false); this.onCollect?.(); }
-  getInteractionText() { return this.enabled ? tInteraction("pickUp", tItem(this.id)) : null; }
+  reveal() {
+    this.object3D.visible = true;
+    this.setEnabled(true);
+  }
+  interact(player) {
+    if (!player?.inventory.add(this)) return;
+    this.object3D.visible = false;
+    this.setEnabled(false);
+    this.onCollect?.();
+  }
+  getInteractionText() {
+    return this.enabled ? tInteraction("pickUp", tItem(this.id)) : null;
+  }
 }
 
 export { KitchenIngredient, KitchenNapkin, MosaicTile };

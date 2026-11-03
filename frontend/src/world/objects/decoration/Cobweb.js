@@ -66,7 +66,6 @@ class Cobweb extends Entity {
 
       if (this.corner) {
         if (this.cornerCeiling && y >= 0) {
-
           return new THREE.Vector3(-Math.abs(x), 0, y);
         }
 

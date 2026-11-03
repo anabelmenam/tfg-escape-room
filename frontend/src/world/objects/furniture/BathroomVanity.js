@@ -58,13 +58,55 @@ class BathroomVanity extends Entity {
 
   createStructure() {
     this.object3D.add(
-      createBox({ width: 4.6, height: 0.16, depth: 1.65, position: new THREE.Vector3(0, 0.08, 0), material: this.darkWoodMaterial }),
-      createBox({ width: 4.6, height: 0.16, depth: 1.65, position: new THREE.Vector3(0, 2.48, 0), material: this.darkWoodMaterial }),
-      createBox({ width: 0.16, height: 2.4, depth: 1.65, position: new THREE.Vector3(-2.22, 1.28, 0), material: this.darkWoodMaterial }),
-      createBox({ width: 0.16, height: 2.4, depth: 1.65, position: new THREE.Vector3(2.22, 1.28, 0), material: this.darkWoodMaterial }),
-      createBox({ width: 4.28, height: 0.14, depth: 1.55, position: new THREE.Vector3(0, 1.67, 0), material: this.darkWoodMaterial }),
-      createBox({ width: 4.28, height: 2.25, depth: 0.12, position: new THREE.Vector3(0, 1.25, -0.77), material: this.darkWoodMaterial }),
-      createBox({ width: 4.9, height: 0.22, depth: 1.9, position: new THREE.Vector3(0, 2.66, 0.06), material: this.stoneMaterial }),
+      createBox({
+        width: 4.6,
+        height: 0.16,
+        depth: 1.65,
+        position: new THREE.Vector3(0, 0.08, 0),
+        material: this.darkWoodMaterial,
+      }),
+      createBox({
+        width: 4.6,
+        height: 0.16,
+        depth: 1.65,
+        position: new THREE.Vector3(0, 2.48, 0),
+        material: this.darkWoodMaterial,
+      }),
+      createBox({
+        width: 0.16,
+        height: 2.4,
+        depth: 1.65,
+        position: new THREE.Vector3(-2.22, 1.28, 0),
+        material: this.darkWoodMaterial,
+      }),
+      createBox({
+        width: 0.16,
+        height: 2.4,
+        depth: 1.65,
+        position: new THREE.Vector3(2.22, 1.28, 0),
+        material: this.darkWoodMaterial,
+      }),
+      createBox({
+        width: 4.28,
+        height: 0.14,
+        depth: 1.55,
+        position: new THREE.Vector3(0, 1.67, 0),
+        material: this.darkWoodMaterial,
+      }),
+      createBox({
+        width: 4.28,
+        height: 2.25,
+        depth: 0.12,
+        position: new THREE.Vector3(0, 1.25, -0.77),
+        material: this.darkWoodMaterial,
+      }),
+      createBox({
+        width: 4.9,
+        height: 0.22,
+        depth: 1.9,
+        position: new THREE.Vector3(0, 2.66, 0.06),
+        material: this.stoneMaterial,
+      }),
     );
   }
 
@@ -77,10 +119,34 @@ class BathroomVanity extends Entity {
     drawer.position.set(0, 2.08, closedZ);
     drawer.add(
       createBox({ width, height, depth: 0.15, position: new THREE.Vector3(0, 0, 0.08), material: this.woodMaterial }),
-      createBox({ width: width - 0.18, height: 0.1, depth, position: new THREE.Vector3(0, -height / 2 + 0.07, -depth / 2), material: this.darkWoodMaterial }),
-      createBox({ width: 0.1, height: height - 0.16, depth, position: new THREE.Vector3(-width / 2 + 0.08, -0.02, -depth / 2), material: this.darkWoodMaterial }),
-      createBox({ width: 0.1, height: height - 0.16, depth, position: new THREE.Vector3(width / 2 - 0.08, -0.02, -depth / 2), material: this.darkWoodMaterial }),
-      createBox({ width: width - 0.18, height: height - 0.16, depth: 0.1, position: new THREE.Vector3(0, -0.02, -depth + 0.05), material: this.darkWoodMaterial }),
+      createBox({
+        width: width - 0.18,
+        height: 0.1,
+        depth,
+        position: new THREE.Vector3(0, -height / 2 + 0.07, -depth / 2),
+        material: this.darkWoodMaterial,
+      }),
+      createBox({
+        width: 0.1,
+        height: height - 0.16,
+        depth,
+        position: new THREE.Vector3(-width / 2 + 0.08, -0.02, -depth / 2),
+        material: this.darkWoodMaterial,
+      }),
+      createBox({
+        width: 0.1,
+        height: height - 0.16,
+        depth,
+        position: new THREE.Vector3(width / 2 - 0.08, -0.02, -depth / 2),
+        material: this.darkWoodMaterial,
+      }),
+      createBox({
+        width: width - 0.18,
+        height: height - 0.16,
+        depth: 0.1,
+        position: new THREE.Vector3(0, -0.02, -depth + 0.05),
+        material: this.darkWoodMaterial,
+      }),
     );
     const handle = this.createDrawerHandle();
     drawer.add(handle);
@@ -135,7 +201,7 @@ class BathroomVanity extends Entity {
         width: doorWidth,
         height: 1.4,
         depth: 0.14,
-        position: new THREE.Vector3(-side * doorWidth / 2, 0, 0),
+        position: new THREE.Vector3((-side * doorWidth) / 2, 0, 0),
         material: this.woodMaterial,
       });
       const knob = new THREE.Mesh(new THREE.SphereGeometry(0.12, 14, 10), this.metalMaterial);
@@ -195,10 +261,7 @@ class BathroomVanity extends Entity {
     this.waterSurface.userData.ignoreAging = true;
 
     const outlet = this.faucet.userData.outletPosition;
-    this.waterStream = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.025, 0.035, 0.42, 12),
-      waterMaterial.clone(),
-    );
+    this.waterStream = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.035, 0.42, 12), waterMaterial.clone());
     this.waterStream.position.set(outlet.x, outlet.y + faucetLift - 0.21, outlet.z);
     this.waterStream.visible = false;
     this.waterStream.userData.ignoreAging = true;
@@ -238,7 +301,10 @@ class BathroomVanity extends Entity {
   }
 
   getInteractables() {
-    return [...this.drawerManager.getInteractables(), ...this.cabinetDoors.map((_, index) => this.createDoorInteractable(index))];
+    return [
+      ...this.drawerManager.getInteractables(),
+      ...this.cabinetDoors.map((_, index) => this.createDoorInteractable(index)),
+    ];
   }
 
   addObjectToDrawer(index, object3D, position = new THREE.Vector3()) {

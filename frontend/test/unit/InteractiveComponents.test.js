@@ -99,6 +99,20 @@ test("menú principal permite abrir ajustes, controles, pruebas y partidas", asy
   assert.ok(screen.toJSON());
 });
 
+test("el menú puede abrir directamente la pantalla de partidas", async () => {
+  globalThis.fetch = async () => response({ slots: [] });
+  const screen = await render(Lobby, {
+    initialView: "play",
+    account: { role: "player", displayName: "Ana" },
+    onLogout() {}, onEnterLobby() {},
+    audioSettings: { music: 1, effects: 1, footsteps: 1 }, onAudioSettingChange() {},
+    mouseSensitivity: 1, onMouseSensitivityChange() {}, onLanguageChange() {},
+  });
+  await act(async () => Promise.resolve());
+  assert.ok(buttonMatching(screen, /volver|back|retour/i));
+  screen.unmount();
+});
+
 test("pausa cubre diario, pistas, controles, ajustes y acciones", async () => {
   const calls = [];
   const props = {

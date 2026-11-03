@@ -1,13 +1,5 @@
 import * as THREE from "three";
-import {
-  Bed,
-  Cabinet,
-  Carpet,
-  Chair,
-  Desk,
-  Wardrobe,
-  applyAgedFurnitureAppearance,
-} from "../../objects/index.js";
+import { Bed, Cabinet, Carpet, Chair, Desk, Wardrobe, applyAgedFurnitureAppearance } from "../../objects/index.js";
 
 const bedroomWoodStyle = {
   woodTexture: "/textures/furniture/wood2.jpg",

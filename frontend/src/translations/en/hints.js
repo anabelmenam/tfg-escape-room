@@ -1,5 +1,5 @@
 export default {
-hints: {
+  hints: {
     title: "Hints",
     request: "Ask for a hint",
     another: "Ask for another hint",
@@ -21,7 +21,10 @@ hints: {
         "A hallway mechanism seems to be missing an essential part.",
         "Fit the hand and set the clock; it will reveal your companion's maze route.",
       ],
-      mumHotWater: ["Some messages only appear when the atmosphere in the bathroom changes.", "Turn on the hot water and watch the steam."],
+      mumHotWater: [
+        "Some messages only appear when the atmosphere in the bathroom changes.",
+        "Turn on the hot water and watch the steam.",
+      ],
       mumWaitSymbols: [
         "The safe is waiting for symbols only your companion can uncover.",
         "Ask your companion to restore the power and turn on the desk lamp.",
@@ -58,12 +61,18 @@ hints: {
         "Something in your living room is no longer protected after ordering the embers.",
         "Open it and collect the letter containing the chest code.",
       ],
-      mumChest: ["The letter links every season to a digit; together they form something your companion needs.", "Tell your companion to use 3816 on the chest in their living room."],
+      mumChest: [
+        "The letter links every season to a digit; together they form something your companion needs.",
+        "Tell your companion to use 3816 on the chest in their living room.",
+      ],
       mumBlocks: [
         "The toy pieces seem to remember the shape of a lost construction.",
         "Rebuild the block castle to reveal a pushpin.",
       ],
-      mumBlocksReward: ["The finished construction has revealed a tiny reward.", "Collect the pushpin beside the blocks."],
+      mumBlocksReward: [
+        "The finished construction has revealed a tiny reward.",
+        "Collect the pushpin beside the blocks.",
+      ],
       mumPin: [
         "The noticeboard looks complete except for one tiny empty point.",
         "Select the pushpin and place it on the board before examining it.",
@@ -152,7 +161,10 @@ hints: {
         "The path discovered by your companion matches the maze behind the mirror.",
         "Follow the path shown by your companion's clock clue.",
       ],
-      dadBooks: ["The book colours are not arranged as they would appear after rain.", "Arrange them in rainbow order."],
+      dadBooks: [
+        "The book colours are not arranged as they would appear after rain.",
+        "Arrange them in rainbow order.",
+      ],
       dadWaitPainting: [
         "The space behind the painting still holds something only your companion can release.",
         "Ask them to place the fallen painting and both fragments.",
@@ -165,12 +177,18 @@ hints: {
         "The seam is open, but its secret is still inside.",
         "Interact with the open cushion again to search it.",
       ],
-      dadFireplace: ["The missing little flame belongs very close to where it should burn.", "Select the match and light the fireplace."],
+      dadFireplace: [
+        "The missing little flame belongs very close to where it should burn.",
+        "Select the match and light the fireplace.",
+      ],
       dadWaitDisplayCase: [
         "Your chest depends on a letter only your companion can reach.",
         "Your companion must solve the embers, open the case and read the letter.",
       ],
-      dadChest: ["The seasons in your companion's letter form the chest combination.", "Enter 3816 on the chest lock in your living room."],
+      dadChest: [
+        "The seasons in your companion's letter form the chest combination.",
+        "Enter 3816 on the chest lock in your living room.",
+      ],
       dadPhotoNote: [
         "A page in the children's room tells a journey through four places.",
         "Collect ‘My day’ from the drawer and tell your companion the photograph order.",
@@ -207,18 +225,54 @@ hints: {
         "Your last rewards remain in rooms you have already helped complete.",
         "Find any missing keys: the flame is in the living-room chest and the wave is behind the mosaic.",
       ],
-      mumElectricalPlan: ["One final layer remains beneath the spools.", "Pick up the revealed electrical plan and share it with your companion."],
-      mumRadioReward: ["Completing the radio moved something inside it.", "Take the key inside the radio so you can leave the bedroom."],
-      mumBedroomExit: ["The exit no longer seems to require a puzzle, only the right object.", "Select the key and unlock the door to enter the hallway."],
-      mumWaitLivingRoomDoor: ["You have reached a door whose key only your companion can obtain.", "Your companion must finish the maze, collect its key, and unlock the living room."],
-      mumWaitChildrenDoor: ["The next room depends on what your companion's chest contains.", "Your companion must open the living-room chest, take its key, and unlock the children's room."],
-      mumRecipeNote: ["Your kitchen holds instructions for your companion's ingredients.", "Find and collect the kitchen recipe so you can tell them the correct order."],
-      dadWaitBedroomExit: ["You have finished your part, but the exit depends on something only your companion can find.", "Your companion must complete the radio, collect its key, and unlock the door."],
-      dadMazeReward: ["The completed route left something new beside the board.", "Pick up the key that appeared beside the maze."],
-      dadLivingRoomDoor: ["The maze reward belongs to a nearby door.", "Select the key and use it on the living-room door."],
-      dadChestReward: ["The open chest held more than one final key.", "Open the chest, take the key, and bring it to the children's-room door."],
-      dadChildrenDoor: ["The newly found key seems to lead to the children's room.", "Select the key and unlock the children's-room door from the hallway."],
-      dadWaitKitchenDoor: ["The next entrance needs the strength of a tool only your companion can find.", "Your companion must open the children's wardrobe, take the crowbar, and force a kitchen door."],
+      mumElectricalPlan: [
+        "One final layer remains beneath the spools.",
+        "Pick up the revealed electrical plan and share it with your companion.",
+      ],
+      mumRadioReward: [
+        "Completing the radio moved something inside it.",
+        "Take the key inside the radio so you can leave the bedroom.",
+      ],
+      mumBedroomExit: [
+        "The exit no longer seems to require a puzzle, only the right object.",
+        "Select the key and unlock the door to enter the hallway.",
+      ],
+      mumWaitLivingRoomDoor: [
+        "You have reached a door whose key only your companion can obtain.",
+        "Your companion must finish the maze, collect its key, and unlock the living room.",
+      ],
+      mumWaitChildrenDoor: [
+        "The next room depends on what your companion's chest contains.",
+        "Your companion must open the living-room chest, take its key, and unlock the children's room.",
+      ],
+      mumRecipeNote: [
+        "Your kitchen holds instructions for your companion's ingredients.",
+        "Find and collect the kitchen recipe so you can tell them the correct order.",
+      ],
+      dadWaitBedroomExit: [
+        "You have finished your part, but the exit depends on something only your companion can find.",
+        "Your companion must complete the radio, collect its key, and unlock the door.",
+      ],
+      dadMazeReward: [
+        "The completed route left something new beside the board.",
+        "Pick up the key that appeared beside the maze.",
+      ],
+      dadLivingRoomDoor: [
+        "The maze reward belongs to a nearby door.",
+        "Select the key and use it on the living-room door.",
+      ],
+      dadChestReward: [
+        "The open chest held more than one final key.",
+        "Open the chest, take the key, and bring it to the children's-room door.",
+      ],
+      dadChildrenDoor: [
+        "The newly found key seems to lead to the children's room.",
+        "Select the key and unlock the children's-room door from the hallway.",
+      ],
+      dadWaitKitchenDoor: [
+        "The next entrance needs the strength of a tool only your companion can find.",
+        "Your companion must open the children's wardrobe, take the crowbar, and force a kitchen door.",
+      ],
       finalDoor: [
         "All four bolts are open. The exit needs both players.",
         "Stand at the front door and hold E at the same time.",
@@ -228,5 +282,5 @@ hints: {
         "Your companion still needs to find their final keys and open the remaining bolts.",
       ],
     },
-  }
+  },
 };

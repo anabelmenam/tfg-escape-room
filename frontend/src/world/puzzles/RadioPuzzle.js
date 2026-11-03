@@ -53,7 +53,7 @@ class RadioPuzzle extends Entity {
       roughness: 0.12,
       metalness: 0,
     });
-    const filament = new THREE.MeshStandardMaterial({ color: 0xff9d38, roughness: .5 });
+    const filament = new THREE.MeshStandardMaterial({ color: 0xff9d38, roughness: 0.5 });
 
     const body = new THREE.Mesh(new THREE.BoxGeometry(4.1, 1.9, 1.28, 5, 3, 2), wood);
     body.position.y = 0.08;
@@ -215,7 +215,6 @@ class RadioPuzzle extends Entity {
   }
 
   updateDialIndicator(index) {
-
     this.dialNeedles[index].rotation.z = -(this.values[index] * Math.PI * 2) / 10;
   }
 
@@ -247,7 +246,9 @@ class RadioPuzzle extends Entity {
 
   getInteractionText(player) {
     if (!this.hasMissingDial) {
-      return player?.hasSelected(this.dialItem?.id) ? tInteraction("insert", tItem(this.dialItem.id)) : tInteraction("needItem", tItem(this.dialItem?.id));
+      return player?.hasSelected(this.dialItem?.id)
+        ? tInteraction("insert", tItem(this.dialItem.id))
+        : tInteraction("needItem", tItem(this.dialItem?.id));
     }
     return this.isSolved ? null : tInteraction("examine", tItem("radio"));
   }

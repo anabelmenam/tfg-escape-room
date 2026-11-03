@@ -46,20 +46,104 @@ class Oven extends Entity {
       roughness: 0.84,
     });
     this.object3D.add(
-      createBox({ width: 0.16, height, depth: 2.4, position: new THREE.Vector3(-width / 2 + 0.08, height / 2, 0), material: frame }),
-      createBox({ width: 0.16, height, depth: 2.4, position: new THREE.Vector3(width / 2 - 0.08, height / 2, 0), material: frame }),
-      createBox({ width: width - 0.32, height: 0.16, depth: 2.4, position: new THREE.Vector3(0, 0.08, 0), material: frame }),
-      createBox({ width: width - 0.32, height: 0.16, depth: 2.4, position: new THREE.Vector3(0, height - 0.08, 0), material: frame }),
-      createBox({ width: width - 0.32, height: height - 0.32, depth: 0.16, position: new THREE.Vector3(0, height / 2, -1.12), material: frame }),
-      createBox({ width: width - 0.48, height: 2.12, depth: 0.1, position: new THREE.Vector3(0, 3.65, -1.02), material: enamel }),
-      createBox({ width: 0.12, height: 2.12, depth: 2.1, position: new THREE.Vector3(-width / 2 + 0.27, 3.65, 0), material: enamel }),
-      createBox({ width: 0.12, height: 2.12, depth: 2.1, position: new THREE.Vector3(width / 2 - 0.27, 3.65, 0), material: enamel }),
-      createBox({ width: width - 0.48, height: 0.12, depth: 2.1, position: new THREE.Vector3(0, 2.62, 0), material: enamel }),
-      createBox({ width: width - 0.48, height: 0.12, depth: 2.1, position: new THREE.Vector3(0, 4.68, 0), material: enamel }),
-      createBox({ width: width - 0.1, height: 0.16, depth: 2.4, position: new THREE.Vector3(0, 2.43, -0.02), material: frame }),
-      createBox({ width: width - 0.1, height: 0.16, depth: 2.4, position: new THREE.Vector3(0, 4.98, -0.02), material: frame }),
-      createBox({ width: width - 0.22, height: 0.44, depth: 0.16, position: new THREE.Vector3(0, 4.68, 1.27), material: body }),
-      createBox({ width: 0.68, height: 0.23, depth: 0.07, position: new THREE.Vector3(0, 4.68, 1.39), material: displayMaterial }),
+      createBox({
+        width: 0.16,
+        height,
+        depth: 2.4,
+        position: new THREE.Vector3(-width / 2 + 0.08, height / 2, 0),
+        material: frame,
+      }),
+      createBox({
+        width: 0.16,
+        height,
+        depth: 2.4,
+        position: new THREE.Vector3(width / 2 - 0.08, height / 2, 0),
+        material: frame,
+      }),
+      createBox({
+        width: width - 0.32,
+        height: 0.16,
+        depth: 2.4,
+        position: new THREE.Vector3(0, 0.08, 0),
+        material: frame,
+      }),
+      createBox({
+        width: width - 0.32,
+        height: 0.16,
+        depth: 2.4,
+        position: new THREE.Vector3(0, height - 0.08, 0),
+        material: frame,
+      }),
+      createBox({
+        width: width - 0.32,
+        height: height - 0.32,
+        depth: 0.16,
+        position: new THREE.Vector3(0, height / 2, -1.12),
+        material: frame,
+      }),
+      createBox({
+        width: width - 0.48,
+        height: 2.12,
+        depth: 0.1,
+        position: new THREE.Vector3(0, 3.65, -1.02),
+        material: enamel,
+      }),
+      createBox({
+        width: 0.12,
+        height: 2.12,
+        depth: 2.1,
+        position: new THREE.Vector3(-width / 2 + 0.27, 3.65, 0),
+        material: enamel,
+      }),
+      createBox({
+        width: 0.12,
+        height: 2.12,
+        depth: 2.1,
+        position: new THREE.Vector3(width / 2 - 0.27, 3.65, 0),
+        material: enamel,
+      }),
+      createBox({
+        width: width - 0.48,
+        height: 0.12,
+        depth: 2.1,
+        position: new THREE.Vector3(0, 2.62, 0),
+        material: enamel,
+      }),
+      createBox({
+        width: width - 0.48,
+        height: 0.12,
+        depth: 2.1,
+        position: new THREE.Vector3(0, 4.68, 0),
+        material: enamel,
+      }),
+      createBox({
+        width: width - 0.1,
+        height: 0.16,
+        depth: 2.4,
+        position: new THREE.Vector3(0, 2.43, -0.02),
+        material: frame,
+      }),
+      createBox({
+        width: width - 0.1,
+        height: 0.16,
+        depth: 2.4,
+        position: new THREE.Vector3(0, 4.98, -0.02),
+        material: frame,
+      }),
+      createBox({
+        width: width - 0.22,
+        height: 0.44,
+        depth: 0.16,
+        position: new THREE.Vector3(0, 4.68, 1.27),
+        material: body,
+      }),
+      createBox({
+        width: 0.68,
+        height: 0.23,
+        depth: 0.07,
+        position: new THREE.Vector3(0, 4.68, 1.39),
+        material: displayMaterial,
+      }),
     );
 
     [-0.88, 0.88].forEach((x, index) => {
@@ -87,12 +171,24 @@ class Oven extends Entity {
     [3.08, 3.72].forEach((rackY) => {
       [-0.82, -0.42, 0, 0.42, 0.82].forEach((rackZ) => {
         this.object3D.add(
-          createBox({ width: width - 0.58, height: 0.045, depth: 0.045, position: new THREE.Vector3(0, rackY, rackZ), material: metal }),
+          createBox({
+            width: width - 0.58,
+            height: 0.045,
+            depth: 0.045,
+            position: new THREE.Vector3(0, rackY, rackZ),
+            material: metal,
+          }),
         );
       });
       [-0.82, 0, 0.82].forEach((rackX) => {
         this.object3D.add(
-          createBox({ width: 0.045, height: 0.045, depth: 1.72, position: new THREE.Vector3(rackX, rackY, 0), material: metal }),
+          createBox({
+            width: 0.045,
+            height: 0.045,
+            depth: 1.72,
+            position: new THREE.Vector3(rackX, rackY, 0),
+            material: metal,
+          }),
         );
       });
     });
@@ -103,7 +199,13 @@ class Oven extends Entity {
     const lowerHandle = createRoundedPullHandle({ material: metal, height: 0.72 });
     lowerHandle.position.set(lowerDoorWidth - 0.32, 0, 0.14);
     lowerDoor.add(
-      createBox({ width: lowerDoorWidth, height: 2.48, depth: 0.14, position: new THREE.Vector3(lowerDoorWidth / 2, 0, 0), material: cabinet }),
+      createBox({
+        width: lowerDoorWidth,
+        height: 2.48,
+        depth: 0.14,
+        position: new THREE.Vector3(lowerDoorWidth / 2, 0, 0),
+        material: cabinet,
+      }),
       lowerHandle,
     );
     this.object3D.add(lowerDoor);
@@ -113,9 +215,27 @@ class Oven extends Entity {
     const ovenDoor = new THREE.Group();
     ovenDoor.position.set(0, 2.53, 1.27);
     ovenDoor.add(
-      createBox({ width: width - 0.22, height: ovenDoorHeight, depth: 0.14, position: new THREE.Vector3(0, ovenDoorHeight / 2, 0), material: body }),
-      createBox({ width: width - 0.52, height: 1.16, depth: 0.08, position: new THREE.Vector3(0, ovenDoorHeight / 2 - 0.1, 0.12), material: glass }),
-      createBox({ width: width - 0.5, height: 0.12, depth: 0.12, position: new THREE.Vector3(0, ovenDoorHeight - 0.1, 0.16), material: metal }),
+      createBox({
+        width: width - 0.22,
+        height: ovenDoorHeight,
+        depth: 0.14,
+        position: new THREE.Vector3(0, ovenDoorHeight / 2, 0),
+        material: body,
+      }),
+      createBox({
+        width: width - 0.52,
+        height: 1.16,
+        depth: 0.08,
+        position: new THREE.Vector3(0, ovenDoorHeight / 2 - 0.1, 0.12),
+        material: glass,
+      }),
+      createBox({
+        width: width - 0.5,
+        height: 0.12,
+        depth: 0.12,
+        position: new THREE.Vector3(0, ovenDoorHeight - 0.1, 0.16),
+        material: metal,
+      }),
     );
     this.object3D.add(ovenDoor);
     this.panelManager.register({ panel: ovenDoor, index: 1, axis: "x", openRotation: Math.PI / 2 });
@@ -126,7 +246,13 @@ class Oven extends Entity {
     const upperHandle = createRoundedPullHandle({ material: metal, height: 0.72 });
     upperHandle.position.set(upperDoorWidth - 0.32, 0, 0.14);
     upperDoor.add(
-      createBox({ width: upperDoorWidth, height: 2.28, depth: 0.14, position: new THREE.Vector3(upperDoorWidth / 2, 0, 0), material: cabinet }),
+      createBox({
+        width: upperDoorWidth,
+        height: 2.28,
+        depth: 0.14,
+        position: new THREE.Vector3(upperDoorWidth / 2, 0, 0),
+        material: cabinet,
+      }),
       upperHandle,
     );
     this.object3D.add(upperDoor);

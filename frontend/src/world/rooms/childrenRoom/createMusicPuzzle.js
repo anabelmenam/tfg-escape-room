@@ -3,13 +3,12 @@ import { BoltCutters } from "../../objects/index.js";
 import { MusicPuzzle } from "../../puzzles/index.js";
 
 const createMusicPuzzle = ({ character, testMode, desk, onFocus, onAction }) => {
-  const boltCutters = character === "mum"
-    ? new BoltCutters({ onCollect: () => onAction?.("item.pickup", "bolt-cutters") })
-    : null;
+  const boltCutters =
+    character === "mum" ? new BoltCutters({ onCollect: () => onAction?.("item.pickup", "bolt-cutters") }) : null;
   if (boltCutters) {
-    boltCutters.object3D.position.set(0, .52, 0);
+    boltCutters.object3D.position.set(0, 0.52, 0);
     boltCutters.object3D.rotation.z = Math.PI / 2;
-    boltCutters.object3D.scale.setScalar(.55);
+    boltCutters.object3D.scale.setScalar(0.55);
   }
   const puzzle = new MusicPuzzle({
     character,

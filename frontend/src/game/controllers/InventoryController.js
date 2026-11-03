@@ -7,7 +7,12 @@ export class InventoryController {
     game.inventoryInspectionOpen = false;
     game.inventoryInspectionKey = null;
     game.player.inventory.onChange = (inventory) => {
-      const currentIds = new Set(inventory.getAll().filter(Boolean).map((item) => item.id));
+      const currentIds = new Set(
+        inventory
+          .getAll()
+          .filter(Boolean)
+          .map((item) => item.id),
+      );
       const added = [...currentIds].filter((id) => !this.knownIds.has(id));
       this.knownIds = currentIds;
       if (game.ready && added.length) game.gameAudio.playPickup();

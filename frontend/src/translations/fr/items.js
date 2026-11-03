@@ -66,7 +66,7 @@ const itemPairs = {
   "kitchen-napkin-blue": "serviette de Papa",
   "kitchen-napkin-green": "serviette d'Alba",
   "kitchen-napkin-ochre": "serviette de Jaime",
-    "family-note": "note familiale",
+  "family-note": "note familiale",
   mirror: "miroir",
   tap: "robinet",
   plant: "plante",
@@ -114,5 +114,5 @@ const itemPairs = {
 };
 
 export default {
-items: itemPairs
+  items: itemPairs,
 };

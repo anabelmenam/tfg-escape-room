@@ -12,11 +12,11 @@ const MEMORIES = [
 const MEMORY_PHOTO_IDS = MEMORIES.map((memory) => `children-memory-photo-${memory.id}`);
 const SLOT_POSITIONS = [
   [-2.45, 1.62],
-  [-.82, 2.55],
-  [.82, 1.82],
+  [-0.82, 2.55],
+  [0.82, 1.82],
   [2.45, 2.68],
 ];
-const SLOT_ROTATIONS = [-.09, .07, -.05, .1];
+const SLOT_ROTATIONS = [-0.09, 0.07, -0.05, 0.1];
 const MISSING_PIN_SLOT = 2;
 
 const createPhotoShadowMaterial = () => {
@@ -32,7 +32,7 @@ const createPhotoShadowMaterial = () => {
   context.strokeRect(14, 14, canvas.width - 28, canvas.height - 28);
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
-  return { texture, material: new THREE.MeshStandardMaterial({ map: texture, roughness: .95 }) };
+  return { texture, material: new THREE.MeshStandardMaterial({ map: texture, roughness: 0.95 }) };
 };
 
 class PhotoBoardPuzzle extends ChildrenPuzzle {
@@ -69,10 +69,10 @@ class PhotoBoardPuzzle extends ChildrenPuzzle {
       diaryTexture.colorSpace = THREE.SRGBColorSpace;
       const page = new THREE.Mesh(
         new THREE.PlaneGeometry(2.35, 3.5),
-        new THREE.MeshStandardMaterial({ map: diaryTexture, roughness: .94, side: THREE.DoubleSide }),
+        new THREE.MeshStandardMaterial({ map: diaryTexture, roughness: 0.94, side: THREE.DoubleSide }),
       );
       page.rotation.x = -Math.PI / 2;
-      page.position.y = .02;
+      page.position.y = 0.02;
       this.object3D.add(page);
       this.ownedTextures.push(diaryTexture);
       this.inventoryIcon = imagePath;
@@ -83,15 +83,15 @@ class PhotoBoardPuzzle extends ChildrenPuzzle {
     }
 
     const frame = new THREE.Mesh(
-      new RoundedBoxGeometry(7.2, 3.9, .28, 4, .08),
-      new THREE.MeshStandardMaterial({ color: 0x5b3826, roughness: .82 }),
+      new RoundedBoxGeometry(7.2, 3.9, 0.28, 4, 0.08),
+      new THREE.MeshStandardMaterial({ color: 0x5b3826, roughness: 0.82 }),
     );
     frame.position.y = 1.9;
     const cork = new THREE.Mesh(
-      new RoundedBoxGeometry(6.75, 3.45, .08, 3, .03),
-      new THREE.MeshStandardMaterial({ color: 0xb9824d, roughness: .96 }),
+      new RoundedBoxGeometry(6.75, 3.45, 0.08, 3, 0.03),
+      new THREE.MeshStandardMaterial({ color: 0xb9824d, roughness: 0.96 }),
     );
-    cork.position.set(0, 1.9, .18);
+    cork.position.set(0, 1.9, 0.18);
     this.object3D.add(frame, cork);
 
     const textureLoader = new THREE.TextureLoader();
@@ -99,7 +99,7 @@ class PhotoBoardPuzzle extends ChildrenPuzzle {
       const [x, y] = SLOT_POSITIONS[index];
       const shadowData = createPhotoShadowMaterial();
       const shadow = new THREE.Mesh(new THREE.PlaneGeometry(1.58, 1.18), shadowData.material);
-      shadow.position.set(x, y, .23);
+      shadow.position.set(x, y, 0.23);
       shadow.rotation.z = SLOT_ROTATIONS[index];
       markChildrenControl(shadow, { kind: "memory-slot", value: index });
       this.ownedTextures.push(shadowData.texture);
@@ -108,10 +108,10 @@ class PhotoBoardPuzzle extends ChildrenPuzzle {
       const photoTexture = textureLoader.load(memory.image);
       photoTexture.colorSpace = THREE.SRGBColorSpace;
       const photo = new THREE.Mesh(
-        new THREE.PlaneGeometry(1.42, .92),
-        new THREE.MeshStandardMaterial({ map: photoTexture, roughness: .92 }),
+        new THREE.PlaneGeometry(1.42, 0.92),
+        new THREE.MeshStandardMaterial({ map: photoTexture, roughness: 0.92 }),
       );
-      photo.position.set(x, y, .245);
+      photo.position.set(x, y, 0.245);
       photo.rotation.z = SLOT_ROTATIONS[index];
       photo.visible = false;
       markChildrenControl(photo, { kind: "memory-slot", value: index });
@@ -120,10 +120,10 @@ class PhotoBoardPuzzle extends ChildrenPuzzle {
       this.object3D.add(photo);
 
       const pin = new THREE.Mesh(
-        new THREE.SphereGeometry(.11, 16, 10),
-        new THREE.MeshStandardMaterial({ color: 0xb62f2f, roughness: .42 }),
+        new THREE.SphereGeometry(0.11, 16, 10),
+        new THREE.MeshStandardMaterial({ color: 0xb62f2f, roughness: 0.42 }),
       );
-      pin.position.set(x, y + .49, .32);
+      pin.position.set(x, y + 0.49, 0.32);
       pin.visible = index !== MISSING_PIN_SLOT;
       markChildrenControl(pin, { kind: "memory-slot", value: index });
       this.pins.push(pin);
@@ -131,11 +131,11 @@ class PhotoBoardPuzzle extends ChildrenPuzzle {
     });
 
     this.emptySocket = new THREE.Mesh(
-      new THREE.CircleGeometry(.065, 18),
-      new THREE.MeshStandardMaterial({ color: 0x291b14, roughness: .9, side: THREE.DoubleSide }),
+      new THREE.CircleGeometry(0.065, 18),
+      new THREE.MeshStandardMaterial({ color: 0x291b14, roughness: 0.9, side: THREE.DoubleSide }),
     );
     this.emptySocket.position.copy(this.pins[MISSING_PIN_SLOT].position);
-    this.emptySocket.position.z = .27;
+    this.emptySocket.position.z = 0.27;
     this.object3D.add(this.emptySocket);
     this.hinge = new THREE.Group();
     this.hinge.position.x = -3.6;
@@ -153,17 +153,17 @@ class PhotoBoardPuzzle extends ChildrenPuzzle {
   setHiddenReward(reward) {
     if (this.character !== "mum" || !this.hinge || !reward?.object3D) return;
     this.hiddenReward = reward;
-    reward.object3D.position.set(3.6, 1.76, -.19);
-    reward.object3D.rotation.set(0, 0, -.18);
+    reward.object3D.position.set(3.6, 1.76, -0.19);
+    reward.object3D.rotation.set(0, 0, -0.18);
     reward.object3D.scale.setScalar(1.8);
     reward.object3D.visible = false;
     reward.setEnabled(false);
     const tape = new THREE.Mesh(
-      new THREE.BoxGeometry(.48, .11, .012),
-      new THREE.MeshStandardMaterial({ color: 0xd9c79a, transparent: true, opacity: .68, roughness: .95 }),
+      new THREE.BoxGeometry(0.48, 0.11, 0.012),
+      new THREE.MeshStandardMaterial({ color: 0xd9c79a, transparent: true, opacity: 0.68, roughness: 0.95 }),
     );
-    tape.position.set(3.6, 1.88, -.225);
-    tape.rotation.z = -.08;
+    tape.position.set(3.6, 1.88, -0.225);
+    tape.rotation.z = -0.08;
     this.hinge.add(reward.object3D, tape);
   }
 
@@ -179,7 +179,7 @@ class PhotoBoardPuzzle extends ChildrenPuzzle {
   interact(player) {
     if (!this.available) return;
     if (this.character === "mum" && this.isSolved) {
-      this.setOpen(this.targetHingeAngle >= -.1);
+      this.setOpen(this.targetHingeAngle >= -0.1);
       return;
     }
     if (this.character === "dad") {
@@ -206,12 +206,7 @@ class PhotoBoardPuzzle extends ChildrenPuzzle {
   }
 
   handleControl(control, player) {
-    if (
-      this.character !== "mum"
-      || !this.available
-      || this.isSolved
-      || control?.kind !== "memory-slot"
-    ) return;
+    if (this.character !== "mum" || !this.available || this.isSolved || control?.kind !== "memory-slot") return;
 
     const slot = control.value;
     if (slot === MISSING_PIN_SLOT && !this.pinInserted) return;
@@ -283,7 +278,9 @@ class PhotoBoardPuzzle extends ChildrenPuzzle {
   getInteractionText(player) {
     if (!this.available) return null;
     if (this.character === "mum" && this.isSolved) {
-      return this.targetHingeAngle < -.1 ? tInteraction("close", tItem("noticeboard")) : tInteraction("open", tItem("noticeboard"));
+      return this.targetHingeAngle < -0.1
+        ? tInteraction("close", tItem("noticeboard"))
+        : tInteraction("open", tItem("noticeboard"));
     }
     if (this.character === "dad") return tInteraction("pickUp", tItem(this.itemName));
     if (this.character === "mum" && !this.pinInserted && player?.inventory.hasSelected("globe-pushpin")) {

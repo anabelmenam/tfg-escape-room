@@ -18,7 +18,9 @@ const createCandleCluster = ({ aged = false, scale = 1, count = 3 } = {}) => {
     const plateRim = finishMesh(new THREE.Mesh(new THREE.TorusGeometry(0.215, 0.025, 8, 24), plateMaterial));
     plateRim.position.set(x, 0.052, z);
     plateRim.rotation.x = Math.PI / 2;
-    const candle = finishMesh(new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.1, height, 16), material(aged ? 0x928d7f : 0xd8c9a7, 0.9)));
+    const candle = finishMesh(
+      new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.1, height, 16), material(aged ? 0x928d7f : 0xd8c9a7, 0.9)),
+    );
     candle.position.set(x, height / 2 + 0.055, z);
     const wick = finishMesh(new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.08, 8), material(0x28231f, 1)));
     wick.position.set(x, height + 0.09, z);

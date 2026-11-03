@@ -5,10 +5,12 @@ const sourceRoot = path.resolve("src");
 
 const collectSourceFiles = async (directory) => {
   const entries = await readdir(directory, { withFileTypes: true });
-  const nested = await Promise.all(entries.map((entry) => {
-    const entryPath = path.join(directory, entry.name);
-    return entry.isDirectory() ? collectSourceFiles(entryPath) : [entryPath];
-  }));
+  const nested = await Promise.all(
+    entries.map((entry) => {
+      const entryPath = path.join(directory, entry.name);
+      return entry.isDirectory() ? collectSourceFiles(entryPath) : [entryPath];
+    }),
+  );
   return nested.flat().filter((file) => /\.(js|jsx)$/.test(file));
 };
 
@@ -26,12 +28,15 @@ for (const file of await collectSourceFiles(sourceRoot)) {
   }
   if (file.endsWith(".jsx")) {
     const defaultExport = source.match(/export\s+default\s+([A-Z][A-Za-z0-9]*)/u)?.[1];
-    if (defaultExport && defaultExport !== basename) problems.push(`${relative}: el componente ${defaultExport} debe coincidir con el nombre del archivo`);
+    if (defaultExport && defaultExport !== basename)
+      problems.push(`${relative}: el componente ${defaultExport} debe coincidir con el nombre del archivo`);
   }
 }
 
 if (problems.length) {
-  console.error(`Se encontraron ${problems.length} nombres incoherentes:\n${problems.map((problem) => `- ${problem}`).join("\n")}`);
+  console.error(
+    `Se encontraron ${problems.length} nombres incoherentes:\n${problems.map((problem) => `- ${problem}`).join("\n")}`,
+  );
   process.exitCode = 1;
 } else {
   console.log("Nombres de archivos comprobados correctamente.");

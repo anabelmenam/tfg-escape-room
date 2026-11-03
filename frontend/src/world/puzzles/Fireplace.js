@@ -24,7 +24,10 @@ class Fireplace extends Entity {
     top.position.y = 1.225;
     const hearth = top.clone();
     hearth.position.y = -1.225;
-    const opening = new THREE.Mesh(new THREE.PlaneGeometry(2.5, 1.7), new THREE.MeshStandardMaterial({ color: 0x171312, roughness: 1 }));
+    const opening = new THREE.Mesh(
+      new THREE.PlaneGeometry(2.5, 1.7),
+      new THREE.MeshStandardMaterial({ color: 0x171312, roughness: 1 }),
+    );
     opening.position.set(0, -0.15, -cavityDepth / 2 + 0.07);
     const logMaterial = new THREE.MeshStandardMaterial({ color: 0x4a2518, roughness: 0.95 });
     for (const rotation of [-0.35, 0.35]) {
@@ -53,7 +56,9 @@ class Fireplace extends Entity {
 
   getInteractionText(player) {
     if (this.solved) return null;
-    return player?.hasSelected("living-room-match") ? tInteraction("light", tItem("fireplace")) : tInteraction("examine", tItem("fireplace"));
+    return player?.hasSelected("living-room-match")
+      ? tInteraction("light", tItem("fireplace"))
+      : tInteraction("examine", tItem("fireplace"));
   }
 
   getCollider() {

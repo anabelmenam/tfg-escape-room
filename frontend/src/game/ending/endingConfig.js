@@ -2,15 +2,15 @@ const ENDING_EXIT = {
   delay: 1.05,
   duration: 2.65,
   approachDistance: -1.45,
-  thresholdDistance: .75,
+  thresholdDistance: 0.75,
   endDistance: 4.8,
 };
 
 const ENDING_TOUR = {
   firstSceneDuration: 10,
   sceneDuration: 8,
-  transitionFadeDuration: .65,
-  revealDuration: .55,
+  transitionFadeDuration: 0.65,
+  revealDuration: 0.55,
   finalFadeDuration: 1.15,
 };
 

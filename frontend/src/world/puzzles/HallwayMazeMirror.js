@@ -31,16 +31,25 @@ class HallwayMazeMirror extends Entity {
     glass.position.z = 0.115;
     leaf.add(glass);
 
-    [[3.7, 0.18, 0, 1.77], [3.7, 0.18, 0, -1.77], [0.18, 3.7, -1.76, 0], [0.18, 3.7, 1.76, 0]]
-      .forEach(([width, height, x, y]) => {
-        const border = new THREE.Mesh(new THREE.BoxGeometry(width, height, 0.18), frameMaterial);
-        border.position.set(x, y, 0);
-        border.castShadow = true;
-        leaf.add(border);
-      });
+    [
+      [3.7, 0.18, 0, 1.77],
+      [3.7, 0.18, 0, -1.77],
+      [0.18, 3.7, -1.76, 0],
+      [0.18, 3.7, 1.76, 0],
+    ].forEach(([width, height, x, y]) => {
+      const border = new THREE.Mesh(new THREE.BoxGeometry(width, height, 0.18), frameMaterial);
+      border.position.set(x, y, 0);
+      border.castShadow = true;
+      leaf.add(border);
+    });
 
     const screwMaterial = new THREE.MeshStandardMaterial({ color: 0x858a88, metalness: 0.9, roughness: 0.2 });
-    this.screws = [[-1.55, 1.55], [1.55, 1.55], [-1.55, -1.55], [1.55, -1.55]].map(([x, y]) => {
+    this.screws = [
+      [-1.55, 1.55],
+      [1.55, 1.55],
+      [-1.55, -1.55],
+      [1.55, -1.55],
+    ].map(([x, y]) => {
       const screw = new THREE.Group();
       const head = new THREE.Mesh(new THREE.CylinderGeometry(0.075, 0.075, 0.035, 18), screwMaterial);
       head.rotation.x = Math.PI / 2;
@@ -68,7 +77,9 @@ class HallwayMazeMirror extends Entity {
 
   setReleased(released) {
     this.isReleased = Boolean(released);
-    this.screws.forEach((screw) => { screw.visible = this.showScrews && !this.isReleased; });
+    this.screws.forEach((screw) => {
+      screw.visible = this.showScrews && !this.isReleased;
+    });
   }
 
   setOpen(open, { notify = false } = {}) {
@@ -101,7 +112,12 @@ class HallwayMazeMirror extends Entity {
   }
 
   update(deltaTime) {
-    this.hinge.rotation.y = THREE.MathUtils.damp(this.hinge.rotation.y, this.isOpen ? -Math.PI * 0.82 : 0, 3, deltaTime);
+    this.hinge.rotation.y = THREE.MathUtils.damp(
+      this.hinge.rotation.y,
+      this.isOpen ? -Math.PI * 0.82 : 0,
+      3,
+      deltaTime,
+    );
   }
 }
 

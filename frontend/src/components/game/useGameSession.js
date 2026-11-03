@@ -3,11 +3,31 @@ import { io } from "socket.io-client";
 import { Game } from "../../game/Game.js";
 import { GAME_SOCKET_URL } from "../../services/gameApi.js";
 
-const emitAction = (socket, type, targetId, payload) => socket?.emit("game:action", {
-  actionId: crypto.randomUUID(), type, targetId, ...(payload ? { payload } : {}),
-});
+const emitAction = (socket, type, targetId, payload) =>
+  socket?.emit("game:action", {
+    actionId: crypto.randomUUID(),
+    type,
+    targetId,
+    ...(payload ? { payload } : {}),
+  });
 
-const useGameSession = ({ containerRef, gameRef, socketRef, playerRole, session, isAdmin, audioController, endingSequence, setIsLoading, setIsPaused, setPauseView, setDiaryEntries, setHintHistory, setCompanionConnected, setPlayTimer }) => {
+const useGameSession = ({
+  containerRef,
+  gameRef,
+  socketRef,
+  playerRole,
+  session,
+  isAdmin,
+  audioController,
+  endingSequence,
+  setIsLoading,
+  setIsPaused,
+  setPauseView,
+  setDiaryEntries,
+  setHintHistory,
+  setCompanionConnected,
+  setPlayTimer,
+}) => {
   const { handleHallwayAction, handleEndingChange, startEndingReplay, reset } = endingSequence;
 
   useEffect(() => {
@@ -15,7 +35,9 @@ const useGameSession = ({ containerRef, gameRef, socketRef, playerRole, session,
     if (!container) return undefined;
     let active = true;
     const localSession = session.testMode || session.endingReplay;
-    const socket = localSession ? null : io(GAME_SOCKET_URL, { auth: { roomId: session.roomId, playerToken: session.playerToken } });
+    const socket = localSession
+      ? null
+      : io(GAME_SOCKET_URL, { auth: { roomId: session.roomId, playerToken: session.playerToken } });
     socketRef.current = socket;
     let companionIsConnected = localSession;
     let pausedForCompanion = false;
@@ -48,13 +70,22 @@ const useGameSession = ({ containerRef, gameRef, socketRef, playerRole, session,
           game.pause();
           pausedForCompanion = true;
         }
-        if (session.endingReplay) window.setTimeout(() => { if (active) startEndingReplay(game); }, 250);
+        if (session.endingReplay)
+          window.setTimeout(() => {
+            if (active) startEndingReplay(game);
+          }, 250);
       },
       onPauseRequest: () => {
         if (!active) return;
         if (!localSession && !companionIsConnected) return;
-        if (game.paused) { game.resume(); setIsPaused(false); return; }
-        game.pause(); setPauseView("menu"); setIsPaused(true);
+        if (game.paused) {
+          game.resume();
+          setIsPaused(false);
+          return;
+        }
+        game.pause();
+        setPauseView("menu");
+        setIsPaused(true);
       },
       onHallwayAction: (type, targetId, payload = {}) => handleHallwayAction(game, socket, type, targetId, payload),
       onBedroomAction: (type, targetId, payload = {}) => emitAction(socket, type, targetId, payload),
@@ -100,7 +131,26 @@ const useGameSession = ({ containerRef, gameRef, socketRef, playerRole, session,
       socket?.disconnect();
       game.dispose();
     };
-  }, [audioController, containerRef, gameRef, handleEndingChange, handleHallwayAction, isAdmin, playerRole, reset, session, setCompanionConnected, setDiaryEntries, setHintHistory, setIsLoading, setIsPaused, setPauseView, setPlayTimer, socketRef, startEndingReplay]);
+  }, [
+    audioController,
+    containerRef,
+    gameRef,
+    handleEndingChange,
+    handleHallwayAction,
+    isAdmin,
+    playerRole,
+    reset,
+    session,
+    setCompanionConnected,
+    setDiaryEntries,
+    setHintHistory,
+    setIsLoading,
+    setIsPaused,
+    setPauseView,
+    setPlayTimer,
+    socketRef,
+    startEndingReplay,
+  ]);
 };
 
 export default useGameSession;

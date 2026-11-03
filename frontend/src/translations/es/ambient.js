@@ -1,5 +1,5 @@
 export default {
-ambient: {
+  ambient: {
     plant: "La tierra está húmeda. Parece que alguien la ha regado hace muy poco.",
     vase: "Las flores siguen frescas. Alguien cuidaba esta casa hasta hace muy poco.",
     oldVase: "El polvo dibuja un círculo limpio alrededor de la base. El jarrón ha sido movido recientemente.",
@@ -32,5 +32,5 @@ ambient: {
     decorativeGlobe: "El mapa contiene ciudades en lugares distintos. Las fronteras no coinciden con las que conoces.",
     artSupplies: "Los lápices están gastados y hay trazos del mismo dibujo repetidos en varios colores.",
     plateStack: "Todos los platos están limpios salvo uno, que conserva una fina marca de comida.",
-  }
+  },
 };

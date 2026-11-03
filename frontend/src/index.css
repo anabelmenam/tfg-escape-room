@@ -2,6 +2,50 @@
 @tailwind components;
 @tailwind utilities;
 
+.lobby-panel {
+  scrollbar-color: #675641 transparent;
+  scrollbar-width: thin;
+}
+
+.lobby-panel::-webkit-scrollbar {
+  width: 8px;
+}
+
+.lobby-panel::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: #675641;
+}
+
+@media (max-height: 800px) {
+  .lobby-menu-eyebrow {
+    margin-bottom: .25rem;
+  }
+
+  .lobby-menu-logo {
+    max-width: 13rem;
+    margin-bottom: .5rem;
+  }
+
+  .lobby-menu-tagline {
+    margin-bottom: 1rem;
+    line-height: 1.4;
+  }
+
+  .lobby-menu-actions {
+    gap: .5rem;
+  }
+
+  .lobby-menu-button {
+    padding-top: .55rem;
+    padding-bottom: .55rem;
+  }
+
+  .lobby-menu-footer {
+    margin-top: 1rem;
+    padding-top: .75rem;
+  }
+}
+
 @keyframes ending-light-bloom {
   0% { clip-path: circle(0% at 50% 50%); }
   100% { clip-path: circle(150vmax at 50% 50%); }

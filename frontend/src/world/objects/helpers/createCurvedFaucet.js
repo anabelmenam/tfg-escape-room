@@ -1,12 +1,6 @@
 import * as THREE from "three";
 
-const createCurvedFaucet = ({
-  material,
-  surfaceY = 0,
-  baseZ = -0.67,
-  reach = 0.76,
-  height = 0.57,
-} = {}) => {
+const createCurvedFaucet = ({ material, surfaceY = 0, baseZ = -0.67, reach = 0.76, height = 0.57 } = {}) => {
   const faucet = new THREE.Group();
   faucet.name = "sink-faucet";
 

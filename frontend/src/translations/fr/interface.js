@@ -1,5 +1,5 @@
 export default {
-ui: {
+  ui: {
     language: "Langue",
     spanish: "Espagnol",
     english: "Anglais",
@@ -18,7 +18,7 @@ ui: {
     closeInspection: "Appuyez sur × pour fermer",
     playTime: "Temps de jeu",
   },
-settingsScreen: {
+  settingsScreen: {
     title: "Configurez votre expérience",
     description: "Les modifications s'appliquent immédiatement et sont enregistrées pour la prochaine partie.",
     game: "Jeu",
@@ -29,9 +29,9 @@ settingsScreen: {
     interaction: "Interactions et objets",
     interface: "Vue et menus",
   },
-menu: {
+  menu: {
     cooperative: "Escape game coopératif",
-    title: "La maison entre les souvenirs",
+    title: "La maison entre deux mondes",
     tagline: "Deux joueurs. Deux personnages. Une maison qui ne révèle jamais toute la vérité.",
     play: "Jouer",
     settings: "Réglages",
@@ -101,7 +101,7 @@ menu: {
     soundSettings: "Réglages du son",
     instantChanges: "Les modifications s'appliquent instantanément et sont enregistrées pour la prochaine partie.",
   },
-account: {
+  account: {
     login: "Se connecter",
     register: "Créer un compte",
     name: "Nom",
@@ -115,7 +115,8 @@ account: {
     registerAction: "Créer le compte",
     forgotPassword: "Mot de passe oublié ?",
     forgotTitle: "Réinitialiser le mot de passe",
-    forgotDescription: "Saisissez votre adresse e-mail et nous vous enverrons un lien pour créer un nouveau mot de passe.",
+    forgotDescription:
+      "Saisissez votre adresse e-mail et nous vous enverrons un lien pour créer un nouveau mot de passe.",
     forgotAction: "Envoyer le lien",
     resetEmailSent: "Si un compte existe pour cette adresse, vous recevrez un lien dans quelques minutes.",
     resetTitle: "Nouveau mot de passe",
@@ -155,7 +156,7 @@ account: {
       generic: "L'opération n'a pas pu être effectuée.",
     },
   },
-adminUsers: {
+  adminUsers: {
     menu: "Utilisateurs",
     eyebrow: "Administration",
     title: "Utilisateurs inscrits",
@@ -171,7 +172,7 @@ adminUsers: {
     deleteConfirm: "Le compte de {name} sera définitivement supprimé. Continuer ?",
     roles: { player: "Joueur", admin: "Administrateur" },
   },
-roomLobby: {
+  roomLobby: {
     connecting: "Connexion à la salle…",
     connected: "Connecté",
     connectionFailed: "Impossible de se connecter à la salle",
@@ -193,5 +194,5 @@ roomLobby: {
     waiting: "En attente du lancement par la personne qui a créé la salle.",
     chooseError: "Impossible de sélectionner ce personnage.",
     startError: "Impossible de lancer la partie.",
-  }
+  },
 };

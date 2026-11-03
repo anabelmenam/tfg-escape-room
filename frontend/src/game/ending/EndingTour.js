@@ -10,10 +10,34 @@ const applySolvedHouseState = (game) => {
       ...extra,
     };
   };
-  ["bedroom-radio", "bedroom-sewing-box", "hallway-clock", "bathroom-hot-water", "children-blocks", "children-music-key", "children-globe-pin", "children-globe", "children-wardrobe-chains", "living-room-painting", "living-room-embers", "kitchen-oven"].forEach((id) => solved("mum", id));
-  ["bedroom-family-photo", "bedroom-electrical-panel", "bedroom-light-reveal-puzzle", "hallway-maze", "living-room-rainbow-books", "children-music", "kitchen-stove", "bathroom-sequence"].forEach((id) => solved("dad", id));
+  [
+    "bedroom-radio",
+    "bedroom-sewing-box",
+    "hallway-clock",
+    "bathroom-hot-water",
+    "children-blocks",
+    "children-music-key",
+    "children-globe-pin",
+    "children-globe",
+    "children-wardrobe-chains",
+    "living-room-painting",
+    "living-room-embers",
+    "kitchen-oven",
+  ].forEach((id) => solved("mum", id));
+  [
+    "bedroom-family-photo",
+    "bedroom-electrical-panel",
+    "bedroom-light-reveal-puzzle",
+    "hallway-maze",
+    "living-room-rainbow-books",
+    "children-music",
+    "kitchen-stove",
+    "bathroom-sequence",
+  ].forEach((id) => solved("dad", id));
   solved("dad", "kitchen-recipe", { placements: ["kitchen-tomatoes", "kitchen-carrots", "kitchen-cheese"] });
-  solved("dad", "kitchen-family-table", { placements: ["kitchen-napkin-red", "kitchen-napkin-green", "kitchen-napkin-blue", "kitchen-napkin-ochre"] });
+  solved("dad", "kitchen-family-table", {
+    placements: ["kitchen-napkin-red", "kitchen-napkin-green", "kitchen-napkin-blue", "kitchen-napkin-ochre"],
+  });
   solved("dad", "bathroom-mosaic", { tileInserted: true });
   cleanState.characters.mum.objects["living-room-painting-slot"] = { placed: true, restoredPieces: [0, 1] };
   cleanState.characters.dad.objects["living-room-sofa-cushion"] = { cut: true, searched: true };

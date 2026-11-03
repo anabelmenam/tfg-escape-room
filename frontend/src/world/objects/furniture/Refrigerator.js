@@ -30,22 +30,70 @@ class Refrigerator extends Entity {
       createBox({ width: 3.14, height: 0.18, depth: 3, position: new THREE.Vector3(0, 7.11, 0), material: body }),
       createBox({ width: 3.14, height: 0.16, depth: 2.85, position: new THREE.Vector3(0, 2.22, 0), material: body }),
       createBox({ width: 3.14, height: 7.02, depth: 0.16, position: new THREE.Vector3(0, 3.6, -1.42), material: body }),
-      createBox({ width: 3.06, height: 4.55, depth: 0.1, position: new THREE.Vector3(0, 4.72, -1.38), material: interior }),
-      createBox({ width: 0.12, height: 4.55, depth: 2.65, position: new THREE.Vector3(-1.5, 4.72, 0), material: interior }),
-      createBox({ width: 0.12, height: 4.55, depth: 2.65, position: new THREE.Vector3(1.5, 4.72, 0), material: interior }),
-      createBox({ width: 3.04, height: 1.86, depth: 0.1, position: new THREE.Vector3(0, 1.16, -1.37), material: shadow }),
-      createBox({ width: 0.1, height: 1.86, depth: 2.62, position: new THREE.Vector3(-1.5, 1.16, 0), material: shadow }),
+      createBox({
+        width: 3.06,
+        height: 4.55,
+        depth: 0.1,
+        position: new THREE.Vector3(0, 4.72, -1.38),
+        material: interior,
+      }),
+      createBox({
+        width: 0.12,
+        height: 4.55,
+        depth: 2.65,
+        position: new THREE.Vector3(-1.5, 4.72, 0),
+        material: interior,
+      }),
+      createBox({
+        width: 0.12,
+        height: 4.55,
+        depth: 2.65,
+        position: new THREE.Vector3(1.5, 4.72, 0),
+        material: interior,
+      }),
+      createBox({
+        width: 3.04,
+        height: 1.86,
+        depth: 0.1,
+        position: new THREE.Vector3(0, 1.16, -1.37),
+        material: shadow,
+      }),
+      createBox({
+        width: 0.1,
+        height: 1.86,
+        depth: 2.62,
+        position: new THREE.Vector3(-1.5, 1.16, 0),
+        material: shadow,
+      }),
       createBox({ width: 0.1, height: 1.86, depth: 2.62, position: new THREE.Vector3(1.5, 1.16, 0), material: shadow }),
     );
 
     [3.25, 4.45, 5.65].forEach((y) => {
       this.object3D.add(
-        createBox({ width: 2.86, height: 0.08, depth: 2.42, position: new THREE.Vector3(0, y, 0.08), material: shelfMaterial }),
-        createBox({ width: 2.86, height: 0.07, depth: 0.08, position: new THREE.Vector3(0, y + 0.08, 1.28), material: trim }),
+        createBox({
+          width: 2.86,
+          height: 0.08,
+          depth: 2.42,
+          position: new THREE.Vector3(0, y, 0.08),
+          material: shelfMaterial,
+        }),
+        createBox({
+          width: 2.86,
+          height: 0.07,
+          depth: 0.08,
+          position: new THREE.Vector3(0, y + 0.08, 1.28),
+          material: trim,
+        }),
       );
     });
     this.object3D.add(
-      createBox({ width: 2.72, height: 0.75, depth: 1.95, position: new THREE.Vector3(0, 2.72, 0.18), material: shelfMaterial }),
+      createBox({
+        width: 2.72,
+        height: 0.75,
+        depth: 1.95,
+        position: new THREE.Vector3(0, 2.72, 0.18),
+        material: shelfMaterial,
+      }),
       createBox({ width: 2.86, height: 0.08, depth: 2.4, position: new THREE.Vector3(0, 1.05, 0.08), material: trim }),
     );
 
@@ -55,13 +103,31 @@ class Refrigerator extends Entity {
       door.position.set(-width / 2, y, 1.59);
       door.add(
         createBox({ width, height, depth: 0.14, position: new THREE.Vector3(width / 2, 0, 0), material: body }),
-        createBox({ width: 0.13, height: Math.min(1.45, height * 0.55), depth: 0.13, position: new THREE.Vector3(width - 0.35, handleY, 0.16), material: trim }),
+        createBox({
+          width: 0.13,
+          height: Math.min(1.45, height * 0.55),
+          depth: 0.13,
+          position: new THREE.Vector3(width - 0.35, handleY, 0.16),
+          material: trim,
+        }),
       );
       const binLevels = index === 0 ? [-1.45, -0.15, 1.15] : [-0.28, 0.38];
       binLevels.forEach((binY) => {
         door.add(
-          createBox({ width: width - 0.48, height: 0.08, depth: 0.42, position: new THREE.Vector3(width / 2, binY, -0.23), material: interior }),
-          createBox({ width: width - 0.48, height: 0.25, depth: 0.07, position: new THREE.Vector3(width / 2, binY + 0.12, -0.43), material: shelfMaterial }),
+          createBox({
+            width: width - 0.48,
+            height: 0.08,
+            depth: 0.42,
+            position: new THREE.Vector3(width / 2, binY, -0.23),
+            material: interior,
+          }),
+          createBox({
+            width: width - 0.48,
+            height: 0.25,
+            depth: 0.07,
+            position: new THREE.Vector3(width / 2, binY + 0.12, -0.43),
+            material: shelfMaterial,
+          }),
         );
       });
       this.object3D.add(door);

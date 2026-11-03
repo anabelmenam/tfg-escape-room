@@ -154,8 +154,12 @@ const createBedroom = async ({
     objectColliders: assembly.objectColliders,
     bounds,
     door,
-    addStoryNote: (object3D) => (character === "mum" ? furniture.nightstand1 : furniture.nightstand2)
-      .addObjectToDrawer(1, object3D, new THREE.Vector3(0, -.16, -.52)),
+    addStoryNote: (object3D) =>
+      (character === "mum" ? furniture.nightstand1 : furniture.nightstand2).addObjectToDrawer(
+        1,
+        object3D,
+        new THREE.Vector3(0, -0.16, -0.52),
+      ),
     applyBedroomState: (state) => {
       powerPuzzles.applyState(state);
       radioPuzzle.applyState(state);
@@ -163,8 +167,9 @@ const createBedroom = async ({
         flashlight.object3D.visible = false;
         flashlight.setEnabled(false);
       }
-      const fuseUsed = Boolean(state.characters?.dad?.objects?.["bedroom-electrical-panel"]?.hasFuse)
-        || Boolean(state.characters?.dad?.puzzles?.["bedroom-electrical-panel"]?.solved);
+      const fuseUsed =
+        Boolean(state.characters?.dad?.objects?.["bedroom-electrical-panel"]?.hasFuse) ||
+        Boolean(state.characters?.dad?.puzzles?.["bedroom-electrical-panel"]?.solved);
       if (items.fuse && (state.inventories?.dad?.includes("fuse") || fuseUsed)) {
         items.fuse.object3D.visible = false;
         items.fuse.setEnabled(false);

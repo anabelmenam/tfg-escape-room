@@ -14,18 +14,18 @@ const createLivingRoomFixtures = ({
   onDoorOpenChange,
   onAction,
 }) => {
-  const kitchenOpening = kitchenEntrance
-    ? passageOpenings.find((opening) => opening.id === kitchenEntrance.id)
-    : null;
+  const kitchenOpening = kitchenEntrance ? passageOpenings.find((opening) => opening.id === kitchenEntrance.id) : null;
   const kitchenDoor = kitchenOpening
     ? new Door({
         id: "living-room-kitchen-door",
-        position: kitchenOpening.position.clone().add(
-          new THREE.Vector3(-kitchenOpening.width / 2, 0, 0).applyAxisAngle(
-            new THREE.Vector3(0, 1, 0),
-            kitchenOpening.rotationY,
+        position: kitchenOpening.position
+          .clone()
+          .add(
+            new THREE.Vector3(-kitchenOpening.width / 2, 0, 0).applyAxisAngle(
+              new THREE.Vector3(0, 1, 0),
+              kitchenOpening.rotationY,
+            ),
           ),
-        ),
         rotationY: kitchenOpening.rotationY,
         requiredKey: testMode ? null : character === "mum" ? "crowbar" : null,
         locked: !testMode,
@@ -47,9 +47,7 @@ const createLivingRoomFixtures = ({
       }),
   );
 
-  const blueKey = doorOpening
-    ? new Key({ id: "blue-key", position: new THREE.Vector3(0, 2, -2) })
-    : null;
+  const blueKey = doorOpening ? new Key({ id: "blue-key", position: new THREE.Vector3(0, 2, -2) }) : null;
   const door = doorOpening
     ? new Door({
         id: "living-room-exit-door",
@@ -80,9 +78,10 @@ const createLivingRoomFixtures = ({
   const ambientLight = new THREE.AmbientLight(0xffffff, 0.15);
 
   const applyState = (state) => {
-    const kitchenDoorUnlocked = ["mum", "dad"].some((era) =>
-      state.characters?.[era]?.objects?.["living-room-kitchen-door"]?.locked === false
-      || state.characters?.[era]?.objects?.["hallway-kitchen-door"]?.locked === false,
+    const kitchenDoorUnlocked = ["mum", "dad"].some(
+      (era) =>
+        state.characters?.[era]?.objects?.["living-room-kitchen-door"]?.locked === false ||
+        state.characters?.[era]?.objects?.["hallway-kitchen-door"]?.locked === false,
     );
     if (kitchenDoorUnlocked) kitchenDoor?.unlock({ notify: false });
   };

@@ -48,16 +48,9 @@ const assembleBedroom = ({
 
   const optional = (value) => (value ? [value] : []);
   return {
-    objectColliders: [
-      bed,
-      nightstand1,
-      nightstand2,
-      wardrobe,
-      desk,
-      chair,
-      cabinet,
-      ...windows,
-    ].map((object) => object.getCollider()),
+    objectColliders: [bed, nightstand1, nightstand2, wardrobe, desk, chair, cabinet, ...windows].map((object) =>
+      object.getCollider(),
+    ),
     interactables: [
       door,
       lightSwitch1,

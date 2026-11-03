@@ -26,13 +26,18 @@ class Crowbar extends Entity {
     ]);
     const hookedEnd = new THREE.Mesh(new THREE.TubeGeometry(hookCurve, 40, 0.1, 14, false), paintedSteel);
     const hookTip = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.34, 0.16), bareSteel);
-    hookTip.position.set(0.59, 1.56, 0); hookTip.rotation.z = -0.18;
+    hookTip.position.set(0.59, 1.56, 0);
+    hookTip.rotation.z = -0.18;
 
     const neck = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.46, 0.18), darkSteel);
-    neck.position.set(0, -1.68, 0); neck.rotation.z = -0.13;
+    neck.position.set(0, -1.68, 0);
+    neck.rotation.z = -0.13;
     const leftProng = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.68, 0.17), bareSteel);
-    leftProng.position.set(-0.15, -1.98, 0); leftProng.rotation.z = -0.2;
-    const rightProng = leftProng.clone(); rightProng.position.x = 0.15; rightProng.rotation.z = 0.2;
+    leftProng.position.set(-0.15, -1.98, 0);
+    leftProng.rotation.z = -0.2;
+    const rightProng = leftProng.clone();
+    rightProng.position.x = 0.15;
+    rightProng.rotation.z = 0.2;
     const collar = new THREE.Mesh(new THREE.CylinderGeometry(0.125, 0.125, 0.18, 20), darkSteel);
     collar.position.y = -1.47;
 

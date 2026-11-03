@@ -13,10 +13,10 @@ class FinalThreshold extends Entity {
     this.object3D.name = this.id;
 
     const interactionZone = new THREE.Mesh(
-      new THREE.BoxGeometry(4.8, 7.6, .5),
+      new THREE.BoxGeometry(4.8, 7.6, 0.5),
       new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false }),
     );
-    interactionZone.position.set(0, 0, .25);
+    interactionZone.position.set(0, 0, 0.25);
     this.object3D.add(interactionZone);
     this.setEnabled(false);
   }

@@ -6,7 +6,10 @@ const LanguageSettings = ({ onChange = null }) => (
     <select
       className="w-full rounded border border-amber-100/25 bg-[#120e0d] px-3 py-2 text-amber-50"
       value={getLanguage()}
-      onChange={(event) => { setLanguage(event.target.value); onChange?.(event.target.value); }}
+      onChange={(event) => {
+        setLanguage(event.target.value);
+        onChange?.(event.target.value);
+      }}
     >
       <option value="es">{t("ui.spanish")}</option>
       <option value="en">{t("ui.english")}</option>

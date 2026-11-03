@@ -4,14 +4,15 @@ import { MEMORIES, MEMORY_PHOTO_IDS, PhotoBoardPuzzle } from "../../puzzles/inde
 
 const createPhotoBoardPuzzle = ({ character, furniture, onFocus, onAction, onSolved }) => {
   const { dresser, wardrobes, desks } = furniture;
-  const musicBoxKey = character === "mum"
-    ? new Key({
-        id: "music-box-key",
-        color: 0xd6a43b,
-        scalar: 1.1,
-        onCollect: () => onAction?.("item.pickup", "music-box-key"),
-      })
-    : null;
+  const musicBoxKey =
+    character === "mum"
+      ? new Key({
+          id: "music-box-key",
+          color: 0xd6a43b,
+          scalar: 1.1,
+          onCollect: () => onAction?.("item.pickup", "music-box-key"),
+        })
+      : null;
   if (musicBoxKey) {
     musicBoxKey.object3D.visible = false;
     musicBoxKey.setEnabled(false);
@@ -33,26 +34,30 @@ const createPhotoBoardPuzzle = ({ character, furniture, onFocus, onAction, onSol
     puzzle.object3D.scale.setScalar(0.7);
   } else {
     puzzle.object3D.scale.setScalar(0.5);
-    puzzle.object3D.rotation.z = -.08;
-    desks[0].addObjectToDrawer(0, puzzle.object3D, new THREE.Vector3(0, -.28, -1.05));
+    puzzle.object3D.rotation.z = -0.08;
+    desks[0].addObjectToDrawer(0, puzzle.object3D, new THREE.Vector3(0, -0.28, -1.05));
   }
   if (musicBoxKey) puzzle.setHiddenReward(musicBoxKey);
 
-  const photos = character === "mum"
-    ? MEMORIES.map((memory, index) => new Paper({
-        id: MEMORY_PHOTO_IDS[index],
-        width: 1.42,
-        height: 0.92,
-        rotation: new THREE.Euler(-Math.PI / 2, 0, index % 2 === 0 ? -0.08 : 0.1),
-        imagePath: memory.image,
-        imageFit: "cover",
-        imagePadding: 0,
-        collectible: true,
-        itemName: `memory-photo-${memory.id}`,
-        inspectionTitle: `foto de ${memory.name.toLocaleLowerCase("es")}`,
-        onCollect: () => onAction?.("item.pickup", MEMORY_PHOTO_IDS[index]),
-      }))
-    : [];
+  const photos =
+    character === "mum"
+      ? MEMORIES.map(
+          (memory, index) =>
+            new Paper({
+              id: MEMORY_PHOTO_IDS[index],
+              width: 1.42,
+              height: 0.92,
+              rotation: new THREE.Euler(-Math.PI / 2, 0, index % 2 === 0 ? -0.08 : 0.1),
+              imagePath: memory.image,
+              imageFit: "cover",
+              imagePadding: 0,
+              collectible: true,
+              itemName: `memory-photo-${memory.id}`,
+              inspectionTitle: `foto de ${memory.name.toLocaleLowerCase("es")}`,
+              onCollect: () => onAction?.("item.pickup", MEMORY_PHOTO_IDS[index]),
+            }),
+        )
+      : [];
   if (photos.length) {
     dresser.addObjectToDrawer(5, photos[0].object3D, new THREE.Vector3(0, -0.16, -0.72));
     wardrobes[1].addObjectToDrawer(0, photos[1].object3D, new THREE.Vector3(0, -0.405, -1.1));

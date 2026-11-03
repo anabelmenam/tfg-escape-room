@@ -1,5 +1,5 @@
 export default {
-interactions: {
+  interactions: {
     pressButton: () => "[E] Presionar botón",
     pressSwitch: () => "[E] Presionar interruptor",
     turnOnLamp: () => "[E] Encender lámpara",
@@ -27,5 +27,5 @@ interactions: {
     exit: () => "[E] Salir",
     mazeTitle: () => "Resuelve el laberinto",
     mazeSolution: () => "El camino de la llave",
-  }
+  },
 };

@@ -263,7 +263,6 @@ class Wardrobe extends Entity {
   }
 
   createDoor({ index, side }) {
-
     const door = new THREE.Group();
 
     const isLeftDoor = side === "left";

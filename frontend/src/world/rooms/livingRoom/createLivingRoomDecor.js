@@ -8,21 +8,21 @@ import {
 
 const shelfDecorLayout = [
   [
-    { kind: "books", shelf: 0, x: -2.7, scale: 1.05, variant: 0, rotationY: -.08 },
-    { kind: "vase", shelf: 0, x: 2.55, scale: .8 },
-    { kind: "candles", shelf: 2, x: -2.7, scale: .95 },
+    { kind: "books", shelf: 0, x: -2.7, scale: 1.05, variant: 0, rotationY: -0.08 },
+    { kind: "vase", shelf: 0, x: 2.55, scale: 0.8 },
+    { kind: "candles", shelf: 2, x: -2.7, scale: 0.95 },
   ],
   [
-    { kind: "candles", shelf: 0, x: 2.65, scale: .9 },
-    { kind: "vase", shelf: 2, x: -2.75, scale: .72 },
-    { kind: "books", shelf: 2, x: 2.35, scale: 1.02, variant: 1, rotationY: .11 },
-    { kind: "candles", shelf: 3, x: 0, scale: .92 },
+    { kind: "candles", shelf: 0, x: 2.65, scale: 0.9 },
+    { kind: "vase", shelf: 2, x: -2.75, scale: 0.72 },
+    { kind: "books", shelf: 2, x: 2.35, scale: 1.02, variant: 1, rotationY: 0.11 },
+    { kind: "candles", shelf: 3, x: 0, scale: 0.92 },
   ],
   [
-    { kind: "books", shelf: 0, x: -2.55, scale: .96, variant: 2, rotationY: -.04 },
-    { kind: "vase", shelf: 0, x: 2.65, scale: .76 },
-    { kind: "candles", shelf: 2, x: -2.65, scale: .9 },
-    { kind: "vase", shelf: 3, x: 0, scale: .68 },
+    { kind: "books", shelf: 0, x: -2.55, scale: 0.96, variant: 2, rotationY: -0.04 },
+    { kind: "vase", shelf: 0, x: 2.65, scale: 0.76 },
+    { kind: "candles", shelf: 2, x: -2.65, scale: 0.9 },
+    { kind: "vase", shelf: 3, x: 0, scale: 0.68 },
   ],
 ];
 
@@ -45,7 +45,7 @@ const decorateShelves = (shelves) => {
 const createLivingRoomDecor = ({ shelves, cabinet, hasEntrance }) => {
   decorateShelves(shelves);
 
-  const cabinetVase = createVase({ aged: false, scale: .82 });
+  const cabinetVase = createVase({ aged: false, scale: 0.82 });
   cabinetVase.position.set(0, 3.01, 0);
   cabinet.object3D.add(cabinetVase);
 
@@ -55,7 +55,7 @@ const createLivingRoomDecor = ({ shelves, cabinet, hasEntrance }) => {
   const frames = hasEntrance
     ? createWallFrameCluster({
         aged: false,
-        scale: .95,
+        scale: 0.95,
         imagePaths: [
           "/images/decor/family-breakfast.png",
           "/images/decor/family-picnic.png",

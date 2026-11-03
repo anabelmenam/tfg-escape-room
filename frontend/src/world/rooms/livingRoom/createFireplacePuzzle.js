@@ -6,7 +6,7 @@ const drawAgedRiddle = (context, canvas) => {
   const edge = 42;
   context.fillStyle = "#d8bf83";
   context.fillRect(0, 0, width, height);
-  const stain = context.createRadialGradient(width * .18, height * .15, 10, width * .18, height * .15, width * .7);
+  const stain = context.createRadialGradient(width * 0.18, height * 0.15, 10, width * 0.18, height * 0.15, width * 0.7);
   stain.addColorStop(0, "rgba(111, 67, 28, 0.16)");
   stain.addColorStop(1, "rgba(111, 67, 28, 0)");
   context.fillStyle = stain;
@@ -33,8 +33,8 @@ const drawAgedRiddle = (context, canvas) => {
   context.strokeStyle = "rgba(87, 45, 23, 0.5)";
   context.lineWidth = 2;
   context.beginPath();
-  context.moveTo(width * .25, height - 87);
-  context.quadraticCurveTo(width * .5, height - 63, width * .75, height - 87);
+  context.moveTo(width * 0.25, height - 87);
+  context.quadraticCurveTo(width * 0.5, height - 63, width * 0.75, height - 87);
   context.stroke();
   context.font = "italic 34px Georgia, serif";
   context.fillText("— La familia", width / 2, height - 52);
@@ -49,25 +49,28 @@ const createFireplacePuzzle = ({ character, testMode, sofa, armchairs, onAction,
   if (displayCase) displayCase.unlocked = false;
 
   let hasLetter = false;
-  const vitrineLetter = character === "mum" ? new Paper({
-    id: "living-room-vitrine-letter",
-    width: 1.1,
-    height: .7,
-    collectible: true,
-    itemName: "family-letter",
-    paperColor: "#d8bf83",
-    backColor: "#c5a66d",
-    content: drawAgedRiddle,
-    inspectionTitle: "Carta familiar envejecida",
-    inspectionTranslationKey: "papers.living-room-vitrine-letter",
-    onCollect: () => {
-      hasLetter = true;
-      onAction?.("item.pickup", "living-room-vitrine-letter");
-    },
-  }) : null;
+  const vitrineLetter =
+    character === "mum"
+      ? new Paper({
+          id: "living-room-vitrine-letter",
+          width: 1.1,
+          height: 0.7,
+          collectible: true,
+          itemName: "family-letter",
+          paperColor: "#d8bf83",
+          backColor: "#c5a66d",
+          content: drawAgedRiddle,
+          inspectionTitle: "Carta familiar envejecida",
+          inspectionTranslationKey: "papers.living-room-vitrine-letter",
+          onCollect: () => {
+            hasLetter = true;
+            onAction?.("item.pickup", "living-room-vitrine-letter");
+          },
+        })
+      : null;
   if (vitrineLetter && displayCase) {
-    vitrineLetter.object3D.position.set(.34, .185, .08);
-    vitrineLetter.object3D.rotation.set(Math.PI / 2, 0, -.08);
+    vitrineLetter.object3D.position.set(0.34, 0.185, 0.08);
+    vitrineLetter.object3D.rotation.set(Math.PI / 2, 0, -0.08);
     vitrineLetter.object3D.visible = true;
     vitrineLetter.setEnabled(false);
     displayCase.object3D.add(vitrineLetter.object3D);
@@ -79,19 +82,20 @@ const createFireplacePuzzle = ({ character, testMode, sofa, armchairs, onAction,
   }
 
   const emberClue = character === "dad" ? new EmberClue() : null;
-  const emberPuzzle = character === "mum"
-    ? new EmberPuzzle({
-        onFocus,
-        onSolved: () => {
-          displayCase?.unlock();
-          onAction?.("puzzle.solved", "living-room-embers");
-        },
-      })
-    : null;
-  emberClue?.object3D.position.set(0, 1.62, .18);
+  const emberPuzzle =
+    character === "mum"
+      ? new EmberPuzzle({
+          onFocus,
+          onSolved: () => {
+            displayCase?.unlock();
+            onAction?.("puzzle.solved", "living-room-embers");
+          },
+        })
+      : null;
+  emberClue?.object3D.position.set(0, 1.62, 0.18);
   if (emberClue) emberClue.object3D.visible = false;
-  emberPuzzle?.object3D.position.set(-1.12, -.98, .03);
-  emberPuzzle?.object3D.scale.setScalar(.42);
+  emberPuzzle?.object3D.position.set(-1.12, -0.98, 0.03);
+  emberPuzzle?.object3D.scale.setScalar(0.42);
   if (emberClue) fireplace.object3D.add(emberClue.object3D);
   if (emberPuzzle && displayCase) displayCase.frontLid.add(emberPuzzle.object3D);
   if (testMode) emberPuzzle?.reveal();
@@ -111,27 +115,46 @@ const createFireplacePuzzle = ({ character, testMode, sofa, armchairs, onAction,
   const cushionOptions = {
     id: "living-room-sofa-cushion",
     parent: sofa.object3D,
-    position: new THREE.Vector3(-2.1, 1.55, .1),
-    rotation: new THREE.Euler(-.2, 1, .2),
+    position: new THREE.Vector3(-2.1, 1.55, 0.1),
+    rotation: new THREE.Euler(-0.2, 1, 0.2),
     color: 0x493027,
   };
-  cushion = character === "dad"
-    ? new Cushion({
-        ...cushionOptions,
-        accentColor: 0xdab77d,
-        sewn: true,
-        onCut: () => onAction?.("object.interact", "living-room-sofa-cushion"),
-        onSearch: (player) => {
-          collectMatch(player);
-          onAction?.("object.interact", "living-room-sofa-cushion");
-        },
-      })
-    : new Cushion(cushionOptions);
+  cushion =
+    character === "dad"
+      ? new Cushion({
+          ...cushionOptions,
+          accentColor: 0xdab77d,
+          sewn: true,
+          onCut: () => onAction?.("object.interact", "living-room-sofa-cushion"),
+          onSearch: (player) => {
+            collectMatch(player);
+            onAction?.("object.interact", "living-room-sofa-cushion");
+          },
+        })
+      : new Cushion(cushionOptions);
 
   const decorativeCushions = [
-    new Cushion({ id: "living-room-sofa-cushion-right", parent: sofa.object3D, position: new THREE.Vector3(2.1, 1.55, -.15), rotation: new THREE.Euler(-.2, -1, -.2), color: 0x493027 }),
-    new Cushion({ id: "living-room-armchair-1-cushion", parent: armchairs[0].object3D, position: new THREE.Vector3(0, 1.55, -.28), rotation: new THREE.Euler(-.16, 0, 0), color: 0x493027 }),
-    new Cushion({ id: "living-room-armchair-2-cushion", parent: armchairs[1].object3D, position: new THREE.Vector3(0, 1.55, -.28), rotation: new THREE.Euler(-.16, 0, 0), color: 0x493027 }),
+    new Cushion({
+      id: "living-room-sofa-cushion-right",
+      parent: sofa.object3D,
+      position: new THREE.Vector3(2.1, 1.55, -0.15),
+      rotation: new THREE.Euler(-0.2, -1, -0.2),
+      color: 0x493027,
+    }),
+    new Cushion({
+      id: "living-room-armchair-1-cushion",
+      parent: armchairs[0].object3D,
+      position: new THREE.Vector3(0, 1.55, -0.28),
+      rotation: new THREE.Euler(-0.16, 0, 0),
+      color: 0x493027,
+    }),
+    new Cushion({
+      id: "living-room-armchair-2-cushion",
+      parent: armchairs[1].object3D,
+      position: new THREE.Vector3(0, 1.55, -0.28),
+      rotation: new THREE.Euler(-0.16, 0, 0),
+      color: 0x493027,
+    }),
   ];
 
   const applyState = (state) => {

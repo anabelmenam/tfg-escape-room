@@ -36,9 +36,7 @@ const applyAgedFurnitureAppearance = (object3D, { intensity = 0.65, wearColor = 
       return;
     }
 
-    child.material = Array.isArray(child.material)
-      ? child.material.map(ageMaterial)
-      : ageMaterial(child.material);
+    child.material = Array.isArray(child.material) ? child.material.map(ageMaterial) : ageMaterial(child.material);
   });
 };
 

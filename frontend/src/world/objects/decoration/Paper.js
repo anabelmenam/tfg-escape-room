@@ -121,13 +121,7 @@ class Paper extends Entity {
     this.inspectionImage = preview;
   }
 
-  setText(text, {
-    color = "#43301f",
-    font = "48px serif",
-    padding = 72,
-    lineHeight = 1.35,
-    align = "left",
-  } = {}) {
+  setText(text, { color = "#43301f", font = "48px serif", padding = 72, lineHeight = 1.35, align = "left" } = {}) {
     this.setContent((context, canvas) => {
       context.fillStyle = color;
       context.font = font;
@@ -178,9 +172,10 @@ class Paper extends Entity {
         this.setContent((context, canvas) => {
           const availableWidth = canvas.width - padding * 2;
           const availableHeight = canvas.height - padding * 2;
-          const imageScale = fit === "cover"
-            ? Math.max(availableWidth / image.width, availableHeight / image.height)
-            : Math.min(availableWidth / image.width, availableHeight / image.height);
+          const imageScale =
+            fit === "cover"
+              ? Math.max(availableWidth / image.width, availableHeight / image.height)
+              : Math.min(availableWidth / image.width, availableHeight / image.height);
           const drawWidth = image.width * imageScale;
           const drawHeight = image.height * imageScale;
 

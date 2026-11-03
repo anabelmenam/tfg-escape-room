@@ -2,10 +2,13 @@ import * as THREE from "three";
 import { Lamp, Switch, Window } from "../../objects/index.js";
 
 const createKitchenFixtures = ({ character, config, dimensions, windowOpenings }) => {
-  const lamps = [-6, 6].map((z, index) => new Lamp({
-    id: `kitchen-${character}-lamp-${index + 1}`,
-    position: new THREE.Vector3(0, dimensions.height, z),
-  }));
+  const lamps = [-6, 6].map(
+    (z, index) =>
+      new Lamp({
+        id: `kitchen-${character}-lamp-${index + 1}`,
+        position: new THREE.Vector3(0, dimensions.height, z),
+      }),
+  );
   lamps.forEach((lamp) => lamp.setActive(false));
   const switches = [];
   const setLights = (active) => {
@@ -26,15 +29,18 @@ const createKitchenFixtures = ({ character, config, dimensions, windowOpenings }
   });
   livingRoomDoorSwitch.object3D.rotation.y = Math.PI / 2;
   switches.push(lightSwitch, livingRoomDoorSwitch);
-  const windows = windowOpenings.map((opening) => new Window({
-    id: opening.id,
-    position: opening.position.clone(),
-    rotationY: opening.rotationY,
-    width: opening.width,
-    height: opening.height,
-    columns: 2,
-    rows: 2,
-  }));
+  const windows = windowOpenings.map(
+    (opening) =>
+      new Window({
+        id: opening.id,
+        position: opening.position.clone(),
+        rotationY: opening.rotationY,
+        width: opening.width,
+        height: opening.height,
+        columns: 2,
+        rows: 2,
+      }),
+  );
   return {
     ambientLight: new THREE.AmbientLight(0xffefd2, config.ambientIntensity),
     lamps,

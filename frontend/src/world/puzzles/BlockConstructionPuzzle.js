@@ -24,7 +24,7 @@ class BlockConstructionPuzzle extends ChildrenPuzzle {
     this.selectedBlockY = null;
     this.available = true;
     this.surfaceTop = 1.59;
-    this.towerSlots = [-.9, .9];
+    this.towerSlots = [-0.9, 0.9];
     this.towerZ = 0.35;
     this.blocksPerTower = 4;
     this.createStation();
@@ -40,8 +40,8 @@ class BlockConstructionPuzzle extends ChildrenPuzzle {
       polygonOffsetFactor: -2,
       polygonOffsetUnits: -2,
     });
-    const surface = new THREE.Mesh(new RoundedBoxGeometry(5.9, .3, 3.1, 4, .055), surfaceMaterial);
-    surface.position.set(0, this.surfaceTop - .15, 0.35);
+    const surface = new THREE.Mesh(new RoundedBoxGeometry(5.9, 0.3, 3.1, 4, 0.055), surfaceMaterial);
+    surface.position.set(0, this.surfaceTop - 0.15, 0.35);
     surface.renderOrder = 2;
     markChildrenControl(surface, { kind: "block-surface" });
     this.object3D.add(surface);
@@ -64,23 +64,29 @@ class BlockConstructionPuzzle extends ChildrenPuzzle {
     this.towerSlots.forEach((x) => {
       const shadow = new THREE.Mesh(
         new THREE.PlaneGeometry(1.04, 1.04),
-        new THREE.MeshStandardMaterial({ color: 0x203229, transparent: true, opacity: .42, roughness: 1, side: THREE.DoubleSide }),
+        new THREE.MeshStandardMaterial({
+          color: 0x203229,
+          transparent: true,
+          opacity: 0.42,
+          roughness: 1,
+          side: THREE.DoubleSide,
+        }),
       );
       shadow.rotation.x = -Math.PI / 2;
-      shadow.position.set(x, this.surfaceTop + .014, this.towerZ);
+      shadow.position.set(x, this.surfaceTop + 0.014, this.towerZ);
       shadow.renderOrder = 4;
       this.object3D.add(shadow);
 
       const outline = new THREE.LineLoop(
         new THREE.BufferGeometry().setFromPoints([
-          new THREE.Vector3(-.56, 0, -.56),
-          new THREE.Vector3(.56, 0, -.56),
-          new THREE.Vector3(.56, 0, .56),
-          new THREE.Vector3(-.56, 0, .56),
+          new THREE.Vector3(-0.56, 0, -0.56),
+          new THREE.Vector3(0.56, 0, -0.56),
+          new THREE.Vector3(0.56, 0, 0.56),
+          new THREE.Vector3(-0.56, 0, 0.56),
         ]),
-        new THREE.LineBasicMaterial({ color: 0xaec5b3, transparent: true, opacity: .72 }),
+        new THREE.LineBasicMaterial({ color: 0xaec5b3, transparent: true, opacity: 0.72 }),
       );
-      outline.position.set(x, this.surfaceTop + .018, this.towerZ);
+      outline.position.set(x, this.surfaceTop + 0.018, this.towerZ);
       outline.renderOrder = 5;
       this.object3D.add(outline);
     });
@@ -91,15 +97,26 @@ class BlockConstructionPuzzle extends ChildrenPuzzle {
         new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false, side: THREE.DoubleSide }),
       );
       returnZone.rotation.x = -Math.PI / 2;
-      returnZone.position.set(x, this.surfaceTop + .01, .35);
+      returnZone.position.set(x, this.surfaceTop + 0.01, 0.35);
       markChildrenControl(returnZone, { kind: "block-return", side });
       this.object3D.add(returnZone);
     });
 
     CASTLE_PIECES.forEach((piece, index) => {
-      const block = new THREE.Group(); const material = new THREE.MeshStandardMaterial({ color: piece.color, roughness: .68 });
-      let geometry; if (piece.kind === "roof") geometry = new THREE.CylinderGeometry(0, .62, .64, 4); else if (piece.kind === "bridge") geometry = new RoundedBoxGeometry(3.45, .2, .68, 4, .05); else geometry = new RoundedBoxGeometry(.72, .72, .72, 4, .06);
-      const shape = new THREE.Mesh(geometry, material); if (piece.kind === "roof") shape.rotation.y = Math.PI / 4; block.add(shape); block.position.set(...(this.character === "dad" ? piece.target : piece.start)); markChildrenControl(block, { kind: "block", value: index }); this.blocks[index] = block; this.startPositions[index] = new THREE.Vector3(...piece.start); this.object3D.add(block);
+      const block = new THREE.Group();
+      const material = new THREE.MeshStandardMaterial({ color: piece.color, roughness: 0.68 });
+      let geometry;
+      if (piece.kind === "roof") geometry = new THREE.CylinderGeometry(0, 0.62, 0.64, 4);
+      else if (piece.kind === "bridge") geometry = new RoundedBoxGeometry(3.45, 0.2, 0.68, 4, 0.05);
+      else geometry = new RoundedBoxGeometry(0.72, 0.72, 0.72, 4, 0.06);
+      const shape = new THREE.Mesh(geometry, material);
+      if (piece.kind === "roof") shape.rotation.y = Math.PI / 4;
+      block.add(shape);
+      block.position.set(...(this.character === "dad" ? piece.target : piece.start));
+      markChildrenControl(block, { kind: "block", value: index });
+      this.blocks[index] = block;
+      this.startPositions[index] = new THREE.Vector3(...piece.start);
+      this.object3D.add(block);
     });
     configureChildrenMeshes(this.object3D);
   }
@@ -120,7 +137,7 @@ class BlockConstructionPuzzle extends ChildrenPuzzle {
     this.matMoveStartX = this.object3D.position.x;
     this.matMoveTargetX = this.matMoveStartX - 1.65;
     this.matMoveStartY = this.object3D.position.y;
-    this.matMoveTargetY = this.matMoveStartY + .14;
+    this.matMoveTargetY = this.matMoveStartY + 0.14;
     this.matMoveNotify = notify;
   }
 
@@ -144,12 +161,14 @@ class BlockConstructionPuzzle extends ChildrenPuzzle {
       }
       return null;
     };
-    return intersections.find(({ object }) => {
-      const control = getControl(object);
-      return control?.kind === "block" && control.value !== this.selectedBlock;
-    })
-      ?? intersections.find(({ object }) => getControl(object)?.kind === "block-surface")
-      ?? intersections.find(({ object }) => getControl(object));
+    return (
+      intersections.find(({ object }) => {
+        const control = getControl(object);
+        return control?.kind === "block" && control.value !== this.selectedBlock;
+      }) ??
+      intersections.find(({ object }) => getControl(object)?.kind === "block-surface") ??
+      intersections.find(({ object }) => getControl(object))
+    );
   }
 
   handleControl(control, _player, intersection) {
@@ -237,9 +256,11 @@ class BlockConstructionPuzzle extends ChildrenPuzzle {
       const other = this.blocks[otherIndex];
       const otherSize = this.getPieceSize(otherIndex);
       const otherTop = other.position.y + otherSize.height / 2;
-      return Math.abs(otherTop - supportTop) < 0.08
-        && Math.abs(other.position.z - support.position.z) < 0.45
-        && Math.abs(other.position.x - support.position.x) > 0.8;
+      return (
+        Math.abs(otherTop - supportTop) < 0.08 &&
+        Math.abs(other.position.z - support.position.z) < 0.45 &&
+        Math.abs(other.position.x - support.position.x) > 0.8
+      );
     });
     if (partnerIndex === undefined) return { x: support.position.x, z: support.position.z };
     const partner = this.blocks[partnerIndex];
@@ -255,17 +276,17 @@ class BlockConstructionPuzzle extends ChildrenPuzzle {
     const size = this.getPieceSize(index);
     piece.position.y = this.selectedBlockY;
     const localPoint = fixedPosition ?? this.object3D.worldToLocal(worldPoint.clone());
-    const x = this.towerSlots.reduce((closest, slot) => (
-      Math.abs(slot - localPoint.x) < Math.abs(closest - localPoint.x) ? slot : closest
-    ));
+    const x = this.towerSlots.reduce((closest, slot) =>
+      Math.abs(slot - localPoint.x) < Math.abs(closest - localPoint.x) ? slot : closest,
+    );
     const z = this.towerZ;
     const blocksInTower = this.placed.filter((placedIndex) => {
       if (placedIndex === index) return false;
       const position = this.blocks[placedIndex].position;
-      return Math.abs(position.x - x) < .08 && Math.abs(position.z - z) < .08;
+      return Math.abs(position.x - x) < 0.08 && Math.abs(position.z - z) < 0.08;
     }).length;
     if (blocksInTower >= this.blocksPerTower) {
-      piece.position.y = this.selectedBlockY + .3;
+      piece.position.y = this.selectedBlockY + 0.3;
       return;
     }
 
@@ -288,9 +309,12 @@ class BlockConstructionPuzzle extends ChildrenPuzzle {
 
   checkSolution() {
     if (this.placed.length !== CASTLE_PIECES.length) return false;
-    const solved = this.towerSlots.every((slot) => this.blocks.filter(({ position }) => (
-      Math.abs(position.x - slot) < .08 && Math.abs(position.z - this.towerZ) < .08
-    )).length === this.blocksPerTower);
+    const solved = this.towerSlots.every(
+      (slot) =>
+        this.blocks.filter(
+          ({ position }) => Math.abs(position.x - slot) < 0.08 && Math.abs(position.z - this.towerZ) < 0.08,
+        ).length === this.blocksPerTower,
+    );
     if (solved) this.solve();
     return solved;
   }
@@ -301,10 +325,29 @@ class BlockConstructionPuzzle extends ChildrenPuzzle {
     this.placed = [];
     this.blocks.forEach((block, index) => block.position.copy(this.startPositions[index]));
   }
-  solve({ notify = true } = {}) { if (this.isSolved) return; this.selectedBlock = null; this.selectedBlockY = null; this.isSolved = true; this.placed = CASTLE_PIECES.map((_, index) => index); CASTLE_PIECES.forEach((piece, index) => this.blocks[index].position.set(...piece.target)); if (notify) this.onSolved?.(); this.liftMat({ notify }); }
-  getInteractionText() { if (this.character === "mum" && this.isSolved) return this.matLifted ? null : tInteraction("move", tItem("block-construction")); return tInteraction("examine", tItem("blocks")); }
-  getFocusPosition() { this.object3D.updateWorldMatrix(true, false); return this.object3D.localToWorld(new THREE.Vector3(0, 5.2, 9)); }
-  getLookAtPosition() { this.object3D.updateWorldMatrix(true, false); return this.object3D.localToWorld(new THREE.Vector3(0, 2.6, 0)); }
+  solve({ notify = true } = {}) {
+    if (this.isSolved) return;
+    this.selectedBlock = null;
+    this.selectedBlockY = null;
+    this.isSolved = true;
+    this.placed = CASTLE_PIECES.map((_, index) => index);
+    CASTLE_PIECES.forEach((piece, index) => this.blocks[index].position.set(...piece.target));
+    if (notify) this.onSolved?.();
+    this.liftMat({ notify });
+  }
+  getInteractionText() {
+    if (this.character === "mum" && this.isSolved)
+      return this.matLifted ? null : tInteraction("move", tItem("block-construction"));
+    return tInteraction("examine", tItem("blocks"));
+  }
+  getFocusPosition() {
+    this.object3D.updateWorldMatrix(true, false);
+    return this.object3D.localToWorld(new THREE.Vector3(0, 5.2, 9));
+  }
+  getLookAtPosition() {
+    this.object3D.updateWorldMatrix(true, false);
+    return this.object3D.localToWorld(new THREE.Vector3(0, 2.6, 0));
+  }
 }
 
 export { BlockConstructionPuzzle };

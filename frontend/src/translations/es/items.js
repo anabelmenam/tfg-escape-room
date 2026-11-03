@@ -1,5 +1,5 @@
 export default {
-items: {
+  items: {
     "living-room-key": "llave del salón",
     "red-key": "llave roja",
     "blue-key": "llave azul",
@@ -112,5 +112,5 @@ items: {
     chains: "cadenas",
     note: "nota",
     noticeboard: "tablón",
-  }
+  },
 };

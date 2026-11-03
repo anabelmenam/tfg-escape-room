@@ -1,5 +1,5 @@
 export default {
-ui: {
+  ui: {
     language: "Language",
     spanish: "Spanish",
     english: "English",
@@ -18,7 +18,7 @@ ui: {
     closeInspection: "Press × to close",
     playTime: "Play time",
   },
-settingsScreen: {
+  settingsScreen: {
     title: "Shape your experience",
     description: "Changes apply instantly and are saved for your next game.",
     game: "Gameplay",
@@ -29,9 +29,9 @@ settingsScreen: {
     interaction: "Interaction and items",
     interface: "View and menus",
   },
-menu: {
+  menu: {
     cooperative: "Cooperative escape room",
-    title: "The House Between Memories",
+    title: "The House Between Two Worlds",
     tagline: "Two players. Two characters. One house that never tells the whole truth.",
     play: "Play",
     settings: "Settings",
@@ -100,7 +100,7 @@ menu: {
     soundSettings: "Sound settings",
     instantChanges: "Changes take effect instantly and are saved for your next game.",
   },
-account: {
+  account: {
     login: "Sign in",
     register: "Create account",
     name: "Name",
@@ -154,7 +154,7 @@ account: {
       generic: "The operation could not be completed.",
     },
   },
-adminUsers: {
+  adminUsers: {
     menu: "Users",
     eyebrow: "Administration",
     title: "Registered users",
@@ -170,7 +170,7 @@ adminUsers: {
     deleteConfirm: "The account belonging to {name} will be permanently deleted. Continue?",
     roles: { player: "Player", admin: "Administrator" },
   },
-roomLobby: {
+  roomLobby: {
     connecting: "Connecting to the room…",
     connected: "Connected",
     connectionFailed: "Could not connect to the room",
@@ -178,7 +178,8 @@ roomLobby: {
     room: "Room",
     beforeStart: "Before you begin",
     chooseWorld: "Choose your character",
-    description: "Each player explores the house as a different character. What you do can change the other player's game.",
+    description:
+      "Each player explores the house as a different character. What you do can change the other player's game.",
     shareCode: "Share the code",
     copyCode: "Copy room code",
     available: "Available",
@@ -191,5 +192,5 @@ roomLobby: {
     waiting: "Waiting for the room creator to start the game.",
     chooseError: "That character could not be selected.",
     startError: "The game cannot be started.",
-  }
+  },
 };

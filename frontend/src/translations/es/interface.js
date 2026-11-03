@@ -1,5 +1,5 @@
 export default {
-ui: {
+  ui: {
     language: "Idioma",
     spanish: "Español",
     english: "Inglés",
@@ -18,7 +18,7 @@ ui: {
     closeInspection: "Pulsa la × para cerrar",
     playTime: "Tiempo de juego",
   },
-settingsScreen: {
+  settingsScreen: {
     title: "Configura tu experiencia",
     description: "Los cambios se aplican al instante y se guardan para la próxima partida.",
     game: "Juego",
@@ -29,9 +29,9 @@ settingsScreen: {
     interaction: "Interacción y objetos",
     interface: "Vista y menús",
   },
-menu: {
+  menu: {
     cooperative: "Escape room cooperativo",
-    title: "La casa entre recuerdos",
+    title: "La casa entre dos mundos",
     tagline: "Dos jugadores. Dos personajes. Una misma casa que nunca cuenta toda la verdad.",
     play: "Jugar",
     settings: "Ajustes",
@@ -94,7 +94,7 @@ menu: {
     soundSettings: "Ajustes de sonido",
     instantChanges: "Los cambios se aplican al instante y también se guardan para la próxima partida.",
   },
-account: {
+  account: {
     login: "Iniciar sesión",
     register: "Crear cuenta",
     name: "Nombre",
@@ -148,7 +148,7 @@ account: {
       generic: "No se ha podido completar la operación.",
     },
   },
-adminUsers: {
+  adminUsers: {
     menu: "Usuarios",
     eyebrow: "Administración",
     title: "Usuarios registrados",
@@ -164,7 +164,7 @@ adminUsers: {
     deleteConfirm: "Se eliminará permanentemente la cuenta de {name}. ¿Quieres continuar?",
     roles: { player: "Jugador", admin: "Administrador" },
   },
-roomLobby: {
+  roomLobby: {
     connecting: "Conectando con la sala…",
     connected: "Conectado",
     connectionFailed: "No se ha podido conectar con la sala",
@@ -172,7 +172,8 @@ roomLobby: {
     room: "Sala",
     beforeStart: "Antes de comenzar",
     chooseWorld: "Elige tu personaje",
-    description: "Cada jugador explora la casa como un personaje diferente. Lo que hagáis puede cambiar la partida del otro.",
+    description:
+      "Cada jugador explora la casa como un personaje diferente. Lo que hagáis puede cambiar la partida del otro.",
     shareCode: "Comparte el código",
     copyCode: "Copiar código de sala",
     available: "Disponible",
@@ -185,5 +186,5 @@ roomLobby: {
     waiting: "Esperando a que el anfitrión inicie la partida.",
     chooseError: "No se ha podido elegir ese personaje.",
     startError: "No se puede iniciar la partida.",
-  }
+  },
 };

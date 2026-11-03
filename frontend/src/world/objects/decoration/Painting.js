@@ -55,10 +55,7 @@ const createPainting = ({ complete = false, pieces = [] } = {}) => {
     const texture = createLandscapePieceTexture(index);
     const material = new THREE.MeshStandardMaterial({ map: texture, roughness: 0.85 });
     if (!texture) waitingLandscapePieces.push({ material, index });
-    const piece = new THREE.Mesh(
-      new THREE.PlaneGeometry(0.83, 0.78),
-      material,
-    );
+    const piece = new THREE.Mesh(new THREE.PlaneGeometry(0.83, 0.78), material);
     piece.position.set(-0.85 + (index % paintingColumns) * 0.85, 0.4 - Math.floor(index / paintingColumns) * 0.8, 0.09);
     group.add(piece);
   });
@@ -66,14 +63,21 @@ const createPainting = ({ complete = false, pieces = [] } = {}) => {
 };
 
 class PaintingFragment extends Entity {
-  constructor({ id, index, position = new THREE.Vector3(), rotation = new THREE.Euler(-Math.PI / 2, 0, 0), onCollect = null } = {}) {
+  constructor({
+    id,
+    index,
+    position = new THREE.Vector3(),
+    rotation = new THREE.Euler(-Math.PI / 2, 0, 0),
+    onCollect = null,
+  } = {}) {
     super(id);
     this.onCollect = onCollect;
     this.index = index;
     this.paintingPieceIndex = index;
-    this.inventoryIcon = index === 0
-      ? "/images/icons/living-room/painting-fragment-1.png"
-      : "/images/icons/living-room/painting-fragment-2.png";
+    this.inventoryIcon =
+      index === 0
+        ? "/images/icons/living-room/painting-fragment-1.png"
+        : "/images/icons/living-room/painting-fragment-2.png";
     this.object3D = new THREE.Group();
     this.object3D.name = id;
     this.object3D.position.copy(position);
@@ -173,7 +177,13 @@ class PaintingSlot extends Entity {
     if (!this.isPlaced) {
       const shadow = new THREE.Mesh(
         new THREE.PlaneGeometry(3, 2),
-        new THREE.MeshStandardMaterial({ color: 0x16181a, transparent: true, opacity: 0.72, roughness: 1, side: THREE.DoubleSide }),
+        new THREE.MeshStandardMaterial({
+          color: 0x16181a,
+          transparent: true,
+          opacity: 0.72,
+          roughness: 1,
+          side: THREE.DoubleSide,
+        }),
       );
       shadow.position.z = -0.07;
       this.object3D.add(shadow);

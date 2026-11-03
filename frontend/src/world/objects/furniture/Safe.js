@@ -121,9 +121,24 @@ class Safe extends Entity {
 
     const bottom = createWall(this.width, thickness, this.depth, new THREE.Vector3(0, thickness / 2, 0));
     const top = createWall(this.width, thickness, this.depth, new THREE.Vector3(0, this.height - thickness / 2, 0));
-    const left = createWall(thickness, innerHeight, this.depth, new THREE.Vector3(-this.width / 2 + thickness / 2, this.height / 2, 0));
-    const right = createWall(thickness, innerHeight, this.depth, new THREE.Vector3(this.width / 2 - thickness / 2, this.height / 2, 0));
-    const back = createWall(innerWidth, innerHeight, thickness, new THREE.Vector3(0, this.height / 2, -this.depth / 2 + thickness / 2));
+    const left = createWall(
+      thickness,
+      innerHeight,
+      this.depth,
+      new THREE.Vector3(-this.width / 2 + thickness / 2, this.height / 2, 0),
+    );
+    const right = createWall(
+      thickness,
+      innerHeight,
+      this.depth,
+      new THREE.Vector3(this.width / 2 - thickness / 2, this.height / 2, 0),
+    );
+    const back = createWall(
+      innerWidth,
+      innerHeight,
+      thickness,
+      new THREE.Vector3(0, this.height / 2, -this.depth / 2 + thickness / 2),
+    );
 
     const interiorBottom = createWall(
       innerWidth,
@@ -401,15 +416,7 @@ class Safe extends Entity {
     return this.isOpen ? tInteraction("close", tItem("safe")) : tInteraction("open", tItem("safe"));
   }
 
-  addItem(
-    item,
-    {
-      position = new THREE.Vector3(0, 0.15, 0),
-      rotation = null,
-      scale = null,
-      visible = true,
-    } = {},
-  ) {
+  addItem(item, { position = new THREE.Vector3(0, 0.15, 0), rotation = null, scale = null, visible = true } = {}) {
     const object3D = item?.object3D ?? (item?.isObject3D ? item : null);
     const itemId = item?.id ?? object3D?.name;
 

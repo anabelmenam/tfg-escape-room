@@ -66,7 +66,7 @@ const itemPairs = {
   "kitchen-napkin-blue": "Dad's napkin",
   "kitchen-napkin-green": "Alba's napkin",
   "kitchen-napkin-ochre": "Jaime's napkin",
-    "family-note": "family note",
+  "family-note": "family note",
   mirror: "mirror",
   tap: "tap",
   plant: "plant",
@@ -114,5 +114,5 @@ const itemPairs = {
 };
 
 export default {
-items: itemPairs
+  items: itemPairs,
 };

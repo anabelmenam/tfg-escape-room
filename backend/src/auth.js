@@ -21,7 +21,13 @@ const verifyPassword = async (password, storedHash) => {
   return actual.length === expected.length && timingSafeEqual(actual, expected);
 };
 
-const readCookies = (header = "") => Object.fromEntries(header.split(";").map((part) => part.trim().split("=")).filter(([key, value]) => key && value));
+const readCookies = (header = "") =>
+  Object.fromEntries(
+    header
+      .split(";")
+      .map((part) => part.trim().split("="))
+      .filter(([key, value]) => key && value),
+  );
 const cookieOptions = () => {
   const production = process.env.NODE_ENV === "production";
   return `HttpOnly; Path=/; SameSite=${production ? "None" : "Lax"}; Max-Age=${SESSION_DURATION / 1000}${production ? "; Secure" : ""}`;
@@ -29,21 +35,35 @@ const cookieOptions = () => {
 
 const createSession = async (userId, response) => {
   const token = randomBytes(32).toString("base64url");
-  await UserSession.create({ id: randomUUID(), userId, tokenHash: hashToken(token), expiresAt: new Date(Date.now() + SESSION_DURATION) });
+  await UserSession.create({
+    id: randomUUID(),
+    userId,
+    tokenHash: hashToken(token),
+    expiresAt: new Date(Date.now() + SESSION_DURATION),
+  });
   response.setHeader("Set-Cookie", `${SESSION_COOKIE}=${token}; ${cookieOptions()}`);
 };
 
 const clearSession = async (request, response) => {
   const token = readCookies(request.headers.cookie)[SESSION_COOKIE];
   if (token) await UserSession.destroy({ where: { tokenHash: hashToken(token) } });
-  response.setHeader("Set-Cookie", `${SESSION_COOKIE}=; ${cookieOptions().replace(`Max-Age=${SESSION_DURATION / 1000}`, "Max-Age=0")}`);
+  response.setHeader(
+    "Set-Cookie",
+    `${SESSION_COOKIE}=; ${cookieOptions().replace(`Max-Age=${SESSION_DURATION / 1000}`, "Max-Age=0")}`,
+  );
 };
 
 const getAuthenticatedUser = async (request) => {
   const token = readCookies(request.headers.cookie)[SESSION_COOKIE];
   if (!token) return null;
-  const session = await UserSession.findOne({ where: { tokenHash: hashToken(token) }, include: [{ model: User, as: "user", required: true }] });
-  if (!session || session.expiresAt <= new Date()) { if (session) await session.destroy(); return null; }
+  const session = await UserSession.findOne({
+    where: { tokenHash: hashToken(token) },
+    include: [{ model: User, as: "user", required: true }],
+  });
+  if (!session || session.expiresAt <= new Date()) {
+    if (session) await session.destroy();
+    return null;
+  }
   return session.user;
 };
 
@@ -53,7 +73,9 @@ const requireUser = async (request, response, next) => {
     if (!user) return response.status(401).json({ error: "AUTH_REQUIRED" });
     request.user = user;
     return next();
-  } catch (error) { return next(error); }
+  } catch (error) {
+    return next(error);
+  }
 };
 
 const publicUser = (user) => ({ id: user.id, email: user.email, displayName: user.displayName, role: user.role });

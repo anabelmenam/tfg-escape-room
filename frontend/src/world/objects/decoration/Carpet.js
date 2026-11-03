@@ -131,7 +131,6 @@ class Carpet extends Entity {
   }
 
   createRug() {
-
     this.rugPivot = new THREE.Group();
     this.rugPivot.position.set(-this.width / 2, 0, -this.depth / 2);
     this.object3D.add(this.rugPivot);
@@ -200,7 +199,6 @@ class Carpet extends Entity {
   }
 
   createTop() {
-
     const geometry = new THREE.PlaneGeometry(this.width - 0.02, this.depth - 0.02, 24, 24);
 
     const top = new THREE.Mesh(geometry, this.topMaterial);

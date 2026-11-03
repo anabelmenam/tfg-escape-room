@@ -23,34 +23,52 @@ export class MultiplayerSync {
   }
   placePreviewEchoes() {
     if (!this.previewEchoes.length) return;
-    const direction = new THREE.Vector3(); this.game.camera.getWorldDirection(direction); direction.y = 0; direction.normalize();
+    const direction = new THREE.Vector3();
+    this.game.camera.getWorldDirection(direction);
+    direction.y = 0;
+    direction.normalize();
     const right = new THREE.Vector3(-direction.z, 0, direction.x);
     const center = this.game.camera.position.clone().addScaledVector(direction, 5.2);
     const facingCamera = Math.atan2(direction.x, direction.z);
     this.previewEchoes.forEach((echo, index) => {
       const position = center.clone().addScaledVector(right, index === 0 ? -1.35 : 1.35);
-      echo.setTarget({ position: { x: position.x, y: 5.25, z: position.z }, rotationY: facingCamera + (index === 0 ? -.08 : .08) });
+      echo.setTarget({
+        position: { x: position.x, y: 5.25, z: position.z },
+        rotationY: facingCamera + (index === 0 ? -0.08 : 0.08),
+      });
       if (this.charactersHidden) echo.object3D.visible = false;
     });
   }
   update(delta) {
-    this.remoteEcho?.update(delta); this.previewEchoes.forEach((echo) => echo.update(delta));
+    this.remoteEcho?.update(delta);
+    this.previewEchoes.forEach((echo) => echo.update(delta));
     if (this.charactersHidden) {
       if (this.remoteEcho) this.remoteEcho.object3D.visible = false;
-      this.previewEchoes.forEach((echo) => { echo.object3D.visible = false; });
+      this.previewEchoes.forEach((echo) => {
+        echo.object3D.visible = false;
+      });
     }
-    this.broadcastElapsed += delta; this.heartbeatElapsed += delta;
-    if (this.broadcastElapsed < .125 || this.game.player.isFocused) return;
+    this.broadcastElapsed += delta;
+    this.heartbeatElapsed += delta;
+    if (this.broadcastElapsed < 0.125 || this.game.player.isFocused) return;
     this.broadcastElapsed = 0;
-    const direction = new THREE.Vector3(); this.game.camera.getWorldDirection(direction);
+    const direction = new THREE.Vector3();
+    this.game.camera.getWorldDirection(direction);
     const rotationY = Math.atan2(-direction.x, -direction.z);
-    const moved = this.lastPosition.distanceToSquared(this.game.camera.position) > .0004;
-    const turned = Math.abs(Math.atan2(Math.sin(rotationY - this.lastRotationY), Math.cos(rotationY - this.lastRotationY))) > .008;
+    const moved = this.lastPosition.distanceToSquared(this.game.camera.position) > 0.0004;
+    const turned =
+      Math.abs(Math.atan2(Math.sin(rotationY - this.lastRotationY), Math.cos(rotationY - this.lastRotationY))) > 0.008;
     if (moved || turned || this.heartbeatElapsed >= 1) {
       const position = this.game.camera.position;
-      const roomKey = this.game.roomRegions?.find(({ box }) => position.x >= box.min.x && position.x <= box.max.x && position.z >= box.min.z && position.z <= box.max.z)?.key ?? null;
+      const roomKey =
+        this.game.roomRegions?.find(
+          ({ box }) =>
+            position.x >= box.min.x && position.x <= box.max.x && position.z >= box.min.z && position.z <= box.max.z,
+        )?.key ?? null;
       this.game.onPlayerMovement?.({ position: { x: position.x, y: position.y, z: position.z }, rotationY, roomKey });
-      this.lastPosition.copy(this.game.camera.position); this.lastRotationY = rotationY; this.heartbeatElapsed = 0;
+      this.lastPosition.copy(this.game.camera.position);
+      this.lastRotationY = rotationY;
+      this.heartbeatElapsed = 0;
     }
   }
   updateRemote(movement) {
@@ -66,8 +84,18 @@ export class MultiplayerSync {
   setCharactersHidden(hidden = true) {
     this.charactersHidden = hidden;
     if (this.remoteEcho) this.remoteEcho.object3D.visible = !hidden && this.remoteEcho.connected;
-    this.previewEchoes.forEach((echo) => { echo.object3D.visible = !hidden; });
+    this.previewEchoes.forEach((echo) => {
+      echo.object3D.visible = !hidden;
+    });
   }
-  setIdentity({ character, displayName }) { if (character !== this.game.character) { this.identity = { character, displayName }; this.remoteEcho?.setName(displayName); } }
-  dispose() { this.remoteEcho?.dispose(); this.previewEchoes.forEach((echo) => echo.dispose()); }
+  setIdentity({ character, displayName }) {
+    if (character !== this.game.character) {
+      this.identity = { character, displayName };
+      this.remoteEcho?.setName(displayName);
+    }
+  }
+  dispose() {
+    this.remoteEcho?.dispose();
+    this.previewEchoes.forEach((echo) => echo.dispose());
+  }
 }

@@ -3,7 +3,7 @@ import * as THREE from "three";
 export class FlashlightController {
   constructor(game) {
     this.game = game;
-    this.light = new THREE.SpotLight(0xfff0c2, 65, 45, Math.PI / 7, .35, 1.1);
+    this.light = new THREE.SpotLight(0xfff0c2, 65, 45, Math.PI / 7, 0.35, 1.1);
     this.target = new THREE.Object3D();
     this.light.visible = false;
     this.light.target = this.target;
@@ -17,7 +17,7 @@ export class FlashlightController {
   }
   update() {
     if (!this.active) return;
-    const offset = new THREE.Vector3(.18, -.14, -.08).applyQuaternion(this.game.camera.quaternion);
+    const offset = new THREE.Vector3(0.18, -0.14, -0.08).applyQuaternion(this.game.camera.quaternion);
     const direction = new THREE.Vector3();
     this.game.camera.getWorldDirection(direction);
     this.light.position.copy(this.game.camera.position).add(offset);

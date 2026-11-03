@@ -1,4 +1,8 @@
-const cleanUrl = (value) => value?.trim().replace(/^[-\s]+/, "").replace(/\/$/, "");
+const cleanUrl = (value) =>
+  value
+    ?.trim()
+    .replace(/^[-\s]+/, "")
+    .replace(/\/$/, "");
 const configuredApiUrl = cleanUrl(import.meta.env?.VITE_API_URL);
 const configuredSocketUrl = cleanUrl(import.meta.env?.VITE_SOCKET_URL ?? import.meta.env?.VITE_API_URL);
 
@@ -10,8 +14,8 @@ export const GAME_API_URL = import.meta.env?.PROD
 
 // Netlify no mantiene de forma fiable la conexión WebSocket, por lo que esta
 // sí se abre directamente contra Render.
-export const GAME_SOCKET_URL = configuredSocketUrl
-  ?? (import.meta.env?.PROD ? "https://tfg-escape-room.onrender.com" : "http://localhost:3010");
+export const GAME_SOCKET_URL =
+  configuredSocketUrl ?? (import.meta.env?.PROD ? "https://tfg-escape-room.onrender.com" : "http://localhost:3010");
 
 const request = async (path, options = {}) => {
   const response = await fetch(`${GAME_API_URL}${path}`, {
@@ -24,12 +28,15 @@ const request = async (path, options = {}) => {
   return body;
 };
 
-export const registerAccount = (details) => request("/api/auth/register", { method: "POST", body: JSON.stringify(details) });
+export const registerAccount = (details) =>
+  request("/api/auth/register", { method: "POST", body: JSON.stringify(details) });
 export const loginAccount = (details) => request("/api/auth/login", { method: "POST", body: JSON.stringify(details) });
 export const logoutAccount = () => request("/api/auth/logout", { method: "POST" });
 export const getCurrentAccount = () => request("/api/auth/me");
-export const requestPasswordReset = (email) => request("/api/auth/forgot-password", { method: "POST", body: JSON.stringify({ email }) });
-export const resetPassword = (token, password) => request("/api/auth/reset-password", { method: "POST", body: JSON.stringify({ token, password }) });
+export const requestPasswordReset = (email) =>
+  request("/api/auth/forgot-password", { method: "POST", body: JSON.stringify({ email }) });
+export const resetPassword = (token, password) =>
+  request("/api/auth/reset-password", { method: "POST", body: JSON.stringify({ token, password }) });
 export const getSaveSlots = () => request("/api/save-slots");
 
 export const createGameRoom = (slotNumber, name) =>

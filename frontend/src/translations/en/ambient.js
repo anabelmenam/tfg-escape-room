@@ -1,5 +1,5 @@
 export default {
-ambient: {
+  ambient: {
     plant: "The soil is damp. It looks as though someone watered it very recently.",
     vase: "The flowers are still fresh. Someone was caring for this house until very recently.",
     oldVase: "The dust forms a clean circle around its base. The vase was moved recently.",
@@ -31,5 +31,5 @@ ambient: {
     decorativeGlobe: "The map places cities differently. Its borders do not match the ones you know.",
     artSupplies: "The pencils are worn down, with the same drawing repeated in several colours.",
     plateStack: "Every plate is clean except one, which holds a faint trace of food.",
-  }
+  },
 };

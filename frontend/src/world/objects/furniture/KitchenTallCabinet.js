@@ -38,13 +38,55 @@ class KitchenTallCabinet extends Entity {
 
     const frameThickness = 0.16;
     this.object3D.add(
-      createBox({ width: frameThickness, height, depth, position: new THREE.Vector3(-width / 2 + frameThickness / 2, height / 2, 0), material: dark }),
-      createBox({ width: frameThickness, height, depth, position: new THREE.Vector3(width / 2 - frameThickness / 2, height / 2, 0), material: dark }),
-      createBox({ width: width - frameThickness * 2, height: frameThickness, depth, position: new THREE.Vector3(0, frameThickness / 2, 0), material: dark }),
-      createBox({ width: width - frameThickness * 2, height: frameThickness, depth, position: new THREE.Vector3(0, height - frameThickness / 2, 0), material: dark }),
-      createBox({ width: width - frameThickness * 2, height: height - frameThickness * 2, depth: frameThickness, position: new THREE.Vector3(0, height / 2, -depth / 2 + frameThickness / 2), material: dark }),
-      createBox({ width: width - 0.3, height: 0.12, depth: depth - 0.3, position: new THREE.Vector3(0, height * 0.36, 0), material: dark }),
-      createBox({ width: width - 0.3, height: 0.12, depth: depth - 0.3, position: new THREE.Vector3(0, height * 0.68, 0), material: dark }),
+      createBox({
+        width: frameThickness,
+        height,
+        depth,
+        position: new THREE.Vector3(-width / 2 + frameThickness / 2, height / 2, 0),
+        material: dark,
+      }),
+      createBox({
+        width: frameThickness,
+        height,
+        depth,
+        position: new THREE.Vector3(width / 2 - frameThickness / 2, height / 2, 0),
+        material: dark,
+      }),
+      createBox({
+        width: width - frameThickness * 2,
+        height: frameThickness,
+        depth,
+        position: new THREE.Vector3(0, frameThickness / 2, 0),
+        material: dark,
+      }),
+      createBox({
+        width: width - frameThickness * 2,
+        height: frameThickness,
+        depth,
+        position: new THREE.Vector3(0, height - frameThickness / 2, 0),
+        material: dark,
+      }),
+      createBox({
+        width: width - frameThickness * 2,
+        height: height - frameThickness * 2,
+        depth: frameThickness,
+        position: new THREE.Vector3(0, height / 2, -depth / 2 + frameThickness / 2),
+        material: dark,
+      }),
+      createBox({
+        width: width - 0.3,
+        height: 0.12,
+        depth: depth - 0.3,
+        position: new THREE.Vector3(0, height * 0.36, 0),
+        material: dark,
+      }),
+      createBox({
+        width: width - 0.3,
+        height: 0.12,
+        depth: depth - 0.3,
+        position: new THREE.Vector3(0, height * 0.68, 0),
+        material: dark,
+      }),
     );
 
     const hingeSign = hingeSide === "right" ? 1 : -1;
@@ -54,7 +96,13 @@ class KitchenTallCabinet extends Entity {
     const handle = createRoundedPullHandle({ material: metal, height: 1.05 });
     handle.position.set(-hingeSign * (doorWidth - 0.32), 0, 0.15);
     door.add(
-      createBox({ width: doorWidth, height: height - 0.24, depth: 0.14, position: new THREE.Vector3(-hingeSign * doorWidth / 2, 0, 0), material: wood }),
+      createBox({
+        width: doorWidth,
+        height: height - 0.24,
+        depth: 0.14,
+        position: new THREE.Vector3((-hingeSign * doorWidth) / 2, 0, 0),
+        material: wood,
+      }),
       handle,
     );
     this.object3D.add(door);

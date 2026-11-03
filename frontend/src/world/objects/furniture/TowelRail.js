@@ -58,12 +58,9 @@ class TowelRail extends Entity {
 
     const metal = new THREE.MeshStandardMaterial({ color: metalColor, roughness: 0.24, metalness: 0.72 });
     const cloth = new THREE.MeshStandardMaterial({ color: towelColor, roughness: 0.94, side: THREE.DoubleSide });
-    const rail = createMesh(
-      new THREE.CylinderGeometry(0.06, 0.06, 2.5, 16),
-      metal,
-      new THREE.Vector3(0, 0, 0),
-      { rotationZ: Math.PI / 2 },
-    );
+    const rail = createMesh(new THREE.CylinderGeometry(0.06, 0.06, 2.5, 16), metal, new THREE.Vector3(0, 0, 0), {
+      rotationZ: Math.PI / 2,
+    });
     const towel = createDrapedTowel({ width: 2.15, material: cloth });
     this.object3D.add(rail, towel);
   }

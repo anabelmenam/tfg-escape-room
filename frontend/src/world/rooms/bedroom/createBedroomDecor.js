@@ -34,12 +34,14 @@ const createBedroomDecor = ({ character, desk, cabinet }) => {
     rotation: new THREE.Euler(0, -Math.PI / 4, 0),
     targetOffset: new THREE.Vector3(0.84, 0.02, 0),
     powerAvailable: character !== "dad",
-    ...(character === "mum" ? {
-      lightColor: 0xffd89a,
-      bulbColor: 0xffedc2,
-      emissiveColor: 0xffb34f,
-      lightIntensity: 190,
-    } : {}),
+    ...(character === "mum"
+      ? {
+          lightColor: 0xffd89a,
+          bulbColor: 0xffedc2,
+          emissiveColor: 0xffb34f,
+          lightIntensity: 190,
+        }
+      : {}),
   });
   desk.object3D.add(deskLamp.object3D);
 

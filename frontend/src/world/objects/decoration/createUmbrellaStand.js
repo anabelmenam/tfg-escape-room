@@ -31,7 +31,9 @@ const createUmbrellaStand = ({ aged = false, scale = 1 } = {}) => {
     umbrella.rotation.set(tiltX, 0, tiltZ);
     const shaft = finishMesh(new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, shaftHeight, 10), metalMaterial));
     shaft.position.y = 0.95 + index * 0.05;
-    const foldedCanopy = finishMesh(new THREE.Mesh(new THREE.CylinderGeometry(0.17, 0.045, 0.92, 14), umbrellaMaterial));
+    const foldedCanopy = finishMesh(
+      new THREE.Mesh(new THREE.CylinderGeometry(0.17, 0.045, 0.92, 14), umbrellaMaterial),
+    );
     foldedCanopy.position.y = 0.74;
     const strap = finishMesh(new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.018, 6, 18), rimMaterial));
     strap.position.y = 0.82;
@@ -39,8 +41,14 @@ const createUmbrellaStand = ({ aged = false, scale = 1 } = {}) => {
     const tip = finishMesh(new THREE.Mesh(new THREE.ConeGeometry(0.055, 0.18, 10), metalMaterial));
     tip.position.y = 0.19;
     tip.rotation.z = Math.PI;
-    const handleCurve = new THREE.QuadraticBezierCurve3(new THREE.Vector3(0, shaftHeight + 0.14, 0), new THREE.Vector3(0.33, shaftHeight + 0.36, 0), new THREE.Vector3(0.38, shaftHeight + 0.08, 0));
-    const handle = finishMesh(new THREE.Mesh(new THREE.TubeGeometry(handleCurve, 18, 0.045, 8, false), umbrellaMaterial));
+    const handleCurve = new THREE.QuadraticBezierCurve3(
+      new THREE.Vector3(0, shaftHeight + 0.14, 0),
+      new THREE.Vector3(0.33, shaftHeight + 0.36, 0),
+      new THREE.Vector3(0.38, shaftHeight + 0.08, 0),
+    );
+    const handle = finishMesh(
+      new THREE.Mesh(new THREE.TubeGeometry(handleCurve, 18, 0.045, 8, false), umbrellaMaterial),
+    );
     umbrella.add(shaft, foldedCanopy, strap, tip, handle);
     group.add(umbrella);
   });

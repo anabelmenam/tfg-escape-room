@@ -1,6 +1,17 @@
 const optional = (value) => (value ? [value] : []);
 
-const assembleChildrenRoom = ({ room, placeAgainstWall, character, furniture, fixtures, decor, blockPuzzle, photoPuzzle, musicPuzzle, wardrobePuzzle }) => {
+const assembleChildrenRoom = ({
+  room,
+  placeAgainstWall,
+  character,
+  furniture,
+  fixtures,
+  decor,
+  blockPuzzle,
+  photoPuzzle,
+  musicPuzzle,
+  wardrobePuzzle,
+}) => {
   const { beds, desks, chairs, wardrobes, dresser, carpets } = furniture;
   const { ambientLight, lamps, lightSwitch, windows } = fixtures;
   room.add(
