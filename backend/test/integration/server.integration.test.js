@@ -5,7 +5,7 @@ process.env.FRONTEND_ORIGIN = "https://frontend.example";
 const { httpServer } = await import("../../src/server.js");
 const { User, UserSession, RoomPlayer, GameRoom, GameEvent, PlayerCheckpoint, GameState } = await import("../../src/models/index.js");
 const { sequelize } = await import("../../src/db.js");
-const { io: createSocketClient } = await import("../../../frontend/node_modules/socket.io-client/build/esm/index.js");
+const { io: createSocketClient } = await import("socket.io-client");
 
 let baseUrl;
 
