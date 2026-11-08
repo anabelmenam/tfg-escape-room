@@ -146,7 +146,12 @@ test("registro cubre correo repetido y creación correcta", async (t) => {
   const cookie = response.headers.get("set-cookie");
   assert.match(cookie, /escape_room_session=/);
   assert.match(cookie, /HttpOnly/i);
-  assert.match(cookie, /SameSite=Lax/i);
+  if (process.env.NODE_ENV === "production") {
+    assert.match(cookie, /SameSite=None/i);
+    assert.match(cookie, /Secure/i);
+  } else {
+    assert.match(cookie, /SameSite=Lax/i);
+  }
   assert.match(cookie, /Path=\//i);
   assert.equal(cookie.includes("password123"), false);
 });
