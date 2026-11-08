@@ -1,14 +1,23 @@
 import * as THREE from "three";
 import { createRoom } from "./createRoom.js";
-import { childrenRoomConfig, childrenRoomDimensions } from "./childrenRoom/childrenRoomConfig.js";
 import { createChildrenRoomFurniture } from "./childrenRoom/createChildrenRoomFurniture.js";
 import { createChildrenRoomFixtures } from "./childrenRoom/createChildrenRoomFixtures.js";
 import { createChildrenRoomDecor } from "./childrenRoom/createChildrenRoomDecor.js";
-import { createBlockPuzzle } from "./childrenRoom/createBlockPuzzle.js";
-import { createPhotoBoardPuzzle } from "./childrenRoom/createPhotoBoardPuzzle.js";
-import { createMusicPuzzle } from "./childrenRoom/createMusicPuzzle.js";
-import { createWardrobePuzzle } from "./childrenRoom/createWardrobePuzzle.js";
+import { setupBlockPuzzle } from "./childrenRoom/puzzleSetups/setupBlockPuzzle.js";
+import { setupPhotoBoardPuzzle } from "./childrenRoom/puzzleSetups/setupPhotoBoardPuzzle.js";
+import { setupMusicPuzzle } from "./childrenRoom/puzzleSetups/setupMusicPuzzle.js";
+import { setupWardrobePuzzle } from "./childrenRoom/puzzleSetups/setupWardrobePuzzle.js";
 import { assembleChildrenRoom } from "./childrenRoom/assembleChildrenRoom.js";
+
+const childrenRoomConfig = {
+  wallColor: 0xd8c9a9,
+  floorColor: 0x76543d,
+  ceilingColor: 0xeee1c7,
+  blanketColors: [0x6f91b7, 0xc77b83],
+  carpetColor: 0xb68d42,
+  ambientIntensity: 0.62,
+};
+const childrenRoomDimensions = { width: 22, depth: 20, height: 12 };
 
 const createChildrenRoom = ({
   character = "dad",
@@ -16,8 +25,8 @@ const createChildrenRoom = ({
   onChildrenRoomAction = null,
   testMode = false,
 } = {}) => {
-  const config = childrenRoomConfig[character];
-  if (!config) throw new Error(`Character no válido para ChildrenRoom: ${character}`);
+  if (!["mum", "dad"].includes(character)) throw new Error(`Character no válido para ChildrenRoom: ${character}`);
+  const config = childrenRoomConfig;
   const { width, depth, height } = childrenRoomDimensions;
   const { room, roomColliders, bounds, windowOpenings, placeAgainstWall } = createRoom({
     width,
@@ -48,20 +57,21 @@ const createChildrenRoom = ({
     windowOpenings,
   });
   const decor = createChildrenRoomDecor({ desks: furniture.desks });
-  const blockPuzzle = createBlockPuzzle({
+
+  const blockPuzzle = setupBlockPuzzle({
     character,
     desk: furniture.desks[1],
     onFocus: onObjectFocus,
     onAction: reportAction,
   });
-  const musicPuzzle = createMusicPuzzle({
+  const musicPuzzle = setupMusicPuzzle({
     character,
     testMode,
     desk: furniture.desks[0],
     onFocus: onObjectFocus,
     onAction: reportAction,
   });
-  const photoPuzzle = createPhotoBoardPuzzle({
+  const photoPuzzle = setupPhotoBoardPuzzle({
     character,
     furniture,
     onFocus: onObjectFocus,
@@ -70,7 +80,7 @@ const createChildrenRoom = ({
       if (character === "mum") musicPuzzle.puzzle.setAvailable(true);
     },
   });
-  const wardrobePuzzle = createWardrobePuzzle({
+  const wardrobePuzzle = setupWardrobePuzzle({
     character,
     testMode,
     wardrobe: furniture.wardrobes[0],

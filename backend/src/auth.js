@@ -28,6 +28,7 @@ const readCookies = (header = "") =>
       .map((part) => part.trim().split("="))
       .filter(([key, value]) => key && value),
   );
+
 const cookieOptions = () => {
   const production = process.env.NODE_ENV === "production";
   return `HttpOnly; Path=/; SameSite=${production ? "None" : "Lax"}; Max-Age=${SESSION_DURATION / 1000}${production ? "; Secure" : ""}`;

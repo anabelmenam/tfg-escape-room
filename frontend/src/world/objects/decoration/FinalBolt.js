@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { Entity } from "../Entity.js";
 import { tInteraction, tItem } from "../../../translations/index.js";
-import { createSymbolTexture } from "./FinalKey.js";
+import { createSymbolTexture } from "./items/FinalKey.js";
 
 class FinalBolt extends Entity {
   constructor({ id, keyId, symbol, color, onUnlock } = {}) {

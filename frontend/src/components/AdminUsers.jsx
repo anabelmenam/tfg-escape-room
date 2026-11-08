@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { AlertTriangle, Trash2, X } from "lucide-react";
 import { deleteAdminUser, getAdminUsers } from "../services/gameApi.js";
 import { t } from "../translations/index.js";
+import AdminUsersSkeleton from "./skeletons/AdminUsersSkeleton.jsx";
 
 const AdminUsers = ({ currentUserId }) => {
   const [users, setUsers] = useState([]);
@@ -52,7 +53,7 @@ const AdminUsers = ({ currentUserId }) => {
     }
   };
 
-  if (loading) return <p className="py-10 text-center text-[#c9ba9e]">{t("adminUsers.loading")}</p>;
+  if (loading) return <AdminUsersSkeleton />;
   return (
     <div>
       <p className="text-xs font-bold uppercase tracking-[.24em] text-[#d8aa64]">{t("adminUsers.eyebrow")}</p>

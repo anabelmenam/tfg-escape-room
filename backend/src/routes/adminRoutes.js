@@ -11,7 +11,10 @@ export const createAdminRouter = () => {
   const router = Router();
   router.use(requireUser, requireAdmin);
   router.get("/users", async (request, response) => {
-    const users = await User.findAll({ attributes: ["id", "displayName", "email", "role", "createdAt"], order: [["createdAt", "DESC"]] });
+    const users = await User.findAll({
+      attributes: ["id", "displayName", "email", "role", "createdAt"],
+      order: [["createdAt", "DESC"]],
+    });
     return response.json({ users });
   });
   router.delete("/users/:userId", async (request, response) => {
@@ -25,7 +28,12 @@ export const createAdminRouter = () => {
       const roomIds = [...new Set(memberships.map(({ roomId }) => roomId))];
       await user.destroy({ transaction });
       if (roomIds.length) {
-        const remaining = await RoomPlayer.findAll({ where: { roomId: { [Op.in]: roomIds } }, attributes: ["roomId"], transaction, raw: true });
+        const remaining = await RoomPlayer.findAll({
+          where: { roomId: { [Op.in]: roomIds } },
+          attributes: ["roomId"],
+          transaction,
+          raw: true,
+        });
         const occupied = new Set(remaining.map(({ roomId }) => roomId));
         const emptyRooms = roomIds.filter((roomId) => !occupied.has(roomId));
         if (emptyRooms.length) await GameRoom.destroy({ where: { id: { [Op.in]: emptyRooms } }, transaction });
@@ -33,7 +41,12 @@ export const createAdminRouter = () => {
       return account;
     });
     if (!deletedUser) return response.status(404).json({ error: "USER_NOT_FOUND" });
-    if (deletedUser.email) try { await sendAccountDeletedEmail(deletedUser); } catch (error) { console.error("No se pudo enviar el correo de cuenta eliminada:", error.message); }
+    if (deletedUser.email)
+      try {
+        await sendAccountDeletedEmail(deletedUser);
+      } catch (error) {
+        console.error("No se pudo enviar el correo de cuenta eliminada:", error.message);
+      }
     return response.status(204).end();
   });
   return router;

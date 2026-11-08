@@ -20,6 +20,7 @@ const createBedroomFurniture = ({ character, characterConfig, testMode = false }
     mattressColor: 0xd8e0e4,
     pillowColor: characterConfig.pillowColor,
   });
+
   const nightstand1 = new Cabinet({
     id: "nightstand1",
     position: new THREE.Vector3(-6.5, 0, -11),
@@ -44,12 +45,14 @@ const createBedroomFurniture = ({ character, characterConfig, testMode = false }
     handleType: "knob",
     ...bedroomWoodStyle,
   });
+
   const wardrobe = new Wardrobe({
     id: "wardrobe1",
     position: new THREE.Vector3(6.5, 0, -3),
     ...bedroomWoodStyle,
   });
   wardrobe.object3D.rotation.y = -Math.PI / 2;
+
   const cabinet = new Cabinet({
     id: "cabinet1",
     position: new THREE.Vector3(-7, 0, 3),
@@ -61,6 +64,7 @@ const createBedroomFurniture = ({ character, characterConfig, testMode = false }
     ...bedroomWoodStyle,
   });
   cabinet.object3D.rotation.y = Math.PI / 2;
+
   const desk = new Desk({
     id: "desk1",
     position: new THREE.Vector3(6.5, 0, 8),
@@ -74,6 +78,7 @@ const createBedroomFurniture = ({ character, characterConfig, testMode = false }
     ...bedroomWoodStyle,
   });
   chair.object3D.rotation.y = Math.PI / 2;
+
   const carpet = new Carpet({
     id: "carpet1",
     position: new THREE.Vector3(-1.5, 0.01, -5),

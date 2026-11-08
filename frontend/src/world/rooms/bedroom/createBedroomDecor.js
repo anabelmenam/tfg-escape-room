@@ -9,7 +9,9 @@ const createBedroomDecor = ({ character, desk, cabinet }) => {
     width: 1.15,
     height: 0.82,
   });
-  if (character === "dad") desk.object3D.add(deskPaper.object3D);
+  if (character === "dad") {
+    desk.object3D.add(deskPaper.object3D);
+  }
 
   [
     { x: 1.43, z: 0.82, angle: -0.12, width: 1.28, height: 0.9 },

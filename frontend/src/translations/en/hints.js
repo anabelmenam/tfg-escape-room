@@ -42,7 +42,7 @@ export default {
         "Ask your companion to arrange the books like a rainbow.",
       ],
       mumPainting: [
-        "The space behind the bookcase has a shape that looks strangely familiar.",
+        "The painting behind the bookcase has a shape that looks strangely familiar.",
         "Pick up the fallen painting and place it in the wall frame.",
       ],
       mumPaintingPieces: [
@@ -106,8 +106,8 @@ export default {
         "Your companion must finish the table and solve the stove.",
       ],
       mumOven: [
-        "The lights in your companion's kitchen seem connected to your oven controls.",
-        "Copy the illuminated temperature and time from your companion.",
+        "Your companion's oven seems to have illuminated indicators.",
+        "Copy your companion's illuminated temperature and time; their oven will open automatically.",
       ],
       mumWaitMosaic: [
         "The pattern in your bathroom seems to mirror a puzzle your companion must arrange.",
@@ -127,7 +127,7 @@ export default {
       ],
       dadFamilyPhoto: [
         "A family memory is fragmented, but its colours still preserve an order.",
-        "Reorder it so your companion can open the sewing box.",
+        "Arrange the family picture. The solution will allow your companion to open the sewing box.",
       ],
       dadElectrical: [
         "Your companion's plan and a hidden bedroom part can restore the power.",

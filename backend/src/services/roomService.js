@@ -7,7 +7,9 @@ import { syncRoomPlayTimer } from "./gameSessionService.js";
 
 export const ensureFreeSlot = async (userId, slotNumber, transaction) => {
   const occupied = await RoomPlayer.findOne({
-    where: { userId, slotNumber }, transaction, lock: transaction.LOCK.UPDATE,
+    where: { userId, slotNumber },
+    transaction,
+    lock: transaction.LOCK.UPDATE,
   });
   if (occupied) {
     const error = new Error("SAVE_SLOT_OCCUPIED");
@@ -23,8 +25,11 @@ export const getPlayerFromToken = async (roomId, token) => {
   });
   if (!player) return null;
   return {
-    id: player.id, roomId: player.roomId, userId: player.userId,
-    character: player.character, displayName: player.user.displayName,
+    id: player.id,
+    roomId: player.roomId,
+    userId: player.userId,
+    character: player.character,
+    displayName: player.user.displayName,
   };
 };
 
@@ -38,11 +43,14 @@ export const getLobbyState = async (roomId, transaction) => {
   const players = await RoomPlayer.findAll({
     where: { roomId },
     include: [{ model: User, as: "user", attributes: ["displayName"], required: true }],
-    order: [["joinedAt", "ASC"]], transaction,
+    order: [["joinedAt", "ASC"]],
+    transaction,
   });
   return {
     players: players.map((player) => ({
-      id: player.id, character: player.character, connected: player.connected,
+      id: player.id,
+      character: player.character,
+      connected: player.connected,
       displayName: player.user.displayName,
     })),
   };
@@ -64,7 +72,16 @@ export const createRoom = async (user, { slotNumber, name }) => {
         );
         await room.update({ creatorPlayerId: playerId }, { transaction });
         await GameState.create({ roomId, state: createInitialState() }, { transaction });
-        return { roomId, joinCode, playerId, playerToken, character: null, status: "waiting", isCreator: true, showIntroduction: true };
+        return {
+          roomId,
+          joinCode,
+          playerId,
+          playerToken,
+          character: null,
+          status: "waiting",
+          isCreator: true,
+          showIntroduction: true,
+        };
       });
     } catch (error) {
       const collision = error?.name === "SequelizeUniqueConstraintError" && error?.fields?.join_code;
@@ -77,16 +94,30 @@ export const createRoom = async (user, { slotNumber, name }) => {
 export const joinRoom = async (joinCode, user, { slotNumber }) =>
   withTransaction(async (transaction) => {
     const room = await GameRoom.findOne({
-      where: { joinCode: normaliseCode(joinCode) }, transaction, lock: transaction.LOCK.UPDATE,
+      where: { joinCode: normaliseCode(joinCode) },
+      transaction,
+      lock: transaction.LOCK.UPDATE,
     });
-    if (!room) { const error = new Error("ROOM_NOT_FOUND"); error.status = 404; throw error; }
-    if (room.status !== "waiting") { const error = new Error("ROOM_NOT_JOINABLE"); error.status = 409; throw error; }
+    if (!room) {
+      const error = new Error("ROOM_NOT_FOUND");
+      error.status = 404;
+      throw error;
+    }
+    if (room.status !== "waiting") {
+      const error = new Error("ROOM_NOT_JOINABLE");
+      error.status = 409;
+      throw error;
+    }
     await ensureFreeSlot(user.id, slotNumber, transaction);
     if (await RoomPlayer.findOne({ where: { roomId: room.id, userId: user.id }, transaction })) {
-      const error = new Error("ALREADY_IN_ROOM"); error.status = 409; throw error;
+      const error = new Error("ALREADY_IN_ROOM");
+      error.status = 409;
+      throw error;
     }
-    if (await RoomPlayer.count({ where: { roomId: room.id }, transaction }) >= 2) {
-      const error = new Error("ROOM_FULL"); error.status = 409; throw error;
+    if ((await RoomPlayer.count({ where: { roomId: room.id }, transaction })) >= 2) {
+      const error = new Error("ROOM_FULL");
+      error.status = 409;
+      throw error;
     }
     const playerId = randomUUID();
     const playerToken = randomUUID();
@@ -94,14 +125,29 @@ export const joinRoom = async (joinCode, user, { slotNumber }) =>
       { id: playerId, roomId: room.id, userId: user.id, character: null, reconnectToken: playerToken, slotNumber },
       { transaction },
     );
-    return { roomId: room.id, joinCode: room.joinCode, playerId, playerToken, character: null, status: "waiting", isCreator: false, showIntroduction: true };
+    return {
+      roomId: room.id,
+      joinCode: room.joinCode,
+      playerId,
+      playerToken,
+      character: null,
+      status: "waiting",
+      isCreator: false,
+      showIntroduction: true,
+    };
   });
 
 export const selectCharacter = async (roomId, playerId, requestedCharacter) =>
   withTransaction(async (transaction) => {
     const players = await RoomPlayer.findAll({ where: { roomId }, transaction, lock: transaction.LOCK.UPDATE });
-    const occupied = new Set(players.filter(({ id }) => id !== playerId).map(({ character }) => character).filter(Boolean));
-    if (requestedCharacter && occupied.has(requestedCharacter)) throw new Error("Ese mundo ya lo ha elegido el otro jugador.");
+    const occupied = new Set(
+      players
+        .filter(({ id }) => id !== playerId)
+        .map(({ character }) => character)
+        .filter(Boolean),
+    );
+    if (requestedCharacter && occupied.has(requestedCharacter))
+      throw new Error("Ese mundo ya lo ha elegido el otro jugador.");
     await RoomPlayer.update({ character: requestedCharacter }, { where: { id: playerId }, transaction });
     return getLobbyState(roomId, transaction);
   });
@@ -115,7 +161,8 @@ export const startGame = async (roomId, playerId) =>
     const selected = lobby.players.filter(({ character }) => character);
     if (selected.length !== 2 || new Set(selected.map(({ character }) => character)).size !== 2)
       throw new Error("Los dos jugadores deben elegir un mundo distinto.");
-    if (lobby.players.some(({ connected }) => !connected)) throw new Error("Los dos jugadores deben estar conectados para empezar.");
+    if (lobby.players.some(({ connected }) => !connected))
+      throw new Error("Los dos jugadores deben estar conectados para empezar.");
     await room.update({ status: "playing" }, { transaction });
     await syncRoomPlayTimer(roomId, transaction);
     return lobby;

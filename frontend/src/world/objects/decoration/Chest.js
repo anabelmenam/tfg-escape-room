@@ -22,11 +22,9 @@ class Chest extends Entity {
     locked = false,
     requiredKey = null,
     requiredPassword = null,
-
     castShadow = true,
     receiveShadow = true,
     createCollider = true,
-
     onOpenChange = null,
   } = {}) {
     super(id);
@@ -34,30 +32,22 @@ class Chest extends Entity {
     this.width = width;
     this.height = height;
     this.depth = depth;
-
     this.bodyHeight = height * 0.68;
     this.lidHeight = height - this.bodyHeight;
-
     this.wallThickness = Math.min(width, height, depth) * 0.06;
-
     this.bandWidth = width * 0.055;
     this.bandThickness = Math.min(this.width, this.height, this.depth) * 0.025;
     this.openAngle = Math.PI * 0.32;
     this.openingSpeed = 5;
-
     this.isOpen = initiallyOpen;
     this.targetOpen = initiallyOpen;
-
     this.locked = locked;
     this.requiredKey = requiredKey;
     this.requiredPassword = requiredPassword;
-
     this.castShadow = castShadow;
     this.receiveShadow = receiveShadow;
-
     this.createColliderEnabled = createCollider;
     this.onOpenChange = onOpenChange;
-
     this.contents = new Map();
 
     this.texture = texture
@@ -95,7 +85,6 @@ class Chest extends Entity {
 
     this.object3D = new THREE.Group();
     this.object3D.name = id;
-
     this.object3D.position.copy(position);
     this.object3D.rotation.y = rotationY;
 
@@ -107,10 +96,8 @@ class Chest extends Entity {
 
     this.bodyGroup = new THREE.Group();
     this.bodyGroup.name = `${id}-body`;
-
     this.lidPivot = new THREE.Group();
     this.lidPivot.name = `${id}-lid-pivot`;
-
     this.lidGroup = new THREE.Group();
     this.lidGroup.name = `${id}-lid`;
 
@@ -122,7 +109,6 @@ class Chest extends Entity {
     this.createChest();
 
     this.lidPivot.rotation.x = this.isOpen ? -this.openAngle : 0;
-
     this.object3D.updateMatrixWorld(true);
 
     if (this.createColliderEnabled) {
@@ -147,9 +133,7 @@ class Chest extends Entity {
 
   createRoundedGeometry(width, height, depth, radius) {
     const maximumRadius = Math.min(width, height, depth) / 2;
-
     const validRadius = Math.max(0.001, Math.min(radius, maximumRadius * 0.9));
-
     return new RoundedBoxGeometry(width, height, depth, 4, validRadius);
   }
 
@@ -167,9 +151,7 @@ class Chest extends Entity {
     const wallHeight = this.bodyHeight - this.wallThickness;
     const wallY = this.wallThickness + wallHeight / 2;
     const sideDepth = this.depth - this.wallThickness * 2;
-
     const sideGeometry = this.createRoundedGeometry(this.wallThickness, wallHeight, sideDepth, radius);
-
     const leftWall = new THREE.Mesh(sideGeometry, this.woodMaterial);
     leftWall.name = `${this.id}-left-wall`;
     leftWall.position.set(-this.width / 2 + this.wallThickness / 2, wallY, 0);
@@ -241,12 +223,9 @@ class Chest extends Entity {
     const radius = this.depth / 2;
 
     const shape = new THREE.Shape();
-
     shape.moveTo(-radius, 0);
     shape.lineTo(radius, 0);
-
     shape.absarc(0, 0, radius, 0, Math.PI, false);
-
     shape.closePath();
 
     const geometry = new THREE.ExtrudeGeometry(shape, {
@@ -259,14 +238,12 @@ class Chest extends Entity {
     });
 
     geometry.rotateY(Math.PI / 2);
-
     geometry.computeBoundingBox();
 
     const boundingBox = geometry.boundingBox;
 
     const center = new THREE.Vector3();
     boundingBox.getCenter(center);
-
     geometry.translate(-center.x, -boundingBox.min.y, -center.z);
 
     return geometry;
@@ -274,22 +251,16 @@ class Chest extends Entity {
 
   createLid() {
     this.lidPivot.position.set(0, this.bodyHeight, -this.depth / 2);
-
     this.lidGroup.position.z = this.depth / 2;
 
     const geometry = this.createCurvedLidGeometry();
 
     const lid = new THREE.Mesh(geometry, this.woodMaterial);
-
     lid.name = `${this.id}-lid`;
-
     lid.scale.y = this.lidHeight / (this.depth / 2);
-
     this.configureMesh(lid);
-
     this.lidGroup.add(lid);
     this.lidPivot.add(this.lidGroup);
-
     this.lid = lid;
   }
 
@@ -302,23 +273,17 @@ class Chest extends Entity {
 
     positions.forEach((x, index) => {
       const frontGeometry = new THREE.BoxGeometry(this.bandWidth, this.bodyHeight, bandDepth);
-
       const frontBand = new THREE.Mesh(frontGeometry, this.metalMaterial);
-
       frontBand.name = `${this.id}-body-band-front-${index + 1}`;
       frontBand.position.set(x, this.bodyHeight / 2, frontZ);
 
       const backGeometry = new THREE.BoxGeometry(this.bandWidth, this.bodyHeight, bandDepth);
-
       const backBand = new THREE.Mesh(backGeometry, this.metalMaterial);
-
       backBand.name = `${this.id}-body-band-back-${index + 1}`;
       backBand.position.set(x, this.bodyHeight / 2, backZ);
 
       const bottomGeometry = new THREE.BoxGeometry(this.bandWidth, bandDepth, this.depth + bandDepth * 2);
-
       const bottomBand = new THREE.Mesh(bottomGeometry, this.metalMaterial);
-
       bottomBand.name = `${this.id}-body-band-bottom-${index + 1}`;
       bottomBand.position.set(x, bottomY, 0);
 
@@ -335,16 +300,12 @@ class Chest extends Entity {
     const depth = this.depth * 0.07;
 
     const geometry = new THREE.BoxGeometry(width, height, depth);
-
     const positions = [-this.width * 0.28, this.width * 0.28];
 
     positions.forEach((x, index) => {
       const hinge = new THREE.Mesh(geometry, this.metalMaterial);
-
       hinge.name = `${this.id}-hinge-${index + 1}`;
-
       hinge.position.set(x, this.bodyHeight - height / 2, -this.depth / 2 - depth / 2);
-
       this.configureMesh(hinge);
       this.bodyGroup.add(hinge);
     });
@@ -356,18 +317,14 @@ class Chest extends Entity {
     const depth = this.depth * 0.045;
 
     const geometry = this.createRoundedGeometry(width, height, depth, Math.min(width, height) * 0.1);
-
     const lock = new THREE.Mesh(geometry, this.lockMaterial);
-
     lock.name = `${this.id}-lock`;
-
     lock.position.set(0, this.bodyHeight * 0.72, this.depth / 2 + depth / 2);
 
     this.configureMesh(lock);
     this.bodyGroup.add(lock);
 
     const keyholeGeometry = new THREE.CircleGeometry(width * 0.09, 12);
-
     const keyholeMaterial = new THREE.MeshStandardMaterial({
       color: 0x111111,
       roughness: 1,
@@ -375,11 +332,8 @@ class Chest extends Entity {
     });
 
     const keyhole = new THREE.Mesh(keyholeGeometry, keyholeMaterial);
-
     keyhole.name = `${this.id}-keyhole`;
-
     keyhole.position.set(0, this.bodyHeight * 0.72, this.depth / 2 + depth + 0.003);
-
     this.configureMesh(keyhole);
     this.bodyGroup.add(keyhole);
   }
@@ -387,7 +341,6 @@ class Chest extends Entity {
   configureMesh(mesh) {
     mesh.castShadow = this.castShadow;
     mesh.receiveShadow = this.receiveShadow;
-
     mesh.geometry?.computeBoundingBox();
     mesh.geometry?.computeBoundingSphere();
   }
@@ -417,7 +370,6 @@ class Chest extends Entity {
       }
 
       inventory.remove(this.requiredKey);
-
       this.unlock();
     }
 
@@ -457,9 +409,7 @@ class Chest extends Entity {
 
   update(delta) {
     const targetAngle = this.targetOpen ? -this.openAngle : 0;
-
     const nextAngle = THREE.MathUtils.damp(this.lidPivot.rotation.x, targetAngle, this.openingSpeed, delta);
-
     this.lidPivot.rotation.x = nextAngle;
 
     if (Math.abs(nextAngle - targetAngle) > 0.001) {
@@ -483,7 +433,6 @@ class Chest extends Entity {
     item,
     {
       position = new THREE.Vector3(0, this.wallThickness + 0.15, 0),
-
       rotation = null,
       scale = null,
       visible = true,
@@ -506,9 +455,7 @@ class Chest extends Entity {
     }
 
     this.contents.set(itemId, item);
-
     this.contentContainer.add(object3D);
-
     object3D.position.copy(position);
     object3D.visible = visible;
 
@@ -535,7 +482,6 @@ class Chest extends Entity {
     }
 
     const object3D = item.object3D ?? (item.isObject3D ? item : null);
-
     this.contents.delete(itemId);
 
     if (object3D) {
@@ -579,18 +525,12 @@ class Chest extends Entity {
     const lidVisible = this.lidPivot.visible;
 
     const contentVisible = this.contentContainer.visible;
-
     this.lidPivot.visible = false;
     this.contentContainer.visible = false;
-
     this.object3D.updateMatrixWorld(true);
-
     this.collider = new THREE.Box3().setFromObject(this.object3D);
-
     this.lidPivot.visible = lidVisible;
-
     this.contentContainer.visible = contentVisible;
-
     this.object3D.updateMatrixWorld(true);
 
     return this.collider;

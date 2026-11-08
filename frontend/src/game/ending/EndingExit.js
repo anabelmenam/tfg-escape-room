@@ -1,5 +1,12 @@
 import * as THREE from "three";
-import { ENDING_EXIT } from "./endingConfig.js";
+
+const ENDING_EXIT = {
+  delay: 1.05,
+  duration: 2.65,
+  approachDistance: -1.45,
+  thresholdDistance: 0.75,
+  endDistance: 4.8,
+};
 
 const hidePlayers = (game) => {
   game.multiplayer.setCharactersHidden(true);

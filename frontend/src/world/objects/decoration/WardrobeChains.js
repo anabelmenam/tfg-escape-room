@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { Entity } from "../Entity.js";
 import { tInteraction, tItem } from "../../../translations/index.js";
-import { createBoltCuttersModel } from "./BoltCutters.js";
+import { createBoltCuttersModel } from "./items/BoltCutters.js";
 
 class WardrobeChains extends Entity {
   constructor({ onCut = null } = {}) {

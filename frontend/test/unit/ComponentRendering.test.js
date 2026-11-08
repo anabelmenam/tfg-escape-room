@@ -16,13 +16,13 @@ const render = async (Component, props = {}) => {
   return renderer;
 };
 
-const AudioSettings = (await import("../../src/components/AudioSettings.jsx")).default;
-const MouseSettings = (await import("../../src/components/MouseSettings.jsx")).default;
-const LanguageSettings = (await import("../../src/components/LanguageSettings.jsx")).default;
+const AudioSettings = (await import("../../src/components/menu/settings/AudioSettings.jsx")).default;
+const MouseSettings = (await import("../../src/components/menu/settings/MouseSettings.jsx")).default;
+const LanguageSettings = (await import("../../src/components/menu/settings/LanguageSettings.jsx")).default;
 const ControlsPanel = (await import("../../src/components/menu/ControlsPanel.jsx")).default;
 const SettingsPanel = (await import("../../src/components/menu/SettingsPanel.jsx")).default;
 const GameHud = (await import("../../src/components/game/GameHud.jsx")).default;
-const LoadingOverlay = (await import("../../src/components/game/LoadingOverlay.jsx")).default;
+const GameLoadingSkeleton = (await import("../../src/components/skeletons/GameLoadingSkeleton.jsx")).default;
 const StoryOverlay = (await import("../../src/components/game/StoryOverlay.jsx")).default;
 const TestModePanel = (await import("../../src/components/game/TestModePanel.jsx")).default;
 const EndingOverlay = (await import("../../src/components/ending/EndingOverlay.jsx")).default;
@@ -69,7 +69,7 @@ test("paneles de controles y configuración renderizan todas sus variantes", asy
 test("HUD, carga, historia y panel de pruebas cubren sus estados", async () => {
   assert.ok((await render(GameHud, { showCrosshair: true })).toJSON());
   assert.ok((await render(GameHud, { showCrosshair: false })).toJSON());
-  assert.ok((await render(LoadingOverlay)).toJSON());
+  assert.ok((await render(GameLoadingSkeleton)).toJSON());
   let continued = false;
   const mumStory = await render(StoryOverlay, { character: "mum", onContinue: () => { continued = true; } });
   await act(async () => mumStory.root.findByType("button").props.onClick());

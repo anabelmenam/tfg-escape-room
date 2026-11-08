@@ -51,7 +51,7 @@ Esta separación mantiene el punto de entrada reducido y permite probar las regl
 - `src/models/index.js`: modelos de cuentas, sesiones, partidas, jugadores, estado, eventos y puntos de continuación. Los atributos JavaScript usan camelCase y las columnas PostgreSQL mantienen snake_case.
 - `migrations/*.js`: migraciones con funciones `up` y `down`. El ejecutor les pasa `queryInterface`, `Sequelize` y `{ transaction }`, y registra su aplicación en `SequelizeMeta` dentro de la misma transacción.
 
-Ejecuta `npm run migrate` tanto en una instalación nueva como en una base creada con las anteriores migraciones SQL. Se conservan las tablas y los datos existentes; no se utiliza `sync({ force: true })` ni `sync({ alter: true })`. Las migraciones ya registradas no vuelven a ejecutarse.
+Ejecuta `npm run migrate` tanto en una instalación nueva como en una base creada con las anteriores migraciones SQL. Se conservan las tablas y los datos existentes. No se utiliza `sync({ force: true })` ni `sync({ alter: true })`. Las migraciones ya registradas no vuelven a ejecutarse.
 
 `npm run migrate:undo` revierte la última migración. Puede eliminar datos al revertir la creación de tablas. La migración que convierte la nomenclatura antigua a personajes no se revierte para evitar perder progreso.
 
@@ -61,6 +61,24 @@ El envío se realiza con Brevo. Configura `FRONTEND_ORIGIN`, `BREVO_API_KEY`, `E
 
 El comando `npm start` aplica automáticamente las migraciones pendientes antes de iniciar el servidor.
 
-## Comprobación de sintaxis
+## Pruebas y comprobaciones
 
-`npm run check` comprueba la sintaxis del backend.
+Las pruebas unitarias cubren autenticación, modelos, estado inicial, correo y reglas de dominio. Las pruebas de integración arrancan la aplicación de forma controlada para comprobar las rutas HTTP y la comunicación mediante Socket.IO.
+
+```bash
+npm test
+```
+
+Para generar el informe de cobertura y exigir un mínimo del 85 % de líneas:
+
+```bash
+npm run test:coverage
+```
+
+La comprobación completa valida la sintaxis de los módulos y las migraciones antes de ejecutar toda la suite:
+
+```bash
+npm run check
+```
+
+El informe HTML de cobertura se genera en `coverage/`.

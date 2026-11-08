@@ -4,29 +4,18 @@ import { createBedroomFurniture } from "./bedroom/createBedroomFurniture.js";
 import { createBedroomFixtures } from "./bedroom/createBedroomFixtures.js";
 import { createBedroomDecor } from "./bedroom/createBedroomDecor.js";
 import { createBedroomItems } from "./bedroom/createBedroomItems.js";
-import { createBedroomRadioPuzzle } from "./bedroom/createBedroomRadioPuzzle.js";
-import { createBedroomPowerPuzzles } from "./bedroom/createBedroomPowerPuzzles.js";
+import { setupBedroomRadioPuzzle } from "./bedroom/puzzleSetups/setupBedroomRadioPuzzle.js";
+import { setupBedroomPowerPuzzles } from "./bedroom/puzzleSetups/setupBedroomPowerPuzzles.js";
 import { assembleBedroom } from "./bedroom/assembleBedroom.js";
 
-const bedroomCharacterConfig = {
-  mum: {
-    wallColor: 0xc8b89d,
-    floorColor: 0x6a4d3c,
-    ceilingColor: 0xb0a18c,
-    blanketColor: 0xa89305,
-    pillowColor: 0xa89305,
-    carpetColor: 0x762d34,
-    ambientLightIntensity: 0.55,
-  },
-  dad: {
-    wallColor: 0xc8b89d,
-    floorColor: 0x6a4d3c,
-    ceilingColor: 0xb0a18c,
-    blanketColor: 0xa89305,
-    pillowColor: 0xa89305,
-    carpetColor: 0x762d34,
-    ambientLightIntensity: 0.55,
-  },
+const bedroomConfig = {
+  wallColor: 0xc8b89d,
+  floorColor: 0x6a4d3c,
+  ceilingColor: 0xb0a18c,
+  blanketColor: 0xa89305,
+  pillowColor: 0xa89305,
+  carpetColor: 0x762d34,
+  ambientLightIntensity: 0.55,
 };
 
 const createBedroom = async ({
@@ -37,15 +26,14 @@ const createBedroom = async ({
   onBedroomAction = null,
   testMode = false,
 } = {}) => {
-  const characterConfig = bedroomCharacterConfig[character];
-
-  if (!characterConfig) {
+  if (!["mum", "dad"].includes(character)) {
     throw new Error(`Character no válido para Bedroom: ${character}`);
   }
+  const config = bedroomConfig;
   const { room, roomColliders, bounds, doorOpening, windowOpenings, placeAgainstWall } = createRoom({
-    wallColor: characterConfig.wallColor,
-    floorColor: characterConfig.floorColor,
-    ceilingColor: characterConfig.ceilingColor,
+    wallColor: config.wallColor,
+    floorColor: config.floorColor,
+    ceilingColor: config.ceilingColor,
     wallTexture: "/textures/rooms/whiteWall.jpg",
     floorTexture: "/textures/rooms/floor2.jpg",
     ceilingTexture: "/textures/rooms/whiteWall.jpg",
@@ -98,7 +86,7 @@ const createBedroom = async ({
   const fixtures = createBedroomFixtures({
     character,
     testMode,
-    characterConfig,
+    characterConfig: config,
     doorOpening,
     windowOpenings,
     onDoorOpenChange,
@@ -106,14 +94,14 @@ const createBedroom = async ({
   });
   const { door, lights } = fixtures;
   room.add(...lights);
-  const furniture = createBedroomFurniture({ character, characterConfig, testMode });
+  const furniture = createBedroomFurniture({ character, characterConfig: config, testMode });
 
   const items = createBedroomItems({ character, furniture, onAction: reportAction });
   const { flashlight } = items;
 
   const decor = createBedroomDecor({ character, desk: furniture.desk, cabinet: furniture.cabinet });
 
-  const radioPuzzle = createBedroomRadioPuzzle({
+  const radioPuzzle = setupBedroomRadioPuzzle({
     character,
     testMode,
     clues,
@@ -122,7 +110,7 @@ const createBedroom = async ({
     onFocus: onObjectFocus,
     onAction: reportAction,
   });
-  const powerPuzzles = createBedroomPowerPuzzles({
+  const powerPuzzles = setupBedroomPowerPuzzles({
     character,
     testMode,
     clues,

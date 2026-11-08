@@ -6,7 +6,7 @@ import { installBrowserMocks } from "../helpers/browserMocks.js";
 installBrowserMocks();
 
 const { createGameWorld } = await import("../../src/world/createGameWorld.js");
-const { EventManager } = await import("../../src/game/EventManager.js");
+const { EventManager } = await import("../../src/game/managers/EventManager.js");
 const { startEndingHouseTour, updateEndingTour } = await import("../../src/game/ending/EndingTour.js");
 const { startEndingExit, updateEndingExit } = await import("../../src/game/ending/EndingExit.js");
 
@@ -56,12 +56,19 @@ for (const [playerRole, character] of [["A", "mum"], ["B", "dad"]]) {
     if (character === "dad") {
       const bathroomLock = level.entities.find(({ id }) => id === "bathroom-sequence-lock");
       const chestLock = level.entities.find(({ id }) => id === "living-room-chest-lock");
+      const livingRoomChest = level.entities.find(({ id }) => id === "living-room-chest");
       const stove = level.entities.find(({ id }) => id === "kitchen-stove");
       const dadNapkin = level.entities.find(({ id }) => id === "kitchen-napkin-blue");
       const ingredientIds = level.entities.map(({ id }) => id);
       assert.equal(bathroomLock?.password, "5274");
       assert.equal(chestLock?.password, "3816");
       assert.notEqual(bathroomLock.password, chestLock.password);
+      assert.equal(livingRoomChest?.hasItem("study-key"), true);
+      assert.equal(livingRoomChest?.hasItem("final-key-living-room"), true);
+      assert.equal(livingRoomChest?.getItem("study-key")?.object3D.visible, true);
+      assert.equal(livingRoomChest?.getItem("final-key-living-room")?.object3D.visible, true);
+      assert.equal(livingRoomChest?.getItem("study-key")?.enabled, false);
+      assert.equal(livingRoomChest?.getItem("final-key-living-room")?.enabled, false);
       const stoveFocus = stove.object3D.worldToLocal(stove.getFocusPosition());
       const stoveLookAt = stove.object3D.worldToLocal(stove.getLookAtPosition());
       assert.ok(stoveFocus.y > 3.5);
@@ -96,10 +103,7 @@ for (const [playerRole, character] of [["A", "mum"], ["B", "dad"]]) {
   });
 }
 
-test("crea la sala auxiliar y rechaza roles desconocidos", async () => {
-  const livingRoom = await createGameWorld({ playerRole: "D", ...createCallbacks() });
-  assert.ok(livingRoom.room);
-
+test("crea la sala de iconos y rechaza roles desconocidos", async () => {
   const iconsRoom = await createGameWorld({ playerRole: "C", ...createCallbacks() });
   assert.equal(iconsRoom.room.name, "Icon Studio");
   assert.ok(iconsRoom.room.getObjectByName("icon-studio-clock-hand"));

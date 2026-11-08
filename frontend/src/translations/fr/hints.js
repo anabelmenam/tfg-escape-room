@@ -42,7 +42,7 @@ export default {
         "Demandez-lui de classer les livres comme un arc-en-ciel.",
       ],
       mumPainting: [
-        "Le vide derrière la bibliothèque possède une forme étrangement familière.",
+        "Le tableau derrière la bibliothèque possède une forme étrangement familière.",
         "Ramassez le tableau tombé et placez-le au mur.",
       ],
       mumPaintingPieces: [
@@ -106,8 +106,8 @@ export default {
         "Votre partenaire doit terminer la table et régler les plaques.",
       ],
       mumOven: [
-        "Les lumières de la cuisine de votre partenaire semblent reliées aux commandes de votre four.",
-        "Copiez la température et le temps éclairés chez votre partenaire.",
+        "Le four de votre partenaire semble avoir des indicateurs lumineux.",
+        "Copiez la température et le temps éclairés chez votre partenaire ; son four s'ouvrira automatiquement.",
       ],
       mumWaitMosaic: [
         "Le dessin de votre salle de bains semble refléter une énigme que votre partenaire doit ordonner.",
@@ -127,7 +127,7 @@ export default {
       ],
       dadFamilyPhoto: [
         "Un souvenir familial est fragmenté, mais ses couleurs conservent un ordre.",
-        "Remettez-la en ordre pour débloquer la boîte à couture de votre partenaire.",
+        "Remettez le portrait de famille en ordre. La solution permettra à votre partenaire d'ouvrir la boîte à couture.",
       ],
       dadElectrical: [
         "Le plan de votre partenaire et une pièce cachée peuvent rétablir le courant.",

@@ -1,5 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ENDING_UI } from "../../game/ending/endingConfig.js";
+
+const ENDING_UI = {
+  tourStartDelay: 350,
+  previewHoldDuration: 850,
+};
 
 const useEndingSequence = ({ session, gameRef, setIsPaused }) => {
   const previewTimerRef = useRef(null);

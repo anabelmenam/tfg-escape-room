@@ -1,11 +1,21 @@
 import * as THREE from "three";
 import { createRoom } from "./createRoom.js";
-import { bathroomConfig, bathroomDimensions } from "./bathroom/bathroomConfig.js";
 import { createBathroomFixtures } from "./bathroom/createBathroomFixtures.js";
 import { createBathroomFurniture } from "./bathroom/createBathroomFurniture.js";
 import { createBathroomDecor } from "./bathroom/createBathroomDecor.js";
-import { createBathroomPuzzles } from "./bathroom/createBathroomPuzzles.js";
+import { setupBathroomPuzzles } from "./bathroom/puzzleSetups/setupBathroomPuzzles.js";
 import { assembleBathroom } from "./bathroom/assembleBathroom.js";
+
+const bathroomConfig = {
+  wallColor: 0xc8b89d,
+  floorColor: 0x8ba6a2,
+  fixtureColor: 0xf1ead9,
+  cabinetColor: 0x7b573d,
+  metalColor: 0xb9aa83,
+  textileColor: 0x668e8a,
+  ambientIntensity: 0.38,
+};
+const bathroomDimensions = { width: 15, depth: 10, height: 12 };
 
 const createBathroom = ({
   character = "dad",
@@ -13,8 +23,8 @@ const createBathroom = ({
   onBathroomAction = null,
   testMode = false,
 } = {}) => {
-  const config = bathroomConfig[character];
-  if (!config) throw new Error(`Character no válido para Bathroom: ${character}`);
+  if (!["mum", "dad"].includes(character)) throw new Error(`Character no válido para Bathroom: ${character}`);
+  const config = bathroomConfig;
   const { width, depth, height } = bathroomDimensions;
   const { room, roomColliders, bounds, windowOpenings, placeAgainstWall } = createRoom({
     width,
@@ -38,16 +48,18 @@ const createBathroom = ({
   room.name = `Bathroom-${character}`;
   room.userData.character = character;
   const reportAction = (type, targetId, payload) => onBathroomAction?.(type, targetId, payload);
+
   const fixtures = createBathroomFixtures({ character, config, dimensions: bathroomDimensions, windowOpenings });
   const furniture = createBathroomFurniture({ character, config, testMode });
   const decor = createBathroomDecor({ vanity: furniture.vanity });
-  const puzzles = createBathroomPuzzles({
+  const puzzles = setupBathroomPuzzles({
     character,
     testMode,
     vanity: furniture.vanity,
     onFocus: onObjectFocus,
     onAction: reportAction,
   });
+
   const assembly = assembleBathroom({ room, placeAgainstWall, furniture, fixtures, decor, puzzles });
   return {
     room,

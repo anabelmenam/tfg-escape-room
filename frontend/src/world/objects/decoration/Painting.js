@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { Entity } from "../Entity.js";
-import { Scissors } from "../../puzzles/Scissors.js";
+import { Scissors } from "../../puzzles/livingRoom/Scissors.js";
 import { tInteraction, tItem } from "../../../translations/index.js";
 
 const paintingColumns = 3;
@@ -160,7 +160,6 @@ class PaintingSlot extends Entity {
     this.object3D.name = id;
     this.object3D.position.copy(position);
     this.object3D.rotation.y = rotationY;
-    // Keep the mounting reference stable when the silhouette becomes a framed painting.
     this.wallMountObject = new THREE.Mesh(new THREE.PlaneGeometry(2.96, 2.08));
     this.wallMountObject.position.z = -0.08;
     this.wallMountObject.visible = false;

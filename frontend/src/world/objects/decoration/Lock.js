@@ -35,28 +35,21 @@ class Lock extends Entity {
 
     this.digits = digits;
     this.password = passwordString;
-
     this.color = color;
     this.metalColor = metalColor;
     this.wheelColor = wheelColor;
-
     this.onFocus = onFocus;
     this.onUnlock = onUnlock;
     this.canUnlock = canUnlock;
-
     this.values = Array(digits).fill(0);
-
     this.locked = true;
     this.focused = false;
-
     this.wheels = [];
     this.numberMeshes = [];
-
     this.shackleOpenProgress = 0;
     this.shackleOpening = false;
 
     this.object3D = this.createLock();
-
     this.object3D.position.copy(position);
     this.object3D.rotation.y = rotationY;
 
@@ -69,7 +62,6 @@ class Lock extends Entity {
 
   createLock() {
     const group = new THREE.Group();
-
     group.name = this.id;
 
     this.createBody(group);
@@ -81,7 +73,6 @@ class Lock extends Entity {
 
   createBody(group) {
     const width = Math.max(2.6, this.digits * 0.75 + 0.8);
-
     const geometry = new THREE.BoxGeometry(width, 2.2, 0.8);
 
     const material = new THREE.MeshStandardMaterial({
@@ -91,12 +82,9 @@ class Lock extends Entity {
     });
 
     this.body = new THREE.Mesh(geometry, material);
-
     this.body.position.y = 0;
-
     this.body.castShadow = true;
     this.body.receiveShadow = true;
-
     this.body.userData.entity = this;
 
     group.add(this.body);
@@ -104,23 +92,16 @@ class Lock extends Entity {
 
   createShackle(group) {
     const width = Math.max(1.4, this.digits * 0.35);
-
     const radius = width / 2;
-
     const curve = new THREE.CatmullRomCurve3([
       new THREE.Vector3(-radius, 1, 0),
-
       new THREE.Vector3(-radius, 2.3, 0),
-
       new THREE.Vector3(0, 2.9, 0),
-
       new THREE.Vector3(radius, 2.3, 0),
-
       new THREE.Vector3(radius, 1, 0),
     ]);
 
     const geometry = new THREE.TubeGeometry(curve, 32, 0.15, 12, false);
-
     const material = new THREE.MeshStandardMaterial({
       color: this.metalColor,
       roughness: 0.2,
@@ -128,7 +109,6 @@ class Lock extends Entity {
     });
 
     this.shackle = new THREE.Mesh(geometry, material);
-
     this.shackle.castShadow = true;
 
     group.add(this.shackle);
@@ -136,18 +116,14 @@ class Lock extends Entity {
 
   createWheels(group) {
     const spacing = 0.72;
-
     const totalWidth = (this.digits - 1) * spacing;
-
     const startX = -totalWidth / 2;
 
     for (let index = 0; index < this.digits; index++) {
       const wheelGroup = new THREE.Group();
-
       wheelGroup.position.set(startX + index * spacing, 0, 0.44);
 
       const wheelGeometry = new THREE.CylinderGeometry(0.28, 0.28, 0.48, 24);
-
       const wheelMaterial = new THREE.MeshStandardMaterial({
         color: this.wheelColor,
         roughness: 0.45,
@@ -155,25 +131,17 @@ class Lock extends Entity {
       });
 
       const wheel = new THREE.Mesh(wheelGeometry, wheelMaterial);
-
       wheel.rotation.z = Math.PI / 2;
-
       wheel.castShadow = true;
-
       wheel.userData.lock = this;
       wheel.userData.lockDigitIndex = index;
-
       wheelGroup.add(wheel);
 
       const numberMesh = this.createNumberMesh(this.values[index]);
-
       numberMesh.position.set(0, 0, 0.3);
-
       numberMesh.userData.lock = this;
       numberMesh.userData.lockDigitIndex = index;
-
       wheelGroup.add(numberMesh);
-
       this.wheels.push(wheelGroup);
       this.numberMeshes.push(numberMesh);
 
@@ -183,12 +151,10 @@ class Lock extends Entity {
 
   createNumberMesh(number) {
     const canvas = document.createElement("canvas");
-
     canvas.width = 128;
     canvas.height = 128;
 
     const texture = new THREE.CanvasTexture(canvas);
-
     texture.colorSpace = THREE.SRGBColorSpace;
 
     const material = new THREE.MeshStandardMaterial({
@@ -199,12 +165,9 @@ class Lock extends Entity {
     });
 
     const geometry = new THREE.PlaneGeometry(0.35, 0.45);
-
     const mesh = new THREE.Mesh(geometry, material);
-
     mesh.userData.canvas = canvas;
     mesh.userData.texture = texture;
-
     this.drawNumber(mesh, number);
 
     return mesh;
@@ -212,26 +175,17 @@ class Lock extends Entity {
 
   drawNumber(mesh, number) {
     const canvas = mesh.userData.canvas;
-
     const texture = mesh.userData.texture;
 
     const context = canvas.getContext("2d");
-
     context.clearRect(0, 0, canvas.width, canvas.height);
-
     context.fillStyle = "#111111";
-
     context.fillRect(0, 0, canvas.width, canvas.height);
-
     context.fillStyle = "#f2e6c9";
-
     context.font = "bold 82px Arial";
-
     context.textAlign = "center";
     context.textBaseline = "middle";
-
     context.fillText(String(number), canvas.width / 2, canvas.height / 2);
-
     texture.needsUpdate = true;
   }
 
@@ -292,7 +246,6 @@ class Lock extends Entity {
     }
 
     this.locked = false;
-
     this.exitFocusRequested = true;
     this.shackleOpening = true;
     this.shackleOpenProgress = 0;
@@ -368,11 +321,8 @@ class Lock extends Entity {
     this.shackleOpenProgress += delta / 0.5;
 
     const t = Math.min(this.shackleOpenProgress, 1);
-
     const eased = t * t * (3 - 2 * t);
-
     this.shackle.position.y = THREE.MathUtils.lerp(0, 0.8, eased);
-
     this.shackle.rotation.z = THREE.MathUtils.lerp(0, -Math.PI / 8, eased);
 
     if (t >= 1) {
@@ -389,7 +339,6 @@ class Lock extends Entity {
       child.geometry?.dispose();
 
       const materials = Array.isArray(child.material) ? child.material : [child.material];
-
       materials.forEach((material) => {
         material?.map?.dispose();
         material?.dispose();
@@ -398,7 +347,6 @@ class Lock extends Entity {
 
     this.wheels = [];
     this.numberMeshes = [];
-
     this.object3D.clear();
   }
 }

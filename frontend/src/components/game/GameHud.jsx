@@ -1,5 +1,5 @@
 import { t } from "../../translations/index.js";
-import { INVENTORY_SIZE } from "../../game/inventoryConfig.js";
+import { INVENTORY_SIZE } from "../../game/Inventory.js";
 
 const formatTime = (totalSeconds) => {
   const seconds = Math.max(0, Math.floor(totalSeconds));

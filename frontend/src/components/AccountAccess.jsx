@@ -61,32 +61,34 @@ const AccountAccess = ({ onAuthenticated }) => {
 
   return (
     <main
-      className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#110f10] px-5 py-10 text-[#f2e7d1] before:pointer-events-none before:absolute before:inset-6 before:border before:border-[#d5b67c]/20"
+      className="account-access relative flex h-dvh min-h-0 items-center justify-center overflow-hidden bg-[#110f10] px-5 py-6 text-[#f2e7d1] before:pointer-events-none before:absolute before:inset-6 before:border before:border-[#d5b67c]/20"
     >
-      <section className="relative z-10 w-full max-w-md border border-[#d7b77b]/40 bg-[#211916]/95 p-8 shadow-2xl shadow-black/60 sm:p-10">
+      <section className="account-access-panel relative z-10 w-full max-w-[26rem] border border-[#d7b77b]/40 bg-[#211916]/95 p-8 shadow-2xl shadow-black/60 sm:p-9">
         {(mode === "forgot" || mode === "reset") && (
           <button
             type="button"
             onClick={returnToLogin}
-            className="mb-5 flex items-center gap-2 text-sm font-semibold text-[#c9b998] hover:text-[#f5e8ce]"
+            className="account-access-back mb-5 flex items-center gap-2 text-sm font-semibold text-[#c9b998] hover:text-[#f5e8ce]"
           >
             <ArrowLeft size={17} />
             {t("account.backToLogin")}
           </button>
         )}
-        <p className="text-center text-xs font-bold uppercase tracking-[.24em] text-[#d8aa64]">
+        <p className="account-access-eyebrow text-center text-xs font-bold uppercase tracking-[.24em] text-[#d8aa64]">
           {t("menu.cooperative")}
         </p>
         <img
           src="/branding/logo-name.png"
           alt=""
           aria-hidden="true"
-          className="mx-auto mt-3 w-full max-w-[14rem] drop-shadow-[0_12px_20px_rgba(0,0,0,0.45)]"
+          className="account-access-logo mx-auto mt-3 w-full max-w-[14rem] drop-shadow-[0_12px_20px_rgba(0,0,0,0.45)]"
         />
         <h1
           className={
             ["forgot", "reset", "resetComplete"].includes(mode)
-              ? "mt-3 text-center font-serif text-4xl text-[#f5e8ce]"
+              ? `account-access-title mt-3 text-center font-serif text-[#f5e8ce] ${
+                  mode === "forgot" ? "text-3xl" : "text-4xl"
+                }`
               : "sr-only"
           }
         >
@@ -100,7 +102,7 @@ const AccountAccess = ({ onAuthenticated }) => {
             <button
               type="button"
               onClick={returnToLogin}
-              className="mt-6 w-full bg-[#bd7939] px-4 py-3 font-bold text-[#1d120b] hover:bg-[#d69851]"
+              className="account-access-submit mt-6 w-full bg-[#bd7939] px-4 py-3 font-bold text-[#1d120b] hover:bg-[#d69851]"
             >
               {t("account.loginAction")}
             </button>
@@ -108,7 +110,7 @@ const AccountAccess = ({ onAuthenticated }) => {
         ) : (
           <>
             {!["forgot", "reset"].includes(mode) && (
-              <div className="mt-7 grid grid-cols-2 rounded border border-[#6f5940]/60 bg-[#120e0d] p-1">
+              <div className="account-access-tabs mt-7 grid grid-cols-2 rounded border border-[#6f5940]/60 bg-[#120e0d] p-1">
                 {["login", "register"].map((item) => (
                   <button
                     key={item}
@@ -127,7 +129,7 @@ const AccountAccess = ({ onAuthenticated }) => {
             {mode === "reset" && (
               <p className="mt-5 text-sm leading-6 text-[#bcae95]">{t("account.resetDescription")}</p>
             )}
-            <form className="mt-6 space-y-4" onSubmit={submit}>
+            <form className="account-access-form mt-6 space-y-4" onSubmit={submit}>
               {mode === "register" && (
                 <label className="block text-sm font-semibold text-[#e4d2ae]">
                   <span className="mb-2 flex items-center gap-2">
@@ -139,7 +141,7 @@ const AccountAccess = ({ onAuthenticated }) => {
                     onChange={update("displayName")}
                     maxLength={40}
                     required
-                    className="w-full border border-[#806644] bg-[#120e0d] px-4 py-3 outline-none focus:border-[#e0b968]"
+                    className="account-access-input w-full border border-[#806644] bg-[#120e0d] px-4 py-3 outline-none focus:border-[#e0b968]"
                   />
                 </label>
               )}
@@ -155,7 +157,7 @@ const AccountAccess = ({ onAuthenticated }) => {
                     onChange={update("email")}
                     required
                     autoComplete="email"
-                    className="w-full border border-[#806644] bg-[#120e0d] px-4 py-3 outline-none focus:border-[#e0b968]"
+                    className="account-access-input w-full border border-[#806644] bg-[#120e0d] px-4 py-3 outline-none focus:border-[#e0b968]"
                   />
                 </label>
               )}
@@ -173,7 +175,7 @@ const AccountAccess = ({ onAuthenticated }) => {
                     maxLength={128}
                     required
                     autoComplete={mode === "login" ? "current-password" : "new-password"}
-                    className="w-full border border-[#806644] bg-[#120e0d] px-4 py-3 outline-none focus:border-[#e0b968]"
+                    className="account-access-input w-full border border-[#806644] bg-[#120e0d] px-4 py-3 outline-none focus:border-[#e0b968]"
                   />
                 </label>
               )}
@@ -191,7 +193,7 @@ const AccountAccess = ({ onAuthenticated }) => {
                     maxLength={128}
                     required
                     autoComplete="new-password"
-                    className="w-full border border-[#806644] bg-[#120e0d] px-4 py-3 outline-none focus:border-[#e0b968]"
+                    className="account-access-input w-full border border-[#806644] bg-[#120e0d] px-4 py-3 outline-none focus:border-[#e0b968]"
                   />
                 </label>
               )}
@@ -222,7 +224,7 @@ const AccountAccess = ({ onAuthenticated }) => {
               )}
               <button
                 disabled={busy || Boolean(message)}
-                className="w-full bg-[#bd7939] px-4 py-3 font-bold text-[#1d120b] hover:bg-[#d69851] disabled:opacity-50"
+                className="account-access-submit w-full bg-[#bd7939] px-4 py-3 font-bold text-[#1d120b] hover:bg-[#d69851] disabled:opacity-50"
               >
                 {busy ? t("account.working") : t(`account.${mode}Action`)}
               </button>

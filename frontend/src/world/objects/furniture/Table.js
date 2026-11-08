@@ -5,39 +5,30 @@ import { createWoodMaterials } from "../helpers/createWoodMaterials.js";
 class Table extends Entity {
   constructor({
     id = "table",
-
     position = new THREE.Vector3(),
     rotation = new THREE.Euler(),
     rotationY = 0,
     scale = 1,
-
     width = 4,
     height = 1.6,
     depth = 2.5,
-
     topThickness = 0.18,
-
     legThickness = 0.22,
     legInset = 0.2,
-
     hasShelf = true,
     shelfHeight = 0.45,
     shelfThickness = 0.12,
     shelfInset = 0.25,
-
     woodColor = 0x8a5a35,
     darkWoodColor = 0x51321f,
     interiorColor = 0x6e4429,
-
     woodTexture = null,
     woodTextureRepeat = {
       x: 1,
       y: 1,
     },
-
     castShadow = true,
     receiveShadow = true,
-
     createCollider = true,
   } = {}) {
     super(id);
@@ -45,27 +36,21 @@ class Table extends Entity {
     this.width = width;
     this.height = height;
     this.depth = depth;
-
     this.topThickness = topThickness;
-
     this.legThickness = legThickness;
     this.legInset = legInset;
-
     this.hasShelf = hasShelf;
     this.shelfHeight = shelfHeight;
     this.shelfThickness = shelfThickness;
     this.shelfInset = shelfInset;
-
     this.castShadow = castShadow;
     this.receiveShadow = receiveShadow;
-
     this.createColliderEnabled = createCollider;
 
     const materials = createWoodMaterials({
       woodColor,
       darkWoodColor,
       interiorColor,
-
       woodTexture,
       woodTextureRepeat,
     });
@@ -76,9 +61,7 @@ class Table extends Entity {
 
     this.object3D = new THREE.Group();
     this.object3D.name = id;
-
     this.object3D.position.copy(position);
-
     this.object3D.rotation.copy(rotation);
     this.object3D.rotation.y += rotationY;
 
@@ -112,25 +95,18 @@ class Table extends Entity {
     const geometry = new THREE.BoxGeometry(this.width, this.topThickness, this.depth);
 
     const top = new THREE.Mesh(geometry, this.woodMaterial);
-
     top.name = `${this.id}-top`;
-
     top.position.y = this.height - this.topThickness / 2;
 
     this.configureMesh(top);
-
     this.object3D.add(top);
   }
 
   createLegs() {
     const legHeight = this.height - this.topThickness;
-
     const legGeometry = new THREE.BoxGeometry(this.legThickness, legHeight, this.legThickness);
-
     const x = this.width / 2 - this.legInset - this.legThickness / 2;
-
     const z = this.depth / 2 - this.legInset - this.legThickness / 2;
-
     const y = legHeight / 2;
 
     const legPositions = [
@@ -142,7 +118,6 @@ class Table extends Entity {
 
     legPositions.forEach((legPosition, index) => {
       const leg = new THREE.Mesh(legGeometry, this.darkWoodMaterial);
-
       leg.name = `${this.id}-leg-${index + 1}`;
       leg.position.copy(legPosition);
 
@@ -154,15 +129,11 @@ class Table extends Entity {
 
   createShelf() {
     const shelfWidth = this.width - this.shelfInset * 2;
-
     const shelfDepth = this.depth - this.shelfInset * 2;
-
     const geometry = new THREE.BoxGeometry(shelfWidth, this.shelfThickness, shelfDepth);
 
     const shelf = new THREE.Mesh(geometry, this.interiorMaterial ?? this.woodMaterial);
-
     shelf.name = `${this.id}-shelf`;
-
     shelf.position.y = this.shelfHeight + this.shelfThickness / 2;
 
     this.configureMesh(shelf);
@@ -182,7 +153,6 @@ class Table extends Entity {
 
   updateCollider() {
     this.object3D.updateMatrixWorld(true);
-
     this.collider = new THREE.Box3().setFromObject(this.object3D);
 
     return this.collider;

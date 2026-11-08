@@ -1,9 +1,16 @@
 import { createRoom } from "./createRoom.js";
-import { hallwayDimensions, hallwayCharacterConfig } from "./hallway/hallwayConfig.js";
 import { createHallwayDoors } from "./hallway/createHallwayDoors.js";
 import { createHallwayLighting } from "./hallway/createHallwayLighting.js";
-import { createHallwayPuzzle } from "./hallway/createHallwayPuzzle.js";
+import { setupHallwayPuzzle } from "./hallway/puzzleSetups/setupHallwayPuzzle.js";
 import { createHallwayDecor } from "./hallway/createHallwayDecor.js";
+
+const hallwayConfig = {
+  wallColor: 0xc8b89d,
+  floorColor: 0x6a4d3c,
+  ceilingColor: 0xb0a18c,
+  carpetColor: 0x762d34,
+};
+const hallwayDimensions = { width: 50, depth: 10, height: 12 };
 
 const createHallway = ({
   character = "dad",
@@ -14,11 +21,15 @@ const createHallway = ({
   isInteractHeld = () => false,
   testMode = false,
 } = {}) => {
-  const config = hallwayCharacterConfig[character];
-  if (!config) throw new Error(`Character no válido para Hallway: ${character}`);
+  if (!["mum", "dad"].includes(character)) {
+    throw new Error(`Character no válido para Hallway: ${character}`);
+  }
+
+  const config = hallwayConfig;
   const { width, depth, height } = hallwayDimensions;
   const hallwayCenterX = entranceX + width / 2 - 6;
   const connectionX = entranceX - hallwayCenterX;
+
   const { room, roomColliders, passageOpenings, placeAgainstWall } = createRoom({
     width,
     depth,
@@ -45,9 +56,10 @@ const createHallway = ({
   room.name = `Bedroom Hallway-${character}`;
   room.position.set(hallwayCenterX, 0, entranceZ + depth / 2);
   const reportAction = (type, targetId, payload) => onHallwayAction?.(type, targetId, payload);
+
   const doors = createHallwayDoors({ character, testMode, passageOpenings, isInteractHeld, onAction: reportAction });
   const lighting = createHallwayLighting({ character, connectionX, dimensions: hallwayDimensions });
-  const puzzle = createHallwayPuzzle({ character, testMode, onFocus: onObjectFocus, onAction: reportAction });
+  const puzzle = setupHallwayPuzzle({ character, testMode, onFocus: onObjectFocus, onAction: reportAction });
   const decor = createHallwayDecor({ character, config });
 
   room.add(
@@ -66,12 +78,19 @@ const createHallway = ({
     puzzle.clock.object3D,
     puzzle.mirror.object3D,
   );
-  if (puzzle.maze) room.add(puzzle.maze.object3D);
-  if (character === "mum") room.add(puzzle.note.object3D);
+
+  if (puzzle.maze) {
+    room.add(puzzle.maze.object3D);
+  }
+  if (character === "mum") {
+    room.add(puzzle.note.object3D);
+  }
+
   placeAgainstWall(lighting.hallwaySwitch, "back");
   placeAgainstWall(lighting.exitSwitch, "right");
   placeAgainstWall(decor.consoleTable, "front");
   placeAgainstWall(puzzle.clock, "back");
+
   if (character === "mum") {
     placeAgainstWall(puzzle.note, "back");
     puzzle.note.object3D.translateZ(0.025);
@@ -80,6 +99,7 @@ const createHallway = ({
     placeAgainstWall(puzzle.maze, "front");
     puzzle.maze.object3D.translateZ(-0.13);
   }
+
   placeAgainstWall(puzzle.mirror, "front");
   placeAgainstWall(decor.daughterFrame, "back");
   placeAgainstWall(decor.sonFrame, "back");

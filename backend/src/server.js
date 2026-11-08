@@ -31,7 +31,8 @@ app.use("/api", createRoomRouter());
 app.use((request, response) => response.status(404).json({ error: "Ruta no encontrada." }));
 app.use((error, request, response, next) => {
   if (response.headersSent) return next(error);
-  if (error instanceof z.ZodError) return response.status(400).json({ error: "Datos de petición no válidos.", details: error.issues });
+  if (error instanceof z.ZodError)
+    return response.status(400).json({ error: "Datos de petición no válidos.", details: error.issues });
   const status = error.status ?? error.statusCode;
   const statusCode = Number.isInteger(status) && status >= 400 && status < 600 ? status : 500;
   console.error(error);
@@ -62,5 +63,20 @@ if (isMainModule) await startServer();
 export { app, httpServer, startServer };
 export { reduceAction, setObjectState } from "./gameLogic.js";
 export { normaliseCode, passwordResetTokenHash, socketRoom } from "./serverUtils.js";
-export { applyAction, playTimerSnapshot, saveCheckpoint, syncRoomPlayTimer, updateCheckpoint } from "./services/gameSessionService.js";
-export { createRoom, ensureFreeSlot, getLobbyState, getPlayerFromToken, getSnapshot, joinRoom, selectCharacter, startGame } from "./services/roomService.js";
+export {
+  applyAction,
+  playTimerSnapshot,
+  saveCheckpoint,
+  syncRoomPlayTimer,
+  updateCheckpoint,
+} from "./services/gameSessionService.js";
+export {
+  createRoom,
+  ensureFreeSlot,
+  getLobbyState,
+  getPlayerFromToken,
+  getSnapshot,
+  joinRoom,
+  selectCharacter,
+  startGame,
+} from "./services/roomService.js";

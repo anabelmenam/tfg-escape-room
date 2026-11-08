@@ -8,20 +8,15 @@ class Window extends Entity {
     position = new THREE.Vector3(),
     rotationY = 0,
     scale = 1,
-
     width = 5,
     height = 4,
     depth = 0.45,
-
     frameThickness = 0.18,
-
     columns = 2,
     rows = 1,
-
     frameColor = 0x5a321d,
     glassColor = 0xa8d8e8,
     glassOpacity = 0.25,
-
     hasGlass = true,
     hasCrossbars = true,
     hasCurtains = true,
@@ -33,16 +28,12 @@ class Window extends Entity {
     this.width = width;
     this.height = height;
     this.depth = depth;
-
     this.frameThickness = frameThickness;
-
     this.columns = Math.max(1, columns);
     this.rows = Math.max(1, rows);
-
     this.hasGlass = hasGlass;
     this.hasCrossbars = hasCrossbars;
     this.hasCurtains = hasCurtains;
-
     this.object3D = new THREE.Group();
     this.object3D.name = id;
     this.object3D.userData.ambientDescriptionKey = "window";
@@ -70,16 +61,12 @@ class Window extends Entity {
 
     this.glassMaterial = new THREE.MeshPhysicalMaterial({
       color: glassColor,
-
       transparent: true,
       opacity: glassOpacity,
-
       roughness: 0.08,
       metalness: 0,
-
       transmission: 0.65,
       thickness: 0.05,
-
       side: THREE.DoubleSide,
       depthWrite: false,
     });
@@ -154,7 +141,6 @@ class Window extends Entity {
 
   createCrossbars() {
     const innerWidth = this.width - this.frameThickness * 2;
-
     const innerHeight = this.height - this.frameThickness * 2;
 
     for (let column = 1; column < this.columns; column += 1) {
@@ -188,20 +174,14 @@ class Window extends Entity {
 
   createGlass() {
     const glassWidth = this.width - this.frameThickness * 2;
-
     const glassHeight = this.height - this.frameThickness * 2;
 
     const glassGeometry = new THREE.BoxGeometry(glassWidth, glassHeight, 0.04);
-
     this.glass = new THREE.Mesh(glassGeometry, this.glassMaterial);
-
     this.glass.name = `${this.id}-glass`;
-
     this.glass.position.z = 0.01;
-
     this.glass.castShadow = false;
     this.glass.receiveShadow = false;
-
     this.glass.renderOrder = 1;
 
     this.object3D.add(this.glass);

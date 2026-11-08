@@ -23,6 +23,7 @@ const createChildrenRoomFurniture = ({ config }) => {
         pillowColor: 0xe8dfcd,
       }),
   );
+
   const studyAreaZ = 2;
   const desks = [-0.7, 0.7].map(
     (side, index) =>
@@ -44,6 +45,7 @@ const createChildrenRoomFurniture = ({ config }) => {
         ...woodStyle,
       }),
   );
+
   const wardrobes = [-1.2, 1.2].map(
     (side, index) =>
       new Wardrobe({
@@ -57,6 +59,7 @@ const createChildrenRoomFurniture = ({ config }) => {
   wardrobes.forEach((wardrobe) => {
     wardrobe.object3D.scale.y = 0.84;
   });
+
   const dresser = new Cabinet({
     id: "children-room-dresser",
     position: new THREE.Vector3(0, 0, -8.3),
@@ -68,6 +71,7 @@ const createChildrenRoomFurniture = ({ config }) => {
     handleType: "knob",
     ...woodStyle,
   });
+
   const carpets = [-2, 2].map(
     (side, index) =>
       new Carpet({

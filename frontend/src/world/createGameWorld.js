@@ -8,7 +8,7 @@ import { createBathroom } from "./rooms/createBathroom.js";
 import { createKitchen } from "./rooms/createKitchen.js";
 import { createToyBasket } from "./objects/index.js";
 import { t, tInteraction, tItem } from "../translations/index.js";
-import { createFamilyStoryNotes } from "./levels/createFamilyStoryNotes.js";
+import { createFamilyStoryNotes } from "./createFamilyStoryNotes.js";
 
 const characterByPlayerRole = {
   A: "mum",
@@ -46,6 +46,7 @@ const createGameWorld = async ({
       onBedroomAction,
       testMode,
     });
+
     const hallway = createHallway({
       onHallwayAction,
       onObjectFocus,
@@ -55,6 +56,7 @@ const createGameWorld = async ({
       entranceX: bedroom.doorOpening.position.x,
       entranceZ: bedroom.doorOpening.position.z,
     });
+
     const livingRoomEntrancePosition = -3;
     const livingRoom = await createLivingRoom({
       character,
@@ -72,6 +74,7 @@ const createGameWorld = async ({
       },
       kitchenEntrance: { id: "living-room-kitchen-connection", wall: "right", position: 7, width: 5, height: 8 },
     });
+
     const childrenRoom = createChildrenRoom({
       character,
       onObjectFocus,
@@ -79,28 +82,35 @@ const createGameWorld = async ({
       isFlashlightOn,
       testMode,
     });
+
     const bathroom = createBathroom({ character, onObjectFocus, onBathroomAction, testMode });
+
     const kitchen = createKitchen({ character, onObjectFocus, onKitchenAction, testMode });
+
     childrenRoom.room.position.set(
       hallway.room.position.x + hallway.childrenRoomOpening.position.x,
       0,
       hallway.room.position.z + hallway.childrenRoomOpening.position.z - childrenRoom.dimensions.depth / 2,
     );
+
     bathroom.room.position.set(
       hallway.room.position.x + hallway.bathroomOpening.position.x - bathroom.dimensions.width / 2,
       0,
       hallway.room.position.z + hallway.bathroomOpening.position.z,
     );
+
     kitchen.room.position.set(
       hallway.room.position.x + hallway.kitchenOpening.position.x,
       0,
       hallway.room.position.z + hallway.dimensions.depth / 2 + kitchen.dimensions.depth / 2,
     );
+
     livingRoom.room.position.set(
       hallway.room.position.x + hallway.livingRoomOpening.position.x - livingRoomEntrancePosition,
       0,
       hallway.room.position.z + hallway.dimensions.depth / 2 + 15,
     );
+
     const storyNotes = createFamilyStoryNotes({
       character,
       rooms: { bedroom, hallway, livingRoom, childrenRoom, bathroom, kitchen },
@@ -114,9 +124,11 @@ const createGameWorld = async ({
       },
       onNoteCollected: onStoryNoteCollected,
     });
+
     const gameWorld = new THREE.Group();
     gameWorld.name = `GameWorld-${character}`;
     gameWorld.add(bedroom.room, hallway.room, livingRoom.room, childrenRoom.room, bathroom.room, kitchen.room);
+
     const toyBasket = createToyBasket({ aged: false, scale: 0.92 });
     toyBasket.position.set(9.2, 0.02, -2.2);
     childrenRoom.room.add(toyBasket);
@@ -124,7 +136,9 @@ const createGameWorld = async ({
     const ambientInteractables = [];
     gameWorld.traverse((object) => {
       const descriptionKey = object.userData?.ambientDescriptionKey;
+
       if (!descriptionKey) return;
+
       ambientInteractables.push({
         id: `ambient-${descriptionKey}-${ambientInteractables.length}`,
         object3D: object,
@@ -142,11 +156,13 @@ const createGameWorld = async ({
     });
 
     gameWorld.updateMatrixWorld(true);
+
     const wallColliders = [bedroom, hallway, livingRoom, childrenRoom, bathroom, kitchen].flatMap((area) =>
       area.roomColliders
         .filter((mesh) => mesh.name.includes("-wall-section-"))
         .map((mesh) => ({ box: new THREE.Box3().setFromObject(mesh) })),
     );
+
     for (const door of [
       bedroom.door,
       hallway.livingRoomDoor,
@@ -263,14 +279,6 @@ const createGameWorld = async ({
         ...storyNotes,
       ],
     };
-  }
-
-  if (playerRole === "D") {
-    return createLivingRoom({
-      onSwitchPress,
-      eventManager,
-      onDoorOpenChange,
-    });
   }
 
   if (playerRole === "C") {

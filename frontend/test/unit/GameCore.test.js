@@ -1,27 +1,16 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { EventManager } from "../../src/game/EventManager.js";
-import { GameState } from "../../src/game/GameState.js";
+import { EventManager } from "../../src/game/managers/EventManager.js";
 
 globalThis.localStorage = { getItem: () => null, setItem: () => {} };
-const { MAZE_ROUTE, MAZE_SIZE, canMove } = await import("../../src/world/puzzles/mazeLayout.js");
+const { MAZE_ROUTE, MAZE_SIZE, canMove } = await import("../../src/world/puzzles/hallway/mazeLayout.js");
 
-test("GameState almacena y alterna valores", () => {
-  const state = new GameState();
-  state.set("lamp", false);
-  assert.equal(state.get("lamp"), false);
-  assert.equal(state.toggle("lamp"), true);
-  assert.equal(state.get("lamp"), true);
-});
-
-test("EventManager notifica a todos los oyentes y permite limpiar", () => {
+test("EventManager notifica a todos los oyentes", () => {
   const events = new EventManager();
   const received = [];
   events.on("solved", (data) => received.push(["first", data]));
   events.on("solved", (data) => received.push(["second", data]));
   events.emit("solved", { id: "maze" });
-  events.clear();
-  events.emit("solved", { id: "radio" });
 
   assert.deepEqual(received, [
     ["first", { id: "maze" }],

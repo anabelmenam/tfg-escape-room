@@ -1,5 +1,12 @@
 import * as THREE from "three";
-import { ENDING_TOUR } from "./endingConfig.js";
+
+const ENDING_TOUR = {
+  firstSceneDuration: 10,
+  sceneDuration: 8,
+  transitionFadeDuration: 0.65,
+  revealDuration: 0.55,
+  finalFadeDuration: 1.15,
+};
 
 const applySolvedHouseState = (game) => {
   const cleanState = structuredClone(game.sharedState);

@@ -70,7 +70,6 @@ class Safe extends Entity {
     this.targetDoorRotation = 0;
 
     this.object3D = this.createObject();
-
     this.object3D.position.copy(position);
     this.object3D.rotation.y = rotationY;
 
@@ -177,26 +176,20 @@ class Safe extends Entity {
     });
 
     this.door = new THREE.Mesh(new THREE.BoxGeometry(this.width * 0.92, this.height * 0.9, 0.18), material);
-
     this.door.position.x = (this.width * 0.92) / 2;
-
     this.door.castShadow = true;
     this.door.receiveShadow = true;
-
     this.doorPivot.add(this.door);
     safe.add(this.doorPivot);
   }
 
   createLockPanel() {
     this.lockPanel = new THREE.Group();
-
     this.lockPanel.position.set(0, -1, 0.13);
     this.lockPanel.scale.setScalar(0.7);
-
     this.door.add(this.lockPanel);
 
     const panelWidth = Math.min(this.width * 0.7, this.password.length * 0.72 + 0.35);
-
     const panelMaterial = new THREE.MeshStandardMaterial({
       color: 0x111111,
       roughness: 0.3,
@@ -204,21 +197,17 @@ class Safe extends Entity {
     });
 
     const panel = new THREE.Mesh(new THREE.BoxGeometry(panelWidth, 1.15, 0.12), panelMaterial);
-
     this.lockPanel.add(panel);
 
     const spacing = panelWidth / this.password.length;
-
     for (let i = 0; i < this.password.length; i++) {
       const x = -panelWidth / 2 + spacing / 2 + i * spacing;
-
       this.createSymbolDisplay(i, x, spacing);
     }
   }
 
   createSymbolDisplay(index, x, spacing) {
     const displayWidth = Math.min(spacing * 0.72, 0.55);
-
     const displayMaterial = new THREE.MeshStandardMaterial({
       color: 0xe5e1d8,
       roughness: 0.5,
@@ -226,33 +215,25 @@ class Safe extends Entity {
     });
 
     const display = new THREE.Mesh(new THREE.BoxGeometry(displayWidth, 0.7, 0.08), displayMaterial);
-
     display.position.set(x, 0, 0.1);
-
     display.userData.safeDigitIndex = index;
-
     this.lockPanel.add(display);
 
     const symbol = this.createSymbolMesh(this.symbols[this.values[index]], displayWidth);
-
     symbol.position.set(x, 0, 0.15);
     symbol.userData.safeDigitIndex = index;
 
     this.lockPanel.add(symbol);
-
     this.displayMeshes.push(symbol);
   }
 
   createSymbolMesh(value, width) {
     const canvas = document.createElement("canvas");
-
     canvas.width = 256;
     canvas.height = 256;
 
     const context = canvas.getContext("2d");
-
     context.clearRect(0, 0, canvas.width, canvas.height);
-
     context.fillStyle = "#111111";
 
     const baseFontSize = 150;
@@ -267,7 +248,6 @@ class Safe extends Entity {
     context.font = `bold ${baseFontSize * scale}px Arial`;
     context.textAlign = "center";
     context.textBaseline = "middle";
-
     context.fillText(String(value), canvas.width / 2, canvas.height / 2 + 5);
 
     const texture = new THREE.CanvasTexture(canvas);
@@ -292,11 +272,8 @@ class Safe extends Entity {
     });
 
     this.handle = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 0.35, 20), material);
-
     this.handle.rotation.x = Math.PI / 2;
-
     this.handle.position.set(this.width * 0.35, -this.height * 0.1, 0.2);
-
     this.door.add(this.handle);
   }
 
@@ -310,28 +287,22 @@ class Safe extends Entity {
     }
 
     this.values[index] = (this.values[index] + 1) % this.symbols.length;
-
     this.updateDisplay(index);
-
     this.checkPassword();
   }
 
   updateDisplay(index) {
     const oldMesh = this.displayMeshes[index];
-
     const newMesh = this.createSymbolMesh(this.symbols[this.values[index]], 0.55);
 
     newMesh.position.copy(oldMesh.position);
     newMesh.userData.safeDigitIndex = index;
 
     this.lockPanel.remove(oldMesh);
-
     oldMesh.geometry.dispose();
     oldMesh.material.map?.dispose();
     oldMesh.material.dispose();
-
     this.lockPanel.add(newMesh);
-
     this.displayMeshes[index] = newMesh;
   }
 
@@ -341,7 +312,6 @@ class Safe extends Entity {
 
   checkPassword() {
     const currentCombination = this.getCurrentCombination();
-
     const correct = this.password.every((value, index) => value === currentCombination[index]);
 
     if (correct && (this.canUnlock?.() ?? true)) {
@@ -357,7 +327,6 @@ class Safe extends Entity {
     }
 
     this.isLocked = false;
-
     this.exitFocusRequested = true;
 
     if (this.onUnlock) {

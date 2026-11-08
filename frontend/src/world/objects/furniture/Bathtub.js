@@ -1,15 +1,7 @@
 import * as THREE from "three";
 import { Entity } from "../Entity.js";
+import { createMesh } from "../helpers/createMesh.js";
 import { tInteraction, tItem } from "../../../translations/index.js";
-
-const createMesh = (geometry, material, position, { rotationX = 0 } = {}) => {
-  const mesh = new THREE.Mesh(geometry, material);
-  mesh.position.copy(position);
-  mesh.rotation.x = rotationX;
-  mesh.castShadow = true;
-  mesh.receiveShadow = true;
-  return mesh;
-};
 
 class Bathtub extends Entity {
   constructor({

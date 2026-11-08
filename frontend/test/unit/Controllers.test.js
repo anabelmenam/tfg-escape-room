@@ -7,7 +7,7 @@ import { Inventory } from "../../src/game/Inventory.js";
 installBrowserMocks();
 
 const { Player } = await import("../../src/game/Player.js");
-const { InteractionManager } = await import("../../src/game/InteractionManager.js");
+const { InteractionManager } = await import("../../src/game/managers/InteractionManager.js");
 const { InventoryController } = await import("../../src/game/controllers/InventoryController.js");
 const { GameInputController } = await import("../../src/game/controllers/GameInputController.js");
 const { setLanguage } = await import("../../src/translations/index.js");
@@ -85,9 +85,9 @@ test("InteractionManager detecta controles, oclusiones y ejecuta interacciones",
   };
   const manager = new InteractionManager({
     camera: new THREE.PerspectiveCamera(),
-    interactableManager: { getAll: () => [entity] },
     player: { isFocused: false },
   });
+  manager.add(entity);
   manager.raycaster = {
     setFromCamera() {},
     intersectObjects: (objects) => objects === manager.occluders ? [] : [{ object: child, distance: 2 }],

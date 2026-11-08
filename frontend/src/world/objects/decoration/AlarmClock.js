@@ -7,10 +7,8 @@ class AlarmClock extends Entity {
     position = new THREE.Vector3(),
     rotationY = 0,
     scale = 1,
-
     time = "03:28",
     isBroken = false,
-
     bodyColor = 0x1f1f1f,
     frameColor = 0x111111,
     screenColor = 0x090909,
@@ -21,7 +19,6 @@ class AlarmClock extends Entity {
 
     this.time = time;
     this.isBroken = isBroken;
-
     this.bodyColor = bodyColor;
     this.frameColor = frameColor;
     this.screenColor = screenColor;
@@ -29,7 +26,6 @@ class AlarmClock extends Entity {
     this.buttonColor = buttonColor;
 
     this.object3D = this.createClock();
-
     this.object3D.position.copy(position);
     this.object3D.rotation.y = rotationY;
 
@@ -43,7 +39,6 @@ class AlarmClock extends Entity {
   createClock() {
     const group = new THREE.Group();
     group.name = this.id;
-
     this.createBody(group);
     this.createFrontFrame(group);
     this.createScreen(group);
@@ -63,9 +58,7 @@ class AlarmClock extends Entity {
     });
 
     const body = new THREE.Mesh(geometry, material);
-
     body.position.y = 0.42;
-
     body.castShadow = true;
     body.receiveShadow = true;
 
@@ -82,18 +75,14 @@ class AlarmClock extends Entity {
     });
 
     const frame = new THREE.Mesh(geometry, material);
-
     frame.position.set(0, 0.42, 0.38);
-
     frame.castShadow = true;
     frame.receiveShadow = true;
-
     group.add(frame);
   }
 
   createScreen(group) {
     const geometry = new THREE.PlaneGeometry(1.28, 0.45);
-
     this.screenTexture = this.createScreenTexture();
 
     const material = new THREE.MeshStandardMaterial({
@@ -102,7 +91,6 @@ class AlarmClock extends Entity {
     });
 
     this.screen = new THREE.Mesh(geometry, material);
-
     this.screen.position.set(0, 0.42, 0.412);
 
     group.add(this.screen);
@@ -110,23 +98,19 @@ class AlarmClock extends Entity {
 
   createScreenTexture() {
     const canvas = document.createElement("canvas");
-
     canvas.width = 512;
     canvas.height = 180;
 
     const context = canvas.getContext("2d");
-
     context.fillStyle = `#${this.screenColor.toString(16).padStart(6, "0")}`;
     context.fillRect(0, 0, canvas.width, canvas.height);
 
     if (this.isBroken) {
       context.fillStyle = "#131b22";
       context.fillRect(0, 0, canvas.width, canvas.height);
-
       context.strokeStyle = "#465560";
       context.lineWidth = 2;
       context.strokeRect(12, 12, canvas.width - 24, canvas.height - 24);
-
       context.strokeStyle = "#8fa2ae";
       context.lineWidth = 2;
       context.shadowColor = "#5f7280";
@@ -153,14 +137,11 @@ class AlarmClock extends Entity {
     }
 
     context.fillStyle = this.digitColor;
-
     context.font = "bold 110px monospace";
     context.textAlign = "center";
     context.textBaseline = "middle";
-
     context.shadowColor = this.digitColor;
     context.shadowBlur = 14;
-
     context.fillText(this.time, canvas.width / 2, canvas.height / 2 + 5);
 
     const texture = new THREE.CanvasTexture(canvas);
@@ -177,29 +158,21 @@ class AlarmClock extends Entity {
     });
 
     const mainButton = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.08, 0.16), material);
-
     mainButton.position.set(0, 0.84, 0);
-
     mainButton.castShadow = true;
     mainButton.receiveShadow = true;
-
     group.add(mainButton);
 
     const smallButtonGeometry = new THREE.BoxGeometry(0.18, 0.07, 0.14);
 
     const leftButton = new THREE.Mesh(smallButtonGeometry, material);
-
     leftButton.position.set(-0.55, 0.84, 0);
-
     leftButton.castShadow = true;
     leftButton.receiveShadow = true;
-
     group.add(leftButton);
 
     const rightButton = leftButton.clone();
-
     rightButton.position.x = 0.55;
-
     group.add(rightButton);
   }
 
@@ -212,18 +185,13 @@ class AlarmClock extends Entity {
     const geometry = new THREE.BoxGeometry(0.28, 0.08, 0.38);
 
     const leftFoot = new THREE.Mesh(geometry, material);
-
     leftFoot.position.set(-0.5, 0.04, 0);
-
     leftFoot.castShadow = true;
     leftFoot.receiveShadow = true;
-
     group.add(leftFoot);
 
     const rightFoot = leftFoot.clone();
-
     rightFoot.position.x = 0.5;
-
     group.add(rightFoot);
   }
 
@@ -235,7 +203,6 @@ class AlarmClock extends Entity {
     }
 
     this.screenTexture = this.createScreenTexture();
-
     this.screen.material.map = this.screenTexture;
     this.screen.material.needsUpdate = true;
   }

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import EndingOverlay from "./ending/EndingOverlay.jsx";
 import useEndingSequence from "./ending/useEndingSequence.js";
 import GameHud from "./game/GameHud.jsx";
-import LoadingOverlay from "./game/LoadingOverlay.jsx";
+import GameLoadingSkeleton from "./skeletons/GameLoadingSkeleton.jsx";
 import PauseOverlay from "./game/PauseOverlay.jsx";
 import StoryOverlay from "./game/StoryOverlay.jsx";
 import TestModePanel from "./game/TestModePanel.jsx";
@@ -122,7 +122,7 @@ const GameCanvas = ({
         endingPreview={session.endingPreview && !session.endingReplay}
         onExit={onExit}
       />
-      {isLoading && <LoadingOverlay />}
+      {isLoading && <GameLoadingSkeleton />}
       {!session.testMode && !session.endingReplay && !isLoading && !companionConnected && (
         <div className="absolute inset-0 z-[100] flex items-center justify-center bg-black/85 px-6 text-center text-[#f2e7d1]">
           <div className="max-w-md border border-[#d7b77b]/40 bg-[#211916] p-9 shadow-2xl">

@@ -27,7 +27,7 @@ const makeGame = () => {
     inventoryController: { updateUI: () => calls.push(["ui"]), inspectSelected: (v) => calls.push(["inspect", v]), closeInspection: () => calls.push(["closeInspection"]), dispose() {} },
     flashlightController: { active: true, light: {}, target: {}, toggle: () => calls.push(["flash"]), update: () => calls.push(["flashUpdate"]) },
     input: { isPressed: () => false, dispose() {} }, interactionManager: { update() {}, dispose() {} },
-    interactableManager: { dispose() {} }, entityManager: { update() {}, dispose() {} },
+    entityManager: { update() {}, dispose() {} },
     gameAudio: { updateFootsteps() {}, dispose() {} }, ownsGameAudio: false,
     inputController: { dispose() {} },
     timer: { update() {}, getDelta: () => .016, disconnect() {} },
@@ -84,8 +84,8 @@ test("Game controla pausa, tamaño, rendimiento y delegaciones", async () => {
   assert.equal(game.flashlightOn, true);
   assert.ok(game.flashlight);
   assert.ok(game.flashlightTarget);
-  game.multiplayer.remoteEcho = { id: 1 }; game.multiplayer.previewEchoes = [1, 2];
-  assert.ok(game.remoteEcho); assert.equal(game.previewEchoes.length, 2);
+  game.multiplayer.remoteAvatar = { id: 1 }; game.multiplayer.previewAvatars = [1, 2];
+  assert.ok(game.remoteAvatar); assert.equal(game.previewAvatars.length, 2);
   game.pause(); game.pause();
   game.resume({ lockPointer: true }); game.resume();
   game.paused = true; game.player.isFirstPerson = false; game.resume();

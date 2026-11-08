@@ -66,7 +66,6 @@ export const initializeGameLevel = async (game) => {
     testMode: game.testMode,
     onSwitchPress: (lightSwitch) => {
       const active = lightSwitch.active;
-      game.gameState.set(lightSwitch.id, active);
       game.eventManager.emit("buttonPressed", { id: lightSwitch.id, active });
     },
     eventManager: game.eventManager,
@@ -138,7 +137,7 @@ export const initializeGameLevel = async (game) => {
     game.collisionManager.isOutsideRoom = true;
     game.collisionManager.previousPosition = game.camera.position.clone();
   }
-  for (const interactable of roomData.interactables ?? []) game.interactableManager.add(interactable);
+  for (const interactable of roomData.interactables ?? []) game.interactionManager.add(interactable);
   game.applySharedState(game.sharedState);
   if (game.pendingCheckpoint && !game.testMode && !game.endingPreview) {
     const checkpoint = game.pendingCheckpoint;

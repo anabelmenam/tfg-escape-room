@@ -38,9 +38,16 @@ const assembleLivingRoom = ({
     cabinet.object3D,
     plant,
   );
-  if (door) room.add(door.object3D);
-  if (kitchenDoor) room.add(kitchenDoor.object3D);
-  if (frames) room.add(frames);
+
+  if (door) {
+    room.add(door.object3D);
+  }
+  if (kitchenDoor) {
+    room.add(kitchenDoor.object3D);
+  }
+  if (frames) {
+    room.add(frames);
+  }
 
   placeAgainstWall(lightSwitch, "right");
   placeAgainstWall(entranceLightSwitch, "back");

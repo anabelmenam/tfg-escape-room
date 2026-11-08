@@ -10,40 +10,31 @@ class Cabinet extends Entity {
     position = new THREE.Vector3(),
     rotationY = 0,
     scale = 1,
-
     width = 4,
     height = 5,
     depth = 2.2,
-
     rows = 4,
     columns = 1,
-
     frameThickness = 0.15,
     drawerGap = 0.08,
     drawerOpenDistance = 1.5,
     drawerSpeed = 10,
     lockedDrawers = [],
     requiredDrawerKeys = {},
-
     handleType = "knob",
     handleColor = 0x8a6a42,
-
     woodColor = 0x5a321d,
     darkWoodColor = 0x3d2114,
     drawerInteriorColor = 0x6b4226,
-
     woodTexture = null,
     darkWoodTexture = null,
     drawerInteriorTexture = null,
-
     woodNormalMap = null,
     woodRoughnessMap = null,
-
     woodTextureRepeat = {
       x: 1,
       y: 1,
     },
-
     darkWoodTextureRepeat = null,
     drawerInteriorTextureRepeat = null,
   } = {}) {
@@ -52,15 +43,12 @@ class Cabinet extends Entity {
     this.width = width;
     this.height = height;
     this.depth = depth;
-
     this.rows = Math.max(1, rows);
     this.columns = Math.max(1, columns);
-
     this.frameThickness = frameThickness;
     this.drawerGap = drawerGap;
     this.drawerOpenDistance = drawerOpenDistance;
     this.drawerSpeed = drawerSpeed;
-
     this.drawerManager = new DrawerManager({
       ownerId: this.id,
       drawerSpeed,
@@ -81,14 +69,11 @@ class Cabinet extends Entity {
       darkWoodColor,
       drawerInteriorColor,
       handleColor,
-
       woodTexture,
       darkWoodTexture,
       drawerInteriorTexture,
-
       woodNormalMap,
       woodRoughnessMap,
-
       woodTextureRepeat,
       darkWoodTextureRepeat,
       drawerInteriorTextureRepeat,
@@ -103,14 +88,11 @@ class Cabinet extends Entity {
     darkWoodColor,
     drawerInteriorColor,
     handleColor,
-
     woodTexture,
     darkWoodTexture,
     drawerInteriorTexture,
-
     woodNormalMap,
     woodRoughnessMap,
-
     woodTextureRepeat,
     darkWoodTextureRepeat,
     drawerInteriorTextureRepeat,
@@ -119,27 +101,20 @@ class Cabinet extends Entity {
       woodColor,
       darkWoodColor,
       interiorColor: drawerInteriorColor,
-
       handleColor,
-
       woodTexture,
       darkWoodTexture,
       interiorTexture: drawerInteriorTexture,
-
       woodNormalMap,
       woodRoughnessMap,
-
       woodTextureRepeat,
       darkWoodTextureRepeat,
       interiorTextureRepeat: drawerInteriorTextureRepeat,
     });
 
     this.woodMaterial = materials.wood;
-
     this.darkWoodMaterial = materials.darkWood;
-
     this.drawerInteriorMaterial = materials.interior;
-
     this.handleMaterial = materials.handle;
   }
 
@@ -192,9 +167,7 @@ class Cabinet extends Entity {
 
   createDrawers() {
     const usableWidth = this.width - this.frameThickness * 2 - this.drawerGap * (this.columns + 1);
-
     const usableHeight = this.height - this.frameThickness * 2 - this.drawerGap * (this.rows + 1);
-
     const drawerWidth = usableWidth / this.columns;
     const drawerHeight = usableHeight / this.rows;
 
@@ -345,9 +318,7 @@ class Cabinet extends Entity {
     }
 
     const knob = new THREE.Mesh(new THREE.SphereGeometry(0.12, 12, 8), this.handleMaterial);
-
     knob.position.set(0, 0, this.frameThickness + 0.13);
-
     drawer.add(knob);
   }
 

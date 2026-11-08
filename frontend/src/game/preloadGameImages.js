@@ -75,7 +75,7 @@ const loadImage = (url) => {
       try {
         await image.decode?.();
       } catch {
-        // onload already confirms that the image data is available.
+        console.log(`No se pudo decodificar la imagen del juego: ${url}`);
       }
       resolve(image);
     };

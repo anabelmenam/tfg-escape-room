@@ -10,6 +10,7 @@ const woodStyle = {
   drawerInteriorColor: 0x6b4734,
   handleColor: 0x9b773d,
 };
+
 const createHallwayDecor = ({ character, config }) => {
   const consoleTable = new Table({
     id: `hallway-${character}-console`,
@@ -32,6 +33,7 @@ const createHallwayDecor = ({ character, config }) => {
     textureRepeat: { x: 8, y: 1 },
     hasFringes: false,
   });
+
   const vase = createVase({ aged: false, scale: 0.72, flowers: true });
   vase.position.set(-0.72, 2.51, 0);
   consoleTable.object3D.add(vase);
@@ -40,6 +42,7 @@ const createHallwayDecor = ({ character, config }) => {
   consoleTable.object3D.add(bowl);
   const umbrellaStand = createUmbrellaStand({ aged: false, scale: 0.95 });
   umbrellaStand.position.set(23.8, 0, 4.3);
+
   const daughterFrame = new Frame({
     id: `hallway-${character}-daughter-frame`,
     position: new THREE.Vector3(-13, 5.7, -4.42),
@@ -58,6 +61,7 @@ const createHallwayDecor = ({ character, config }) => {
     imagePath: "/images/family/son-portrait.png",
     mount: "wall",
   });
+
   return { consoleTable, carpet, umbrellaStand, daughterFrame, sonFrame };
 };
 export { createHallwayDecor };

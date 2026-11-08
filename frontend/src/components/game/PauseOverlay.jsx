@@ -13,6 +13,7 @@ const BackButton = ({ onClick }) => (
     {t("menu.back")}
   </button>
 );
+
 const withoutSignature = (text) => text.replace(/\s+—\s+(Mamá|Papá|Mum|Dad|Maman|Papa)\s*$/, "");
 
 const DiaryBook = ({ diaryEntries, onBack }) => {

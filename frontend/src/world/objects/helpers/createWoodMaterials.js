@@ -6,45 +6,33 @@ const createWoodMaterials = ({
   darkWoodColor = 0x3d2114,
   interiorColor = 0x6b4226,
   handleColor = 0x8a6a42,
-
   woodTexture = null,
   darkWoodTexture = null,
   interiorTexture = null,
-
   woodNormalMap = null,
   woodRoughnessMap = null,
-
   darkWoodNormalMap = null,
   darkWoodRoughnessMap = null,
-
   interiorNormalMap = null,
   interiorRoughnessMap = null,
-
   woodTextureRepeat = { x: 1, y: 1 },
   darkWoodTextureRepeat = null,
   interiorTextureRepeat = null,
-
   woodRoughness = 0.78,
   darkWoodRoughness = 0.84,
   interiorRoughness = 0.9,
-
   woodMetalness = 0.02,
   darkWoodMetalness = 0.01,
   interiorMetalness = 0,
-
   handleRoughness = 0.35,
   handleMetalness = 0.55,
-
   woodNormalScale = 1,
   darkWoodNormalScale = 1,
   interiorNormalScale = 1,
 } = {}) => {
   const resolvedDarkWoodTexture = darkWoodTexture ?? woodTexture;
-
   const resolvedInteriorTexture = interiorTexture ?? darkWoodTexture ?? woodTexture;
-
   const resolvedDarkRepeat = darkWoodTextureRepeat ?? woodTextureRepeat;
-
   const resolvedInteriorRepeat = interiorTextureRepeat ?? darkWoodTextureRepeat ?? woodTextureRepeat;
 
   const woodMap = loadTexture({
@@ -104,10 +92,8 @@ const createWoodMaterials = ({
   const wood = new THREE.MeshStandardMaterial({
     color: woodColor,
     map: woodMap,
-
     normalMap: woodNormalTexture,
     normalScale: new THREE.Vector2(woodNormalScale, woodNormalScale),
-
     roughnessMap: woodRoughnessTexture,
     roughness: woodRoughness,
     metalness: woodMetalness,
@@ -116,12 +102,9 @@ const createWoodMaterials = ({
   const darkWood = new THREE.MeshStandardMaterial({
     color: darkWoodColor,
     map: darkWoodMap,
-
     normalMap: darkWoodNormalTexture,
     normalScale: new THREE.Vector2(darkWoodNormalScale, darkWoodNormalScale),
-
     roughnessMap: darkWoodRoughnessTexture,
-
     roughness: darkWoodRoughness,
     metalness: darkWoodMetalness,
   });
@@ -129,12 +112,9 @@ const createWoodMaterials = ({
   const interior = new THREE.MeshStandardMaterial({
     color: interiorColor,
     map: interiorMap,
-
     normalMap: interiorNormalTexture,
     normalScale: new THREE.Vector2(interiorNormalScale, interiorNormalScale),
-
     roughnessMap: interiorRoughnessTexture,
-
     roughness: interiorRoughness,
     metalness: interiorMetalness,
   });

@@ -1,8 +1,8 @@
 import { createElement, useState } from "react";
 import { Gamepad2, Languages, Volume2 } from "lucide-react";
-import AudioSettings from "../AudioSettings.jsx";
-import LanguageSettings from "../LanguageSettings.jsx";
-import MouseSettings from "../MouseSettings.jsx";
+import AudioSettings from "./settings/AudioSettings.jsx";
+import LanguageSettings from "./settings/LanguageSettings.jsx";
+import MouseSettings from "./settings/MouseSettings.jsx";
 import { t } from "../../translations/index.js";
 
 const tabs = [

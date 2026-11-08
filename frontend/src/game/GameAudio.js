@@ -1,5 +1,4 @@
 const AUDIO_LIBRARY = {
-  // Replace this file with another loop to change the background music.
   music: { src: "/audio/full-of-memories.ogg", volume: 0.08, loop: true },
   puzzleComplete: { src: "/audio/puzzle-complete.mp3", volume: 0.9 },
   itemPickup: { src: "/audio/item-pickup-click.wav", volume: 0.72 },

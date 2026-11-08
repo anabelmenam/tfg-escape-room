@@ -10,7 +10,6 @@ const createCurvedFaucet = ({ material, surfaceY = 0, baseZ = -0.67, reach = 0.7
   body.position.set(0, surfaceY + 0.24, baseZ);
   const spoutEndY = surfaceY + height * 0.98;
 
-  // A smooth mixer spout, joined to the body and ending vertically over the bowl.
   const spoutPath = new THREE.CubicBezierCurve3(
     new THREE.Vector3(0, surfaceY + 0.36, baseZ),
     new THREE.Vector3(0, surfaceY + height, baseZ),

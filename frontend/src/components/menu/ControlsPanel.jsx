@@ -3,9 +3,9 @@ import { Eye, Footprints, Hand, Menu, MousePointer2 } from "lucide-react";
 import { t } from "../../translations/index.js";
 
 const groups = [
-  { title: "settingsScreen.movement", icon: Footprints, indices: [0, 3, 4, 5] },
-  { title: "settingsScreen.interaction", icon: Hand, indices: [1, 2, 6, 7, 8] },
-  { title: "settingsScreen.interface", icon: Menu, indices: [9, 10] },
+  { title: "settingsScreen.movement", icon: Footprints, indexes: [0, 3, 4, 5] },
+  { title: "settingsScreen.interaction", icon: Hand, indexes: [1, 2, 6, 7, 8] },
+  { title: "settingsScreen.interface", icon: Menu, indexes: [9, 10] },
 ];
 const keys = ["W A S D", "Mouse", "E", "Ctrl", "Shift", "Space", "Q", "1–8 / wheel", "R", "F", "Esc"];
 const icons = [Footprints, MousePointer2, Hand, Footprints, Footprints, Footprints, Eye, Hand, Eye, Eye, Menu];
@@ -26,7 +26,7 @@ const ControlsPanel = ({ isAdmin = false }) => (
             {t(group.title)}
           </h2>
           <div className="mt-2 space-y-1.5">
-            {group.indices
+            {group.indexes
               .filter((index) => isAdmin || index !== 9)
               .map((index) => {
                 const ItemIcon = icons[index];

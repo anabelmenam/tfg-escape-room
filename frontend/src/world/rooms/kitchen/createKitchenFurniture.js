@@ -24,6 +24,7 @@ const createKitchenFurniture = ({ character, config }) => {
     rotationY: -Math.PI / 2,
     color: config.applianceColor,
   });
+
   const counter = new KitchenCounter({
     id: `kitchen-${character}-counter`,
     position: new THREE.Vector3(7.75, 0, -2.1),
@@ -31,6 +32,7 @@ const createKitchenFurniture = ({ character, config }) => {
     width: 8.5,
     cabinetColor: config.cabinetColor,
   });
+
   const oven = new Oven({
     id: `kitchen-${character}-oven`,
     position: new THREE.Vector3(7.55, 0, -7.85),
@@ -38,6 +40,7 @@ const createKitchenFurniture = ({ character, config }) => {
     bodyColor: config.applianceColor,
     cabinetColor: config.cabinetColor,
   });
+
   const cooktopCounter = new CooktopCounter({
     id: `kitchen-${character}-cooktop-counter`,
     position: new THREE.Vector3(7.75, 0, 3.75),
@@ -45,6 +48,7 @@ const createKitchenFurniture = ({ character, config }) => {
     width: 3,
     cabinetColor: config.cabinetColor,
   });
+
   const smallCounter = new KitchenCounter({
     id: `kitchen-${character}-small-counter`,
     position: new THREE.Vector3(7.75, 0, 5.95),
@@ -53,6 +57,7 @@ const createKitchenFurniture = ({ character, config }) => {
     cabinetColor: config.cabinetColor,
     hasSink: false,
   });
+
   const firstTallCabinet = new KitchenTallCabinet({
     id: `kitchen-${character}-tall-cabinet-1`,
     position: new THREE.Vector3(7.5, 0, 8.1),
@@ -60,6 +65,7 @@ const createKitchenFurniture = ({ character, config }) => {
     color: config.cabinetColor,
     hingeSide: "left",
   });
+
   const secondTallCabinet = new KitchenTallCabinet({
     id: `kitchen-${character}-tall-cabinet-2`,
     position: new THREE.Vector3(7.5, 0, 11.15),
@@ -67,6 +73,7 @@ const createKitchenFurniture = ({ character, config }) => {
     color: config.cabinetColor,
     hingeSide: "right",
   });
+
   const diningTable = new Table({
     id: `kitchen-${character}-table`,
     position: new THREE.Vector3(-4.5, 0, -1),
@@ -78,6 +85,7 @@ const createKitchenFurniture = ({ character, config }) => {
     createCollider: true,
     ...woodStyle,
   });
+
   const chairs = [
     [-7.2, -2.7, Math.PI / 2],
     [-7.2, 0.7, Math.PI / 2],
@@ -93,6 +101,7 @@ const createKitchenFurniture = ({ character, config }) => {
         ...woodStyle,
       }),
   );
+
   const furniture = [
     refrigerator,
     oven,
@@ -107,6 +116,7 @@ const createKitchenFurniture = ({ character, config }) => {
   furniture.forEach((object) =>
     applyAgedFurnitureAppearance(object.object3D, { intensity: 0.12, wearColor: 0x6d5c4b }),
   );
+
   return {
     refrigerator,
     oven,

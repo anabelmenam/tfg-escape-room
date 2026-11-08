@@ -11,7 +11,7 @@ El proyecto combina un escenario tridimensional construido con Three.js, una int
 ## Funcionalidades principales
 
 - Escape room cooperativo para dos jugadores.
-- Dos personajes con perspectivas temporales y puzles complementarios.
+- Dos personajes, Mamá y Papá, con perspectivas y puzles complementarios.
 - Casa 3D explorable con dormitorio, pasillo, salón, habitación infantil, baño y cocina.
 - Puzles de lógica, observación, memoria, música, electricidad, laberinto y manipulación de objetos.
 - Inventario, inspección de pistas y diario narrativo.
@@ -24,6 +24,16 @@ El proyecto combina un escenario tridimensional construido con Three.js, una int
 - Interfaz disponible en español, inglés y francés.
 - Ajustes persistentes de sonido y sensibilidad del ratón.
 - Modo de pruebas para acceder directamente a personajes, habitaciones, recursos y final.
+
+## Capturas
+
+| Menú principal | Sala de espera |
+| --- | --- |
+| ![Menú principal](docs/images/menu-principal.png) | ![Selección de personaje y código de sala](docs/images/sala-espera.png) |
+
+| Perspectiva de Mamá | Perspectiva de Papá |
+| --- | --- |
+| ![Partida desde la perspectiva de Mamá](docs/images/juego-mama.png) | ![Partida desde la perspectiva de Papá](docs/images/juego-papa.png) |
 
 ## Tecnologías
 
@@ -52,7 +62,7 @@ El proyecto combina un escenario tridimensional construido con Three.js, una int
 - Vercel para el cliente
 - Render para el servidor
 - ESLint
-- `node:test` y cobertura nativa de Node.js
+- `node:test` y c8 para pruebas y cobertura
 
 ## Arquitectura
 
@@ -63,15 +73,15 @@ tfg-escape-room/
 ├── backend/
 │   ├── migrations/       # Migraciones incrementales de PostgreSQL
 │   ├── src/              # API, autenticación, Socket.IO y persistencia
-│   └── test/unit/        # Pruebas del servidor
+│   └── test/             # Pruebas unitarias y de integración del servidor
 ├── frontend/
 │   ├── public/           # Imágenes, sonidos y texturas
 │   ├── src/
 │   │   ├── components/   # Interfaz React
-│   │   ├── game/         # Motor, controles, audio y sincronización
+│   │   ├── game/         # Motor, gestores, controles, audio y sincronización
 │   │   ├── translations/ # Español, inglés y francés
-│   │   └── world/        # Habitaciones, objetos y puzles
-│   └── test/unit/        # Pruebas del cliente y lógica del juego
+│   │   └── world/        # Habitaciones, objetos y puzles por estancia
+│   └── test/             # Pruebas unitarias, de integración y utilidades
 ├── docs/                 # Documentación complementaria
 ├── docker-compose.yml    # PostgreSQL para desarrollo
 ├── netlify.toml          # Configuración anterior de Netlify
@@ -171,7 +181,7 @@ VITE_SOCKET_URL=http://localhost:3010
 | Saltar | `Espacio` |
 | Encender o apagar la linterna | `Q` |
 | Seleccionar inventario | `1`–`8` o rueda del ratón |
-| Inspeccionar determinados objetos | `I` o `R` |
+| Inspeccionar determinados objetos | `R` |
 | Cambiar de vista | `F` |
 | Pausa o cerrar inspección | `Esc` |
 
@@ -180,16 +190,13 @@ VITE_SOCKET_URL=http://localhost:3010
 En desarrollo se puede acceder directamente a distintas zonas sin crear una sala ni conectar un segundo jugador:
 
 ```text
-http://localhost:5173/?character=mum&area=bedroom
-http://localhost:5173/?character=dad&area=hallway
-http://localhost:5173/?character=mum&area=children
-http://localhost:5173/?character=dad&area=bathroom
-http://localhost:5173/?character=dad&area=kitchen
+http://localhost:5173/?character=mum
+http://localhost:5173/?character=dad
 http://localhost:5173/?test=icons
 http://localhost:5173/?test=ending
 ```
 
-Los valores admitidos para `character` son `mum` y `dad`. Las áreas disponibles son `bedroom`, `hallway`, `children`, `bathroom` y `kitchen`.
+Los valores admitidos para `character` son `mum` y `dad`. Cada uno inicia un recorrido de administración por la casa completa. `test=icons` abre el catálogo visual de recursos y `test=ending` reproduce la secuencia final. Estas rutas solo se habilitan en desarrollo.
 
 Las cuentas administradoras también disponen de accesos visuales a estas pruebas desde el menú. Para crear o actualizar una cuenta administradora:
 
@@ -223,7 +230,7 @@ npm run test:coverage
 npm run check
 ```
 
-`npm run check` ejecuta las pruebas y las comprobaciones propias de cada paquete. En el cliente también ejecuta ESLint, valida los nombres de archivo y genera la compilación de producción.
+`npm run check` ejecuta las pruebas y las comprobaciones propias de cada paquete. En el cliente también ejecuta ESLint y genera la compilación de producción. En el servidor comprueba la sintaxis de los módulos y ejecuta las pruebas.
 
 La estrategia y el catálogo actual de pruebas se explican en [docs/TESTING.md](docs/TESTING.md).
 

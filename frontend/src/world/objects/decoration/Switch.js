@@ -6,17 +6,13 @@ class Switch extends Entity {
   constructor({ id, onPress, position, scale = 1, powerAvailable = true } = {}) {
     super(id);
     this.object3D = new THREE.Group();
-
     this.onPress = onPress;
     this.powerAvailable = powerAvailable;
     this.audioController = null;
-
     this.createPlate();
     this.createLever();
-
     this.offRotation = Math.PI / 8;
     this.onRotation = -Math.PI / 8;
-
     this.object3D.position.copy(position);
     this.object3D.scale.setScalar(scale);
     this.setActive(false);
@@ -47,13 +43,11 @@ class Switch extends Entity {
     );
 
     this.lever.position.z = 0.1;
-
     this.object3D.add(this.lever);
   }
 
   setActive(active) {
     this.active = active;
-
     this.lever.rotation.x = active ? this.onRotation : this.offRotation;
   }
 
@@ -82,7 +76,6 @@ class Switch extends Entity {
 
   setPowerAvailable(available) {
     this.powerAvailable = available;
-
     if (!available) {
       this.setActive(false);
     }

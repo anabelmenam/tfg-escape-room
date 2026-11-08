@@ -10,27 +10,21 @@ class Carpet extends Entity {
     position = new THREE.Vector3(),
     rotationY = 0,
     scale = 1,
-
     width = 5,
     depth = 7,
     thickness = 0.08,
     cornerRadius = 0.15,
-
     color = 0xffffff,
     sideColor = 0x6b4226,
-
     texture = null,
     textureRepeat = {
       x: 1,
       y: 1,
     },
-
     normalMap = null,
     roughnessMap = null,
-
     roughness = 0.95,
     metalness = 0,
-
     hasFringes = false,
     fringeColor = null,
     fringeLength = 0.25,
@@ -44,7 +38,6 @@ class Carpet extends Entity {
     this.depth = depth;
     this.thickness = thickness;
     this.cornerRadius = cornerRadius;
-
     this.hasFringes = hasFringes;
     this.fringeColor = fringeColor ?? sideColor;
     this.fringeLength = fringeLength;
@@ -53,7 +46,6 @@ class Carpet extends Entity {
     this.onLift = onLift;
     this.isLifted = false;
     this.liftProgress = 0;
-
     this.object3D = new THREE.Group();
     this.object3D.position.copy(position);
     this.object3D.rotation.y = rotationY;
@@ -64,13 +56,10 @@ class Carpet extends Entity {
     this.createMaterials({
       color,
       sideColor,
-
       texture,
       textureRepeat,
-
       normalMap,
       roughnessMap,
-
       roughness,
       metalness,
     });
@@ -78,19 +67,7 @@ class Carpet extends Entity {
     this.createRug();
   }
 
-  createMaterials({
-    color,
-    sideColor,
-
-    texture,
-    textureRepeat,
-
-    normalMap,
-    roughnessMap,
-
-    roughness,
-    metalness,
-  }) {
+  createMaterials({ color, sideColor, texture, textureRepeat, normalMap, roughnessMap, roughness, metalness }) {
     const colorTexture = loadTexture({
       path: texture,
       repeat: textureRepeat,
@@ -165,9 +142,7 @@ class Carpet extends Entity {
       const z = this.topBasePositions[index * 3 + 1];
       const nearLiftedCornerX = THREE.MathUtils.clamp((x + halfWidth) / (halfWidth * 2), 0, 1);
       const nearLiftedCornerZ = THREE.MathUtils.clamp((z + halfDepth) / (halfDepth * 2), 0, 1);
-
       const cornerWeight = nearLiftedCornerX ** 3 * nearLiftedCornerZ ** 3;
-
       positions.setZ(index, this.liftProgress * 1.05 * cornerWeight);
     }
 
@@ -181,20 +156,14 @@ class Carpet extends Entity {
 
   createBase() {
     const maximumRadius = Math.min(this.width, this.depth, this.thickness) / 2;
-
     const resolvedRadius = Math.min(this.cornerRadius, maximumRadius);
-
     const geometry = new RoundedBoxGeometry(this.width, this.thickness, this.depth, 4, resolvedRadius);
 
     const base = new THREE.Mesh(geometry, this.sideMaterial);
-
     base.name = `${this.id}-base`;
-
     base.position.set(this.width / 2, this.thickness / 2, this.depth / 2);
-
     base.castShadow = true;
     base.receiveShadow = true;
-
     this.rugPivot.add(base);
   }
 
@@ -202,15 +171,10 @@ class Carpet extends Entity {
     const geometry = new THREE.PlaneGeometry(this.width - 0.02, this.depth - 0.02, 24, 24);
 
     const top = new THREE.Mesh(geometry, this.topMaterial);
-
     top.name = `${this.id}-top`;
-
     top.rotation.x = -Math.PI / 2;
-
     top.position.set(this.width / 2, this.thickness + 0.003, this.depth / 2);
-
     top.receiveShadow = true;
-
     this.topGeometry = geometry;
     this.topBasePositions = geometry.attributes.position.array.slice();
     this.rugPivot.add(top);
@@ -218,7 +182,6 @@ class Carpet extends Entity {
 
   createFringes() {
     const numberOfFringes = Math.max(2, Math.floor(this.width / this.fringeSpacing));
-
     const actualSpacing = this.width / numberOfFringes;
 
     for (let index = 0; index < numberOfFringes; index += 1) {
@@ -242,9 +205,7 @@ class Carpet extends Entity {
     const geometry = new THREE.BoxGeometry(this.fringeThickness, this.fringeThickness, this.fringeLength);
 
     const fringe = new THREE.Mesh(geometry, this.fringeMaterial);
-
     fringe.position.set(x + this.width / 2, this.fringeThickness / 2, z + this.depth / 2);
-
     fringe.castShadow = true;
     fringe.receiveShadow = true;
 
@@ -253,7 +214,6 @@ class Carpet extends Entity {
 
   getCollider() {
     this.object3D.updateMatrixWorld(true);
-
     return new THREE.Box3().setFromObject(this.object3D);
   }
 }

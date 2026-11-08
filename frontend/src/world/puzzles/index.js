@@ -1,25 +1,25 @@
-import { BookPuzzle } from "./BookPuzzle.js";
-import { LightRevealPuzzle } from "./LightRevealPuzzle.js";
-import { SewingBoxPuzzle } from "./SewingBoxPuzzle.js";
-import { FamilyPhotoPuzzle } from "./FamilyPhotoPuzzle.js";
-import { ElectricalPanelPuzzle } from "./ElectricalPanelPuzzle.js";
-import { RadioPuzzle } from "./RadioPuzzle.js";
-import { Scissors } from "./Scissors.js";
-import { Cushion, Match } from "./Cushion.js";
-import { Fireplace } from "./Fireplace.js";
-import { DisplayCase } from "./DisplayCase.js";
-import { EmberClue, EmberPuzzle } from "./EmberPuzzle.js";
-import { BathroomSteamPuzzle, STEAM_SEQUENCE } from "./BathroomSteamPuzzle.js";
-import { HallwayMazeMirror } from "./HallwayMazeMirror.js";
-import { BlockConstructionPuzzle } from "./BlockConstructionPuzzle.js";
-import { MusicPuzzle } from "./MusicPuzzle.js";
-import { PhotoBoardPuzzle, MEMORIES, MEMORY_PHOTO_IDS } from "./PhotoBoardPuzzle.js";
-import { KitchenIngredient, KitchenNapkin, MosaicTile } from "./KitchenItems.js";
-import { RecipePuzzle } from "./RecipePuzzle.js";
-import { StovePuzzle } from "./StovePuzzle.js";
-import { TableSettingPuzzle } from "./TableSettingPuzzle.js";
-import { OvenControlPuzzle } from "./OvenControlPuzzle.js";
-import { BathroomMosaicPuzzle } from "./BathroomMosaicPuzzle.js";
+import { BookPuzzle } from "./livingRoom/BookPuzzle.js";
+import { LightRevealPuzzle } from "./bedroom/LightRevealPuzzle.js";
+import { SewingBoxPuzzle } from "./bedroom/SewingBoxPuzzle.js";
+import { FamilyPhotoPuzzle } from "./bedroom/FamilyPhotoPuzzle.js";
+import { ElectricalPanelPuzzle } from "./bedroom/ElectricalPanelPuzzle.js";
+import { RadioPuzzle } from "./bedroom/RadioPuzzle.js";
+import { Scissors } from "./livingRoom/Scissors.js";
+import { Cushion, Match } from "./livingRoom/Cushion.js";
+import { Fireplace } from "./livingRoom/Fireplace.js";
+import { DisplayCase } from "./livingRoom/DisplayCase.js";
+import { EmberClue, EmberPuzzle } from "./livingRoom/EmberPuzzle.js";
+import { BathroomSteamPuzzle, STEAM_SEQUENCE } from "./bathroom/BathroomSteamPuzzle.js";
+import { HallwayMazeMirror } from "./hallway/HallwayMazeMirror.js";
+import { BlockConstructionPuzzle } from "./childrenRoom/BlockConstructionPuzzle.js";
+import { MusicPuzzle } from "./childrenRoom/MusicPuzzle.js";
+import { PhotoBoardPuzzle, MEMORIES, MEMORY_PHOTO_IDS } from "./childrenRoom/PhotoBoardPuzzle.js";
+import { KitchenIngredient, KitchenNapkin, MosaicTile } from "./kitchen/KitchenItems.js";
+import { RecipePuzzle } from "./kitchen/RecipePuzzle.js";
+import { StovePuzzle } from "./kitchen/StovePuzzle.js";
+import { TableSettingPuzzle } from "./kitchen/TableSettingPuzzle.js";
+import { OvenControlPuzzle } from "./kitchen/OvenControlPuzzle.js";
+import { BathroomMosaicPuzzle } from "./bathroom/BathroomMosaicPuzzle.js";
 
 export {
   BookPuzzle,
@@ -52,4 +52,4 @@ export {
   MosaicTile,
   BathroomMosaicPuzzle,
 };
-export { ClockPuzzle } from "./ClockPuzzle.js";
+export { ClockPuzzle } from "./hallway/ClockPuzzle.js";

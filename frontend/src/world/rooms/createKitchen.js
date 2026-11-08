@@ -1,16 +1,24 @@
 import * as THREE from "three";
 import { createRoom } from "./createRoom.js";
-import { kitchenConfig, kitchenDimensions } from "./kitchen/kitchenConfig.js";
 import { createKitchenFixtures } from "./kitchen/createKitchenFixtures.js";
 import { createKitchenFurniture } from "./kitchen/createKitchenFurniture.js";
 import { createKitchenDecor } from "./kitchen/createKitchenDecor.js";
-import { createKitchenAppliancePuzzles } from "./kitchen/createKitchenAppliancePuzzles.js";
-import { createKitchenFoodPuzzles } from "./kitchen/createKitchenFoodPuzzles.js";
+import { setupKitchenAppliancePuzzles } from "./kitchen/puzzleSetups/setupKitchenAppliancePuzzles.js";
+import { setupKitchenFoodPuzzles } from "./kitchen/puzzleSetups/setupKitchenFoodPuzzles.js";
 import { assembleKitchen } from "./kitchen/assembleKitchen.js";
 
+const kitchenConfig = {
+  wallColor: 0xc8b89d,
+  floorColor: 0x706151,
+  cabinetColor: 0x75543b,
+  applianceColor: 0xe0dacb,
+  ambientIntensity: 0.42,
+};
+const kitchenDimensions = { width: 18, depth: 26, height: 12 };
+
 const createKitchen = ({ character = "dad", onObjectFocus = null, onKitchenAction = null, testMode = false } = {}) => {
-  const config = kitchenConfig[character];
-  if (!config) throw new Error(`Character no válido para Kitchen: ${character}`);
+  if (!["mum", "dad"].includes(character)) throw new Error(`Character no válido para Kitchen: ${character}`);
+  const config = kitchenConfig;
   const { width, depth, height } = kitchenDimensions;
   const { room, roomColliders, bounds, windowOpenings, placeAgainstWall } = createRoom({
     width,
@@ -43,14 +51,14 @@ const createKitchen = ({ character = "dad", onObjectFocus = null, onKitchenActio
   const fixtures = createKitchenFixtures({ character, config, dimensions: kitchenDimensions, windowOpenings });
   const furniture = createKitchenFurniture({ character, config });
   const decor = createKitchenDecor({ character, depth, furniture });
-  const appliancePuzzles = createKitchenAppliancePuzzles({
+  const appliancePuzzles = setupKitchenAppliancePuzzles({
     character,
     testMode,
     furniture,
     onFocus: onObjectFocus,
     onAction: reportAction,
   });
-  const foodPuzzles = createKitchenFoodPuzzles({
+  const foodPuzzles = setupKitchenFoodPuzzles({
     character,
     testMode,
     furniture,

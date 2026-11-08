@@ -65,6 +65,28 @@ test("las rutas privadas rechazan peticiones sin sesión", async () => {
   }
 });
 
+test("una sesión caducada se elimina y no permite acceder a rutas privadas", async (t) => {
+  t.after(restoreStubs);
+  let destroyed = false;
+  stub(UserSession, "findOne", async () => ({
+    user: { id: "expired-user", role: "user" },
+    expiresAt: new Date(Date.now() - 1_000),
+    destroy: async () => { destroyed = true; },
+  }));
+  const response = await request("/api/auth/me", { headers: authHeaders });
+  assert.equal(response.status, 401);
+  assert.deepEqual(await response.json(), { error: "AUTH_REQUIRED" });
+  assert.equal(destroyed, true);
+});
+
+test("el servidor rechaza cuerpos JSON que superan el límite configurado", async () => {
+  const response = await request("/api/auth/login", {
+    method: "POST",
+    body: JSON.stringify({ email: "ana@example.com", password: "a".repeat(1_100_000) }),
+  });
+  assert.equal(response.status, 413);
+});
+
 test("registro e inicio de sesión validan los datos antes de consultar la base de datos", async () => {
   for (const path of ["/api/auth/register", "/api/auth/login"]) {
     const response = await request(path, {
@@ -75,6 +97,19 @@ test("registro e inicio de sesión validan los datos antes de consultar la base 
     const body = await response.json();
     assert.equal(typeof body.error, "string");
   }
+});
+
+test("las entradas con patrones de inyección se rechazan antes de acceder al dominio", async () => {
+  const login = await request("/api/auth/login", {
+    method: "POST",
+    body: JSON.stringify({ email: "' OR 1=1 --", password: "password123" }),
+  });
+  assert.equal(login.status, 400);
+
+  const room = await request("/api/rooms/%3Cscript%3Ealert(1)%3C%2Fscript%3E/state", {
+    headers: { "X-Player-Token": "not-a-uuid" },
+  });
+  assert.equal(room.status, 400);
 });
 
 test("recuperación y cambio de contraseña rechazan cargas inválidas", async () => {
@@ -108,7 +143,12 @@ test("registro cubre correo repetido y creación correcta", async (t) => {
   response = await request("/api/auth/register", { method: "POST", body: JSON.stringify({ displayName: "Ana", email: "ANA@example.com", password: "password123" }) });
   assert.equal(response.status, 201);
   assert.equal((await response.json()).user.email, "ana@example.com");
-  assert.match(response.headers.get("set-cookie"), /escape_room_session=/);
+  const cookie = response.headers.get("set-cookie");
+  assert.match(cookie, /escape_room_session=/);
+  assert.match(cookie, /HttpOnly/i);
+  assert.match(cookie, /SameSite=Lax/i);
+  assert.match(cookie, /Path=\//i);
+  assert.equal(cookie.includes("password123"), false);
 });
 
 test("login rechaza credenciales incorrectas y crea sesión con las válidas", async (t) => {
@@ -149,6 +189,18 @@ test("un usuario normal no puede consultar la administración", async (t) => {
   authenticated("user");
   const response = await request("/api/admin/users", { headers: authHeaders });
   assert.equal(response.status, 403);
+});
+
+test("un usuario autenticado no puede eliminar una partida ajena", async (t) => {
+  t.after(restoreStubs);
+  authenticated("user");
+  stub(RoomPlayer, "findOne", async () => null);
+  const response = await request("/api/rooms/90000000-0000-4000-8000-000000000001", {
+    method: "DELETE",
+    headers: authHeaders,
+  });
+  assert.equal(response.status, 404);
+  assert.deepEqual(await response.json(), { error: "ROOM_NOT_FOUND" });
 });
 
 test("estado de sala valida el jugador y devuelve la instantánea", async (t) => {
@@ -216,6 +268,11 @@ test("socket autentica al jugador y procesa lobby, acciones, movimiento y metada
     actionId: "60000000-0000-4000-8000-000000000001", type: "item.pickup", targetId: "test-item", payload: {},
   });
   assert.equal(answer.ok, true);
+  answer = await emitAck("game:action", {
+    actionId: "no-es-un-uuid", type: "accion.inventada", targetId: "x".repeat(101), payload: {},
+  });
+  assert.equal(answer.ok, false);
+  assert.match(answer.error, /Invalid uuid|invalid_string/i);
   socket.emit("player:movement", { position: { x: 1, y: 2, z: 3 }, rotationY: 0, roomKey: "hallway" });
   socket.emit("player:checkpoint-meta", { diaryEntries: ["entry"], hintHistory: [{ id: "hint", text: "Pista" }] });
   await new Promise((resolve) => setTimeout(resolve, 30));

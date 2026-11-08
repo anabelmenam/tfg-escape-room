@@ -37,7 +37,9 @@ const createBedroomFixtures = ({
   const onPress = (pressed) => {
     lamp.setActive(pressed.active);
     switches.forEach((item) => {
-      if (item !== pressed) item.setActive(pressed.active);
+      if (item !== pressed) {
+        item.setActive(pressed.active);
+      }
     });
   };
   const lightSwitch1 = new Switch({

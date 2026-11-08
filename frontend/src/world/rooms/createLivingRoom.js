@@ -2,9 +2,9 @@ import * as THREE from "three";
 import { createRoom } from "./createRoom.js";
 
 import { createLivingRoomDecor } from "./livingRoom/createLivingRoomDecor.js";
-import { createShelfPaintingPuzzle } from "./livingRoom/createShelfPaintingPuzzle.js";
-import { createFireplacePuzzle } from "./livingRoom/createFireplacePuzzle.js";
-import { createChestPuzzle } from "./livingRoom/createChestPuzzle.js";
+import { setupShelfPaintingPuzzle } from "./livingRoom/puzzleSetups/setupShelfPaintingPuzzle.js";
+import { setupFireplacePuzzle } from "./livingRoom/puzzleSetups/setupFireplacePuzzle.js";
+import { setupChestPuzzle } from "./livingRoom/puzzleSetups/setupChestPuzzle.js";
 import { createLivingRoomFurniture } from "./livingRoom/createLivingRoomFurniture.js";
 import { createLivingRoomFixtures } from "./livingRoom/createLivingRoomFixtures.js";
 import { assembleLivingRoom } from "./livingRoom/assembleLivingRoom.js";
@@ -77,7 +77,7 @@ const createLivingRoom = async ({
     woodStyle,
   } = furniture;
 
-  const fireplacePuzzle = createFireplacePuzzle({
+  const fireplacePuzzle = setupFireplacePuzzle({
     character,
     testMode,
     sofa,
@@ -94,7 +94,7 @@ const createLivingRoom = async ({
     hasEntrance: Boolean(entrance),
   });
 
-  const chestPuzzle = createChestPuzzle({
+  const chestPuzzle = setupChestPuzzle({
     character,
     testMode,
     shelf: shelf2,
@@ -103,7 +103,7 @@ const createLivingRoom = async ({
     onAction: onLivingRoomAction,
     onFocus: onObjectFocus,
   });
-  const paintingPuzzle = createShelfPaintingPuzzle({
+  const paintingPuzzle = setupShelfPaintingPuzzle({
     character,
     testMode,
     shelf: shelf1,

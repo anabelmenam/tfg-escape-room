@@ -10,33 +10,25 @@ class Desk extends Entity {
     position = new THREE.Vector3(),
     rotationY = 0,
     scale = 1,
-
     woodColor = 0x5a321d,
     darkWoodColor = 0x3d2114,
     interiorColor = 0x6b4226,
     handleColor = 0x8a6a42,
-
     woodTexture = null,
     darkWoodTexture = null,
     interiorTexture = null,
-
     woodNormalMap = null,
     woodRoughnessMap = null,
-
     darkWoodNormalMap = null,
     darkWoodRoughnessMap = null,
-
     interiorNormalMap = null,
     interiorRoughnessMap = null,
-
     woodTextureRepeat = {
       x: 1,
       y: 1,
     },
-
     darkWoodTextureRepeat = null,
     interiorTextureRepeat = null,
-
     drawerOpenDistance = 1.22,
     drawerSpeed = 5,
     lockedDrawers = [],
@@ -50,7 +42,6 @@ class Desk extends Entity {
 
     this.drawerOpenDistance = drawerOpenDistance;
     this.drawerSpeed = drawerSpeed;
-
     this.drawerManager = new DrawerManager({
       ownerId: this.id,
       drawerSpeed,
@@ -62,20 +53,15 @@ class Desk extends Entity {
       darkWoodColor,
       interiorColor,
       handleColor,
-
       woodTexture,
       darkWoodTexture,
       interiorTexture,
-
       woodNormalMap,
       woodRoughnessMap,
-
       darkWoodNormalMap,
       darkWoodRoughnessMap,
-
       interiorNormalMap,
       interiorRoughnessMap,
-
       woodTextureRepeat,
       darkWoodTextureRepeat,
       interiorTextureRepeat,
@@ -132,7 +118,6 @@ class Desk extends Entity {
     });
 
     this.object3D.add(tabletop, rearSupport, leftDrawerSupport, rightDrawerSupport, drawerTopSupport);
-
     this.createLegs();
   }
 
@@ -176,9 +161,7 @@ class Desk extends Entity {
 
   createDrawer({ index, x, y, closedZ }) {
     const drawer = new THREE.Group();
-
     drawer.position.set(x, y, closedZ);
-
     drawer.userData.drawerIndex = index;
     drawer.userData.closedZ = closedZ;
     drawer.userData.openZ = closedZ + this.drawerOpenDistance;
@@ -225,9 +208,7 @@ class Desk extends Entity {
 
     const handle = this.createHandle();
     handle.position.set(0, 0, 0.1);
-
     drawer.add(front, bottom, leftWall, rightWall, rearWall, handle);
-
     drawer.traverse((child) => {
       child.userData.drawerRoot = drawer;
       child.userData.drawerIndex = index;

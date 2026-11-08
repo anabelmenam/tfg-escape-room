@@ -1,14 +1,7 @@
 import * as THREE from "three";
 import { Entity } from "../Entity.js";
+import { createMesh } from "../helpers/createMesh.js";
 import { tInteraction, tItem } from "../../../translations/index.js";
-
-const createMesh = (geometry, material, position) => {
-  const mesh = new THREE.Mesh(geometry, material);
-  mesh.position.copy(position);
-  mesh.castShadow = true;
-  mesh.receiveShadow = true;
-  return mesh;
-};
 
 class Toilet extends Entity {
   constructor({
@@ -93,7 +86,6 @@ class Toilet extends Entity {
   createLid(porcelain, metal) {
     this.lidPivot = new THREE.Group();
     this.lidPivot.position.set(0, 1.48, 0.82);
-
     this.lid = createMesh(new THREE.CylinderGeometry(0.82, 0.82, 0.1, 32), porcelain, new THREE.Vector3(0, 0, -0.87));
     this.lid.scale.z = 1.25;
 

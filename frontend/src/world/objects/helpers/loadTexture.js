@@ -35,11 +35,4 @@ const loadTexture = ({ path, repeat = { x: 1, y: 1 }, colorTexture = true, flipY
   return texture;
 };
 
-const clearTextureCache = () => {
-  textureCache.forEach((texture) => {
-    texture.dispose();
-  });
-  textureCache.clear();
-};
-
-export { loadTexture, clearTextureCache };
+export { loadTexture };

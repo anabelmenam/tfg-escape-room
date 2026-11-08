@@ -4,48 +4,10 @@ import * as THREE from "three";
 import { installBrowserMocks } from "../helpers/browserMocks.js";
 
 installBrowserMocks();
-const { Decoration } = await import("../../src/world/objects/decoration/Decoration.js");
-const { BlockConstructionPuzzle } = await import("../../src/world/puzzles/BlockConstructionPuzzle.js");
-const { CASTLE_PIECES } = await import("../../src/world/puzzles/ChildrenPuzzleBase.js");
+const { BlockConstructionPuzzle } = await import("../../src/world/puzzles/childrenRoom/BlockConstructionPuzzle.js");
+const { CASTLE_PIECES } = await import("../../src/world/puzzles/childrenRoom/ChildrenPuzzleBase.js");
 const { initializeGameLevel } = await import("../../src/game/initializeGameLevel.js");
-const { EventManager } = await import("../../src/game/EventManager.js");
-const { GameState } = await import("../../src/game/GameState.js");
-
-test("Decoration configura materiales, transformaciones, visibilidad y colisión", async () => {
-  const decoration = Object.create(Decoration.prototype);
-  Object.assign(decoration, {
-    id: "test-decoration", color: 0xff0000, roughness: .3, metalness: .7,
-    castShadow: false, receiveShadow: true, texture: null, textureRepeat: { x: 1, y: 1 },
-    createColliderEnabled: true, loaded: true, object3D: new THREE.Group(),
-  });
-  const mesh = new THREE.Mesh(new THREE.BoxGeometry(1, 2, 3), new THREE.MeshStandardMaterial({ color: 0xffffff }));
-  const ignored = new THREE.Group();
-  decoration.object3D.add(mesh, ignored);
-  decoration.configureModel(decoration.object3D);
-  assert.equal(mesh.castShadow, false);
-  assert.equal(mesh.material.roughness, .3);
-  assert.ok(decoration.configureMaterials([mesh.material], null)[0]);
-  assert.ok(decoration.configureMaterial(null, null).isMaterial);
-  assert.ok(decoration.updateCollider().isBox3);
-  assert.ok(decoration.getCollider().isBox3);
-  decoration.setVisible(false);
-  decoration.setPosition(new THREE.Vector3(1, 2, 3));
-  decoration.setRotation({ y: 1 });
-  decoration.setScale(2);
-  decoration.setScale(new THREE.Vector3(1, 2, 3));
-  assert.equal(decoration.object3D.visible, false);
-  decoration.createColliderEnabled = false;
-  assert.equal(decoration.getCollider(), null);
-  decoration.loadPromise = Promise.resolve(decoration);
-  assert.equal(await decoration.load(), decoration);
-  assert.equal(decoration.isLoaded(), true);
-
-  decoration.getModel = async () => new THREE.Group();
-  decoration.createColliderEnabled = true;
-  decoration.loaded = false;
-  assert.equal(await decoration.loadModel(), decoration);
-  assert.equal(decoration.loaded, true);
-});
+const { EventManager } = await import("../../src/game/managers/EventManager.js");
 
 test("puzzle de bloques cubre selección, apilado, devolución, solución y alfombra", () => {
   const calls = [];
@@ -99,12 +61,12 @@ test("inicialización del nivel conecta entidades, colisiones, audio y checkpoin
   };
   const game = {
     playerRole: "A", character: "mum", testArea: "hallway", testMode: true, endingPreview: true,
-    scene: new THREE.Scene(), camera, gameState: new GameState(), eventManager: new EventManager(), collisionManager,
+    scene: new THREE.Scene(), camera, eventManager: new EventManager(), collisionManager,
     gameAudio: { playAction: (type) => calls.push(["audio", type]) },
     player: { focusObject: () => {}, setLookAt: () => calls.push(["look"]) },
     localJournalEntries: [], input: { isPressed: () => true }, flashlightOn: true,
     multiplayer: { initialize: () => calls.push(["multi"]), placePreviewEchoes: () => calls.push(["echoes"]) },
-    entityManager: { add: () => {} }, interactionManager: { setOccluders: () => {} }, interactableManager: { add: () => {} },
+    entityManager: { add: () => {} }, interactionManager: { add: () => {}, setOccluders: () => {} },
     sharedState: {}, applyingSharedState: false, applySharedState: (state) => calls.push(["state", state.ending?.phase]),
     onDiaryEntriesChanged: (entries) => calls.push(["diary", entries.length]), onHallwayAction: (...args) => calls.push(args),
   };

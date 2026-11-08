@@ -48,7 +48,6 @@ class Lamp extends Entity {
 
   createSocket() {
     const socketGeometry = new THREE.CylinderGeometry(0.18, 0.22, 0.4, 16);
-
     const socketMaterial = new THREE.MeshStandardMaterial({
       color: 0x333333,
       roughness: 0.5,
@@ -65,7 +64,6 @@ class Lamp extends Entity {
 
   createShade() {
     const shadeGeometry = new THREE.CylinderGeometry(0.25, 1.1, 1, 32, 1, true);
-
     const shadeMaterial = new THREE.MeshStandardMaterial({
       color: 0x303030,
       roughness: 0.65,
@@ -75,10 +73,8 @@ class Lamp extends Entity {
 
     this.shade = new THREE.Mesh(shadeGeometry, shadeMaterial);
     this.shade.position.y = -1.5;
-
     this.shade.castShadow = false;
     this.shade.receiveShadow = true;
-
     this.object3D.add(this.shade);
 
     const shadeTopGeometry = new THREE.CylinderGeometry(0.5, 0.5, 0.12, 32);
@@ -91,9 +87,7 @@ class Lamp extends Entity {
     });
 
     this.shadeTop = new THREE.Mesh(shadeTopGeometry, shadeTopMaterial);
-
     this.shadeTop.position.y = -1.03;
-
     this.shadeTop.castShadow = false;
     this.shadeTop.receiveShadow = true;
 
@@ -102,7 +96,6 @@ class Lamp extends Entity {
 
   createBulb() {
     const bulbGeometry = new THREE.SphereGeometry(0.28, 24, 24);
-
     this.bulbMaterial = new THREE.MeshStandardMaterial({
       color: 0x555555,
       emissive: 0x000000,
@@ -119,16 +112,13 @@ class Lamp extends Entity {
 
   createLight() {
     this.roomLight = new THREE.PointLight(0xffe4a3, 0, 55, 1.35);
-
     this.roomLight.position.set(0, -1.28, 0);
     this.roomLight.castShadow = false;
 
     this.roomLight.shadow.mapSize.width = 1024;
     this.roomLight.shadow.mapSize.height = 1024;
-
     this.roomLight.shadow.camera.near = 0.1;
     this.roomLight.shadow.camera.far = 60;
-
     this.roomLight.shadow.bias = -0.0005;
     this.roomLight.shadow.normalBias = 0.03;
 
@@ -137,7 +127,6 @@ class Lamp extends Entity {
 
     this.lightTarget = new THREE.Object3D();
     this.lightTarget.position.set(0, -10, 0);
-
     this.downLight.target = this.lightTarget;
     this.downLight.castShadow = false;
 
@@ -171,7 +160,6 @@ class Lamp extends Entity {
     if (!active) {
       this.roomLight.intensity = 0;
       this.downLight.intensity = 0;
-
       this.bulbMaterial.color.set(0x555555);
       this.bulbMaterial.emissive.set(0x000000);
       this.bulbMaterial.emissiveIntensity = 0;

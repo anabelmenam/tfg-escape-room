@@ -1,4 +1,4 @@
-import { INVENTORY_SIZE } from "./inventoryConfig.js";
+export const INVENTORY_SIZE = 8;
 
 export class Inventory {
   constructor(size = INVENTORY_SIZE) {

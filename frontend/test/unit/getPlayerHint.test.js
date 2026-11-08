@@ -25,6 +25,13 @@ test("la pista de Mamá avanza según el progreso y combina el inventario local"
   assert.equal(getPlayerHint({ state, character: "mum", inventoryIds: ["bedroom-electrical-plan"] }), "mumWaitSymbols");
   solve(state, "dad", "bedroom-light-reveal-puzzle");
   assert.equal(getPlayerHint({ state, character: "mum", inventoryIds: ["bedroom-electrical-plan"] }), "mumSafe");
+
+  setObject(state, "mum", "bedroom-symbol-safe", { open: true, locked: false });
+  assert.equal(getPlayerHint({ state, character: "mum", inventoryIds: ["bedroom-electrical-plan"] }), "mumRadio");
+  setObject(state, "mum", "bedroom-radio", { hasDial: true });
+  assert.equal(getPlayerHint({ state, character: "mum", inventoryIds: ["bedroom-electrical-plan"] }), "mumRadio");
+  solve(state, "mum", "bedroom-radio");
+  assert.equal(getPlayerHint({ state, character: "mum", inventoryIds: ["bedroom-electrical-plan"] }), "mumRadioReward");
 });
 
 test("la pista de Papá distingue entre esperar y actuar con la herramienta", () => {

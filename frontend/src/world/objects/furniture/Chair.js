@@ -9,24 +9,18 @@ class Chair extends Entity {
     position = new THREE.Vector3(),
     rotationY = 0,
     scale = 0.8,
-
     woodColor = 0x5a321d,
     darkWoodColor = 0x3d2114,
-
     woodTexture = null,
     darkWoodTexture = null,
-
     woodNormalMap = null,
     woodRoughnessMap = null,
-
     darkWoodNormalMap = null,
     darkWoodRoughnessMap = null,
-
     woodTextureRepeat = {
       x: 1,
       y: 1,
     },
-
     darkWoodTextureRepeat = null,
   } = {}) {
     super(id);
@@ -39,23 +33,18 @@ class Chair extends Entity {
     const materials = createWoodMaterials({
       woodColor,
       darkWoodColor,
-
       woodTexture,
       darkWoodTexture,
-
       woodNormalMap,
       woodRoughnessMap,
-
       darkWoodNormalMap,
       darkWoodRoughnessMap,
-
       woodTextureRepeat,
       darkWoodTextureRepeat,
     });
 
     this.woodMaterial = materials.wood;
     this.darkWoodMaterial = materials.darkWood;
-
     this.createChair();
   }
 
@@ -125,7 +114,6 @@ class Chair extends Entity {
     });
 
     this.object3D.add(leftPost, rightPost, topRail);
-
     this.createBackrestSlats();
   }
 
@@ -185,7 +173,6 @@ class Chair extends Entity {
 
   getCollider() {
     this.object3D.updateMatrixWorld(true);
-
     return new THREE.Box3().setFromObject(this.object3D);
   }
 }

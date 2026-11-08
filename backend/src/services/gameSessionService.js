@@ -73,8 +73,13 @@ export const applyAction = async (roomId, player, action) =>
     await row.update({ revision: nextRevision, state: nextState, updatedAt: new Date() }, { transaction });
     await GameEvent.create(
       {
-        id: randomUUID(), roomId, actorPlayerId: player.id, actionId: action.actionId,
-        revision: nextRevision, eventType: action.type, payload: action,
+        id: randomUUID(),
+        roomId,
+        actorPlayerId: player.id,
+        actionId: action.actionId,
+        revision: nextRevision,
+        eventType: action.type,
+        payload: action,
       },
       { transaction },
     );

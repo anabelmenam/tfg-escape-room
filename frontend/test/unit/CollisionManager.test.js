@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import * as THREE from "three";
-import { CollisionManager } from "../../src/game/CollisionManager.js";
+import { CollisionManager } from "../../src/game/managers/CollisionManager.js";
 
 const cameraAt = (x, y, z) => ({ position: new THREE.Vector3(x, y, z) });
 const configuredManager = () => {

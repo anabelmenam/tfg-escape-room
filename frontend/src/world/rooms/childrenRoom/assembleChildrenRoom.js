@@ -27,7 +27,9 @@ const assembleChildrenRoom = ({
     ...carpets.map((carpet) => carpet.object3D),
     decor.wallArt,
   );
-  if (character === "mum") room.add(photoPuzzle.puzzle.object3D);
+  if (character === "mum") {
+    room.add(photoPuzzle.puzzle.object3D);
+  }
 
   placeAgainstWall(lightSwitch, "front");
   beds.forEach((bed) => placeAgainstWall(bed, "back"));

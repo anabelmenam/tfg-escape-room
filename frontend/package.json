@@ -6,8 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "check": "npm run lint && npm run check:names && npm test && npm run build",
-    "check:names": "node scripts/check-file-names.mjs",
+    "check": "npm run lint && npm test && npm run build",
     "lint": "eslint .",
     "test": "node --import tsx --test \"test/**/*.test.js\"",
     "test:coverage": "c8 --all --include='src/**/*.js' --include='src/**/*.jsx' --reporter=text --reporter=html node --import tsx --test \"test/**/*.test.js\"",

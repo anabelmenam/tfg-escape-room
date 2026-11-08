@@ -2,12 +2,10 @@ import * as THREE from "three";
 import { HDRLoader } from "three/addons/loaders/HDRLoader.js";
 import { Input } from "./Input.js";
 import { Player } from "./Player.js";
-import { InteractionManager } from "./InteractionManager.js";
-import { CollisionManager } from "./CollisionManager.js";
-import { InteractableManager } from "./InteractableManager.js";
-import { GameState } from "./GameState.js";
-import { EventManager } from "./EventManager.js";
-import { EntityManager } from "./EntityManager.js";
+import { InteractionManager } from "./managers/InteractionManager.js";
+import { CollisionManager } from "./managers/CollisionManager.js";
+import { EventManager } from "./managers/EventManager.js";
+import { EntityManager } from "./managers/EntityManager.js";
 import { GameAudio } from "./GameAudio.js";
 import { startEndingHouseTour, updateEndingTour } from "./ending/EndingTour.js";
 import { startEndingExit, updateEndingExit } from "./ending/EndingExit.js";
@@ -101,14 +99,10 @@ export class Game {
     this.input = new Input();
     this.collisionManager = new CollisionManager();
     this.player = new Player(this.camera, this.renderer.domElement, this.input, this.collisionManager);
-    this.gameState = new GameState();
-    this.gameState.set("living-room-switch", false);
     this.eventManager = new EventManager();
     this.entityManager = new EntityManager();
-    this.interactableManager = new InteractableManager();
     this.interactionManager = new InteractionManager({
       camera: this.camera,
-      interactableManager: this.interactableManager,
       player: this.player,
     });
 
@@ -133,11 +127,11 @@ export class Game {
   get flashlightTarget() {
     return this.flashlightController.target;
   }
-  get remoteEcho() {
-    return this.multiplayer.remoteEcho;
+  get remoteAvatar() {
+    return this.multiplayer.remoteAvatar;
   }
-  get previewEchoes() {
-    return this.multiplayer.previewEchoes;
+  get previewAvatars() {
+    return this.multiplayer.previewAvatars;
   }
 
   setupLoadingManager() {
@@ -392,7 +386,6 @@ export class Game {
     this.inventoryController.dispose();
     this.input.dispose();
     this.interactionManager.dispose();
-    this.interactableManager.dispose();
     this.entityManager.dispose();
     this.multiplayer.dispose();
     if (this.ownsGameAudio) this.gameAudio.dispose();

@@ -17,7 +17,7 @@ const getMumHint = (state, inventory) => {
   if (!sewingDone) return "mumBedroomSearch";
   if (!electricalDone && !has(inventory, "bedroom-electrical-plan")) return "mumElectricalPlan";
   if (!safeOpen) return solved(state, "dad", "bedroom-light-reveal-puzzle") ? "mumSafe" : "mumWaitSymbols";
-  if (!radioDone) return has(inventory, "radio-dial") ? "mumRadio" : "mumSafe";
+  if (!radioDone) return "mumRadio";
   if (!bedroomExitOpen) return has(inventory, "bedroom-key") ? "mumBedroomExit" : "mumRadioReward";
   if (!solved(state, "mum", "hallway-clock") && !solved(state, "dad", "hallway-maze"))
     return has(inventory, "clock-hand") ? "mumClock" : "mumBedroomSearch";

@@ -6,7 +6,6 @@ import { loadTexture } from "../helpers/loadTexture.js";
 class Sofa extends Entity {
   constructor({
     id = "sofa",
-
     position = new THREE.Vector3(),
     rotationY = 0,
     scale = 1,
@@ -91,7 +90,6 @@ class Sofa extends Entity {
 
     this.object3D = new THREE.Group();
     this.object3D.name = id;
-
     this.object3D.position.copy(position);
     this.object3D.rotation.y = rotationY;
 
@@ -123,13 +121,11 @@ class Sofa extends Entity {
 
   getValidRadius(width, height, depth, requestedRadius) {
     const maximumRadius = Math.min(width, height, depth) / 2;
-
     return Math.max(0.001, Math.min(requestedRadius, maximumRadius * 0.9));
   }
 
   createRoundedGeometry({ width, height, depth, radius }) {
     const validRadius = this.getValidRadius(width, height, depth, radius);
-
     return new RoundedBoxGeometry(width, height, depth, this.roundedSegments, validRadius);
   }
 
@@ -142,11 +138,8 @@ class Sofa extends Entity {
     });
 
     const base = new THREE.Mesh(geometry, this.sofaMaterial);
-
     base.name = `${this.id}-base`;
-
     base.position.set(0, this.legHeight + this.baseHeight / 2, 0);
-
     this.configureMesh(base);
     this.object3D.add(base);
   }
@@ -160,16 +153,12 @@ class Sofa extends Entity {
     });
 
     const back = new THREE.Mesh(geometry, this.sofaMaterial);
-
     back.name = `${this.id}-back-structure`;
 
     const seatTop = this.legHeight + this.baseHeight + this.cushionThickness;
-
     back.position.set(
       0,
-
       seatTop + this.backStructureHeight / 2 - this.cushionThickness * 0.35,
-
       -this.baseDepth / 2 + this.backStructureThickness / 2,
     );
 
@@ -179,9 +168,7 @@ class Sofa extends Entity {
 
   createSeatCushions() {
     const startX = -this.totalSeatWidth / 2 + this.seatWidth / 2;
-
     const cushionDepth = this.seatDepth - this.backCushionThickness * 0.15;
-
     const cushionWidth = this.seatWidth - this.seatGap * 0.35;
 
     for (let index = 0; index < this.seats; index++) {
@@ -193,14 +180,10 @@ class Sofa extends Entity {
       });
 
       const cushion = new THREE.Mesh(geometry, this.sofaMaterial);
-
       cushion.name = `${this.id}-seat-cushion-${index + 1}`;
-
       cushion.position.set(
         startX + index * (this.seatWidth + this.seatGap),
-
         this.legHeight + this.baseHeight + this.cushionThickness / 2,
-
         depthOffset(this.baseDepth, cushionDepth),
       );
 
@@ -211,9 +194,7 @@ class Sofa extends Entity {
 
   createBackCushions() {
     const startX = -this.totalSeatWidth / 2 + this.seatWidth / 2;
-
     const cushionWidth = this.seatWidth - this.seatGap * 0.35;
-
     const seatTop = this.legHeight + this.baseHeight + this.cushionThickness;
 
     for (let index = 0; index < this.seats; index++) {
@@ -225,14 +206,11 @@ class Sofa extends Entity {
       });
 
       const cushion = new THREE.Mesh(geometry, this.sofaMaterial);
-
       cushion.name = `${this.id}-back-cushion-${index + 1}`;
 
       cushion.position.set(
         startX + index * (this.seatWidth + this.seatGap),
-
         seatTop + this.backCushionHeight / 2 - this.height * 0.025,
-
         -this.seatDepth / 2 + this.backCushionThickness / 2 + this.depth * 0.055,
       );
 
@@ -252,18 +230,13 @@ class Sofa extends Entity {
     });
 
     const x = this.width / 2 - this.armrestWidth / 2;
-
     const y = this.legHeight + this.armrestHeight / 2;
-
     const positions = [new THREE.Vector3(-x, y, 0), new THREE.Vector3(x, y, 0)];
 
     positions.forEach((armrestPosition, index) => {
       const armrest = new THREE.Mesh(geometry, this.sofaMaterial);
-
       armrest.name = `${this.id}-armrest-${index + 1}`;
-
       armrest.position.copy(armrestPosition);
-
       this.configureMesh(armrest);
       this.object3D.add(armrest);
     });
@@ -271,11 +244,8 @@ class Sofa extends Entity {
 
   createLegs() {
     const geometry = new THREE.BoxGeometry(this.legThickness, this.legHeight, this.legThickness);
-
     const x = this.width / 2 - this.armrestWidth - this.legInsetX;
-
     const z = this.baseDepth / 2 - this.legInsetZ;
-
     const y = this.legHeight / 2;
 
     const positions = [
@@ -287,11 +257,8 @@ class Sofa extends Entity {
 
     positions.forEach((legPosition, index) => {
       const leg = new THREE.Mesh(geometry, this.legMaterial);
-
       leg.name = `${this.id}-leg-${index + 1}`;
-
       leg.position.copy(legPosition);
-
       this.configureMesh(leg);
       this.object3D.add(leg);
     });
@@ -300,14 +267,12 @@ class Sofa extends Entity {
   configureMesh(mesh) {
     mesh.castShadow = this.castShadow;
     mesh.receiveShadow = this.receiveShadow;
-
     mesh.geometry?.computeBoundingBox();
     mesh.geometry?.computeBoundingSphere();
   }
 
   updateCollider() {
     this.object3D.updateMatrixWorld(true);
-
     this.collider = new THREE.Box3().setFromObject(this.object3D);
 
     return this.collider;

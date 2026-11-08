@@ -8,7 +8,6 @@ const { Shelf } = await import("../../src/world/objects/furniture/Shelf.js");
 const { Chest } = await import("../../src/world/objects/decoration/Chest.js");
 const { Safe } = await import("../../src/world/objects/furniture/Safe.js");
 const { Lock } = await import("../../src/world/objects/decoration/Lock.js");
-const { Cobweb } = await import("../../src/world/objects/decoration/Cobweb.js");
 const { Book } = await import("../../src/world/objects/decoration/Book.js");
 const { KitchenCounter } = await import("../../src/world/objects/furniture/KitchenCounter.js");
 
@@ -134,13 +133,7 @@ test("Lock maneja ruedas, combinación, apertura y estados deshabilitados", () =
   lock.dispose();
 });
 
-test("Cobweb y Book cubren variantes visuales, interacción y animación", () => {
-  for (const options of [{ corner: false }, { corner: true }, { cornerCeiling: true }]) {
-    const web = new Cobweb({ id: "web", ...options, spokes: 5, rings: 2 });
-    web.setOpacity(.2);
-    assert.equal(web.material.opacity, .2);
-    web.dispose();
-  }
+test("Book cubre interacción y animación", () => {
   const calls = [];
   const book = new Book({ id: "book", symbol: "△", onInteract: () => calls.push("read") });
   book.interact();

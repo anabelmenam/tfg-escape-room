@@ -11,24 +11,19 @@ class Wardrobe extends Entity {
     position = new THREE.Vector3(),
     rotationY = 0,
     scale = 1,
-
     woodColor = 0x5a321d,
     darkWoodColor = 0x3d2114,
     interiorColor = 0x6d4d35,
     handleColor = 0xb58a45,
-
     woodTexture = null,
     darkWoodTexture = null,
     interiorTexture = null,
-
     woodNormalMap = null,
     woodRoughnessMap = null,
-
     woodTextureRepeat = {
       x: 1,
       y: 1,
     },
-
     darkWoodTextureRepeat = null,
     interiorTextureRepeat = null,
   } = {}) {
@@ -58,14 +53,11 @@ class Wardrobe extends Entity {
       darkWoodColor,
       interiorColor,
       handleColor,
-
       woodTexture,
       darkWoodTexture,
       interiorTexture,
-
       woodNormalMap,
       woodRoughnessMap,
-
       woodTextureRepeat,
       darkWoodTextureRepeat,
       interiorTextureRepeat,
@@ -80,14 +72,11 @@ class Wardrobe extends Entity {
     darkWoodColor,
     interiorColor,
     handleColor,
-
     woodTexture,
     darkWoodTexture,
     interiorTexture,
-
     woodNormalMap,
     woodRoughnessMap,
-
     woodTextureRepeat,
     darkWoodTextureRepeat,
     interiorTextureRepeat,
@@ -97,14 +86,11 @@ class Wardrobe extends Entity {
       darkWoodColor,
       interiorColor,
       handleColor,
-
       woodTexture,
       darkWoodTexture,
       interiorTexture,
-
       woodNormalMap,
       woodRoughnessMap,
-
       woodTextureRepeat,
       darkWoodTextureRepeat,
       interiorTextureRepeat,
@@ -240,7 +226,6 @@ class Wardrobe extends Entity {
 
     rail.rotation.z = Math.PI / 2;
     rail.position.set(0, 6.3, -0.15);
-
     rail.castShadow = true;
     rail.receiveShadow = true;
 
@@ -264,9 +249,7 @@ class Wardrobe extends Entity {
 
   createDoor({ index, side }) {
     const door = new THREE.Group();
-
     const isLeftDoor = side === "left";
-
     const pivotX = isLeftDoor ? -2.82 : 2.82;
     const panelOffsetX = isLeftDoor ? 1.4 : -1.4;
 
@@ -282,11 +265,9 @@ class Wardrobe extends Entity {
     });
 
     const handle = this.createDoorHandle();
-
     handle.position.set(isLeftDoor ? 2.45 : -2.45, -0.1, 0.12);
 
     door.add(panel, handle);
-
     door.traverse((child) => {
       child.userData.doorRoot = door;
       child.userData.doorIndex = index;
@@ -296,11 +277,9 @@ class Wardrobe extends Entity {
       id: `${this.id}-door-${index}`,
       object3D: door,
       enabled: true,
-
       getInteractionText: () => {
         return this.doorStates[index] ? tInteraction("close", tItem("door")) : tInteraction("open", tItem("door"));
       },
-
       interact: () => {
         this.toggleDoor(index);
       },
@@ -328,7 +307,6 @@ class Wardrobe extends Entity {
 
   createDrawer({ index, x }) {
     const drawer = new THREE.Group();
-
     drawer.position.set(x, 1.35, this.closedDrawerZ);
     drawer.userData.drawerIndex = index;
 
@@ -376,7 +354,6 @@ class Wardrobe extends Entity {
     handle.position.set(0, 0, 0.1);
 
     drawer.add(front, drawerBottom, leftWall, rightWall, rearWall, handle);
-
     drawer.traverse((child) => {
       child.userData.drawerRoot = drawer;
       child.userData.drawerIndex = index;
@@ -386,13 +363,11 @@ class Wardrobe extends Entity {
       id: `${this.id}-drawer-${index}`,
       object3D: drawer,
       enabled: true,
-
       getInteractionText: () => {
         return this.drawerStates[index]
           ? tInteraction("close", tItem("drawer"))
           : tInteraction("open", tItem("drawer"));
       },
-
       interact: () => {
         this.toggleDrawer(index);
       },
@@ -405,7 +380,6 @@ class Wardrobe extends Entity {
 
   createDoorHandle() {
     const handleGroup = new THREE.Group();
-
     const handleHeight = 0.9;
     const handleThickness = 0.12;
     const supportDepth = 0.22;
@@ -441,7 +415,6 @@ class Wardrobe extends Entity {
 
   createDrawerHandle() {
     const handleGroup = new THREE.Group();
-
     const handleWidth = 1.05;
     const handleThickness = 0.12;
     const supportDepth = 0.22;

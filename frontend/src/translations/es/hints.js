@@ -42,7 +42,7 @@ export default {
         "Pide a tu compañero que ordene los libros como un arcoíris.",
       ],
       mumPainting: [
-        "Tras la estantería queda un vacío con una forma demasiado familiar.",
+        "Tras la estantería queda un cuadro con una forma demasiado familiar.",
         "Recoge el cuadro caído y colócalo en el marco vacío.",
       ],
       mumPaintingPieces: [
@@ -106,7 +106,7 @@ export default {
         "Tu compañero debe completar la mesa y ajustar los fogones para revelar temperatura y tiempo.",
       ],
       mumOven: [
-        "Las luces de la cocina de tu compañero parecen comunicarse con los mandos de tu horno.",
+        "El horno de tu compañero parecen tener luz.",
         "Copia la temperatura y el tiempo iluminados de tu compañero; su horno se abrirá automáticamente.",
       ],
       mumWaitMosaic: [
@@ -127,7 +127,7 @@ export default {
       ],
       dadFamilyPhoto: [
         "Un recuerdo familiar está fragmentado, pero sus colores conservan un orden.",
-        "Ordena sus partes; la solución permitirá a tu compañero abrir la caja de costura.",
+        "Ordena el cuadro familiar. La solución permitirá a tu compañero abrir la caja de costura.",
       ],
       dadElectrical: [
         "El plano de tu compañero y una pieza escondida en el dormitorio pueden devolver la corriente.",

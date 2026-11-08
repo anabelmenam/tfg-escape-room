@@ -3,6 +3,7 @@ import GameCanvas from "./components/GameCanvas.jsx";
 import Lobby from "./components/Lobby.jsx";
 import RoomLobby from "./components/RoomLobby.jsx";
 import AccountAccess from "./components/AccountAccess.jsx";
+import AppLoadingSkeleton from "./components/skeletons/AppLoadingSkeleton.jsx";
 import { GameAudio } from "./game/GameAudio.js";
 import { getLanguage } from "./translations/index.js";
 import { getCurrentAccount, logoutAccount } from "./services/gameApi.js";
@@ -12,7 +13,8 @@ const getTestSession = () => {
   const requestedCharacter = params.get("character");
   const legacyTest = params.get("test");
   if (legacyTest === "icons") return { testMode: true, testPlayerRole: "C", testArea: "icons" };
-  if (legacyTest === "ending") return { testMode: true, character: "dad", testArea: "hallway", endingPreview: true, endingReplay: true };
+  if (legacyTest === "ending")
+    return { testMode: true, character: "dad", testArea: "hallway", endingPreview: true, endingReplay: true };
   const character = requestedCharacter ?? (legacyTest === "mum" ? "mum" : legacyTest === "dad" ? "dad" : null);
   if (!["mum", "dad"].includes(character)) return null;
   return { testMode: true, adminTour: true, character, testArea: "bedroom" };
@@ -41,6 +43,7 @@ const App = () => {
     effects: readSetting("effects-volume", 1),
     footsteps: readSetting("footsteps-volume", 1),
   }));
+
   const [mouseSensitivity, setMouseSensitivity] = useState(() =>
     readSetting("mouse-sensitivity", 1, { min: 0.2, max: 2 }),
   );
@@ -69,10 +72,13 @@ const App = () => {
 
   useEffect(() => {
     if (testSession || passwordResetRequested) return;
-    getCurrentAccount().then(({ user }) => {
-      setAccount(user);
-      if (user.role === "admin" && requestedTestSession) setSession(requestedTestSession);
-    }).catch(() => setAccount(null)).finally(() => setAccountLoading(false));
+    getCurrentAccount()
+      .then(({ user }) => {
+        setAccount(user);
+        if (user.role === "admin" && requestedTestSession) setSession(requestedTestSession);
+      })
+      .catch(() => setAccount(null))
+      .finally(() => setAccountLoading(false));
   }, [testSession]);
 
   const changeAudioSetting = (setting, value) => {
@@ -97,15 +103,25 @@ const App = () => {
     setSession(null);
   };
 
-  if (accountLoading) return <main className="flex min-h-screen items-center justify-center bg-[#110f10] text-[#d8aa64]">{getLanguage() === "es" ? "Cargando…" : "Loading…"}</main>;
-  if (passwordResetRequested || (!testSession && !account)) return <AccountAccess onAuthenticated={setAccount} />;
+  if (accountLoading) {
+    return <AppLoadingSkeleton />;
+  }
+
+  if (passwordResetRequested || (!testSession && !account)) {
+    return <AccountAccess onAuthenticated={setAccount} />;
+  }
 
   if (!session) {
     return (
       <Lobby
         account={account}
         initialView={lobbyView}
-        onLogout={async () => { await logoutAccount(); setAccount(null); setSession(null); setLobbyView("menu"); }}
+        onLogout={async () => {
+          await logoutAccount();
+          setAccount(null);
+          setSession(null);
+          setLobbyView("menu");
+        }}
         language={language}
         onLanguageChange={setLanguageState}
         onEnterLobby={enterRoom}
@@ -116,6 +132,7 @@ const App = () => {
       />
     );
   }
+
   if ((!session.character || session.status === "waiting") && !session.testPlayerRole) {
     return <RoomLobby session={session} onStart={setSession} onBack={returnToRooms} />;
   }

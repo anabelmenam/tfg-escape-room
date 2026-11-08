@@ -2,6 +2,117 @@
 @tailwind components;
 @tailwind utilities;
 
+.account-access {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+@media (max-height: 800px) {
+  .account-access {
+    padding-top: .75rem;
+    padding-bottom: .75rem;
+  }
+
+  .account-access::before {
+    inset: .75rem;
+  }
+
+  .account-access-panel {
+    padding: 1.5rem;
+  }
+
+  .account-access-logo {
+    max-width: 10rem;
+    margin-top: .35rem;
+  }
+
+  .account-access-tabs {
+    margin-top: .75rem;
+  }
+
+  .account-access-form {
+    margin-top: 1rem;
+    gap: .75rem;
+  }
+
+  .account-access-input {
+    padding-top: .6rem;
+    padding-bottom: .6rem;
+  }
+
+  .account-access-back {
+    margin-bottom: .5rem;
+  }
+
+  .account-access-title {
+    margin-top: .35rem;
+    font-size: 1.75rem;
+  }
+}
+
+@media (max-height: 700px) {
+  .account-access {
+    padding: .75rem 1rem;
+  }
+
+  .account-access::before {
+    inset: .65rem;
+  }
+
+  .account-access-panel {
+    max-width: 24rem;
+    padding: .8rem 1.15rem;
+  }
+
+  .account-access-eyebrow {
+    font-size: .625rem;
+    line-height: .75rem;
+  }
+
+  .account-access-logo {
+    max-width: 6.5rem;
+    margin-top: .15rem;
+  }
+
+  .account-access-tabs {
+    margin-top: .4rem;
+  }
+
+  .account-access-tabs button {
+    padding-top: .3rem;
+    padding-bottom: .3rem;
+  }
+
+  .account-access-form {
+    margin-top: .5rem;
+    gap: .4rem;
+  }
+
+  .account-access-form label > span {
+    margin-bottom: .2rem;
+    font-size: .75rem;
+    line-height: 1rem;
+  }
+
+  .account-access-input {
+    padding-top: .35rem;
+    padding-bottom: .35rem;
+  }
+
+  .account-access-title {
+    font-size: 1.35rem;
+  }
+
+  .account-access-submit {
+    padding-top: .55rem;
+    padding-bottom: .55rem;
+  }
+
+  .account-access-back {
+    margin-bottom: .25rem;
+  }
+}
+
 .lobby-panel {
   scrollbar-color: #675641 transparent;
   scrollbar-width: thin;

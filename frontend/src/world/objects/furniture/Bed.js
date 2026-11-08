@@ -8,19 +8,16 @@ class Bed extends Entity {
     rotationY = 0,
     scale = 1,
     size = "double",
-
     woodColor = 0x5b3a29,
     headboardColor = woodColor,
     mattressColor = 0xe8e8e8,
     blanketColor = 0x556b8d,
     pillowColor = 0xffffff,
-
     woodTexture = null,
     headboardTexture = null,
     mattressTexture = null,
     blanketTexture = null,
     pillowTexture = null,
-
     woodTextureRepeat = { x: 1, y: 1 },
     headboardTextureRepeat = { x: 1, y: 1 },
     mattressTextureRepeat = { x: 1, y: 1 },
@@ -74,9 +71,7 @@ class Bed extends Entity {
 
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
-
     texture.repeat.set(repeat.x ?? 1, repeat.y ?? 1);
-
     texture.colorSpace = THREE.SRGBColorSpace;
 
     return texture;
@@ -89,13 +84,11 @@ class Bed extends Entity {
       mattressColor,
       blanketColor,
       pillowColor,
-
       woodTexture,
       headboardTexture,
       mattressTexture,
       blanketTexture,
       pillowTexture,
-
       woodTextureRepeat,
       headboardTextureRepeat,
       mattressTextureRepeat,
@@ -158,7 +151,6 @@ class Bed extends Entity {
     const geometry = new RoundedBoxGeometry(size.x, size.y, size.z, 4, radius);
 
     const mesh = new THREE.Mesh(geometry, material);
-
     mesh.name = name;
     mesh.position.copy(position);
     mesh.castShadow = true;

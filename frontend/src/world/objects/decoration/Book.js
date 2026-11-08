@@ -64,12 +64,10 @@ class Book extends Entity {
       new THREE.BoxGeometry(this.width * 0.82, this.height * 0.9, this.depth),
       pagesMaterial,
     );
-
     pages.castShadow = true;
     pages.receiveShadow = true;
 
     const frontCover = new THREE.Mesh(new THREE.BoxGeometry(this.width, this.height, 0.05), coverMaterial);
-
     frontCover.position.z = this.depth / 2 + 0.025;
     frontCover.castShadow = true;
     frontCover.receiveShadow = true;
@@ -78,7 +76,6 @@ class Book extends Entity {
     backCover.position.z = -this.depth / 2 - 0.025;
 
     const spine = new THREE.Mesh(new THREE.BoxGeometry(0.06, this.height, this.depth + 0.1), coverMaterial);
-
     spine.position.x = -this.width / 2 + 0.03;
     spine.castShadow = true;
     spine.receiveShadow = true;
@@ -203,7 +200,6 @@ class Book extends Entity {
   animateTo(position, duration = 0.25) {
     this.animationStart.copy(this.object3D.position);
     this.animationTarget.copy(position);
-
     this.animationProgress = 0;
     this.animationDuration = duration;
     this.isAnimating = true;

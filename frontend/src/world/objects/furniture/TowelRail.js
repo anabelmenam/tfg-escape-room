@@ -1,14 +1,6 @@
 import * as THREE from "three";
 import { Entity } from "../Entity.js";
-
-const createMesh = (geometry, material, position, { rotationZ = 0 } = {}) => {
-  const mesh = new THREE.Mesh(geometry, material);
-  mesh.position.copy(position);
-  mesh.rotation.z = rotationZ;
-  mesh.castShadow = true;
-  mesh.receiveShadow = true;
-  return mesh;
-};
+import { createMesh } from "../helpers/createMesh.js";
 
 const createDrapedTowel = ({ width, material }) => {
   const profile = new THREE.Shape();

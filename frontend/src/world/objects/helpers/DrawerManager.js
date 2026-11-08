@@ -6,11 +6,9 @@ class DrawerManager {
   constructor({ ownerId, drawerSpeed = 5, lockedDrawers = [], requiredDrawerKeys = {} } = {}) {
     this.ownerId = ownerId;
     this.drawerSpeed = drawerSpeed;
-
     this.drawers = [];
     this.states = [];
     this.interactables = [];
-
     this.lockedDrawers = new Set(lockedDrawers);
     this.requiredDrawerKeys = requiredDrawerKeys;
     this.audio = new MechanicalAudio({ kind: "drawer", volume: 0.38 });
@@ -20,7 +18,6 @@ class DrawerManager {
     drawer.userData.drawerIndex = index;
     drawer.userData.closedZ = closedZ;
     drawer.userData.openZ = openZ;
-
     this.drawers[index] = drawer;
 
     this.states[index] = {
@@ -41,7 +38,6 @@ class DrawerManager {
       id: `${this.ownerId}-drawer-${index}`,
       object3D: drawer,
       enabled: true,
-
       interact: (player) => {
         const state = this.states[index];
         const requiredKey = this.requiredDrawerKeys[index];
@@ -56,7 +52,6 @@ class DrawerManager {
 
         this.toggle(index);
       },
-
       getInteractionText: () => {
         const state = this.states[index];
 
@@ -83,7 +78,6 @@ class DrawerManager {
     }
 
     state.isOpen = !state.isOpen;
-
     state.targetZ = state.isOpen ? drawer.userData.openZ : drawer.userData.closedZ;
     this.audio.play(state.isOpen ? "open" : "close", 4.3 / this.drawerSpeed);
 
