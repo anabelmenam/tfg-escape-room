@@ -159,14 +159,14 @@ Vite mostrará la dirección local, normalmente `http://localhost:5173`.
 
 El servidor utiliza las siguientes variables:
 
-| Variable             | Descripción                                                       |
-| -------------------- | ----------------------------------------------------------------- |
+| Variable             | Descripción                                                         |
+| -------------------- | ------------------------------------------------------------------- |
 | `DATABASE_URL`       | Cadena de conexión a PostgreSQL. En producción la proporciona Neon. |
-| `FRONTEND_ORIGIN`    | Origen autorizado del cliente. En local: `http://localhost:5173`. |
-| `BREVO_API_KEY`      | Clave de la API de Brevo para recuperar contraseñas.              |
-| `EMAIL_FROM_ADDRESS` | Remitente verificado en Brevo.                                    |
-| `EMAIL_FROM_NAME`    | Nombre visible del remitente.                                     |
-| `PORT`               | Puerto del servidor. Si se omite, se utiliza `3010`.              |
+| `FRONTEND_ORIGIN`    | Origen autorizado del cliente. En local: `http://localhost:5173`.   |
+| `BREVO_API_KEY`      | Clave de la API de Brevo para recuperar contraseñas.                |
+| `EMAIL_FROM_ADDRESS` | Remitente verificado en Brevo.                                      |
+| `EMAIL_FROM_NAME`    | Nombre visible del remitente.                                       |
+| `PORT`               | Puerto del servidor. Si se omite, se utiliza `3010`.                |
 
 Puede partirse del archivo [backend/.env.example](backend/.env.example).
 
@@ -347,4 +347,4 @@ El resultado se genera en `frontend/dist/`.
 
 ## Estado del proyecto
 
-Proyecto académico en desarrollo. La suite automatizada protege la lógica principal, aunque una partida cooperativa completa también requiere validación manual en dos clientes por su componente gráfico y en tiempo real.
+Proyecto académico en desarrollo.
