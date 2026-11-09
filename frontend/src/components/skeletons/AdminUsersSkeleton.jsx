@@ -9,7 +9,7 @@ const AdminUsersSkeleton = () => (
       <div className="mt-3 h-10 w-72 max-w-[80%] rounded-sm bg-[#f5e8ce]/15" />
       <div className="mt-4 h-4 w-full max-w-xl rounded-sm bg-[#a99a83]/15" />
 
-      <div className="mt-7 overflow-hidden border border-[#6f5940]/55">
+      <div className="mt-7 overflow-x-auto border border-[#6f5940]/55">
         <div className="grid grid-cols-[1.1fr_1.5fr_.7fr_.8fr_2.5rem] gap-4 bg-[#120e0d] px-4 py-3">
           {Array.from({ length: 5 }, (_, index) => (
             <div key={index} className="h-3 rounded-sm bg-[#9f8968]/20" />

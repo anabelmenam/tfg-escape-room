@@ -57,7 +57,7 @@ const AdminUsers = ({ currentUserId }) => {
   return (
     <div>
       <p className="text-xs font-bold uppercase tracking-[.24em] text-[#d8aa64]">{t("adminUsers.eyebrow")}</p>
-      <h1 className="mt-2 font-serif text-4xl text-[#f5e8ce]">{t("adminUsers.title")}</h1>
+      <h1 className="mt-2 font-serif text-3xl text-[#f5e8ce] sm:text-4xl">{t("adminUsers.title")}</h1>
       <p className="mt-3 text-[#a99a83]">{t("adminUsers.description")}</p>
       {error && <p className="mt-5 border border-red-400/30 bg-red-950/30 px-3 py-2 text-sm text-red-200">{error}</p>}
       <div className="mt-7 overflow-x-auto border border-[#6f5940]/55">
@@ -107,7 +107,7 @@ const AdminUsers = ({ currentUserId }) => {
             if (event.target === event.currentTarget && !deleting) setDeleteTarget(null);
           }}
         >
-          <section className="relative w-full max-w-md overflow-hidden border border-red-300/30 bg-[#211916] p-7 shadow-2xl shadow-black">
+          <section className="relative max-h-[calc(100dvh-2rem)] w-full max-w-md overflow-y-auto border border-red-300/30 bg-[#211916] p-5 shadow-2xl shadow-black sm:p-7">
             <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-transparent via-red-500/70 to-transparent" />
             <button
               type="button"

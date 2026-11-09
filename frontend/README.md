@@ -4,6 +4,14 @@ Cliente de *La casa entre dos mundos*, un escape room cooperativo en primera per
 
 La documentación general, la instalación completa y la explicación de la experiencia se encuentran en el [README principal](../README.md).
 
+## Recorrido por la aplicación
+
+La aplicación comienza con el registro o inicio de sesión. Cada cuenta dispone de tres huecos desde los que puede crear una partida, continuarla o unirse mediante un código. En el lobby, los jugadores eligen personajes distintos y esperan a que ambos estén preparados.
+
+Durante la partida, el cliente presenta la casa en primera persona, el inventario, los mensajes de interacción, el diario y las pistas contextuales. Las acciones locales se envían al servidor y los cambios compartidos se aplican en ambos mundos. El menú de pausa reúne los ajustes, los controles y la salida segura de la sesión.
+
+Las cuentas administradoras disponen además de recorridos directos para revisar cada personaje, los recursos visuales y la secuencia final.
+
 ## Funcionalidades
 
 - Registro, inicio de sesión y recuperación de contraseña.
@@ -18,13 +26,14 @@ La documentación general, la instalación completa y la explicación de la expe
 
 ## Tecnologías
 
-- React 19 y React DOM.
-- Vite 7.
-- Three.js, `three-mesh-bvh` y `three-bvh-csg`.
-- Socket.IO Client.
-- Tailwind CSS y PostCSS.
-- Lucide React.
-- ESLint, `node:test`, `tsx` y c8 para calidad y pruebas.
+| Área | Herramientas |
+| --- | --- |
+| Interfaz | React 19 y React DOM |
+| Construcción | Vite 7 |
+| Escena 3D | Three.js, `three-mesh-bvh` y `three-bvh-csg` |
+| Tiempo real | Socket.IO Client |
+| Estilos e iconos | Tailwind CSS, PostCSS y Lucide React |
+| Calidad | ESLint, `node:test`, `tsx` y c8 |
 
 ## Organización
 

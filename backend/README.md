@@ -2,6 +2,19 @@
 
 Servidor Node.js con Express 5 para la API HTTP, Socket.IO para la comunicación en tiempo real y Sequelize 6 para acceder a PostgreSQL. Express y Socket.IO comparten el mismo servidor HTTP y puerto. `pg` se mantiene como controlador PostgreSQL utilizado por Sequelize.
 
+La presentación general, el arranque conjunto y las instrucciones de juego se encuentran en el [README principal](../README.md).
+
+## Responsabilidades
+
+- Registrar usuarios, autenticar sesiones y recuperar contraseñas.
+- Gestionar los tres huecos de guardado de cada cuenta.
+- Crear partidas y permitir que el segundo jugador se una mediante un código.
+- Coordinar la selección de Mamá y Papá y el comienzo de la sesión.
+- Validar las acciones antes de modificar el estado compartido.
+- Sincronizar movimientos, inventarios, objetos, puzles y temporizador.
+- Guardar el punto de continuación individual de cada jugador.
+- Proporcionar operaciones privadas de administración.
+
 ## Arranque local
 
 1. Desde la raíz del proyecto: `docker compose up -d postgres`
@@ -82,3 +95,16 @@ npm run check
 ```
 
 El informe HTML de cobertura se genera en `coverage/`.
+
+## Comandos
+
+| Comando | Finalidad |
+| --- | --- |
+| `npm run dev` | Aplica migraciones y arranca el servidor en modo observación. |
+| `npm start` | Aplica migraciones y arranca el servidor para producción. |
+| `npm test` | Ejecuta las pruebas unitarias y de integración. |
+| `npm run test:coverage` | Genera cobertura y exige al menos un 85 % de líneas. |
+| `npm run check` | Valida sintaxis, migraciones y toda la suite. |
+| `npm run migrate` | Aplica las migraciones pendientes. |
+| `npm run migrate:undo` | Revierte la última migración. |
+| `npm run admin:create` | Crea o actualiza una cuenta administradora. |

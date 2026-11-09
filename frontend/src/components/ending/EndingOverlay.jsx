@@ -21,9 +21,9 @@ const EndingOverlay = ({ ending, showLight, tourBeat, tourFade, character, endin
       />
 
       {["choice", "complete"].includes(ending?.phase) && (
-        <div className="ending-screen-in absolute inset-0 z-[70] flex items-center justify-center overflow-hidden bg-white p-6 text-stone-900">
+        <div className="ending-screen-in absolute inset-0 z-[70] flex items-center justify-center overflow-hidden bg-white p-3 text-stone-900 sm:p-6">
           <div className="absolute inset-0 animate-pulse bg-[radial-gradient(circle,rgba(255,255,255,1)_0%,rgba(238,224,195,.92)_48%,rgba(40,29,24,.96)_100%)]" />
-          <div className="ending-panel-in relative w-full max-w-3xl rounded-sm border border-stone-900/20 bg-[#efe4cd]/95 p-7 text-center shadow-2xl">
+          <div className="ending-panel-in relative max-h-[calc(100dvh-1.5rem)] w-full max-w-3xl overflow-y-auto rounded-sm border border-stone-900/20 bg-[#efe4cd]/95 p-4 text-center shadow-2xl sm:max-h-[calc(100dvh-3rem)] sm:p-7">
             {ending.phase === "complete" && (
               <div className="relative mx-auto aspect-[4/3] max-h-[46vh] overflow-hidden border-[10px] border-[#5a3d29] bg-stone-300 shadow-xl">
                 <img
@@ -46,14 +46,14 @@ const EndingOverlay = ({ ending, showLight, tourBeat, tourFade, character, endin
             {ending.phase === "choice" ? (
               <>
                 <p className="text-xs font-bold uppercase tracking-[.38em] text-stone-600">Escape room</p>
-                <h1 className="mt-5 font-serif text-7xl font-semibold tracking-[.18em]">{t("finalScreen.title")}</h1>
-                <p className="mx-auto mt-6 max-w-xl font-serif text-xl italic leading-relaxed">
+                <h1 className="mt-4 font-serif text-5xl font-semibold tracking-[.1em] sm:mt-5 sm:text-7xl sm:tracking-[.18em]">{t("finalScreen.title")}</h1>
+                <p className="mx-auto mt-4 max-w-xl font-serif text-lg italic leading-relaxed sm:mt-6 sm:text-xl">
                   {t("finalScreen.text")}
                 </p>
                 <button
                   type="button"
                   onClick={onExit}
-                  className="mt-9 bg-stone-800 px-10 py-4 font-semibold text-amber-50 hover:bg-stone-700"
+                  className="mt-7 w-full bg-stone-800 px-8 py-3 font-semibold text-amber-50 hover:bg-stone-700 sm:mt-9 sm:w-auto sm:px-10 sm:py-4"
                 >
                   {t("finalScreen.back")}
                 </button>

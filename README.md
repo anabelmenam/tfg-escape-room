@@ -1,12 +1,50 @@
-# La casa entre dos mundos
+<p align="center">
+  <img src="frontend/public/branding/logo-name.png" alt="La casa entre dos mundos" width="360">
+</p>
 
-Escape room cooperativo en primera persona desarrollado como Trabajo Fin de Grado. Dos jugadores recorren versiones distintas de una misma casa —Mamá y Papá— y deben comunicarse para resolver puzles conectados, reconstruir la historia familiar y alcanzar juntos la salida.
+<h1 align="center">La casa entre dos mundos</h1>
 
-## Descripción
+<p align="center">
+  Escape room cooperativo en primera persona para dos jugadores.
+</p>
+
+<p align="center">
+  <a href="#presentación">Presentación</a> ·
+  <a href="#funcionalidades-principales">Funcionalidades</a> ·
+  <a href="#instalación-local">Puesta en marcha</a> ·
+  <a href="#cómo-jugar">Cómo jugar</a> ·
+  <a href="#pruebas-y-cobertura">Pruebas</a>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/React-19-149eca?logo=react&logoColor=white" alt="React 19">
+  <img src="https://img.shields.io/badge/Three.js-3D-000000?logo=threedotjs&logoColor=white" alt="Three.js">
+  <img src="https://img.shields.io/badge/Node.js-22-339933?logo=nodedotjs&logoColor=white" alt="Node.js 22">
+  <img src="https://img.shields.io/badge/PostgreSQL-16-4169e1?logo=postgresql&logoColor=white" alt="PostgreSQL 16">
+  <img src="https://img.shields.io/badge/Socket.IO-tiempo_real-010101?logo=socketdotio&logoColor=white" alt="Socket.IO">
+</p>
+
+<p align="center">
+  <img src="docs/images/juego-mama.png" alt="Partida desde la perspectiva de Mamá" width="100%">
+</p>
+
+## Presentación
+
+**La casa entre dos mundos** es un escape room cooperativo desarrollado como Trabajo Fin de Grado. Dos jugadores recorren versiones distintas de una misma casa —Mamá y Papá— y deben comunicarse para resolver puzles conectados, reconstruir la historia familiar y alcanzar juntos la salida.
 
 Cada jugador observa objetos, pistas y estados diferentes. Una acción realizada en una versión de la casa puede desbloquear información o mecanismos en la otra, por lo que la cooperación es parte central del diseño.
 
 El proyecto combina un escenario tridimensional construido con Three.js, una interfaz React y un servidor multijugador en tiempo real. Las partidas, los inventarios, el progreso de los puzles y la posición individual de cada jugador se conservan para poder continuar más adelante.
+
+**Contenido**
+
+- [Funcionalidades principales](#funcionalidades-principales).
+- [Tecnologías](#tecnologías).
+- [Arquitectura](#arquitectura).
+- [Instalación local](#instalación-local).
+- [Cómo jugar](#cómo-jugar).
+- [Pruebas y cobertura](#pruebas-y-cobertura).
+- [Despliegue](#despliegue).
 
 ## Funcionalidades principales
 
@@ -37,32 +75,14 @@ El proyecto combina un escenario tridimensional construido con Three.js, una int
 
 ## Tecnologías
 
-### Cliente
-
-- React 19
-- Vite 7
-- Three.js
-- Tailwind CSS
-- Socket.IO Client
-- Lucide React
-
-### Servidor
-
-- Node.js 22
-- Express 5
-- Socket.IO
-- Sequelize 6
-- PostgreSQL 16
-- Zod
-- Brevo para recuperación de contraseña
-
-### Infraestructura y calidad
-
-- Docker Compose para PostgreSQL local
-- Vercel para el cliente
-- Render para el servidor
-- ESLint
-- `node:test` y c8 para pruebas y cobertura
+| Componente | Tecnologías | Documentación |
+| --- | --- | --- |
+| Interfaz y juego 3D | React 19, Vite 7, Three.js, Tailwind CSS y Lucide React | [Frontend](frontend/README.md) |
+| API y tiempo real | Node.js 22, Express 5 y Socket.IO | [Backend](backend/README.md) |
+| Persistencia | PostgreSQL 16, Sequelize 6 y migraciones propias | [Migraciones](backend/migrations) |
+| Validación y correo | Zod y Brevo | [Backend](backend/README.md#recuperación-de-contraseña) |
+| Desarrollo local | npm y Docker Compose | [Configuración](docker-compose.yml) |
+| Calidad | ESLint, `node:test` y c8 | [Estrategia de pruebas](docs/TESTING.md) |
 
 ## Arquitectura
 

@@ -103,6 +103,11 @@ const App = () => {
     setSession(null);
   };
 
+  const exitGame = () => {
+    setLobbyView(session.testMode ? "menu" : "play");
+    setSession(null);
+  };
+
   if (accountLoading) {
     return <AppLoadingSkeleton />;
   }
@@ -149,7 +154,7 @@ const App = () => {
       onAudioSettingChange={changeAudioSetting}
       mouseSensitivity={mouseSensitivity}
       onMouseSensitivityChange={changeMouseSensitivity}
-      onExit={returnToRooms}
+      onExit={exitGame}
     />
   );
 };

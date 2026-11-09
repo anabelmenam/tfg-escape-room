@@ -34,7 +34,7 @@ const Lobby = ({
       className="relative flex min-h-screen min-h-dvh items-center justify-center overflow-hidden bg-[#110f10] px-4 py-4 text-[#f2e7d1] before:pointer-events-none before:absolute before:inset-6 before:border before:border-[#d5b67c]/20 after:pointer-events-none after:absolute after:inset-8 after:border after:border-[#d5b67c]/[.08] sm:px-5"
     >
       <section
-        className={`lobby-panel relative z-10 max-h-[calc(100dvh-2rem)] w-full overflow-y-auto rounded-sm border border-[#d7b77b]/40 bg-[#211916]/95 p-5 shadow-2xl shadow-black/60 sm:p-7 ${view === "play" || view === "settings" || view === "controls" || view === "tests" || view === "users" ? "max-w-4xl" : "max-w-lg"}`}
+        className={`lobby-panel relative z-10 max-h-[calc(100dvh-2rem)] w-full overflow-y-auto rounded-sm border border-[#d7b77b]/40 bg-[#211916]/95 p-5 shadow-2xl shadow-black/60 sm:p-7 ${view === "controls" ? "controls-panel-shell" : ""} ${view === "play" || view === "settings" || view === "controls" || view === "tests" || view === "users" ? "max-w-4xl" : "max-w-lg"}`}
       >
         {view !== "menu" && view !== "play" && (
           <button

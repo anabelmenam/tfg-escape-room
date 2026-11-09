@@ -63,9 +63,9 @@ const RoomLobby = ({ session, onStart, onBack }) => {
 
   return (
     <main
-      className="min-h-screen bg-[#110f10] px-5 py-7 text-[#f2e7d1]"
+      className="min-h-screen bg-[#110f10] px-4 py-4 text-[#f2e7d1] sm:px-5 sm:py-7"
     >
-      <header className="mx-auto flex max-w-6xl items-start justify-between gap-4 border-b border-[#d7b77b]/25 pb-4">
+      <header className="mx-auto flex max-w-6xl flex-col gap-3 border-b border-[#d7b77b]/25 pb-4 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
         <button
           type="button"
           className="flex items-center gap-2 text-sm text-[#c9ba9e] transition hover:text-[#f5e8ce]"
@@ -73,20 +73,20 @@ const RoomLobby = ({ session, onStart, onBack }) => {
         >
           <ArrowLeft size={17} aria-hidden="true" /> {t("roomLobby.leave")}
         </button>
-        <div>
-          <p className="mb-3 text-center text-xs font-bold uppercase tracking-[0.24em] text-[#d8aa64]">
+        <div className="w-full sm:w-auto">
+          <p className="mb-2 text-left text-xs font-bold uppercase tracking-[0.18em] text-[#d8aa64] sm:mb-3 sm:text-center sm:tracking-[0.24em]">
             {t("roomLobby.room")} {session.joinCode ?? ""}
           </p>
-          <p className="text-right text-xs text-[#958772]">{t(`roomLobby.${connectionState}`)}</p>
+          <p className="text-left text-xs text-[#958772] sm:text-right">{t(`roomLobby.${connectionState}`)}</p>
         </div>
       </header>
 
-      <section className="mx-auto max-w-5xl py-12 text-center">
+      <section className="mx-auto max-w-5xl py-8 text-center sm:py-12">
         <p className="mb-3 text-center text-xs font-bold uppercase tracking-[0.24em] text-[#d8aa64]">
           {t("roomLobby.beforeStart")}
         </p>
-        <h1 className="mb-3 font-serif text-5xl text-[#f5e8ce] sm:text-6xl">{t("characterSelection.title")}</h1>
-        <p className="mx-auto mb-10 max-w-xl leading-relaxed text-[#c9ba9e]">{t("characterSelection.description")}</p>
+        <h1 className="mb-3 font-serif text-4xl text-[#f5e8ce] sm:text-6xl">{t("characterSelection.title")}</h1>
+        <p className="mx-auto mb-7 max-w-xl text-sm leading-relaxed text-[#c9ba9e] sm:mb-10 sm:text-base">{t("characterSelection.description")}</p>
         {session.isCreator && (
           <button
             type="button"
@@ -108,17 +108,17 @@ const RoomLobby = ({ session, onStart, onBack }) => {
               <button
                 key={character}
                 type="button"
-                className={`relative min-h-64 overflow-hidden rounded-sm border border-[#9a8061]/55 bg-[#1d1917] p-8 text-left transition before:absolute before:inset-0 before:bg-[radial-gradient(circle_at_50%_25%,#817160,transparent_46%)] before:opacity-25 before:transition hover:before:opacity-50 disabled:cursor-not-allowed disabled:opacity-60 ${selectedBySelf ? "ring-2 ring-[#f1ca74] ring-offset-2 ring-offset-[#110f10] before:opacity-50" : ""}`}
+                className={`relative min-h-52 overflow-hidden rounded-sm border border-[#9a8061]/55 bg-[#1d1917] p-5 text-left transition before:absolute before:inset-0 before:bg-[radial-gradient(circle_at_50%_25%,#817160,transparent_46%)] before:opacity-25 before:transition hover:before:opacity-50 disabled:cursor-not-allowed disabled:opacity-60 sm:min-h-64 sm:p-8 ${selectedBySelf ? "ring-2 ring-[#f1ca74] ring-offset-2 ring-offset-[#110f10] before:opacity-50" : ""}`}
                 disabled={Boolean(occupiedByOther)}
                 onClick={() => chooseCharacter(selectedBySelf ? null : character)}
               >
-                <span className="relative z-10 mb-6 flex h-20 w-20 items-center justify-center rounded-full border border-[#d7b77b]/35 bg-black/20 font-serif text-5xl text-[#e7c584]">
+                <span className="relative z-10 mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-[#d7b77b]/35 bg-black/20 font-serif text-4xl text-[#e7c584] sm:mb-6 sm:h-20 sm:w-20 sm:text-5xl">
                   {info.symbol}
                 </span>
-                <span className="relative z-10 mb-2 block font-serif text-4xl">
+                <span className="relative z-10 mb-2 block font-serif text-3xl sm:text-4xl">
                   {t(`characterSelection.${info.translationKey}`)}
                 </span>
-                <span className="absolute bottom-7 left-8 z-10 rounded-full border border-white/20 bg-black/25 px-3 py-1 text-xs font-bold">
+                <span className="absolute bottom-5 left-5 z-10 rounded-full border border-white/20 bg-black/25 px-3 py-1 text-xs font-bold sm:bottom-7 sm:left-8">
                   {occupant
                     ? occupant.id === session.playerId
                       ? t("roomLobby.you")

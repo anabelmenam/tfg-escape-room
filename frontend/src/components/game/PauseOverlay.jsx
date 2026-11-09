@@ -37,8 +37,8 @@ const DiaryBook = ({ diaryEntries, onBack }) => {
           <ArrowLeft size={17} aria-hidden="true" />
           {t("menu.back")}
         </button>
-        <div className="grid h-[min(78vh,42rem)] grid-cols-2 overflow-hidden bg-[#e6d4aa] text-[#3e2c20]">
-          <section className="relative overflow-hidden border-r border-[#8a6b47]/40 bg-[linear-gradient(90deg,#cdb88c_0%,#eadbb8_8%,#eadbb8_92%,#c8ae7b_100%)] px-6 pb-9 pt-7 md:px-9">
+        <div className="grid h-[min(78vh,42rem)] grid-cols-1 overflow-y-auto bg-[#e6d4aa] text-[#3e2c20] sm:grid-cols-2 sm:overflow-hidden">
+          <section className="relative min-h-[22rem] overflow-hidden border-b border-[#8a6b47]/40 bg-[linear-gradient(90deg,#cdb88c_0%,#eadbb8_8%,#eadbb8_92%,#c8ae7b_100%)] px-5 pb-9 pt-16 sm:min-h-0 sm:border-b-0 sm:border-r sm:px-6 sm:pt-7 md:px-9">
             <p className="text-center font-serif text-2xl font-semibold md:text-3xl">{t("ui.diary")}</p>
             <p className="mt-1 text-center text-xs uppercase tracking-[.2em] text-[#765d43]">{t("diaryBook.shared")}</p>
             <div className="mt-4 grid gap-0.5 md:mt-5">
@@ -67,7 +67,7 @@ const DiaryBook = ({ diaryEntries, onBack }) => {
             </div>
             <p className="absolute bottom-4 left-0 right-0 text-center font-serif text-xs text-[#806b50]">1</p>
           </section>
-          <article className="relative overflow-hidden bg-[repeating-linear-gradient(0deg,transparent_0,transparent_32px,rgba(98,111,111,.13)_33px),linear-gradient(90deg,#c8ae7b_0%,#f0e2bf_8%,#ead8ad_100%)] p-6 md:p-10">
+          <article className="relative min-h-[22rem] overflow-y-auto bg-[repeating-linear-gradient(0deg,transparent_0,transparent_32px,rgba(98,111,111,.13)_33px),linear-gradient(90deg,#c8ae7b_0%,#f0e2bf_8%,#ead8ad_100%)] p-5 sm:min-h-0 sm:p-6 md:p-10">
             <p className="text-xs font-bold uppercase tracking-[.18em] text-[#8b5d4d]">{author}</p>
             <h2 className="mt-3 font-serif text-2xl font-semibold italic text-[#4d3328] md:text-3xl">{title}</h2>
             <p className="mt-5 whitespace-pre-line font-serif text-sm italic leading-7 text-[#4e3c30] md:mt-7 md:text-lg md:leading-[2.05rem]">
@@ -101,7 +101,7 @@ const PauseOverlay = ({
 }) => (
   <div className="absolute inset-0 z-[90] flex items-center justify-center overflow-hidden bg-black/75 p-3 text-amber-50 backdrop-blur-sm sm:p-4">
     <div
-      className={`w-full rounded-sm border border-[#d7b77b]/40 bg-[#211916]/95 shadow-2xl shadow-black/60 ${view === "settings" || view === "diary" || view === "controls" ? "max-w-5xl" : "max-w-lg"} ${view === "diary" ? "p-2" : "p-4 sm:p-5"}`}
+      className={`pause-panel-shell w-full rounded-sm border border-[#d7b77b]/40 bg-[#211916]/95 shadow-2xl shadow-black/60 ${view === "controls" ? "controls-panel-shell" : ""} ${view === "settings" || view === "diary" || view === "controls" ? "max-w-5xl" : "max-w-lg"} ${view === "diary" ? "p-2" : "p-4 sm:p-5"}`}
     >
       {view === "menu" ? (
         <>

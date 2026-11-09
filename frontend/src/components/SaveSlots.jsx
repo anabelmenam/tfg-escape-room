@@ -93,7 +93,7 @@ const SaveSlots = ({ onContinue, onBack }) => {
           <div className="mb-7 flex items-end justify-between gap-4">
             <div>
               <p className="text-xs font-bold uppercase tracking-[.24em] text-[#d8aa64]">{t("account.savedGames")}</p>
-              <h1 className="mt-2 font-serif text-4xl text-[#f5e8ce]">{t("account.chooseSlot")}</h1>
+              <h1 className="mt-2 font-serif text-3xl text-[#f5e8ce] sm:text-4xl">{t("account.chooseSlot")}</h1>
             </div>
             <span className="text-sm text-[#958772]">{slots.length}/3</span>
           </div>
@@ -101,7 +101,7 @@ const SaveSlots = ({ onContinue, onBack }) => {
             {[1, 2, 3].map((number) => {
               const slot = slotAt(number);
               return (
-                <article key={number} className="flex min-h-56 flex-col border border-[#6f5940]/55 bg-[#171210]/75 p-5">
+                <article key={number} className="flex min-h-48 flex-col border border-[#6f5940]/55 bg-[#171210]/75 p-4 sm:min-h-56 sm:p-5">
                   <p className="text-xs font-bold uppercase tracking-[.18em] text-[#9f8968]">
                     {t("account.slot")} {number}
                   </p>
@@ -169,7 +169,7 @@ const SaveSlots = ({ onContinue, onBack }) => {
           <p className="text-xs font-bold uppercase tracking-[.24em] text-[#d8aa64]">
             {t("account.slot")} {selected}
           </p>
-          <h1 className="mt-2 font-serif text-4xl text-[#f5e8ce]">{t("createGameScreen.title")}</h1>
+          <h1 className="mt-2 font-serif text-3xl text-[#f5e8ce] sm:text-4xl">{t("createGameScreen.title")}</h1>
           <p className="mt-3 text-[#a99a83]">{t("createGameScreen.description")}</p>
           <div className="mt-8 grid grid-cols-2 gap-2 rounded border border-[#6f5940]/55 bg-[#120e0d] p-1">
             {["create", "join"].map((item) => (
@@ -187,7 +187,7 @@ const SaveSlots = ({ onContinue, onBack }) => {
               </button>
             ))}
           </div>
-          <div className="mt-6 border border-[#6f5940]/55 bg-[#171210]/75 p-6">
+          <div className="mt-6 border border-[#6f5940]/55 bg-[#171210]/75 p-4 sm:p-6">
             {mode === "create" ? (
               <label className="block text-sm font-semibold text-[#e4d2ae]">
                 {t("account.gameName")}
@@ -237,7 +237,7 @@ const SaveSlots = ({ onContinue, onBack }) => {
             if (event.target === event.currentTarget && !deleting) setDeleteTarget(null);
           }}
         >
-          <section className="relative w-full max-w-md overflow-hidden border border-red-300/30 bg-[#211916] p-7 shadow-2xl shadow-black">
+          <section className="relative max-h-[calc(100dvh-2rem)] w-full max-w-md overflow-y-auto border border-red-300/30 bg-[#211916] p-5 shadow-2xl shadow-black sm:p-7">
             <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-transparent via-red-500/70 to-transparent" />
             <button
               type="button"
