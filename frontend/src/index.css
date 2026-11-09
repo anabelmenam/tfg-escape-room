@@ -141,6 +141,25 @@
   background: #675641;
 }
 
+.inspection-panel {
+  scrollbar-color: #675641 #251913;
+  scrollbar-width: thin;
+}
+
+.inspection-panel::-webkit-scrollbar {
+  width: 7px;
+}
+
+.inspection-panel::-webkit-scrollbar-track {
+  background: #251913;
+}
+
+.inspection-panel::-webkit-scrollbar-thumb {
+  border: 2px solid #251913;
+  border-radius: 999px;
+  background: #806644;
+}
+
 @media (max-width: 767px), (max-height: 800px) {
   .pause-panel-shell {
     max-height: calc(100dvh - 1.5rem);

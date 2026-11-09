@@ -1,8 +1,6 @@
 <p align="center">
-  <img src="frontend/public/branding/logo-name.png" alt="La casa entre dos mundos" width="360">
+  <img src="frontend/public/logo/logo-name.png" alt="La casa entre dos mundos" width="360">
 </p>
-
-<h1 align="center">La casa entre dos mundos</h1>
 
 <p align="center">
   Escape room cooperativo en primera persona para dos jugadores.
@@ -25,7 +23,7 @@
 </p>
 
 <p align="center">
-  <img src="docs/images/juego-mama.png" alt="Partida desde la perspectiva de Mamá" width="100%">
+  <img src="docs/images/dormitorio_realidad_mama.jpg" alt="Partida desde la perspectiva de Mamá" width="100%">
 </p>
 
 ## Presentación
@@ -65,24 +63,24 @@ El proyecto combina un escenario tridimensional construido con Three.js, una int
 
 ## Capturas
 
-| Menú principal | Sala de espera |
-| --- | --- |
+| Menú principal                                    | Sala de espera                                                          |
+| ------------------------------------------------- | ----------------------------------------------------------------------- |
 | ![Menú principal](docs/images/menu-principal.png) | ![Selección de personaje y código de sala](docs/images/sala-espera.png) |
 
-| Perspectiva de Mamá | Perspectiva de Papá |
-| --- | --- |
-| ![Partida desde la perspectiva de Mamá](docs/images/juego-mama.png) | ![Partida desde la perspectiva de Papá](docs/images/juego-papa.png) |
+| Perspectiva de Mamá                                                               | Perspectiva de Papá                                                               |
+| --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| ![Partida desde la perspectiva de Mamá](docs/images/dormitorio_realidad_mama.jpg) | ![Partida desde la perspectiva de Papá](docs/images/dormitorio_realidad_papa.jpg) |
 
 ## Tecnologías
 
-| Componente | Tecnologías | Documentación |
-| --- | --- | --- |
-| Interfaz y juego 3D | React 19, Vite 7, Three.js, Tailwind CSS y Lucide React | [Frontend](frontend/README.md) |
-| API y tiempo real | Node.js 22, Express 5 y Socket.IO | [Backend](backend/README.md) |
-| Persistencia | PostgreSQL 16, Sequelize 6 y migraciones propias | [Migraciones](backend/migrations) |
-| Validación y correo | Zod y Brevo | [Backend](backend/README.md#recuperación-de-contraseña) |
-| Desarrollo local | npm y Docker Compose | [Configuración](docker-compose.yml) |
-| Calidad | ESLint, `node:test` y c8 | [Estrategia de pruebas](docs/TESTING.md) |
+| Componente          | Tecnologías                                             | Documentación                                           |
+| ------------------- | ------------------------------------------------------- | ------------------------------------------------------- |
+| Interfaz y juego 3D | React 19, Vite 7, Three.js, Tailwind CSS y Lucide React | [Frontend](frontend/README.md)                          |
+| API y tiempo real   | Node.js 22, Express 5 y Socket.IO                       | [Backend](backend/README.md)                            |
+| Persistencia        | PostgreSQL 16, Sequelize 6 y migraciones propias        | [Migraciones](backend/migrations)                       |
+| Validación y correo | Zod y Brevo                                             | [Backend](backend/README.md#recuperación-de-contraseña) |
+| Desarrollo local    | npm y Docker Compose                                    | [Configuración](docker-compose.yml)                     |
+| Calidad             | ESLint, `node:test` y c8                                | [Estrategia de pruebas](docs/TESTING.md)                |
 
 ## Arquitectura
 
@@ -104,7 +102,6 @@ tfg-escape-room/
 │   └── test/             # Pruebas unitarias, de integración y utilidades
 ├── docs/                 # Documentación complementaria
 ├── docker-compose.yml    # PostgreSQL para desarrollo
-├── netlify.toml          # Configuración anterior de Netlify
 └── frontend/vercel.json  # Construcción, API y rutas del despliegue web
 ```
 
@@ -162,14 +159,14 @@ Vite mostrará la dirección local, normalmente `http://localhost:5173`.
 
 El servidor utiliza las siguientes variables:
 
-| Variable | Descripción |
-| --- | --- |
-| `DATABASE_URL` | Cadena de conexión a PostgreSQL. |
-| `FRONTEND_ORIGIN` | Origen autorizado del cliente. En local: `http://localhost:5173`. |
-| `BREVO_API_KEY` | Clave de la API de Brevo para recuperar contraseñas. |
-| `EMAIL_FROM_ADDRESS` | Remitente verificado en Brevo. |
-| `EMAIL_FROM_NAME` | Nombre visible del remitente. |
-| `PORT` | Puerto del servidor. Si se omite, se utiliza `3010`. |
+| Variable             | Descripción                                                       |
+| -------------------- | ----------------------------------------------------------------- |
+| `DATABASE_URL`       | Cadena de conexión a PostgreSQL. En producción la proporciona Neon. |
+| `FRONTEND_ORIGIN`    | Origen autorizado del cliente. En local: `http://localhost:5173`. |
+| `BREVO_API_KEY`      | Clave de la API de Brevo para recuperar contraseñas.              |
+| `EMAIL_FROM_ADDRESS` | Remitente verificado en Brevo.                                    |
+| `EMAIL_FROM_NAME`    | Nombre visible del remitente.                                     |
+| `PORT`               | Puerto del servidor. Si se omite, se utiliza `3010`.              |
 
 Puede partirse del archivo [backend/.env.example](backend/.env.example).
 
@@ -191,19 +188,19 @@ VITE_SOCKET_URL=http://localhost:3010
 
 ### Controles
 
-| Acción | Control |
-| --- | --- |
-| Moverse | `W`, `A`, `S`, `D` |
-| Mirar y seleccionar | Ratón |
-| Interactuar, recoger o colocar | `E` |
-| Correr | `Ctrl` |
-| Agacharse | `Shift` |
-| Saltar | `Espacio` |
-| Encender o apagar la linterna | `Q` |
-| Seleccionar inventario | `1`–`8` o rueda del ratón |
-| Inspeccionar determinados objetos | `R` |
-| Cambiar de vista | `F` |
-| Pausa o cerrar inspección | `Esc` |
+| Acción                            | Control                   |
+| --------------------------------- | ------------------------- |
+| Moverse                           | `W`, `A`, `S`, `D`        |
+| Mirar y seleccionar               | Ratón                     |
+| Interactuar, recoger o colocar    | `E`                       |
+| Correr                            | `Ctrl`                    |
+| Agacharse                         | `Shift`                   |
+| Saltar                            | `Espacio`                 |
+| Encender o apagar la linterna     | `Q`                       |
+| Seleccionar inventario            | `1`–`8` o rueda del ratón |
+| Inspeccionar determinados objetos | `R`                       |
+| Cambiar de vista                  | `F`                       |
+| Pausa o cerrar inspección         | `Esc`                     |
 
 ## Modo de pruebas
 
@@ -281,7 +278,29 @@ La configuración principal contempla:
 - Reescritura de `/api/*` hacia el servidor de Render para mantener las
   peticiones y la cookie de sesión en el mismo origen.
 - Comunicación Socket.IO directa con el backend de Render.
-- PostgreSQL externo configurado mediante `DATABASE_URL`.
+- Base de datos PostgreSQL gestionada por Neon y conectada al servidor de
+  Render mediante `DATABASE_URL`.
+
+### Configurar la base de datos en Neon
+
+1. Crear un proyecto en Neon y seleccionar la región más próxima al servicio
+   de Render.
+2. Abrir el apartado **Connection Details** del proyecto y copiar la cadena de
+   conexión de PostgreSQL. Debe utilizarse la cadena completa, con SSL
+   habilitado, cuyo formato es similar al siguiente:
+
+   ```env
+   DATABASE_URL=postgresql://usuario:contraseña@host/neondb?sslmode=require
+   ```
+
+3. En el servicio del backend de Render, abrir **Environment** y guardar esa
+   cadena como variable `DATABASE_URL`.
+4. Desplegar de nuevo el backend. El comando de arranque de producción ejecuta
+   las migraciones pendientes antes de iniciar el servidor.
+
+La cadena de conexión contiene credenciales privadas: no debe copiarse al
+repositorio, al README ni a archivos `.env` que estén bajo control de versiones.
+El valor mostrado arriba es únicamente un ejemplo.
 
 ### Desplegar el cliente en Vercel
 
@@ -302,8 +321,6 @@ La configuración principal contempla:
 
 La regla de la API se evalúa antes que la navegación SPA. Por ello, las rutas
 `/api/*` llegan a Render y el resto de rutas del navegador cargan `index.html`.
-El archivo `netlify.toml` se conserva temporalmente para que la versión actual
-siga disponible hasta comprobar el nuevo despliegue.
 
 Después del cambio deben verificarse, en este orden: registro o inicio de
 sesión, recarga manteniendo la sesión, creación y unión a una sala desde dos
@@ -331,4 +348,3 @@ El resultado se genera en `frontend/dist/`.
 ## Estado del proyecto
 
 Proyecto académico en desarrollo. La suite automatizada protege la lógica principal, aunque una partida cooperativa completa también requiere validación manual en dos clientes por su componente gráfico y en tiempo real.
-

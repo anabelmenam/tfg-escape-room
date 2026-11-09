@@ -30,9 +30,7 @@ const Lobby = ({
   const [view, setView] = useState(initialView);
 
   return (
-    <main
-      className="relative flex min-h-screen min-h-dvh items-center justify-center overflow-hidden bg-[#110f10] px-4 py-4 text-[#f2e7d1] before:pointer-events-none before:absolute before:inset-6 before:border before:border-[#d5b67c]/20 after:pointer-events-none after:absolute after:inset-8 after:border after:border-[#d5b67c]/[.08] sm:px-5"
-    >
+    <main className="relative flex min-h-screen min-h-dvh items-center justify-center overflow-hidden bg-[#110f10] px-4 py-4 text-[#f2e7d1] before:pointer-events-none before:absolute before:inset-6 before:border before:border-[#d5b67c]/20 after:pointer-events-none after:absolute after:inset-8 after:border after:border-[#d5b67c]/[.08] sm:px-5">
       <section
         className={`lobby-panel relative z-10 max-h-[calc(100dvh-2rem)] w-full overflow-y-auto rounded-sm border border-[#d7b77b]/40 bg-[#211916]/95 p-5 shadow-2xl shadow-black/60 sm:p-7 ${view === "controls" ? "controls-panel-shell" : ""} ${view === "play" || view === "settings" || view === "controls" || view === "tests" || view === "users" ? "max-w-4xl" : "max-w-lg"}`}
       >
@@ -53,13 +51,15 @@ const Lobby = ({
               {t("menu.cooperative")}
             </p>
             <img
-              src="/branding/logo-name.png"
+              src="/logo/logo-name.png"
               alt=""
               aria-hidden="true"
               className="lobby-menu-logo mx-auto mb-4 w-full max-w-[16rem] drop-shadow-[0_14px_22px_rgba(0,0,0,0.45)]"
             />
             <h1 className="sr-only">{t("menu.title")}</h1>
-            <p className="lobby-menu-tagline mx-auto mb-10 max-w-md text-center leading-relaxed text-[#c9ba9e]">{t("menu.tagline")}</p>
+            <p className="lobby-menu-tagline mx-auto mb-10 max-w-md text-center leading-relaxed text-[#c9ba9e]">
+              {t("menu.tagline")}
+            </p>
             <div className="lobby-menu-actions mx-auto flex max-w-sm flex-col gap-3">
               <MenuButton onClick={() => setView("play")}>{t("menu.play")}</MenuButton>
               <MenuButton secondary onClick={() => setView("settings")}>

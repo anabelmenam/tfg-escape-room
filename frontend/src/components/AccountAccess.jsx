@@ -60,9 +60,7 @@ const AccountAccess = ({ onAuthenticated }) => {
           : t("menu.title");
 
   return (
-    <main
-      className="account-access relative flex h-dvh min-h-0 items-center justify-center overflow-hidden bg-[#110f10] px-5 py-6 text-[#f2e7d1] before:pointer-events-none before:absolute before:inset-6 before:border before:border-[#d5b67c]/20"
-    >
+    <main className="account-access relative flex h-dvh min-h-0 items-center justify-center overflow-hidden bg-[#110f10] px-5 py-6 text-[#f2e7d1] before:pointer-events-none before:absolute before:inset-6 before:border before:border-[#d5b67c]/20">
       <section className="account-access-panel relative z-10 w-full max-w-[26rem] border border-[#d7b77b]/40 bg-[#211916]/95 p-8 shadow-2xl shadow-black/60 sm:p-9">
         {(mode === "forgot" || mode === "reset") && (
           <button
@@ -78,7 +76,7 @@ const AccountAccess = ({ onAuthenticated }) => {
           {t("menu.cooperative")}
         </p>
         <img
-          src="/branding/logo-name.png"
+          src="/logo/logo-name.png"
           alt=""
           aria-hidden="true"
           className="account-access-logo mx-auto mt-3 w-full max-w-[14rem] drop-shadow-[0_12px_20px_rgba(0,0,0,0.45)]"

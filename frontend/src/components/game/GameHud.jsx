@@ -59,7 +59,7 @@ const GameHud = ({ showCrosshair, playTimeSeconds = null }) => (
       id="inventory-inspection"
       className="pointer-events-auto absolute inset-0 z-30 hidden items-center justify-center bg-black/80 p-3 sm:p-8"
     >
-      <div className="relative max-h-full max-w-4xl overflow-y-auto rounded-lg border border-amber-100/30 bg-[#251913] p-3 shadow-2xl sm:p-4">
+      <div className="inspection-panel relative max-h-full max-w-4xl overflow-y-auto rounded-lg border border-amber-100/30 bg-[#251913] p-3 shadow-2xl sm:p-4">
         <button
           id="inventory-inspection-close"
           type="button"
