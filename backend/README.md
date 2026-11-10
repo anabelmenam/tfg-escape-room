@@ -22,6 +22,14 @@ La presentación general, el arranque conjunto y las instrucciones de juego se e
 3. Crear las tablas: `npm run migrate`
 4. Arrancar el servidor: `npm run dev`
 
+Al utilizar PostgreSQL mediante el archivo `docker-compose.yml`, debe
+configurarse la conexión local en `backend/.env`:
+
+```env
+DATABASE_URL=postgres://escape_room:escape_room@localhost:5434/escape_room
+FRONTEND_ORIGIN=http://localhost:5173
+```
+
 El servidor escucha en `http://localhost:3010` y Socket.IO usa el mismo puerto.
 PostgreSQL del proyecto se publica en `localhost:5434` para no interferir con otras bases de datos locales que puedan usar `5432` o `5433`.
 

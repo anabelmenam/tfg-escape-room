@@ -141,6 +141,15 @@ npm run migrate
 npm run dev
 ```
 
+Al utilizar PostgreSQL mediante el archivo `docker-compose.yml`, debe sustituirse
+el valor de `DATABASE_URL` en `backend/.env` por la conexión local incluida en
+la configuración de Docker:
+
+```env
+DATABASE_URL=postgres://escape_room:escape_room@localhost:5434/escape_room
+FRONTEND_ORIGIN=http://localhost:5173
+```
+
 El servidor HTTP y Socket.IO quedan disponibles en `http://localhost:3010`.
 
 ### 4. Arrancar el cliente
